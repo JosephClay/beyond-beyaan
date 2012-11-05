@@ -214,8 +214,9 @@ namespace Beyond_Beyaan.Screens
 					MessageBox.Show(reason);
 					return false;
 				}
+				gameMain.masterItemManager = new Data_Managers.MasterItemManager(new DirectoryInfo(directoryPath));
 				gameMain.masterTechnologyList.ResetAll();
-				gameMain.masterTechnologyList.LoadGenericTechnologies(directoryPath);
+				gameMain.masterTechnologyList.LoadTechnologies(directoryPath, gameMain.resourceManager, gameMain.masterItemManager);
 				gameMain.shipScriptManager.LoadShipScripts(Path.Combine(Path.Combine(directoryPath, "Scripts"), "Ship"));
 				gameMain.raceManager = new Data_Managers.RaceManager(directoryPath, Path.Combine(directoryPath, "graphics"), gameMain.masterTechnologyList, gameMain.shipScriptManager, Path.Combine(Path.Combine(directoryPath, "Scripts"), "Technology"), gameMain.iconManager, gameMain.resourceManager);
 				gameMain.planetTypeManager.LoadPlanetTypes(Path.Combine(directoryPath, "planets.xml"), Path.Combine(Path.Combine(directoryPath, "graphics"), "planets.png"), Path.Combine(directoryPath, "graphics"), gameMain);

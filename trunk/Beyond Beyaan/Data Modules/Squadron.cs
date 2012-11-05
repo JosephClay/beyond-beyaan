@@ -170,7 +170,7 @@ namespace Beyond_Beyaan
 
 			colonizablePlanets = new List<string>();
 			transportCapacity = 0;
-			foreach (ShipInstance ship in ships)
+			/*foreach (ShipInstance ship in ships)
 			{
 				foreach (EquipmentInstance equipment in ship.Equipments)
 				{
@@ -194,7 +194,7 @@ namespace Beyond_Beyaan
 						}
 					}
 				}
-			}
+			}*/
 
 			SetLocation();
 		}

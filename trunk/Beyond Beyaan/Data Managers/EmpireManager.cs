@@ -202,7 +202,7 @@ namespace Beyond_Beyaan
 				empire.FleetManager.ResetFleetMovements();
 				empire.ProcessTurn();
 				empire.UpdateProjects(planetTypeManager, r);
-				empire.TechnologyManager.ProcessResearchTurn(empire.ResearchPoints, empire.SitRepManager);
+				//empire.TechnologyManager.ProcessResearchTurn(empire.ResearchPoints, empire.ItemManager, empire.SitRepManager);
 				empire.CheckExploredSystems(galaxy);
 				empire.UpdateResearchPoints();
 				empire.ContactManager.UpdateContacts(empire.SitRepManager);

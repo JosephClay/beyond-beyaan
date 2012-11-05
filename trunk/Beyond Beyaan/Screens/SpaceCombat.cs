@@ -111,14 +111,14 @@ namespace Beyond_Beyaan.Screens
 
 				foreach (EquipmentInstance equipment in selectedShip.Equipments)
 				{
-					if (equipment.IsPassive())
+					/*if (equipment.IsPassive())
 					{
 						passiveEquipments.Add(equipment);
 					}
 					else
 					{
 						activeEquipments.Add(equipment);
-					}
+					}*/
 				}
 				if (passiveEquipments.Count > 6)
 				{
@@ -996,13 +996,13 @@ namespace Beyond_Beyaan.Screens
 							}
 							combatShip.equipment.Add(newEquipment);
 						}
-						ShipInstance convertedShip = new ShipInstance(gameMain.masterTechnologyList.ConvertStartingShipToRealShip(combatShip, newEmpire.EmpireRace, gameMain.iconManager), newEmpire);
+						/*ShipInstance convertedShip = new ShipInstance(gameMain.masterTechnologyList.ConvertStartingShipToRealShip(combatShip, newEmpire.EmpireRace, gameMain.iconManager), newEmpire);
 						convertedShip.Values.Add("ShipRadius", (convertedShip.BaseShipDesign.ShipClass.Size * 16) / 2);
 						convertedShip.Values.Add("XPos", (int.Parse(ship.Attribute("posX").Value) * 16 + (int)convertedShip.Values["ShipRadius"]));
 						convertedShip.Values.Add("YPos", (int.Parse(ship.Attribute("posY").Value) * 16 + (int)convertedShip.Values["ShipRadius"]));
 						convertedShip.Values.Add("Angle", (float.Parse(ship.Attribute("rotation").Value, System.Globalization.CultureInfo.InvariantCulture)));
 						convertedShip.Values = convertedShip.BaseShipDesign.ShipClass.ShipScript.Initialize(convertedShip.Values);
-						fleet.combatShips.Add(convertedShip);
+						fleet.combatShips.Add(convertedShip);*/
 					}
 					fleet.UpdateShipInfo();
 					fleetsInCombat.Add(fleet);

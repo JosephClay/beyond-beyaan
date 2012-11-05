@@ -2019,6 +2019,29 @@ namespace Beyond_Beyaan
 			SetScrollButtonPosition();
 		}
 
+		public void SetAmountVisible(int amount)
+		{
+			topIndex = 0;
+			amountVisible = amount;
+			if (!isSlider)
+			{
+				scrollButtonLength = (int)(((float)amountVisible / amountOfItems) * scrollBarLength);
+				if (scrollButtonLength < 8)
+				{
+					scrollButtonLength = 8;
+				}
+				if (isHorizontal)
+				{
+					Scroll.ResizeButton(scrollButtonLength, scrollSize);
+				}
+				else
+				{
+					Scroll.ResizeButton(scrollSize, scrollButtonLength);
+				}
+			}
+			SetScrollButtonPosition();
+		}
+
 		public void SetEnabledState(bool enabled)
 		{
 			Up.Active = enabled;
@@ -2507,7 +2530,7 @@ namespace Beyond_Beyaan
 			//this.borderWidth = borderWidth;
 			//this.borderHeight = borderHeight;
 			//background = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, sections);
-			textScrollBar = new ScrollBar(xPos + width - 16, yPos, 16, height - 32, 100, 1, false, false, scrollBarSprites);
+			textScrollBar = new ScrollBar(xPos + width - 16, yPos, 16, height - 32, height, 1, false, false, scrollBarSprites);
 
 			//Set the text stuff
 			wrapView = new GorgonLibrary.Graphics.Viewport(0, 0, width - 16, height);

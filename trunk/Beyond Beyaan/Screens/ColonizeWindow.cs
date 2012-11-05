@@ -14,9 +14,9 @@ namespace Beyond_Beyaan.Screens
 		private ColonizeFunction colonizeFunction;
 		private DoneFunction doneFunction;
 
-		private InvisibleStretchButton[] planetButtons;
-		private InvisibleStretchButton[] shipButtons;
-		private Label[] planetNumericNames;
+		//private InvisibleStretchButton[] planetButtons;
+		//private InvisibleStretchButton[] shipButtons;
+		//private Label[] planetNumericNames;
 		private Label systemNameLabel;
 		private ScrollBar shipScrollBar;
 
@@ -27,16 +27,16 @@ namespace Beyond_Beyaan.Screens
 		private List<ShipInstance> colonyShips;
 		private Squadron selectedFleet;
 
-		private int selectedPlanet;
-		private int selectedShip;
+		//private int selectedPlanet;
+		//private int selectedShip;
 
-		private int planetOffset;
-		private int shipOffset;
+		//private int planetOffset;
+		//private int shipOffset;
 
-		private int maxPlanetVisible;
-		private int maxShipVisible;
+		//private int maxPlanetVisible;
+		//private int maxShipVisible;
 
-		private bool[] colonizable;
+		//private bool[] colonizable;
 
 		public ColonizeWindow(int centerX, int centerY, GameMain gameMain, ColonizeFunction colonizeFunction, DoneFunction doneFunction)
 			: base(centerX, centerY, 10, 10, string.Empty, gameMain, false)
@@ -64,7 +64,7 @@ namespace Beyond_Beyaan.Screens
 			backGroundImage.Draw(drawingManagement);
 			systemNameLabel.Draw();
 
-			for (int i = 0; i < maxPlanetVisible; i++)
+			/*for (int i = 0; i < maxPlanetVisible; i++)
 			{
 				planetButtons[i].Draw(drawingManagement);
 				GorgonLibrary.Graphics.Sprite planet = selectedSystem.Planets[i].PlanetType.Sprite;
@@ -79,7 +79,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				planet.Draw();
 				planetNumericNames[i].Draw();
-				/*if (selectedSystem.Planets[i].ConstructionBonus != PLANET_CONSTRUCTION_BONUS.AVERAGE)
+				if (selectedSystem.Planets[i].ConstructionBonus != PLANET_CONSTRUCTION_BONUS.AVERAGE)
 				{
 					drawingManagement.DrawSprite(Utility.PlanetConstructionBonusToSprite(selectedSystem.Planets[i].ConstructionBonus), xPos - planetOffset + (i * 70) + 10, yPos + 95, 255, System.Drawing.Color.White);
 				}
@@ -90,7 +90,7 @@ namespace Beyond_Beyaan.Screens
 				if (selectedSystem.Planets[i].EntertainmentBonus != PLANET_ENTERTAINMENT_BONUS.AVERAGE)
 				{
 					drawingManagement.DrawSprite(Utility.PlanetEntertainmentBonusToSprite(selectedSystem.Planets[i].EntertainmentBonus), xPos - planetOffset + (i * 70) + 44, yPos + 95, 255, System.Drawing.Color.White);
-				}*/
+				}
 			}
 			for (int i = 0; i < maxShipVisible; i++)
 			{
@@ -109,7 +109,7 @@ namespace Beyond_Beyaan.Screens
 				//xPos - planetOffset + (i * 70) + 15
 				sprite.SetPosition(xPos - shipOffset + ((i / 2) * 70) + 35 - (sprite.ScaledWidth / 2) + (i * 70), yPos + 170 - (sprite.ScaledHeight / 2));
 				sprite.Draw();
-			}
+			}*/
 
 			colonizeButton.Draw(drawingManagement);
 			doneButton.Draw(drawingManagement);
@@ -121,7 +121,7 @@ namespace Beyond_Beyaan.Screens
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
 			bool result = false;
-			foreach (InvisibleStretchButton button in planetButtons)
+			/*foreach (InvisibleStretchButton button in planetButtons)
 			{
 				result = button.MouseHover(x, y, frameDeltaTime) || result;
 			}
@@ -135,7 +135,7 @@ namespace Beyond_Beyaan.Screens
 			if (shipScrollBar.MouseHover(x, y, frameDeltaTime))
 			{
 				result = true;
-			}
+			}*/
 
 			return result;
 		}
@@ -143,7 +143,7 @@ namespace Beyond_Beyaan.Screens
 		public override bool MouseDown(int x, int y)
 		{
 			bool result = false;
-			foreach (InvisibleStretchButton button in planetButtons)
+			/*foreach (InvisibleStretchButton button in planetButtons)
 			{
 				result = button.MouseDown(x, y) || result;
 			}
@@ -153,14 +153,14 @@ namespace Beyond_Beyaan.Screens
 			}
 			result = colonizeButton.MouseDown(x, y) || result;
 			result = doneButton.MouseDown(x, y) || result;
-			result = shipScrollBar.MouseDown(x, y) || result;
+			result = shipScrollBar.MouseDown(x, y) || result;*/
 
 			return result;
 		}
 
 		public override bool MouseUp(int x, int y)
 		{
-			for (int i = 0; i < maxPlanetVisible; i++)
+			/*for (int i = 0; i < maxPlanetVisible; i++)
 			{
 				if (planetButtons[i].MouseUp(x, y))
 				{
@@ -183,7 +183,7 @@ namespace Beyond_Beyaan.Screens
 						button.Selected = false;
 					}
 					shipButtons[i].Selected = true;
-					RefreshPlanets();
+					//RefreshPlanets();
 					return true;
 				}
 			}
@@ -208,7 +208,7 @@ namespace Beyond_Beyaan.Screens
 			if (doneButton.MouseUp(x, y))
 			{
 				doneFunction();
-			}
+			}*/
 			return false;
 		}
 
@@ -218,7 +218,7 @@ namespace Beyond_Beyaan.Screens
 			selectedFleet = fleet;
 			colonyShips = new List<ShipInstance>();
 
-			foreach (ShipInstance ship in selectedFleet.Ships)
+			/*foreach (ShipInstance ship in selectedFleet.Ships)
 			{
 				bool breakOut = false;
 				foreach (EquipmentInstance equipment in ship.Equipments)
@@ -249,7 +249,7 @@ namespace Beyond_Beyaan.Screens
 						}
 					}
 				}
-			}
+			}*/
 
 			if (colonyShips.Count == 0)
 			{
@@ -260,7 +260,7 @@ namespace Beyond_Beyaan.Screens
 					return;
 				}
 			}
-			selectedShip = 0;
+			/*selectedShip = 0;
 			//find the first colonizable planet, and select that by default
 			foreach (EquipmentInstance equipment in colonyShips[0].Equipments)
 			{
@@ -338,10 +338,10 @@ namespace Beyond_Beyaan.Screens
 			backGroundImage.MoveTo(xPos - windowWidth / 2, yPos);
 			backGroundImage.SetDimensions(windowWidth, windowHeight);
 
-			RefreshPlanets();
+			RefreshPlanets();*/
 		}
 
-		private void RefreshPlanets()
+		/*private void RefreshPlanets()
 		{
 			List<string> colonizablePlanets = new List<string>();
 			foreach (EquipmentInstance equipment in colonyShips[selectedShip].Equipments)
@@ -391,6 +391,6 @@ namespace Beyond_Beyaan.Screens
 					planetButtons[i].Active = colonizable[i];
 				}
 			}
-		}
+		}*/
 	}
 }

@@ -10,142 +10,38 @@ namespace Beyond_Beyaan.Data_Managers
 {
 	public class MasterTechnologyList
 	{
-		private List<TechnologyItem>[] genericTechnologies;
-		//private Dictionary<Race, List<TechnologyItem>[]> racialTechnologies;
+		private List<TechnologyItem> technologies;
 		private List<string> technologyNames; //This is to ensure that no two technologies have the same name
 
 		public void ResetAll()
 		{
 			technologyNames = new List<string>();
-			genericTechnologies = new List<TechnologyItem>[6];
-			//racialTechnologies = new Dictionary<Race, List<TechnologyItem>[]>();
+			technologies = new List<TechnologyItem>();
 		}
 
-		public void LoadGenericTechnologies(string filePath)
+		public void LoadTechnologies(string filePath, ResourceManager resourceManager, MasterItemManager masterItemManager)
 		{
-			for (int i = 0; i < genericTechnologies.Length; i++)
-			{
-				genericTechnologies[i] = new List<TechnologyItem>();
-			}
 			XDocument doc = XDocument.Load(Path.Combine(filePath, "technologies.xml"));
 			XElement root = doc.Element("Technologies");
 			foreach (XElement element in root.Elements())
 			{
-				int whichField = TechnologyManager.ELECTRONICS;
-				TechnologyField whichFieldEnum = TechnologyField.ELECTRONICS;
-				switch (element.Attribute("name").Value)
+				TechnologyItem item = new TechnologyItem(element, resourceManager, masterItemManager);
+				if (technologyNames.Contains(item.Name))
 				{
-					case "Electronics":
-						{
-							whichField = TechnologyManager.ELECTRONICS;
-							whichFieldEnum = TechnologyField.ELECTRONICS;
-						} break;
-					case "Metallurgy":
-						{
-							whichField = TechnologyManager.METALLURGY;
-							whichFieldEnum = TechnologyField.METALLURGY;
-						} break;
-					case "Energy":
-						{
-							whichField = TechnologyManager.ENERGY;
-							whichFieldEnum = TechnologyField.ENERGY;
-						} break;
-					case "Chemistry":
-						{
-							whichField = TechnologyManager.CHEMISTRY;
-							whichFieldEnum = TechnologyField.CHEMISTRY;
-						} break;
-					case "Physics":
-						{
-							whichField = TechnologyManager.PHYSICS;
-							whichFieldEnum = TechnologyField.PHYSICS;
-						} break;
-					case "Construction":
-						{
-							whichField = TechnologyManager.CONSTRUCTION;
-							whichFieldEnum = TechnologyField.CONSTRUCTION;
-						} break;
+					throw new Exception("Duplicate Technology Name: " + item.Name);
 				}
-				foreach (XElement subElement in element.Elements())
-				{
-					TechnologyItem item = new TechnologyItem(subElement, whichFieldEnum, Path.Combine(Path.Combine(filePath, "Scripts"), "Technology"));
-					if (technologyNames.Contains(item.Name))
-					{
-						throw new Exception("Duplicate Technology Name: " + item.Name);
-					}
-					technologyNames.Add(item.Name);
-					genericTechnologies[whichField].Add(item);
-				}
+				technologyNames.Add(item.Name);
+				technologies.Add(item);
 			}
 		}
 
-		/*public void LoadRacialTechnologies(string raceTechFile, string techScriptDirectory, Race whichRace)
-		{
-			List<TechnologyItem>[] technologies = new List<TechnologyItem>[6];
-			for (int i = 0; i < technologies.Length; i++)
-			{
-				technologies[i] = new List<TechnologyItem>();
-			}
-			XDocument doc = XDocument.Load(raceTechFile);
-			XElement root = doc.Element("Technologies");
-			foreach (XElement element in root.Elements())
-			{
-				int whichField = TechnologyManager.ELECTRONICS;
-				TechnologyField whichFieldEnum = TechnologyField.ELECTRONICS;
-				switch (element.Attribute("name").Value)
-				{
-					case "Electronics":
-						{
-							whichField = TechnologyManager.ELECTRONICS;
-							whichFieldEnum = TechnologyField.ELECTRONICS;
-						} break;
-					case "Metallurgy":
-						{
-							whichField = TechnologyManager.METALLURGY;
-							whichFieldEnum = TechnologyField.METALLURGY;
-						} break;
-					case "Energy":
-						{
-							whichField = TechnologyManager.ENERGY;
-							whichFieldEnum = TechnologyField.ENERGY;
-						} break;
-					case "Chemistry":
-						{
-							whichField = TechnologyManager.CHEMISTRY;
-							whichFieldEnum = TechnologyField.CHEMISTRY;
-						} break;
-					case "Physics":
-						{
-							whichField = TechnologyManager.PHYSICS;
-							whichFieldEnum = TechnologyField.PHYSICS;
-						} break;
-					case "Construction":
-						{
-							whichField = TechnologyManager.CONSTRUCTION;
-							whichFieldEnum = TechnologyField.CONSTRUCTION;
-						} break;
-				}
-				foreach (XElement subElement in element.Elements())
-				{
-					TechnologyItem item = new TechnologyItem(subElement, whichFieldEnum, techScriptDirectory);
-					if (technologyNames.Contains(item.Name))
-					{
-						throw new Exception("Duplicate Technology Name: " + item.Name);
-					}
-					technologyNames.Add(item.Name);
-					technologies[whichField].Add(item);
-				}
-			}
-			racialTechnologies.Add(whichRace, technologies);
-		}*/
-
-		public void ValidateEquipment(string mainItem, string mountItem, List<string> modifiers, Race whichRace)
+		/*public void ValidateEquipment(string mainItem, string mountItem, List<string> modifiers, Race whichRace)
 		{
 			TechnologyItem mainTech = null;
 			TechnologyItem mountTech = null;
 			List<TechnologyItem> modifierTechs = new List<TechnologyItem>();
 			List<string> modifiersCopy = new List<string>(modifiers);
-			foreach (List<TechnologyItem> items in genericTechnologies)
+			foreach (List<TechnologyItem> items in technologies)
 			{
 				foreach (TechnologyItem item in items)
 				{
@@ -176,37 +72,6 @@ namespace Beyond_Beyaan.Data_Managers
 					}
 				}
 			}
-			/*foreach (List<TechnologyItem> items in racialTechnologies[whichRace])
-			{
-				foreach (TechnologyItem item in items)
-				{
-					if (mainItem == item.Name)
-					{
-						mainTech = item;
-					}
-					else if (mountItem == item.Name)
-					{
-						mountTech = item;
-					}
-					else
-					{
-						int k = -1;
-						for (int i = 0; i < modifiersCopy.Count; i++)
-						{
-							if (modifiersCopy[i] == item.Name)
-							{
-								modifierTechs.Add(item);
-								k = i;
-								break;
-							}
-						}
-						if (k >= 0)
-						{
-							modifiersCopy.RemoveAt(k);
-						}
-					}
-				}
-			}*/
 			if (mainTech == null)
 			{
 				throw new Exception("Main item: " + mainItem + " was not found in the technology table for " + whichRace.RaceName + " race");
@@ -282,62 +147,32 @@ namespace Beyond_Beyaan.Data_Managers
 					}
 				}
 			}
-			/*foreach (List<TechnologyItem> items in racialTechnologies[whichRace])
-			{
-				foreach (TechnologyItem item in items)
-				{
-					if (techName == item.Name)
-					{
-						return item;
-					}
-				}
-			}*/
 			throw new Exception("This shouldn't be reached, missing technology in tech table after everything is validated: " + techName);
-		}
+		}*/
 
-		public Dictionary<TechnologyItem, int>[] GetRandomizedTechnologies(Race race)
+		public Dictionary<TechnologyItem, int> GetRandomizedTechnologies(Race race)
 		{
 			Random r = new Random(); //The randomizitator, mwhahaha
-			Dictionary<TechnologyItem, int>[] technologies = new Dictionary<TechnologyItem, int>[6];
+			Dictionary<TechnologyItem, int> randomTechnologies = new Dictionary<TechnologyItem, int>();
 			int percentage = 80; //Replace with race's creativity trait here
-			for (int i = 0; i < technologies.Length; i++)
+			foreach (TechnologyItem item in technologies)
 			{
-				technologies[i] = new Dictionary<TechnologyItem, int>();
-				foreach (TechnologyItem item in genericTechnologies[i])
+				if (item.IsRequired)
 				{
-					if (item.IsRequired)
+					int level = item.TechLevel + (r.Next(0, item.FudgeFactor) - (item.FudgeFactor / 2));
+					randomTechnologies.Add(item, level);
+				}
+				else
+				{
+					if (r.Next(0, 100) < percentage) //Randomly exclude some technologies
 					{
 						int level = item.TechLevel + (r.Next(0, item.FudgeFactor) - (item.FudgeFactor / 2));
-						technologies[i].Add(item, level);
-					}
-					else
-					{
-						if (r.Next(0, 100) < percentage) //Randomly exclude some technologies
-						{
-							int level = item.TechLevel + (r.Next(0, item.FudgeFactor) - (item.FudgeFactor / 2));
-							technologies[i].Add(item, level);
-						}
+						randomTechnologies.Add(item, level);
 					}
 				}
-				/*foreach (TechnologyItem item in racialTechnologies[race][i])
-				{
-					if (item.IsRequired)
-					{
-						int level = item.TechLevel + (r.Next(0, item.FudgeFactor) - (item.FudgeFactor / 2));
-						technologies[i].Add(item, level);
-					}
-					else
-					{
-						if (r.Next(0, 100) < percentage) //Randomly exclude some technologies
-						{
-							int level = item.TechLevel + (r.Next(0, item.FudgeFactor) - (item.FudgeFactor / 2));
-							technologies[i].Add(item, level);
-						}
-					}
-				}*/
 			}
 
-			return technologies;
+			return randomTechnologies;
 		}
 	}
 }

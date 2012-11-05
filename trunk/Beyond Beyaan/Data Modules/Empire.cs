@@ -28,6 +28,7 @@ namespace Beyond_Beyaan
 		private int fleetSelected;
 		private PlanetManager planetManager;
 		private FleetManager fleetManager;
+		private ItemManager itemManager;
 		private TechnologyManager technologyManager;
 		private ContactManager contactManager;
 		private SquadronGroup selectedFleetGroup;
@@ -121,6 +122,11 @@ namespace Beyond_Beyaan
 		public FleetManager FleetManager
 		{
 			get { return fleetManager; }
+		}
+
+		public ItemManager ItemManager
+		{
+			get { return itemManager; }
 		}
 
 		public TechnologyManager TechnologyManager
@@ -268,6 +274,7 @@ namespace Beyond_Beyaan
 			this.type = type;
 			EmpireColor = color;
 			this.race = race;
+			itemManager = new ItemManager();
 			technologyManager = new TechnologyManager();
 			fleetManager = new FleetManager(this);
 			planetManager = new PlanetManager();
@@ -323,12 +330,12 @@ namespace Beyond_Beyaan
 							}
 						}
 
-						ShipDesign realShip = masterTechnologyList.ConvertStartingShipToRealShip(shipToConvert, race, iconManager);
+						//ShipDesign realShip = masterTechnologyList.ConvertStartingShipToRealShip(shipToConvert, race, iconManager);
 
 						// This is where to add single ship vs stacked ship check
 						//for (int j = 0; j < ship.Value; j++)
 						{
-							startingSquadron.AddShipFromDesign(realShip);
+							//startingSquadron.AddShipFromDesign(realShip);
 						}
 					}
 					startingSquadron.Empire = this;
@@ -340,8 +347,8 @@ namespace Beyond_Beyaan
 			{
 				if (ship.addToBlueprints)
 				{
-					ShipDesign realShip = masterTechnologyList.ConvertStartingShipToRealShip(ship, race, iconManager);
-					fleetManager.AddShipDesign(realShip);
+					//ShipDesign realShip = masterTechnologyList.ConvertStartingShipToRealShip(ship, race, iconManager);
+					//fleetManager.AddShipDesign(realShip);
 				}
 			}
 			if (fleetManager.ShipDesigns.Count > 0)
