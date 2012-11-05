@@ -10,7 +10,7 @@ namespace Beyond_Beyaan.Screens
 	{
 		GameMain gameMain;
 
-		private float totalResearchPoints;
+		//private float totalResearchPoints;
 		private Label planetResearchPointsLabel;
 		private Label tradeResearchPointsLabel;
 		private Label totalResearchPointsLabel;
@@ -20,11 +20,11 @@ namespace Beyond_Beyaan.Screens
 		private Label[] fieldLabels;
 		private Label[] progressLabels;
 		private Label[] etaLabels;
-		private StretchButton[] availableTechs;
+		//private StretchButton[] availableTechs;
 		private ScrollBar availableScrollBar;
 
-		private int whichField;
-		private int maxVisible;
+		//private int whichField;
+		//private int maxVisible;
 
 		private StretchableImage background;
 		private StretchableImage researchedListBackground;
@@ -104,10 +104,10 @@ namespace Beyond_Beyaan.Screens
 			drawingManagement.DrawSprite(SpriteName.ResearchIcon, xPos + 688, yPos + 577);
 
 			availableScrollBar.Draw(drawingManagement);
-			for (int i = 0; i < maxVisible; i++)
+			/*for (int i = 0; i < maxVisible; i++)
 			{
 				availableTechs[i].Draw(drawingManagement);
-			}
+			}*/
 		}
 
 		public void UpdateBackground(float frameDeltaTime)
@@ -117,7 +117,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			UpdateBackground(frameDeltaTime);
+			/*UpdateBackground(frameDeltaTime);
 			for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				if (techScrollBars[i].MouseHover(mouseX, mouseY, frameDeltaTime))
@@ -141,12 +141,12 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				availableTechs[i].MouseHover(mouseX, mouseY, frameDeltaTime);
-			}
+			}*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			for (int i = 0; i < techScrollBars.Length; i++)
+			/*for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				techScrollBars[i].MouseDown(x, y);
 			}
@@ -162,12 +162,12 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				availableTechs[i].MouseDown(x, y);
-			}
+			}*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			for (int i = 0; i < techScrollBars.Length; i++)
+			/*for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				if (techScrollBars[i].MouseUp(x, y))
 				{
@@ -215,7 +215,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					availableTechs[i].Selected = true;
 				}
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -236,7 +236,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadPoints()
 		{
-			float planetPoints = gameMain.empireManager.CurrentEmpire.EmpirePlanetResearch;
+			/*float planetPoints = gameMain.empireManager.CurrentEmpire.EmpirePlanetResearch;
 			planetResearchPointsLabel.SetText(Utility.ConvertNumberToFourDigits(planetPoints) + " RP");
 			float tradePoints = gameMain.empireManager.CurrentEmpire.EmpireTradeResearch;
 			tradeResearchPointsLabel.SetText(Utility.ConvertNumberToFourDigits(tradePoints) + " RP");
@@ -295,39 +295,39 @@ namespace Beyond_Beyaan.Screens
 				button.Selected = false;
 			}
 			fieldButtons[whichField].Selected = true;
-			LoadResearchedTechs();
+			LoadResearchedTechs();*/
 		}
 
 		private void SetPercentages(TechnologyManager techManager)
 		{
-			for (int i = 0; i < techScrollBars.Length; i++)
+			/*for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				techScrollBars[i].TopIndex = techManager.TechPercentages[i];
 				techFieldProgresses[i].SetPotentialProgress((int)((techManager.TechPercentages[i] * 0.01f) * totalResearchPoints));
-			}
+			}*/
 		}
 
 		private void LoadResearchedTechs()
 		{
-			TechnologyManager techManager = gameMain.empireManager.CurrentEmpire.TechnologyManager;
+			/*TechnologyManager techManager = gameMain.empireManager.CurrentEmpire.TechnologyManager;
 
 			List<TechnologyItem> items = techManager.ResearchedItems[whichField];
 			maxVisible = items.Count > 9 ? 9 : items.Count;
 			availableScrollBar.TopIndex = 0;
 			availableTechs = new StretchButton[maxVisible];
 
-			RefreshResearchedTechs(techManager);
+			RefreshResearchedTechs(techManager);*/
 		}
 
 		private void RefreshResearchedTechs(TechnologyManager techManager)
 		{
-			List<TechnologyItem> items = techManager.ResearchedItems[whichField];
+			/*List<TechnologyItem> items = techManager.ResearchedItems[whichField];
 			for (int i = 0; i < maxVisible; i++)
 			{
 				availableTechs[i] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, items[i + availableScrollBar.TopIndex].Name, xPos + 435, yPos + 43 + (i * 35), 345, 35, 30, 13);
 			}
 			availableScrollBar.SetAmountOfItems(items.Count > 9 ? items.Count : 9);
-			availableScrollBar.SetEnabledState(items.Count > 9);
+			availableScrollBar.SetEnabledState(items.Count > 9);*/
 		}
 	}
 }

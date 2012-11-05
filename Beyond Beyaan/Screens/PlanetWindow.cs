@@ -9,21 +9,26 @@ namespace Beyond_Beyaan.Screens
 	public class PlanetWindow : WindowInterface
 	{
 		#region Constants
-		private const int MAX_VISIBLE = 4;
+		private const int MAX_VISIBLE = 5;
 		#endregion
 
-		GorgonLibrary.Graphics.Sprite planetSprite;
+		//GorgonLibrary.Graphics.Sprite planetSprite;
 		private SingleLineTextBox planetName;
 		private StretchableImage planetInformationBackground;
+		private StretchableImage planetSpecialsBackground;
+		private StretchableImage planetPopulationBackground;
+		private StretchableImage planetProductionBackground;
 
-		private StretchableImage slidersBackground;
+		private TextBox planetDescription;
+
+		//private StretchableImage slidersBackground;
 		private List<StretchButton> regionButtons;
 		private StretchButton planetOverviewButton;
 		private List<string> outputs;
 		private ScrollBar regionScrollBar;
 		private int regionsVisible;
 		private List<Label> regionNames;
-		private List<Label> regionTypes;
+		//private List<Label> regionTypes;
 
 		//private List<ScrollBar> outputSliders;
 
@@ -71,12 +76,17 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			transferButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Transfer Population", x + 255, y + 370, 240, 25);*/
-			backGroundImage = new StretchableImage(x, this.y, 720, 620, 60, 60, DrawingManagement.BorderBorderBG);
+			backGroundImage = new StretchableImage(x, this.y, 300, 620, 30, 13, DrawingManagement.BoxBorderBG);
 			selectedPlanet = null;
-			planetName = new SingleLineTextBox(x + 22, this.y + 22, 261, 35, DrawingManagement.TextBox);
-			planetInformationBackground = new StretchableImage(x + 15, this.y + 15, 275, 590, 30, 13, DrawingManagement.BoxBorder);
-			slidersBackground = new StretchableImage(x + 291, this.y + 355, 415, 250, 30, 13, DrawingManagement.BoxBorder);
-			planetOverviewButton = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 22, this.y + 317, 261, 36, 30, 13);
+			planetName = new SingleLineTextBox(x + 10, this.y + 12, 281, 35, DrawingManagement.TextBox);
+			planetInformationBackground = new StretchableImage(x + 10, this.y + 48, 281, 75, 30, 13, DrawingManagement.BoxBorderBG);
+			planetSpecialsBackground = new StretchableImage(x + 10, this.y + 123, 281, 40, 30, 13, DrawingManagement.BoxBorderBG);
+			planetPopulationBackground = new StretchableImage(x + 10, this.y + 163, 281, 40, 30, 13, DrawingManagement.BoxBorderBG);
+			planetProductionBackground = new StretchableImage(x + 10, this.y + 203, 281, 150, 30, 13, DrawingManagement.BoxBorderBG);
+
+			planetDescription = new TextBox(x + 15, this.y + 53, 271, 63, "planetDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			//slidersBackground = new StretchableImage(x + 291, this.y + 355, 415, 250, 30, 13, DrawingManagement.BoxBorder);
+			planetOverviewButton = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 10, this.y + 558, 281, 52, 30, 13);
 
 			/*planetProjectButton = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 291, this.y + 340, 310, 60, 30, 13);
 
@@ -89,11 +99,12 @@ namespace Beyond_Beyaan.Screens
 		{
 			selectedPlanet = planet;
 			planetName.SetString(planet.Name);
-			planetSprite = planet.PlanetType.LargeSprite;
+			planetDescription.SetMessage(planet.PlanetType.Description);
+			//planetSprite = planet.PlanetType.LargeSprite;
 
 			regionButtons = new List<StretchButton>();
 			outputs = new List<string>();
-			regionScrollBar = new ScrollBar(x + 268, y + 355, 16, 208, MAX_VISIBLE, MAX_VISIBLE, false, false, DrawingManagement.VerticalScrollBar); 
+			regionScrollBar = new ScrollBar(x + 276, y + 355, 16, 168, MAX_VISIBLE, MAX_VISIBLE, false, false, DrawingManagement.VerticalScrollBar); 
 			foreach (Region region in planet.Regions)
 			{
 				if (!outputs.Contains(region.RegionType.RegionTypeName))
@@ -115,7 +126,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			for (int i = 0; i < regionsVisible; i++)
 			{
-				regionButtons.Add(new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 22, y + 355 + (i * 60), 245, 60, 30, 13));
+				regionButtons.Add(new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 10, y + 355 + (i * 40), 265, 40, 30, 13));
 			}
 			RefreshRegionButtons();
 			/*planetLabel.SetText(selectedPlanet.Name);
@@ -149,15 +160,15 @@ namespace Beyond_Beyaan.Screens
 		private void RefreshRegionButtons()
 		{
 			regionNames = new List<Label>();
-			regionTypes = new List<Label>();
+			//regionTypes = new List<Label>();
 
 			for (int i = 0; i < regionsVisible; i++)
 			{
-				regionNames.Add(new Label("Region " + Utility.ConvertNumberToRomanNumberical(i + regionScrollBar.TopIndex + 1) + " - " + selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.RegionTypeName, x + 25, y + 365 + (i * 60),
+				regionNames.Add(new Label("Region " + Utility.ConvertNumberToRomanNumberical(i + regionScrollBar.TopIndex + 1) + " - " + selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.RegionTypeName, x + 25, y + 365 + (i * 40),
 					System.Drawing.Color.FromArgb((int)(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.Color[0] * 255),
 												  (int)(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.Color[1] * 255),
 												  (int)(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.Color[2] * 255))));
-				regionTypes.Add(new Label(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.RegionTypeName, x + 25, y + 385 + (i * 60), System.Drawing.Color.White));
+				//regionTypes.Add(new Label(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.RegionTypeName, x + 25, y + 385 + (i * 60), System.Drawing.Color.White));
 			}
 		}
 
@@ -231,22 +242,27 @@ namespace Beyond_Beyaan.Screens
 		public override void DrawWindow(DrawingManagement drawingManagement)
 		{
 			base.DrawWindow(drawingManagement);
-			planetInformationBackground.Draw(drawingManagement);
-			planetSprite.SetPosition(x + 25, y + 59);
-			planetSprite.Draw();
+			//planetSprite.SetPosition(x + 25, y + 59);
+			//planetSprite.Draw();
 			planetOverviewButton.Draw(drawingManagement);
 
 			planetName.Draw(drawingManagement);
+			planetInformationBackground.Draw(drawingManagement);
+			planetSpecialsBackground.Draw(drawingManagement);
+			planetPopulationBackground.Draw(drawingManagement);
+			planetProductionBackground.Draw(drawingManagement);
+
+			planetDescription.Draw(drawingManagement);
 
 			regionScrollBar.Draw(drawingManagement);
 			for (int i = 0; i < regionsVisible; i++)
 			{
 				regionButtons[i].Draw(drawingManagement);
 				regionNames[i].Draw();
-				regionTypes[i].Draw();
+				//regionTypes[i].Draw();
 			}
 
-			slidersBackground.Draw(drawingManagement);
+			//slidersBackground.Draw(drawingManagement);
 
 			/*planetProjectButton.Draw(drawingManagement);
 

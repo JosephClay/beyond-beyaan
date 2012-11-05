@@ -127,7 +127,7 @@ namespace Beyond_Beyaan.Screens
 				removeButtons[i].Draw(drawingManagement);
 				equipmentLabels[i].Draw(drawingManagement);
 				SpriteName sprite = SpriteName.BeamIcon;
-				switch (shipDesign.Equipments[i + equipmentScrollbar.TopIndex].EquipmentType)
+				/*switch (shipDesign.Equipments[i + equipmentScrollbar.TopIndex].EquipmentType)
 				{
 					case EquipmentType.BEAM: sprite = SpriteName.BeamIcon;
 						break;
@@ -155,7 +155,7 @@ namespace Beyond_Beyaan.Screens
 						break;
 					case EquipmentType.SPECIAL: sprite = SpriteName.SpecialIcon;
 						break;
-				}
+				}*/
 				drawingManagement.DrawSprite(sprite, xPos + 40, yPos + 117 + (i * 35));
 			}
 

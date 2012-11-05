@@ -246,7 +246,7 @@ namespace Beyond_Beyaan
 			}
 			//If it reaches here, something went wrong
 			return SpriteName.CancelBackground;
-		}*/
+		}
 
 		public static EquipmentType TechTypeToEquipmentType(TechType type)
 		{
@@ -303,7 +303,7 @@ namespace Beyond_Beyaan
 				case TechType.TORPEDO_MODIFICATION: return EquipmentType.TORPEDO;
 			}
 			throw new Exception("Invalid TechType enum called");
-		}
+		}*/
 
 		public static string RelationToLabel(int relation)
 		{

@@ -50,6 +50,7 @@ namespace Beyond_Beyaan
 		internal ResourceManager resourceManager;
 		internal AIManager aiManager;
 		internal ShipScriptManager shipScriptManager;
+		internal MasterItemManager masterItemManager;
 		internal MasterTechnologyList masterTechnologyList;
 		internal int ScreenWidth;
 		internal int ScreenHeight;

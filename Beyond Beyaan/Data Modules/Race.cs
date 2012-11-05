@@ -373,13 +373,13 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public void ValidateShipDesigns(MasterTechnologyList masterTechnologyList)
 		{
-			foreach (StartingShip ship in startingShips)
+			/*foreach (StartingShip ship in startingShips)
 			{
 				foreach (StartingEquipment equipment in ship.equipment)
 				{
 					masterTechnologyList.ValidateEquipment(equipment.mainItem, equipment.mountItem, equipment.modifiers, this);
 				}
-			}
+			}*/
 		}
 
 		public string GetRandomShipName(int size)

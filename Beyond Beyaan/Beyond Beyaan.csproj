@@ -91,6 +91,8 @@
     <Compile Include="Data Managers\EffectManager.cs" />
     <Compile Include="Data Managers\GameConfiguration.cs" />
     <Compile Include="Data Managers\IconManager.cs" />
+    <Compile Include="Data Managers\ItemManager.cs" />
+    <Compile Include="Data Managers\MasterItemManager.cs" />
     <Compile Include="Data Managers\MasterTechnologyList.cs" />
     <Compile Include="Data Managers\ParticleManager.cs" />
     <Compile Include="Data Managers\PlanetTypeManager.cs" />
@@ -106,6 +108,7 @@
     <Compile Include="Data Managers\DrawingManagement.cs" />
     <Compile Include="Data Modules\CombatItems.cs" />
     <Compile Include="Data Modules\Contact.cs" />
+    <Compile Include="Data Modules\Controls.cs" />
     <Compile Include="Data Modules\Effect.cs" />
     <Compile Include="Data Modules\EffectScript.cs" />
     <Compile Include="Data Modules\Empire.cs" />
@@ -130,7 +133,6 @@
     <Compile Include="Data Modules\Stargate.cs" />
     <Compile Include="Data Modules\Starlane.cs" />
     <Compile Include="Data Modules\StarType.cs" />
-    <Compile Include="Data Modules\TechnologyScript.cs" />
     <Compile Include="GameMain.cs" />
     <Compile Include="Data Managers\InterfaceManagement.cs" />
     <Compile Include="Screens\BackgroundStars.cs" />
@@ -157,6 +159,7 @@
     <Compile Include="Screens\TransferToShipWindow.cs" />
     <Compile Include="Screens\TutorialWindow.cs" />
     <Compile Include="Screens\WindowInterface.cs" />
+    <Compile Include="Scripts\ShipItemScript.cs" />
     <Compile Include="Utility\NameGenerator.cs" />
     <Compile Include="Data Modules\Planet.cs" />
     <Compile Include="Data Managers\PlanetManager.cs" />

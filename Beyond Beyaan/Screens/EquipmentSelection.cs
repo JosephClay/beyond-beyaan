@@ -34,7 +34,7 @@ namespace Beyond_Beyaan.Screens
 		private List<TechnologyItem> secondaryItems;
 		private List<TechnologyItem> modifierItems;
 
-		private EquipmentType whichType;
+		//private EquipmentType whichType;
 
 		private int size;
 		private Dictionary<string, object> shipValues;
@@ -45,12 +45,12 @@ namespace Beyond_Beyaan.Screens
 
 		private CheckBox[] buttonList;
 
-		private int maxVisible;
+		//private int maxVisible;
 		private List<int> selectedModifierItems;
 		private ScrollBar scrollBar;
 
 		private Label equipmentNameLabel;
-		private Equipment equipment;
+		//private Equipment equipment;
 
 		private ComboBox mainComboBox;
 		private ComboBox mountComboBox;
@@ -107,7 +107,7 @@ namespace Beyond_Beyaan.Screens
 			typeButtons[11].SetToolTip(DrawingManagement.BoxBorderBG, font, "Reactors", "reactorsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 			typeButtons[12].SetToolTip(DrawingManagement.BoxBorderBG, font, "Special Equipment", "specialEquipmentToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 			typeButtons[0].Selected = true;
-			whichType = EquipmentType.BEAM;
+			//whichType = EquipmentType.BEAM;
 
 			for (int i = 0; i < buttonList.Length; i++)
 			{
@@ -157,10 +157,10 @@ namespace Beyond_Beyaan.Screens
 			statsBackground.Draw(drawingManagement);
 			iconsBackground.Draw(drawingManagement);
 
-			for (int i = 0; i < maxVisible; i++)
+			/*for (int i = 0; i < maxVisible; i++)
 			{
 				buttonList[i].Draw(drawingManagement);
-			}
+			}*/
 			scrollBar.Draw(drawingManagement);
 
 			equipmentNameLabel.Draw();
@@ -168,7 +168,7 @@ namespace Beyond_Beyaan.Screens
 			mountComboBox.Draw(drawingManagement);
 			mainComboBox.Draw(drawingManagement);
 
-			if (equipment != null)
+			/*if (equipment != null)
 			{
 				for (int i = 0; i < equipment.DesignIcons.Count; i++)
 				{
@@ -178,7 +178,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					equipment.DesignControls[i].Draw(xPos + 370, yPos + 27 + (i * 25), 100, 25, drawingManagement);
 				}
-			}
+			}*/
 
 			for (int i = 0; i < typeButtons.Length; i++)
 			{
@@ -203,7 +203,7 @@ namespace Beyond_Beyaan.Screens
 				typeButtons[i].MouseHover(x, y, frameDeltaTime);
 			}
 
-			for (int i = 0; i < maxVisible; i++)
+			/*for (int i = 0; i < maxVisible; i++)
 			{
 				buttonList[i].MouseHover(x, y, frameDeltaTime);
 			}
@@ -230,7 +230,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					equipment.DesignControls[i].Update(x, y, xPos + 370, yPos + 27 + (i * 25), frameDeltaTime);
 				}
-			}
+			}*/
 
 			return result;
 		}
@@ -256,7 +256,7 @@ namespace Beyond_Beyaan.Screens
 				typeButtons[i].MouseDown(x, y);
 			}
 
-			for (int i = 0; i < maxVisible; i++)
+			/*for (int i = 0; i < maxVisible; i++)
 			{
 				buttonList[i].MouseDown(x, y);
 			}
@@ -267,7 +267,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					equipment.DesignControls[i].MouseDown(x, y, xPos + 370, yPos + 27 + (i * 25));
 				}
-			}
+			}*/
 
 			scrollBar.MouseDown(x, y);
 
@@ -291,7 +291,7 @@ namespace Beyond_Beyaan.Screens
 
 			if (okButton.MouseUp(x, y) && OnOkClick != null)
 			{
-				OnOkClick(equipment);
+				//OnOkClick(equipment);
 			}
 			if (cancelButton.MouseUp(x, y) && OnCancelClick != null)
 			{
@@ -302,7 +302,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (typeButtons[i].MouseUp(x, y))
 				{
-					EquipmentType oldType = whichType;
+					/*EquipmentType oldType = whichType;
 					switch (i)
 					{
 						case BEAM: whichType = EquipmentType.BEAM;
@@ -346,11 +346,11 @@ namespace Beyond_Beyaan.Screens
 							button.IsChecked = false;
 						}
 						LoadEquipment();
-					}
+					}*/
 				}
 			}
 
-			for (int i = 0; i < maxVisible; i++)
+			/*for (int i = 0; i < maxVisible; i++)
 			{
 				if (buttonList[i].MouseUp(x, y))
 				{
@@ -364,7 +364,7 @@ namespace Beyond_Beyaan.Screens
 						selectedModifierItems.Add(i + scrollBar.TopIndex);
 						buttonList[i].IsChecked = true;
 					}
-					RefreshEquipmentLabels(false);
+					//RefreshEquipmentLabels(false);
 				}
 			}
 
@@ -382,9 +382,9 @@ namespace Beyond_Beyaan.Screens
 						buttonList[i].IsChecked = true;
 					}
 				}
-			}
+			}*/
 
-			if (equipment != null)
+			/*if (equipment != null)
 			{
 				for (int i = 0; i < equipment.DesignControls.Count; i++)
 				{
@@ -401,7 +401,7 @@ namespace Beyond_Beyaan.Screens
 						RefreshEquipmentLabels(false);
 					}
 				}
-			}
+			}*/
 
 			return result;
 		}
@@ -414,7 +414,7 @@ namespace Beyond_Beyaan.Screens
 
 			TechnologyManager techManager = gameMain.empireManager.CurrentEmpire.TechnologyManager;
 
-			switch(whichType)
+			/*switch(whichType)
 			{
 				case EquipmentType.ARMOR:
 					{
@@ -526,7 +526,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			selectedModifierItems = new List<int>();
-			CheckValidSelection();
+			CheckValidSelection();*/
 		}
 
 		public void LoadWindow(int size, Dictionary<string, object> shipValues)
@@ -539,7 +539,7 @@ namespace Beyond_Beyaan.Screens
 				typeButtons[i].Selected = false;
 			}
 			typeButtons[0].Selected = true;
-			whichType = EquipmentType.BEAM;
+			//whichType = EquipmentType.BEAM;
 			LoadEquipment();
 
 			foreach (CheckBox button in buttonList)
@@ -550,18 +550,18 @@ namespace Beyond_Beyaan.Screens
 
 		private void CheckValidSelection()
 		{
-			if (mainComboBox.SelectedIndex < 0 || (mountComboBox.SelectedIndex < 0 && whichType != EquipmentType.SPECIAL))
+			//if (mainComboBox.SelectedIndex < 0 || (mountComboBox.SelectedIndex < 0 && whichType != EquipmentType.SPECIAL))
 			{
 				okButton.Active = false;
 			}
-			else
+			//else
 			{
-				okButton.Active = true;
+				//okButton.Active = true;
 			}
-			RefreshEquipmentLabels(true);
+			//RefreshEquipmentLabels(true);
 		}
 
-		private void RefreshEquipmentLabels(bool wipe)
+		/*private void RefreshEquipmentLabels(bool wipe)
 		{
 			if (mainComboBox.SelectedIndex < 0 || (mountComboBox.SelectedIndex < 0 && whichType != EquipmentType.SPECIAL))
 			{
@@ -617,6 +617,6 @@ namespace Beyond_Beyaan.Screens
 				modifiers.Add(modifierItems[i]);
 			}
 			return new Equipment(whichType, mainItems[mainComboBox.SelectedIndex], whichType == EquipmentType.SPECIAL ? null : secondaryItems[mountComboBox.SelectedIndex], modifiers, new Dictionary<string,object>(), gameMain.iconManager);
-		}
+		}*/
 	}
 }

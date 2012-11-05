@@ -355,7 +355,7 @@ namespace Beyond_Beyaan.Screens
 						List<StarSystem> startingSystems = gameMain.galaxy.SetStartingSystems(empire, gameMain.planetTypeManager, gameMain.regionTypeManager, out ownedPlanets);
 						empire.SetHomeSystem(startingSystems, ownedPlanets);
 						empire.TechnologyManager.AddTechnologies(gameMain.masterTechnologyList.GetRandomizedTechnologies(empire.EmpireRace));
-						empire.TechnologyManager.SetInitialBracket(0, 5);
+						empire.TechnologyManager.SetInitialBracket(0, 5, empire.ItemManager);
 						empire.SetStartingFleets(startingSystems, gameMain.masterTechnologyList, gameMain.iconManager);
 					}
 					gameMain.empireManager.SetupContacts();

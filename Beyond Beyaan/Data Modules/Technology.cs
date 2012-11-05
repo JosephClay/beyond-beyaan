@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.IO;
+using Beyond_Beyaan.Scripts;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
 
@@ -11,246 +12,259 @@ namespace Beyond_Beyaan
 {
 	public class TechnologyItem
 	{
-		#region Attributes
-		public const string POWER = "basePower";
-		public const string POWER_PERCENTAGE = "basePowerPercentage";
-		public const string TIME = "baseTime";
-		public const string TIME_PERCENTAGE = "baseTimePercentage";
-		public const string COST = "baseCost";
-		public const string COST_PERCENTAGE = "baseCostPercentage";
-		public const string SPACE = "baseSpace";
-		public const string SPACE_PERCENTAGE = "baseSpacePercentage";
-		public const string DESCRIPTION = "description";
-		#endregion
-
-		private TechnologyField techField;
-		private string name;
-		private Dictionary<string, object> values;
-
-		public int ResearchPoints { get; private set; }
+		public string Name { get; private set; }
 		public int TechLevel { get; private set; }
 		public int FudgeFactor { get; private set; }
-		public string Name { get { return name; } }
-		public TechType TechType { get; private set; }
 		public bool IsRequired { get; private set; }
-		public bool IsPassive { get; private set; }
-		public TechnologyScript Script { get; private set; }
-		public Dictionary<string, object> AttributeValues { get { return values; } }
+		public Dictionary<Resource, int> Cost { get; private set; }
+		public string Category { get; private set; }
+
+		#region Items that this technology unlock
+		public List<ShipMainItem> ShipMainItems { get; private set; }
+		public List<ShipModifierItem> ShipModifierItems { get; private set; }
+		public List<ShipEnhancerItem> ShipEnhancerItems { get; private set; }
+		#endregion
+
+		#region Items that this technology removes (such as obsolete items)
+		public List<ShipMainItem> ShipMainItemsRemoved { get; private set; }
+		public List<ShipModifierItem> ShipModifierItemsRemoved { get; private set; }
+		public List<ShipEnhancerItem> ShipEnhancerItemsRemoved { get; private set; }
+		#endregion
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="technologyToLoad">The base technology</param>
-		/// <param name="technologyType">Data on a particular type of technology, i.e. weapon or armor</param>
-		public TechnologyItem(XElement technologyToLoad, TechnologyField techField, string techScriptPath)
+		public TechnologyItem(XElement technologyToLoad, ResourceManager resourceManager, MasterItemManager masterItemManager)
 		{
-			values = new Dictionary<string, object>();
+			Cost = new Dictionary<Resource, int>();
 			//Load the attributes
 			foreach (XAttribute attribute in technologyToLoad.Attributes())
 			{
-				KeyValuePair<string, object> newValue = ConvertElementToObject(attribute.Name.LocalName, attribute.Value);
-				values.Add(newValue.Key, newValue.Value);
+				switch (attribute.Name.LocalName.ToLower())
+				{
+					case "name": Name = attribute.Value;
+						break;
+					case "techlevel": TechLevel = int.Parse(attribute.Value);
+						break;
+					case "fudge": FudgeFactor = int.Parse(attribute.Value);
+						break;
+					case "category": Category = attribute.Value;
+						break;
+					case "isrequired": IsRequired = bool.Parse(attribute.Value);
+						break;
+					case "cost":
+						{
+							string[] parts = attribute.Value.Split(new[] { '|' });
+							foreach (string part in parts)
+							{
+								string[] cost = part.Split(new[] { ',' });
+								Cost.Add(resourceManager.GetResource(cost[0]), int.Parse(cost[1]));
+							}
+						} break;
+				}
 			}
-			name = (string)values["name"];
-			this.techField = techField;
-			TechLevel = (int)values["techLevel"];
-			FudgeFactor = (int)values["fudge"];
-			ResearchPoints = (int)values["researchPoints"];
-			IsRequired = values.ContainsKey("isRequired") ? (bool)values["isRequired"] : false;
-			IsPassive = values.ContainsKey("isPassive") ? (bool)values["isPassive"] : false;
+			foreach (XElement element in technologyToLoad.Elements())
+			{
+				var item = masterItemManager.GetItem(element.Attribute("code").Value);
+				switch (element.Name.ToString().ToLower())
+				{
+					case "shipmainitem": ShipMainItems.Add((ShipMainItem)item);
+						break;
+					case "shipmodifieritem": ShipModifierItems.Add((ShipModifierItem)item);
+						break;
+					case "shipenhanceritem": ShipEnhancerItems.Add((ShipEnhancerItem)item);
+						break;
+					case "removeshipmainitem": ShipMainItemsRemoved.Add((ShipMainItem)item);
+						break;
+					case "removeshipmodifieritem": ShipModifierItemsRemoved.Add((ShipModifierItem)item);
+						break;
+					case "removeshipenhanceritem": ShipEnhancerItemsRemoved.Add((ShipEnhancerItem)item);
+						break;
+				}
+			}
+		}
 
-			if (values.ContainsKey("script"))
+		public Dictionary<string, BaseItem> ItemsToAdd()
+		{
+			Dictionary<string, BaseItem> itemsToAdd = new Dictionary<string, BaseItem>();
+			foreach (ShipMainItem item in ShipMainItems)
 			{
-				Script = new TechnologyScript(new FileInfo(Path.Combine(techScriptPath, (string)values["script"] + ".cs")));
+				itemsToAdd.Add(item.Code, item);
 			}
-			
-			switch((string)values["techType"])
+			foreach (ShipModifierItem item in ShipModifierItems)
 			{
-				case "Infrastructure": TechType = TechType.INFRASTRUCTURE;
-					break;
-				case "Computer": TechType = TechType.COMPUTER;
-					break;
-				case "ComputerModifier": TechType = TechType.COMPUTER_MODIFICATION;
-					break;
-				case "ComputerMount": TechType = TechType.COMPUTER_MOUNT;
-					break;
-				case "StellarEngine": TechType = TechType.STELLAR_ENGINE;
-					break;
-				case "StellarEngineModifier": TechType = TechType.STELLAR_MODIFICATION;
-					break;
-				case "StellarEngineMount": TechType = TechType.STELLAR_ENGINE_MOUNT;
-					break;
-				case "SystemEngine": TechType = TechType.SYSTEM_ENGINE;
-					break;
-				case "SystemEngineModifier": TechType = TechType.SYSTEM_MODIFICATION;
-					break;
-				case "SystemEngineMount": TechType = TechType.SYSTEM_ENGINE_MOUNT;
-					break;
-				case "Shield": TechType = TechType.SHIELD;
-					break;
-				case "ShieldModifier": TechType = TechType.SHIELD_MODIFICATION;
-					break;
-				case "ShieldMount": TechType = TechType.SHIELD_MOUNT;
-					break;
-				case "Armor": TechType = TechType.ARMOR;
-					break;
-				case "ArmorModifier": TechType = TechType.ARMOR_MODIFICATION;
-					break;
-				case "ArmorPlating": TechType = TechType.ARMOR_PLATING;
-					break;
-				case "Beam": TechType = TechType.BEAM;
-					break;
-				case "BeamMount": TechType = TechType.BEAM_MOUNT;
-					break;
-				case "BeamModifier": TechType = TechType.BEAM_MODIFICATION;
-					break;
-				case "Projectile": TechType = TechType.PROJECTILE;
-					break;
-				case "ProjectileMount": TechType = TechType.PROJECTILE_MOUNT;
-					break;
-				case "ProjectileModifier": TechType = TechType.PROJECTILE_MODIFICATION;
-					break;
-				case "MissileWarhead": TechType = TechType.MISSILE_WARHEAD;
-					break;
-				case "MissileBody": TechType = TechType.MISSILE_BODY;
-					break;
-				case "MissileModifier": TechType = TechType.MISSILE_MODIFICATION;
-					break;
-				case "Torpedo": TechType = TechType.TORPEDO;
-					break;
-				case "TorpedoLauncher": TechType = TechType.TORPEDO_LAUNCHER;
-					break;
-				case "TorpedoModifier": TechType = TechType.TORPEDO_MODIFICATION;
-					break;
-				case "Bomb": TechType = TechType.BOMB;
-					break;
-				case "BombBody": TechType = TechType.BOMB_BODY;
-					break;
-				case "BombMod": TechType = TechType.BOMB_MODIFICATION;
-					break;
-				case "Shockwave": TechType = TechType.SHOCKWAVE;
-					break;
-				case "ShockwaveEmitter": TechType = TechType.SHOCKWAVE_EMITTER;
-					break;
-				case "ShockwaveModifier": TechType = TechType.SHOCKWAVE_MODIFICATION;
-					break;
-				case "Reactor": TechType = TechType.REACTOR;
-					break;
-				case "ReactorModifier": TechType = TechType.REACTOR_MODIFICATION;
-					break;
-				case "ReactorMount": TechType = TechType.REACTOR_MOUNT;
-					break;
-				case "Special": TechType = TechType.SPECIAL;
-					break;
-				default: throw new Exception("Invalid Technology Type: " + values["TechType"]);
+				itemsToAdd.Add(item.Code, item);
 			}
+			foreach (ShipEnhancerItem item in ShipEnhancerItems)
+			{
+				itemsToAdd.Add(item.Code, item);
+			}
+			return itemsToAdd;
 		}
-		private KeyValuePair<string, object> ConvertElementToObject(string name, string value)
+		public Dictionary<string, BaseItem> ItemsToRemove()
 		{
-			switch (name)
+			Dictionary<string, BaseItem> itemsToRemove = new Dictionary<string, BaseItem>();
+			foreach (ShipMainItem item in ShipMainItemsRemoved)
 			{
-				case "techType":
-				case "description":
-				case "colonizes":
-				case "particle":
-				case "name": return new KeyValuePair<string, object>(name, value);
-				/*case "baseSpeed":
-				case "baseSpeedMultipler":
-				case "baseSpacePercentage":
-				case "baseCostPercentage":
-				case "basePowerPercentage":
-				case "baseHPPercentage":
-				case "baseAccuracyMultiplier":
-				case "baseSpaceMultiplier":
-				case "baseCostMultiplier":
-				case "basePowerMultiplier":
-				case "baseTimeMultipler":
-				case "baseDamageMultiplier":
-				case "range":
-				case "rangeMultiplier": return new KeyValuePair<string, object>(name, float.Parse(value));*/
-				case "transferCapacity":
-				case "researchPoints":
-				case "fudge":
-				case "techLevel": return new KeyValuePair<string, object>(name, int.Parse(value));
-				case "isPassive":
-				case "isRequired": return new KeyValuePair<string, object>(name, bool.Parse(value));
-				/*case "baseSpace":
-				case "baseCost":
-				case "basePower":
-				case "baseTime": return new KeyValuePair<string,object>(name, long.Parse(value));*/
-				default: return new KeyValuePair<string, object>(name, value);
+				itemsToRemove.Add(item.Code, item);
 			}
+			foreach (ShipModifierItem item in ShipModifierItemsRemoved)
+			{
+				itemsToRemove.Add(item.Code, item);
+			}
+			foreach (ShipEnhancerItem item in ShipEnhancerItemsRemoved)
+			{
+				itemsToRemove.Add(item.Code, item);
+			}
+			return itemsToRemove;
 		}
-		/*public string GetAttributeValue(string attribute)
-		{
-			if (values.ContainsKey(attribute))
-			{
-				return values[attribute];
-			}
-			return null;
-		}
-		public bool AttributeExists(string attribute)
-		{
-			return values.ContainsKey(attribute);
-		}*/
-		/*public long GetSpace(int size)
-		{
-			if (values.ContainsKey(SPACE))
-			{
-				return (long)values[SPACE];
-			}
-			else
-			{
-				double value = (double)values[SPACE_PERCENTAGE] * 0.01 * size;
-				return (long)(value + (value - ((long)value) > 0 ? 1 : 0));
-			}
-		}
-		public long GetPower(int size)
-		{
-			if (values.ContainsKey(POWER))
-			{
-				return (long)values[POWER];
-			}
-			else
-			{
-				double value = (double)values[POWER_PERCENTAGE] * 0.01 * size;
-				return (long)(value + (value - ((long)value) > 0 ? 1 : 0));
-			}
-		}
-		public long GetCost(int size)
-		{
-			if (values.ContainsKey(COST))
-			{
-				return (long)values[COST];
-			}
-			else
-			{
-				double value = (double)values[COST_PERCENTAGE] * 0.01 * size;
-				return (long)(value + (value - ((long)value) > 0 ? 1 : 0));
-			}
-		}
-		public int GetTime(int size)
-		{
-			if (values.ContainsKey(TIME))
-			{
-				return (int)values[TIME];
-			}
-			else if (values.ContainsKey(TIME_PERCENTAGE))
-			{
-				double value = (double)values[TIME_PERCENTAGE] * 0.01 * size;
-				return (int)(value + (value - (int)value) > 0 ? 1 : 0);
-			}
-			return 0; //No time defined, default to 0
-		}*/
-		#region Description
-		public string GetDescription()
-		{
-			return (string)values[DESCRIPTION];
-		}
-		#endregion
 	}
 
-	public enum EquipmentType { BEAM, PROJECTILE, MISSILE, TORPEDO, BOMB, SHOCKWAVE, COMPUTER, STELLAR_ENGINE, SYSTEM_ENGINE, SHIELD, ARMOR, REACTOR, SPECIAL }
+	public class TechnologyProject
+	{
+		public TechnologyItem TechBeingResearched { get; private set; }
+		public bool Locked { get; set; }
+		public int Percentage { get; set; }
+		public Dictionary<Resource, float> Invested { get; private set; }
+
+		public TechnologyProject(TechnologyItem item)
+		{
+			TechBeingResearched = item;
+			Invested = new Dictionary<Resource, float>();
+			foreach (KeyValuePair<Resource, int> resource in TechBeingResearched.Cost)
+			{
+				Invested.Add(resource.Key, 0);
+			}
+			Percentage = 0;
+			Locked = false;
+		}
+
+		//Returns true if the project's cost is paid.
+		public bool InvestProject(Resource resource, float amount)
+		{
+			Invested[resource] += amount;
+			foreach (KeyValuePair<Resource, float> item in Invested)
+			{
+				if (TechBeingResearched.Cost[item.Key] > item.Value)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	//This is an base interface that specifies the standard layout of different components in the game, such as ship items, buildings, etc
+	public class BaseItem
+	{
+		public string Code { get; private set; }
+		public string Name { get; private set; }
+		public string Description { get; private set; }
+		public Dictionary<string, object> Values { get; private set; }
+
+		public BaseItem(XElement itemToLoad)
+		{
+			Values = new Dictionary<string, object>();
+			foreach (XAttribute attribute in itemToLoad.Attributes())
+			{
+				switch (attribute.Name.LocalName.ToLower())
+				{
+					case "code": Code = attribute.Value;
+						break;
+					case "name": Name = attribute.Value;
+						break;
+					case "description": Description = attribute.Value;
+						break;
+					default: Values.Add(attribute.Name.LocalName.ToLower(), attribute.Value);
+						break;
+				}
+			}
+		}
+
+		protected void AddControls(List<BaseControl> controls, string item)
+		{
+			string[] items = item.Split(new[] { '|' });
+
+			foreach (string part in items)
+			{
+				string[] parts = part.Split(new[] { ',' });
+				switch (parts[0].ToLower())
+				{
+					case "numupdown":
+						{
+							int min = int.Parse(parts[3]);
+							int max = int.Parse(parts[4]);
+							int incr = int.Parse(parts[5]);
+							int origVal = int.Parse(parts[6]);
+							NumUpDown control = new NumUpDown(min, max, incr, origVal, parts[1], parts[2]);
+							controls.Add(control);
+						} break;
+				}
+			}
+		}
+	}
+
+	public class ShipMainItem : BaseItem
+	{
+		public string Type { get; private set; }
+		public List<string> Modifiers { get; private set; }
+		public List<string> Enhancers { get; private set; }
+
+		public List<BaseControl> Controls { get; private set; }
+
+		public ShipItemScript Script { get; private set; }
+
+		public ShipMainItem(XElement itemToLoad) : base(itemToLoad)
+		{
+			Type = (string)Values["type"];
+			Modifiers = new List<string>();
+			Enhancers = new List<string>();
+			Controls = new List<BaseControl>();
+
+			foreach (string part in ((string)Values["modifiers"]).Split(new[] { '|' }))
+			{
+				Modifiers.Add(part);
+			}
+			foreach (string part in ((string)Values["enhancers"]).Split(new[] { '|' }))
+			{
+				Enhancers.Add(part);
+			}
+
+			AddControls(Controls, (string)Values["controls"]);
+		}
+	}
+
+	public class ShipModifierItem : BaseItem
+	{
+		public List<string> Modifiers { get; private set; }
+
+		public ShipModifierItem(XElement itemToLoad)
+			: base(itemToLoad)
+		{
+			Modifiers = new List<string>();
+			foreach (string part in ((string)Values["modifiers"]).Split(new[] { '|' }))
+			{
+				Modifiers.Add(part);
+			}
+		}
+	}
+
+	public class ShipEnhancerItem : BaseItem
+	{
+		public List<string> Enhancers { get; private set; }
+
+		public ShipEnhancerItem(XElement itemToLoad)
+			: base(itemToLoad)
+		{
+			Enhancers = new List<string>();
+			foreach (string part in ((string)Values["enhancers"]).Split(new[] { '|' }))
+			{
+				Enhancers.Add(part);
+			}
+		}
+	}
+
 	public class EquipmentInstance : Equipment
 	{
 		//This is for storing the equipment data invidiually
@@ -262,95 +276,49 @@ namespace Beyond_Beyaan
 			Values = new Dictionary<string, object>();
 			//Values.Add("Range", Range());
 			//Values.Add("Space", GetSpaceUsage(shipSize));
-			Values.Add("Passive", IsPassive());
+			//Values.Add("Passive", IsPassive());
 			//Values.Add("Cost", GetCost(shipSize));
 			//Values.Add("Power", GetPower(shipSize));
 			//Values.Add("Time", GetTime(shipSize));
-			Values.Add("Name", GetName());
+			//Values.Add("Name", GetName());
 			//Values.Add("GalaxySpeed", GetSpeed());
-			Values.Add("SelectionSize", GetSelectionSize(shipSize));
+			//Values.Add("SelectionSize", GetSelectionSize(shipSize));
 		}
 	}
 
 	public class Equipment
 	{
-		public TechnologyItem ItemType { get; set; }
-		public TechnologyItem MountType { get; set; }
-		public List<TechnologyItem> ModifierItems { get; set; }
+		public ShipMainItem ShipMainItem { get; set; }
+		public List<ShipModifierItem> ShipModifierItems { get; private set; }
+		public List<ShipEnhancerItem> ShipEnhancerItems { get; private set; }
 
 		public List<Icon> CombatIcons { get; private set; } //For combat view and other views
 		public List<Icon> DesignIcons { get; private set; } //For ship design view
 		public List<Icon> DesignControls { get; private set; } //For ship design view that requires user to input values (such as number of mounts, amount of ammo, etc)
 
-		public Dictionary<string, object> ModifiableValues { get; set; } //This is primarily for icons, so icons can apply changes
-
-		public EquipmentType EquipmentType { get; private set; }
-
-		public Equipment(EquipmentType type)
+		public Equipment()
 		{
-			ItemType = null;
-			MountType = null;
-			ModifierItems = new List<TechnologyItem>();
-			ModifiableValues = new Dictionary<string, object>();
+			ShipMainItem = null;
+			ShipModifierItems = new List<ShipModifierItem>();
+			ShipEnhancerItems = new List<ShipEnhancerItem>();
+
 			CombatIcons = new List<Icon>();
 			DesignIcons = new List<Icon>();
 			DesignControls = new List<Icon>();
 		}
-		public Equipment(EquipmentType type, TechnologyItem mainItem, TechnologyItem secondaryItem, List<TechnologyItem> modifierItems, Dictionary<string, object> modifiableValues, IconManager iconManager)
+		public Equipment(ShipMainItem mainItem, List<ShipModifierItem> modifierItems, List<ShipEnhancerItem> enhancerItems, IconManager iconManager)
 		{
-			this.EquipmentType = type;
-			ItemType = mainItem;
-			MountType = secondaryItem;
-			ModifierItems = new List<TechnologyItem>();
-			ModifiableValues = new Dictionary<string, object>();
-			foreach (TechnologyItem item in modifierItems)
-			{
-				ModifierItems.Add(item);
-			}
-			foreach (KeyValuePair<string, object> keyValuePair in modifiableValues)
-			{
-				ModifiableValues.Add(keyValuePair.Key, keyValuePair.Value);
-			}
-			CombatIcons = new List<Icon>();
-			if (mainItem.AttributeValues.ContainsKey("combatIcons"))
-			{
-				string[] icons = ((string)mainItem.AttributeValues["combatIcons"]).Split(new[] { '|' });
-				foreach (string icon in icons)
-				{
-					CombatIcons.Add(iconManager.GetIcon(icon));
-				}
-			}
-			DesignIcons = new List<Icon>();
-			if (mainItem.AttributeValues.ContainsKey("designIcons"))
-			{
-				string[] icons = ((string)mainItem.AttributeValues["designIcons"]).Split(new[] { '|' });
-				foreach (string icon in icons)
-				{
-					DesignIcons.Add(iconManager.GetIcon(icon));
-				}
-			}
-			DesignControls = new List<Icon>();
-			if (mainItem.AttributeValues.ContainsKey("designControls"))
-			{
-				string[] icons = ((string)mainItem.AttributeValues["designControls"]).Split(new[] { '|' });
-				foreach (string icon in icons)
-				{
-					DesignControls.Add(iconManager.GetIcon(icon));
-				}
-			}
+			ShipMainItem = mainItem;
+			ShipModifierItems = new List<ShipModifierItem>(modifierItems);
+			ShipEnhancerItems = new List<ShipEnhancerItem>(enhancerItems);
 		}
 
 		public Equipment(Equipment equipmentToCopy)
 		{
-			EquipmentType = equipmentToCopy.EquipmentType;
-			ItemType = equipmentToCopy.ItemType;
-			MountType = equipmentToCopy.MountType;
-			ModifiableValues = new Dictionary<string, object>(equipmentToCopy.ModifiableValues);
-			ModifierItems = new List<TechnologyItem>();
-			foreach (TechnologyItem item in equipmentToCopy.ModifierItems)
-			{
-				ModifierItems.Add(item);
-			}
+			ShipMainItem = equipmentToCopy.ShipMainItem;
+			ShipModifierItems = new List<ShipModifierItem>(equipmentToCopy.ShipModifierItems);
+			ShipEnhancerItems = new List<ShipEnhancerItem>(equipmentToCopy.ShipEnhancerItems);
+
 			CombatIcons = new List<Icon>(equipmentToCopy.CombatIcons);
 			DesignIcons = new List<Icon>(equipmentToCopy.DesignIcons);
 			DesignControls = new List<Icon>(equipmentToCopy.DesignControls);
@@ -358,21 +326,28 @@ namespace Beyond_Beyaan
 
 		public bool IsThisEquipmentTheSame(Equipment equipmentToCompare)
 		{
-			if (ItemType != equipmentToCompare.ItemType)
+			if (ShipMainItem != equipmentToCompare.ShipMainItem)
 			{
 				return false;
 			}
-			if (MountType != equipmentToCompare.MountType)
+			if (ShipModifierItems.Count != equipmentToCompare.ShipModifierItems.Count)
 			{
 				return false;
 			}
-			if (ModifierItems.Count != equipmentToCompare.ModifierItems.Count)
+			for (int i = 0; i < ShipModifierItems.Count; i++)
+			{
+				if (ShipModifierItems[i] != equipmentToCompare.ShipModifierItems[i])
+				{
+					return false;
+				}
+			}
+			if (ShipEnhancerItems.Count != equipmentToCompare.ShipEnhancerItems.Count)
 			{
 				return false;
 			}
-			for (int i = 0; i < ModifierItems.Count; i++)
+			for (int i = 0; i < ShipEnhancerItems.Count; i++)
 			{
-				if (ModifierItems[i] != equipmentToCompare.ModifierItems[i])
+				if (ShipEnhancerItems[i] != equipmentToCompare.ShipEnhancerItems[i])
 				{
 					return false;
 				}
@@ -380,7 +355,7 @@ namespace Beyond_Beyaan
 			return true;
 		}
 
-		public bool IsPassive()
+		/*public bool IsPassive()
 		{
 			if (!ItemType.IsPassive)
 			{
@@ -402,12 +377,12 @@ namespace Beyond_Beyaan
 				}
 			}
 			return true;
-		}
+		}*/
 
 		#region Name
 		public string GetName()
 		{
-			if (ItemType.Script != null)
+			if (ShipMainItem.Script != null)
 			{
 				Dictionary<string, object> values = GetEquipmentInfo(null);
 				if (values.ContainsKey("_name"))
@@ -415,32 +390,37 @@ namespace Beyond_Beyaan
 					return (string)values["_name"];
 				}
 			}
-			if (EquipmentType == Beyond_Beyaan.EquipmentType.SPECIAL)
+			
+			string name = ShipMainItem.Name;
+			foreach (var modifier in ShipModifierItems)
 			{
-				return ItemType.GetDescription();
+				name = string.Format(modifier.Name, name);
 			}
-			return string.Format(MountType.GetDescription(), ItemType.GetDescription());// + (Count > 1 ? " x " + Count : ""));
+			return name;
 		}
 		#endregion
 
 		#region Script Functions
 		public Dictionary<string, object> GetEquipmentInfo(Dictionary<string, object> shipValues)
 		{
-			if (ItemType.Script != null)
+			if (ShipMainItem.Script != null)
 			{
-				Dictionary<string, object>[] modifierValues = new Dictionary<string, object>[ModifierItems.Count];
+				Dictionary<string, object>[] modifierValues = new Dictionary<string, object>[ShipModifierItems.Count];
+				Dictionary<string, object>[] enhancerValues = new Dictionary<string, object>[ShipEnhancerItems.Count];
+				Dictionary<string, object> controlValues = new Dictionary<string, object>();
 				for (int i = 0; i < modifierValues.Length; i++)
 				{
-					modifierValues[i] = new Dictionary<string, object>(ModifierItems[i].AttributeValues);
+					modifierValues[i] = new Dictionary<string, object>(ShipModifierItems[i].Values);
 				}
-				if (EquipmentType != Beyond_Beyaan.EquipmentType.SPECIAL)
+				for (int i = 0; i < enhancerValues.Length; i++)
 				{
-					return ItemType.Script.GetEquipmentInfo(ItemType.AttributeValues, MountType.AttributeValues, modifierValues, shipValues, ModifiableValues);
+					enhancerValues[i] = new Dictionary<string, object>(ShipEnhancerItems[i].Values);
 				}
-				else
+				foreach (BaseControl control in ShipMainItem.Controls)
 				{
-					return ItemType.Script.GetEquipmentInfo(ItemType.AttributeValues, null, null, shipValues, ModifiableValues);
+					controlValues.Add(control.Code, control.GetValue());
 				}
+				return ShipMainItem.Script.GetEquipmentInfo(ShipMainItem.Values, modifierValues, enhancerValues, shipValues, controlValues);
 			}
 			return null;
 		}
@@ -449,32 +429,32 @@ namespace Beyond_Beyaan
 			Dictionary<string, object> values = GetEquipmentInfo(shipValues);
 			if (values != null)
 			{
-				return ItemType.Script.UpdateShipInfo(shipValues, values);
+				return ShipMainItem.Script.UpdateShipInfo(shipValues, values);
 			}
 			return shipValues;
 		}
 		
 		public int GetSelectionSize(int shipSize)
 		{
-			if (ItemType.Script != null)
+			if (ShipMainItem.Script != null)
 			{
-				return ItemType.Script.GetTargetReticle(shipSize);
+				return ShipMainItem.Script.GetTargetReticle(shipSize);
 			}
 			return -1;
 		}
 		public Dictionary<string, object>[] Activate(Point gridcell, Point shipPos, Point boundary, Dictionary<string, object> equipmentValues)
 		{
-			if (ItemType.Script != null)
+			if (ShipMainItem.Script != null)
 			{
-				return ItemType.Script.Activate(shipPos.X, shipPos.Y, gridcell.X, gridcell.Y, boundary.X, boundary.Y, equipmentValues);
+				return ShipMainItem.Script.Activate(shipPos.X, shipPos.Y, gridcell.X, gridcell.Y, boundary.X, boundary.Y, equipmentValues);
 			}
 			return null;
 		}
 		public Dictionary<string, object>[] OnHit(Point impact, Point shipPos, int shipSize, Dictionary<string, object> equipmentValues, Dictionary<string, object> particleValues)
 		{
-			if (ItemType.Script != null)
+			if (ShipMainItem.Script != null)
 			{
-				return ItemType.Script.OnHit(impact.X, impact.Y, shipPos.X, shipPos.Y, shipSize, equipmentValues, particleValues);
+				return ShipMainItem.Script.OnHit(impact.X, impact.Y, shipPos.X, shipPos.Y, shipSize, equipmentValues, particleValues);
 			}
 			return null;
 		}

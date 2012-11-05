@@ -155,11 +155,11 @@ namespace Beyond_Beyaan.Data_Modules
 				ship.Values = ship.BaseShipDesign.ShipClass.ShipScript.UpdateShipInfo(ship.Values);
 				foreach (EquipmentInstance equipment in ship.Equipments)
 				{
-					if (equipment.ItemType.Script != null)
+					/*if (equipment.ItemType.Script != null)
 					{
 						equipment.Values = equipment.GetEquipmentInfo(ship.Values);
 						ship.Values = equipment.ItemType.Script.UpdateShipInfo(ship.Values, equipment.Values);
-					}
+					}*/
 				}
 			}
 		}		
