@@ -713,7 +713,7 @@ namespace Beyond_Beyaan
 			{
 				MessageBox.Show(reason);
 			}
-			if (!AddFontFromFile("Computer", 11, false, Environment.CurrentDirectory + "\\Data\\Default\\mainFont.ttf", out reason))
+			if (!AddFontFromFile("Computer", 11, false, Environment.CurrentDirectory + "\\Data\\Demo\\mainFont.ttf", out reason))
 			{
 				MessageBox.Show(reason);
 			}

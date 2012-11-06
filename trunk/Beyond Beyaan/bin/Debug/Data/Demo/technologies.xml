@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Technologies>
+  <Technology name="Laser Cannons"
+              techLevel="0"
+              fudge="0"
+              cost="Research,50"
+              category="Energy"
+              isRequired="True" >
+    <ShipMainItem code="Laser" />
+    <ShipModifierItem code="Light Cannon" />
+  </Technology>
+  <Technology name="Plasma Cannons"
+              techLevel="15"
+              fudge="0"
+              cost="Research,50"
+              category="Energy"
+              isRequired="False" >
+    <ShipMainItem code="Plasma" />
+  </Technology>
+  <Technology name="Ion Cannons"
+              techLevel="5"
+              fudge="0"
+              cost="Research,50"
+              category="Energy"
+              isRequired="False" >
+    <ShipMainItem code="Ion" />
+  </Technology>
+  <Technology name="Rail Guns"
+              techLevel="0"
+              fudge="0"
+              cost="Research,50"
+              category="Physics"
+              isRequired="True" >
+    <ShipMainItem code="Rail" />
+    <ShipModifierItem code="Light Gun" />
+  </Technology>
+  <Technology name="Tokamak Reactors"
+              techLevel="0"
+              fudge="0"
+              cost="Research,50"
+              category="Energy"
+              isRequired="True" >
+    <ShipMainItem code="Tokamak" />
+  </Technology>
+<!-- 
+  <TechField name="Physics">
+    <Technology name="Stabilizer" techLevel="20" fudge="5" researchPoints="1000" techType="BeamModifier" baseAccuracyMultiplier="120" baseDamageMultiplier="100" baseCostMultiplier="140" baseSpaceMultiplier="120" description="Stabilizer" />
+    <Technology name="Light Cannon" techLevel="0" fudge="0" researchPoints="10" techType="BeamMount" baseSpaceMultiplier="0.80" baseCostMultiplier="0.75" basePowerMultiplier="0.70" baseTimeMultipler="0.80" baseDamageMultiplier="0.80" description="Light {0} Cannon" isRequired="True" />
+    <Technology name="Medium Cannon" techLevel="5" fudge="2" researchPoints="10" techType="BeamMount" baseSpaceMultiplier="1.00" baseCostMultiplier="1.00" basePowerMultiplier="1.00" baseTimeMultipler="1.00" baseDamageMultiplier="1.00" description="Medium {0} Cannon" />
+    <Technology name="Heavy Cannon" techLevel="10" fudge="5" researchPoints="100" techType="BeamMount" baseSpaceMultiplier="1.30" baseCostMultiplier="1.20" basePowerMultiplier="1.30" baseTimeMultipler="1.10" baseDamageMultiplier="1.50" description="Heavy {0} Cannon" />
+    <Technology name="Small Exhaust" techLevel="0" fudge="0" researchPoints="0" techType="SystemEngineMount" baseSpaceMultiplier="0.75" baseCostMultiplier="0.80" basePowerMultiplier="0.80" description="Small {0} Exhaust" baseCombatSpeedMultipler="0.80" isRequired="True" isPassive="True" />
+    <Technology name="Small Drive" techLevel="0" fudge="0" researchPoints="0" techType="StellarEngineMount" baseSpaceMultiplier="0.75" baseCostMultiplier="0.80" basePowerMultiplier="0.80" description="Small {0} Drive" baseGalaxySpeedMultipler="0.80" isRequired="True" isPassive="True" />
+    <Technology name="Light Gun" techLevel="0" fudge="0" researchPoints="10" techType="ProjectileMount" baseSpaceMultiplier="0.80" baseAmmoSpaceMultiplier="0.80" baseCostMultiplier="0.75" basePowerMultiplier="0.70" baseTimeMultipler="0.80" baseDamageMultiplier="0.80" description="Light {0} Gun" isRequired="True" />
+  </TechField>
+  <TechField name="Metallurgy">
+    <Technology name="Duralloy" techLevel="0" fudge="0" researchPoints="5" techType="Armor" baseSpace="0.35" baseDamageAbsorption="1.0" baseCost="0.24" basePower="0" description="Duralloy" isRequired="True" isPassive="True" baseRange="0" script="BasicArmorTechnology" />
+    <Technology name="Light Plating" techLevel="0" fudge="0" researchPoints="5" techType="ArmorPlating" baseSpaceMultiplier="0.75" baseCostMultiplier="0.85" baseDamageAbsorptionMultiplier="0.70" basePowerMultiplier="0.80" description="Light {0} Plating" isRequired="True" isPassive="True" />
+    <Technology name="Durasteel" techLevel="10" fudge="3" researchPoints="5" techType="Armor" baseSpace="0.35" baseDamageAbsorption="2.0" baseCost="0.24" basePower="0" description="Durasteel" isPassive="True" baseRange="0" script="BasicArmorTechnology" />
+  </TechField>
+  <TechField name="Chemistry">
+    <Technology name="Nuclear" techLevel="0" fudge="0" researchPoints="50" techType="StellarEngine" baseGalaxySpeed="50" baseSpace="0.25" baseCost="0.15" basePower="0.13" description="Nuclear" baseRange="-1" isRequired="True" isPassive="True" script="BasicStellarEngineTechnology" />
+    <Technology name="Retro" techLevel="0" fudge="0" researchPoints="200" techType="SystemEngine" baseCombatSpeed="4" baseSpace="0.10" baseCost="0.07" basePower="0.08"  description="Retro" baseRange="-1" isRequired="True" isPassive="True" script="BasicSystemEngineTechnology" />
+  </TechField>
+  <TechField name="Electronics">
+    <Technology name="Battle Computer I" techLevel="0" fudge="0" researchPoints="25" techType="Computer" baseSpacePercentage="15" baseAccuracyPercentage="75" baseCostPercentage="9" basePowerPercentage="5"  description="Battle" isPassive="True" />
+    <Technology name="Shield Piercing" techLevel="0" fudge="0" researchPoints="100" techType="BeamModifier" baseDamageMultiplier="1.20" baseCostMultiplier="1.40" baseSpaceMultiplier="1.20" basePowerMultiplier="1.50" baseTimeMultipler="1.00" description="Shield Piercing" />
+    <Technology name="Shield I" techLevel="0" fudge="0" researchPoints="50" techType="Shield" baseSpace="0.10" basePower="0.10" baseCost="0.20" baseDamageAbsorption="1" isPassive="True" isRequired="True" description="Shield I" baseRange="10" script="BasicShieldTechnology" particle1="Shield1" particle2="Shield2" particle3="Shield3" particle4="Shield4" particle5="Shield5" particle8="Shield8" />
+    <Technology name="Shield II" techLevel="0" fudge="0" researchPoints="50" techType="Shield" baseSpace="0.10" basePower="0.10" baseCost="0.20" baseDamageAbsorption="1" isPassive="True" isRequired="True" description="Shield II" baseRange="27" script="BasicShieldTechnology" particle1="Shield1" particle2="Shield2" particle3="Shield3" particle4="Shield4" particle5="Shield5" particle8="Shield8" />
+    <Technology name="Shield Generator" techLevel="0" fudge="0" researchPoints="50" techType="ShieldMount" baseSpaceMultiplier="1.0" basePowerMultiplier="1.0" baseCostMultiplier="1.0" baseDamageAbsorptionMultiplier="1.0" isPassive="True" isRequired="True" description="{0} Generator" />
+  </TechField>
+  <TechField name="Construction">
+    <Technology name="Organic Armor" techLevel="40" fudge="10" researchPoints="5000" techType="ArmorModifier" spaceMultiplier="120" costMultiplier="150" basePowerPercentage="15" description="Organic Armor" isPassive="True" />
+    <Technology name="Standard Colony Base" techLevel="0" fudge="0" researchPoints="0" techType="Special" baseSpace="500" baseCost="50" basePower="200" isRequired="True" description="Standard Colony Base" isPassive="True" colonizes="Terran1,Terran2,Jungle,Oceanic,Steppe,Desert,Badland,Tundra"/>
+    <Technology name="Hostile Colony Base" techLevel="0" fudge="0" researchPoints="0" techType="Special" baseSpace="500" baseCost="50" basePower="200" isRequired="True" description="Hostile Colony Base" isPassive="True" colonizes="Radiated1,Radiated2,Toxic1,Toxic2,Volcanic,Dead,Arctic,Barren"/>
+    <Technology name="Small Transport Pod" techLevel="0" fudge="0" researchPoints="0" techType="Special" baseSpace="500" baseCost="25" basePower="50" isRequired="True" description="Small Transport Pod" isPassive="True" transferCapacity="5" />
+    <Technology name="Light Reactor" techLevel="0" fudge="0" researchPoints="0" techType="ReactorMount" baseSpaceMultiplier="0.85" baseCostMultiplier="0.7" basePowerMultiplier="0.8" isRequired="True" isPassive="True" description="Light {0} Reactor" />
+  </TechField>-->
+</Technologies>

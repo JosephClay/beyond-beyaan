@@ -278,7 +278,7 @@ namespace Beyond_Beyaan.Data_Modules
 			troopShip = new Sprite(RaceName + "troopShip", raceGraphic.Image, x, y, 300, 200);
 
 			startingShips = new List<StartingShip>();
-			XElement startShip = race.Element("StartShips");
+			/*XElement startShip = race.Element("StartShips");
 			foreach (XElement element in startShip.Elements())
 			{
 				StartingShip ship = new StartingShip();
@@ -314,7 +314,7 @@ namespace Beyond_Beyaan.Data_Modules
 					ship.equipment.Add(newEquipment);
 				}
 				startingShips.Add(ship);
-			}
+			}*/
 
 			startingSystems = new List<StartingSystem>();
 			XElement startSystem = race.Element("StartSystems");
@@ -352,7 +352,7 @@ namespace Beyond_Beyaan.Data_Modules
 						}
 						system.Planets.Add(planet);
 					}
-					else if (item.Name == "Squadron")
+					/*else if (item.Name == "Squadron")
 					{
 						StartingSquadron startingSquadron = new StartingSquadron();
 						startingSquadron.StartingName = item.Attribute("name") == null ? "Squadron" : item.Attribute("name").Value;
@@ -363,7 +363,7 @@ namespace Beyond_Beyaan.Data_Modules
 							startingSquadron.StartingShips.Add(startingShip);
 						}
 						system.Squadrons.Add(startingSquadron);
-					}
+					}*/
 				}
 				startingSystems.Add(system);
 			}

@@ -118,6 +118,7 @@ namespace Beyond_Beyaan
 			shipScriptManager = new ShipScriptManager();
 			galaxyScreen = null;
 			inGameMenu = null;
+			masterItemManager = new MasterItemManager();
 			masterTechnologyList = new MasterTechnologyList();
 			starTypeManager = new StarTypeManager();
 			planetTypeManager = new PlanetTypeManager();
@@ -159,6 +160,11 @@ namespace Beyond_Beyaan
 			if (starTypeManager == null)
 			{
 				starTypeManager = new StarTypeManager();
+			}
+
+			if (masterItemManager == null)
+			{
+				masterItemManager = new MasterItemManager();
 			}
 
 			if (masterTechnologyList == null)
@@ -416,13 +422,6 @@ namespace Beyond_Beyaan
 			if (screenInterface is ProcessingTurnScreen)
 			{
 				Turn++;
-#if DEMO
-				if (Turn > 30)
-				{
-					MessageBox.Show("You have reached the end of the demo.  If you enjoyed the game, please support it by purchasing it.  Thanks for trying Beyond Beyaan!");
-					ExitGame();
-				}
-#endif
 			}
 			switch (whichScreen)
 			{

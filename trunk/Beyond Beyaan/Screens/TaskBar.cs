@@ -245,16 +245,7 @@ namespace Beyond_Beyaan
 			{
 				incomeSummary.SetColor(System.Drawing.Color.Green);
 			}
-#if DEMO
-			turnSummary.SetText("Turn " + gameMain.Turn + " (DEMO)");
-			if (gameMain.Turn > 30)
-			{
-				//Somehow it reached past 30 turns, possibly someone modified the code
-				gameMain.ExitGame();
-			}
-#else
 			turnSummary.SetText("Turn " + gameMain.Turn);
-#endif
 			CheckValidTurn();
 		}
 	}

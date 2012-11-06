@@ -37,7 +37,8 @@ namespace Beyond_Beyaan
 		/// <param name="technologyToLoad">The base technology</param>
 		public TechnologyItem(XElement technologyToLoad, ResourceManager resourceManager, MasterItemManager masterItemManager)
 		{
-			Cost = new Dictionary<Resource, int>();
+			InitializeLists();
+
 			//Load the attributes
 			foreach (XAttribute attribute in technologyToLoad.Attributes())
 			{
@@ -83,6 +84,19 @@ namespace Beyond_Beyaan
 						break;
 				}
 			}
+		}
+
+		private void InitializeLists()
+		{
+			ShipMainItems = new List<ShipMainItem>();
+			ShipModifierItems = new List<ShipModifierItem>();
+			ShipEnhancerItems = new List<ShipEnhancerItem>();
+
+			ShipMainItemsRemoved = new List<ShipMainItem>();
+			ShipModifierItemsRemoved = new List<ShipModifierItem>();
+			ShipEnhancerItemsRemoved = new List<ShipEnhancerItem>();
+
+			Cost = new Dictionary<Resource, int>();
 		}
 
 		public Dictionary<string, BaseItem> ItemsToAdd()
@@ -231,7 +245,10 @@ namespace Beyond_Beyaan
 				Enhancers.Add(part);
 			}
 
-			AddControls(Controls, (string)Values["controls"]);
+			if (Values.ContainsKey("controls"))
+			{
+				AddControls(Controls, (string)Values["controls"]);
+			}
 		}
 	}
 

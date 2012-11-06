@@ -59,7 +59,7 @@ namespace Beyond_Beyaan.Screens
 			uiElements = new Dictionary<string, UIElement>();
 			uiLabels = new List<Label>();
 
-			System.IO.DirectoryInfo scriptsDir = new System.IO.DirectoryInfo(Environment.CurrentDirectory + "\\Data\\Default\\Scripts\\Galaxy");
+			System.IO.DirectoryInfo scriptsDir = new System.IO.DirectoryInfo(Environment.CurrentDirectory + "\\Data\\Demo\\Scripts\\Galaxy");
 			System.IO.FileInfo[] scripts = scriptsDir.GetFiles("*.cs");
 			List<string> scriptNames = new List<string>();
 			for (int i = 0; i < scripts.Length; i++)
