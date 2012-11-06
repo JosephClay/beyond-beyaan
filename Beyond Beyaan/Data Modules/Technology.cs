@@ -313,6 +313,8 @@ namespace Beyond_Beyaan
 		public List<Icon> DesignIcons { get; private set; } //For ship design view
 		public List<Icon> DesignControls { get; private set; } //For ship design view that requires user to input values (such as number of mounts, amount of ammo, etc)
 
+		public List<BaseControl> Controls { get; private set; } //For storing and handling controls for main item
+
 		public Equipment()
 		{
 			ShipMainItem = null;
@@ -322,12 +324,17 @@ namespace Beyond_Beyaan
 			CombatIcons = new List<Icon>();
 			DesignIcons = new List<Icon>();
 			DesignControls = new List<Icon>();
+
+			Controls = new List<BaseControl>();
 		}
 		public Equipment(ShipMainItem mainItem, List<ShipModifierItem> modifierItems, List<ShipEnhancerItem> enhancerItems, IconManager iconManager)
 		{
 			ShipMainItem = mainItem;
 			ShipModifierItems = new List<ShipModifierItem>(modifierItems);
 			ShipEnhancerItems = new List<ShipEnhancerItem>(enhancerItems);
+
+			Controls = new List<BaseControl>();
+			CopyControls(mainItem.Controls);
 		}
 
 		public Equipment(Equipment equipmentToCopy)
@@ -339,6 +346,8 @@ namespace Beyond_Beyaan
 			CombatIcons = new List<Icon>(equipmentToCopy.CombatIcons);
 			DesignIcons = new List<Icon>(equipmentToCopy.DesignIcons);
 			DesignControls = new List<Icon>(equipmentToCopy.DesignControls);
+
+			Controls = new List<BaseControl>(equipmentToCopy.Controls);
 		}
 
 		public bool IsThisEquipmentTheSame(Equipment equipmentToCompare)
@@ -370,6 +379,19 @@ namespace Beyond_Beyaan
 				}
 			}
 			return true;
+		}
+
+		private void CopyControls(List<BaseControl> controls)
+		{
+			foreach (BaseControl control in controls)
+			{
+				if (control is NumUpDown)
+				{
+					var convertedControl = (NumUpDown)control;
+					NumUpDown newControl = new NumUpDown(convertedControl.MinValue, convertedControl.MaxValue, convertedControl.IncrAmount, convertedControl.Value, convertedControl.Name, convertedControl.Code);
+					Controls.Add(newControl);
+				}
+			}
 		}
 
 		/*public bool IsPassive()

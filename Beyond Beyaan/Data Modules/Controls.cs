@@ -44,10 +44,10 @@ namespace Beyond_Beyaan.Data_Modules
 
 	public class NumUpDown : BaseControl
 	{
-		private int value;
-		private int minValue;
-		private int maxValue;
-		private int incrAmount;
+		public int Value { get; private set; }
+		public int MinValue { get; private set; }
+		public int MaxValue { get; private set; }
+		public int IncrAmount { get; private set; }
 
 		//private Button upButton;
 		//private Button downButton;
@@ -55,17 +55,17 @@ namespace Beyond_Beyaan.Data_Modules
 		public NumUpDown(int minValue, int maxValue, int incrAmount, int startValue, string name, string code) 
 			: base (name, code)
 		{
-			value = startValue;
-			this.minValue = minValue;
-			this.maxValue = maxValue;
-			this.incrAmount = incrAmount;
+			Value = startValue;
+			MinValue = minValue;
+			MaxValue = maxValue;
+			IncrAmount = incrAmount;
 
-			ValueLabel.SetText(value.ToString());
+			ValueLabel.SetText(Value.ToString());
 		}
 
 		public override object GetValue()
 		{
-			return value;
+			return Value;
 		}
 
 		public override void Draw(int x, int y, int width, int height, DrawingManagement drawingManagement)
