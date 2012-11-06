@@ -17,14 +17,9 @@ namespace Beyond_Beyaan.Data_Managers
 			try
 			{
 				string directory = Path.Combine(Environment.CurrentDirectory, "data");
-				directory = Path.Combine(directory, "default");
+				directory = Path.Combine(directory, "demo");
 				directory = Path.Combine(directory, "ai");
 				DirectoryInfo di = new DirectoryInfo(directory);
-				if (!di.Exists)
-				{
-					//If it don't exist, create one so users can add races
-					di.Create();
-				}
 				foreach (FileInfo fi in di.GetFiles("*.txt"))
 				{
 					AI ai = new AI();

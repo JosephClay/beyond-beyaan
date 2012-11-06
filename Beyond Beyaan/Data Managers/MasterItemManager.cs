@@ -12,12 +12,25 @@ namespace Beyond_Beyaan.Data_Managers
 	{
 		public Dictionary<string, BaseItem> Items { get; private set; }
 
-		public MasterItemManager(DirectoryInfo directoryToLoad)
+		public MasterItemManager()
 		{
 			Items = new Dictionary<string, BaseItem>();
+		}
 
-			XDocument doc = XDocument.Load(Path.Combine(directoryToLoad.FullName, "shipItems.xml"));
-			LoadShipItems(doc.Root);
+		public bool Initialize(DirectoryInfo directoryToLoad, out string reason)
+		{
+			try
+			{
+				XDocument doc = XDocument.Load(Path.Combine(directoryToLoad.FullName, "shipItems.xml"));
+				LoadShipItems(doc.Root);
+			}
+			catch (Exception e)
+			{
+				reason = e.Message;
+				return false;
+			}
+			reason = null;
+			return true;
 		}
 
 		private void LoadShipItems(XElement root)

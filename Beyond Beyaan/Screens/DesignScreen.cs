@@ -36,9 +36,9 @@ namespace Beyond_Beyaan.Screens
 		private Button prevShip;
 		private Button nextShip;
 
-		private ShipDesign shipDesign;
-		private Dictionary<string, object> shipValues;
-		private GorgonLibrary.Graphics.Sprite shipSprite;
+		//private ShipDesign shipDesign;
+		//private Dictionary<string, object> shipValues;
+		//private GorgonLibrary.Graphics.Sprite shipSprite;
 
 		private int xPos;
 		private int yPos;
@@ -112,10 +112,10 @@ namespace Beyond_Beyaan.Screens
 			clearButton.Draw(drawingManagement);
 			confirmButton.Draw(drawingManagement);
 
-			for (int i = 0; i < shipDesign.ShipClass.DesignIcons.Count; i++)
+			/*for (int i = 0; i < shipDesign.ShipClass.DesignIcons.Count; i++)
 			{
 				shipDesign.ShipClass.DesignIcons[i].Draw(xPos + 600, yPos + 265 + (i * 25), 150, 25, drawingManagement);
-			}
+			}*/
 
 			designNameLabel.Draw();
 			nameTextBox.Draw(drawingManagement);
@@ -161,7 +161,7 @@ namespace Beyond_Beyaan.Screens
 
 			GorgonLibrary.Gorgon.CurrentShader = gameMain.ShipShader;
 			gameMain.ShipShader.Parameters["EmpireColor"].SetValue(gameMain.empireManager.CurrentEmpire.ConvertedColor);
-			shipSprite.Draw();
+			//shipSprite.Draw();
 			GorgonLibrary.Gorgon.CurrentShader = null;
 
 			shipClassComboBox.Draw(drawingManagement);
@@ -236,7 +236,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			if (!selectionShowing)
+			/*if (!selectionShowing)
 			{
 				if (nameTextBox.MouseUp(x, y))
 				{
@@ -307,12 +307,12 @@ namespace Beyond_Beyaan.Screens
 			else
 			{
 				equipmentSelection.MouseUp(x, y);
-			}
+			}*/
 		}
 
 		private void OnOkClick(Equipment finalEquipment)
 		{
-			shipDesign.Equipments.Add(finalEquipment);
+			//shipDesign.Equipments.Add(finalEquipment);
 			UpdateInformation();
 		}
 
@@ -347,7 +347,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void LoadShipSprite()
 		{
-			float scale = 1.0f;
+			/*float scale = 1.0f;
 			if (shipDesign.ShipClass.Size <= 10)
 			{
 				scale = (shipDesign.ShipClass.Size * 16) / shipSprite.Width;
@@ -357,12 +357,12 @@ namespace Beyond_Beyaan.Screens
 				scale = 160.0f / shipSprite.Width;
 			}
 			shipSprite.SetScale(scale, scale);
-			shipSprite.SetPosition(xPos + 702 - (shipSprite.ScaledWidth / 2), yPos + 115 - (shipSprite.ScaledHeight / 2));
+			shipSprite.SetPosition(xPos + 702 - (shipSprite.ScaledWidth / 2), yPos + 115 - (shipSprite.ScaledHeight / 2));*/
 		}
 
 		public void LoadScreen()
 		{
-			xPos = gameMain.ScreenWidth / 2 - 420;
+			/*xPos = gameMain.ScreenWidth / 2 - 420;
 			yPos = gameMain.ScreenHeight / 2 - 320;
 
 			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
@@ -386,7 +386,7 @@ namespace Beyond_Beyaan.Screens
 			LoadShipSprite();
 			nameTextBox.SetString(shipDesign.Race.GetRandomShipName(shipDesign.ShipClass.Size));
 
-			UpdateInformation();
+			UpdateInformation();*/
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
@@ -408,7 +408,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void UpdateInformation()
 		{
-			shipValues = shipDesign.GetBasicValues();
+			/*shipValues = shipDesign.GetBasicValues();
 
 			foreach (Icon icon in shipDesign.ShipClass.DesignIcons)
 			{
@@ -437,7 +437,7 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxEquipmentVisible; i++)
 			{
 				equipmentLabels[i].SetText(shipDesign.Equipments[i].GetName());
-			}
+			}*/
 		}
 	}
 }

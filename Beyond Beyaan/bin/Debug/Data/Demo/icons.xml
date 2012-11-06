@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Icons>
+  <Icon name="Agriculture" format="{0} {1}" valueNames="_status|_growthAmount" xPos="0" yPos="0" size="16" />
+  <Icon name="Environment" format="{0}" valueNames="_barrels" xPos="16" yPos="0" size="16" />
+  <Icon name="Commerce" format="{0}" valueNames="_amount" xPos="32" yPos="0" size="16" />
+  <Icon name="Research" format="{0}" valueNames="_amount" xPos="48" yPos="64" size="16" />
+  <Icon name="Industry" format="{0}" valueNames="_amount" xPos="48" yPos="64" size="16" />
+  <Icon name="Ores" format="{0}" valueNames="_amount" xPos="48" yPos="64" size="16" />
+  <Icon name="Espionage" format="{0}" valueNames="_amount" xPos="0" yPos="16" size="16" />
+  <Icon name="Security" format="{0}" valueNames="_amount" xPos="16" yPos="16" size="16" />
+  <Icon name="Relationship" format="{0}" valueNames="_amount" xPos="32" yPos="16" size="16" />
+  <Icon name="Allied" format="" valueNames="" xPos="48" yPos="16" size="16" />
+  <Icon name="NonAggression" format="" valueNames="" xPos="48" yPos="0" size="16" />
+  <Icon name="War" format="" valueNames="" xPos="48" yPos="32" size="16" />
+  <Icon name="Capacity" format="{0}" valueNames="_amount" xPos="48" yPos="48" size="16" />
+  <Icon name="VeryPoor" format="" valueNames="" xPos="0" yPos="32" size="16" />
+  <Icon name="Poor" format="" valueNames="" xPos="0" yPos="48" size="16" />
+  <Icon name="Rich" format="" valueNames="" xPos="0" yPos="64" size="16" />
+  <Icon name="VeryRich" format="" valueNames="" xPos="0" yPos="80" size="16" />
+  <Icon name="Barren" format="" valueNames="" xPos="16" yPos="32" size="16" />
+  <Icon name="Infertile" format="" valueNames="" xPos="16" yPos="48" size="16" />
+  <Icon name="Fertile" format="" valueNames="" xPos="16" yPos="64" size="16" />
+  <Icon name="Lush" format="" valueNames="" xPos="16" yPos="80" size="16" />
+  <Icon name="VeryDull" format="" valueNames="" xPos="32" yPos="32" size="16" />
+  <Icon name="Dull" format="" valueNames="" xPos="32" yPos="48" size="16" />
+  <Icon name="Exciting" format="" valueNames="" xPos="32" yPos="64" size="16" />
+  <Icon name="VeryExciting" format="" valueNames="" xPos="32" yPos="80" size="16" />
+  <Icon name="GeneratedResearch" format="{0} RP" valueNames="_amount" xPos="64" yPos="0" size="20" />
+  <Icon name="TradedResearch" format="{0} RP" valueNames="_amount" xPos="84" yPos="0" size="20" />
+  <Icon name="TotalResearch" format="{0} RP" valueNames="_amount" xPos="104" yPos="0" size="20" />
+  <Icon name="SystemEngine" format="{0}" valueNames="_amount" xPos="124" yPos="0" size="20" />
+  <Icon name="StarDrive" format="{0}" valueNames="_amount" xPos="144" yPos="0" size="20" />
+  <Icon name="PowerRechargeRate" format="{0} GW/Turn" valueNames="_powerRechargeRate" xPos="164" yPos="0" size="20" />
+  <Icon name="PowerCapacity" format="{0} GWs" valueNames="_maxPower" xPos="164" yPos="0" size="20" />
+  <Icon name="TimeRequired" format="{0}" valueNames="_time" xPos="204" yPos="0" size="20" />
+  <Icon name="PowerRequired" format="{0}" valueNames="_power" xPos="164" yPos="0" size="20" />
+  <Icon name="SpaceRequired" format="{0}" valueNames="_space" xPos="124" yPos="20" size="20" />
+  <Icon name="Special" format="{0}" valueNames="_amount" xPos="184" yPos="0" size="20" />
+  <Icon name="Accuracy" format="{0}%" valueNames="_accuracy" xPos="64" yPos="20" size="20" />
+  <Icon name="Damage" format="{0}" valueNames="_damage" xPos="84" yPos="20" size="20" />
+  <Icon name="Cost" format="{0}" valueNames="_cost" xPos="104" yPos="20" size="20" />
+  <Icon name="Space" format="{0} DWTs" valueNames="_space" xPos="124" yPos="20" size="20" />
+  <Icon name="MaxSpace" format="{0}/{1} DWTs" valueNames="_space|_maxSpace" xPos="124" yPos="20" size="20" />
+  <Icon name="Mounts" format="{0}" valueNames="_mounts" xPos="144" yPos="20" size="20" />
+  <Icon name="Ammo" format="{0}/{1}" valueNames="_ammo|_maxAmmo" xPos="164" yPos="20" size="20" />
+  <Icon name="GalaxySpeed" format="{0}" valueNames="_galaxySpeed" xPos="184" yPos="20" size="20" />
+  <Icon name="CombatSpeed" format="{0}" valueNames="_combatSpeed" xPos="204" yPos="20" size="20" />
+  <Icon name="Beam" format="Beam" valueNames="" xPos="64" yPos="40" size="20" />
+  <Icon name="Projectile" format="Projectile" valueNames="" xPos="84" yPos="40" size="20" />
+  <Icon name="Missile" format="Missile" valueNames="" xPos="104" yPos="40" size="20" />
+  <Icon name="Torpedo" format="Torpedo" valueNames="" xPos="124" yPos="40" size="20" />
+  <Icon name="Bomb" format="Bomb" valueNames="" xPos="144" yPos="40" size="20" />
+  <Icon name="Shockwave" format="Shockwave" valueNames="" xPos="104" yPos="60" size="20" />
+  <Icon name="Shield" format="Shield" valueNames="" xPos="164" yPos="40" size="20" />
+  <Icon name="Armor" format="Armor" valueNames="" xPos="184" yPos="40" size="20" />
+  <Icon name="Health" format="{0}/{1} HP" valueNames="_health|_maxHealth" xPos="204" yPos="40" size="20" />
+  <Icon name="MaxHealth" format="{0} HP" valueNames="_maxHealth" xPos="204" yPos="40" size="20" />
+  <Icon name="ShieldAbsorption" format="{0}" valueNames="_shieldAbsorption" xPos="164" yPos="40" size="20" />
+  <Icon name="ArmorAbsorption" format="{0}" valueNames="_armorAbsorption" xPos="184" yPos="40" size="20" />
+  <Icon name="Power" format="{0}/{1}" valueNames="_power|_maxPower" xPos="164" yPos="0" size="20" />
+  <Icon name="Time" format="{0}/{1} TUs" valueNames="_time|_maxTime" xPos="204" yPos="0" size="20" />
+  <Icon name="MaxTime" format="{0} TUs" valueNames="_maxTime" xPos="204" yPos="0" size="20" />
+  <Icon name="Computer" format="{0}" valueNames="_amount" xPos="64" yPos="60" size="20" />
+  <Icon name="Building" format="{0}" valueNames="_amount" xPos="84" yPos="60" size="20" />
+  <Icon name="AmmoControl" format="{0}" valueNames="_maxAmmo" xPos="164" yPos="20" size="20" control="upDown,100,1"/>
+  <Icon name="MountsControl" format="{0}" valueNames="_mounts" xPos="144" yPos="20" size="20"  control="upDown,100,1"/>
+  <Icon name="Food" format="{0}" valueNames="_food" xPos="0" yPos="0" size="16" />
+</Icons>

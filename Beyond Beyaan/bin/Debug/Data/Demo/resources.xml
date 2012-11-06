@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Resources>
+  <Resource name="Billion Credit" abbreviation="BC" icon="Commerce" storable="True" />
+  <Resource name="Food" abbreviation="FD" icon="Food" storable="False" convertsTo="Billion Credit" ratio="0.5" />
+  <Resource name="Ores" abbreviation="OR" icon="Ores" storable="True" />
+  <Resource name="Industry" abbreviation="ID" icon="Industry" storable="False" convertsTo="Billion Credit" ratio="0.75" />
+  <Resource name="Research" abbreviation="RP" icon="Research" storable="False" />
+  <Resource name="Radioactives" abbreviation="RA" icon="Research" storable="True" />
+</Resources>

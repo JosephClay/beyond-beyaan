@@ -76,15 +76,7 @@ namespace Beyond_Beyaan.Screens
 			buttons[3] = new Button(SpriteName.Options2, SpriteName.Options, string.Empty, 400, gameMain.ScreenHeight - 150, 260, 40);
 			buttons[4] = new Button(SpriteName.Exit2, SpriteName.Exit, string.Empty, 400, gameMain.ScreenHeight - 100, 260, 40);
 
-#if DEMO
-			buttons[0].Active = false;
-			buttons[2].Active = false;
-#endif
-
 			string versionString = "Version 0.5.4";
-#if DEMO
-			versionString += " (Demo)";
-#endif
 			version = new Label(versionString, 5, gameMain.ScreenHeight - 25);
 
 			x = (gameMain.ScreenWidth / 2) - 512;
@@ -214,7 +206,11 @@ namespace Beyond_Beyaan.Screens
 					MessageBox.Show(reason);
 					return false;
 				}
-				gameMain.masterItemManager = new Data_Managers.MasterItemManager(new DirectoryInfo(directoryPath));
+				if (!gameMain.masterItemManager.Initialize(new DirectoryInfo(directoryPath), out reason))
+				{
+					MessageBox.Show(reason);
+					return false;
+				}
 				gameMain.masterTechnologyList.ResetAll();
 				gameMain.masterTechnologyList.LoadTechnologies(directoryPath, gameMain.resourceManager, gameMain.masterItemManager);
 				gameMain.shipScriptManager.LoadShipScripts(Path.Combine(Path.Combine(directoryPath, "Scripts"), "Ship"));
