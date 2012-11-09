@@ -47,7 +47,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void UpdateProduction(Dictionary<Resource, float> productions, Dictionary<Resource, float> consumptions, Dictionary<Resource, float> shortages, Dictionary<Resource, float> resources)
+		/*public void UpdateProduction(Dictionary<Resource, float> productions, Dictionary<Resource, float> consumptions, Dictionary<Resource, float> shortages, Dictionary<Resource, float> resources)
 		{
 			consumptions.Clear();
 			foreach (Planet planet in planets)
@@ -80,7 +80,7 @@ namespace Beyond_Beyaan
 			{
 				planet.CalculateConsumptionAndProduction(shortages, consumptions, productions);
 			}
-		}
+		}*/
 
 		public void UpdatePopGrowth(Dictionary<Resource, float> foodShortages)
 		{

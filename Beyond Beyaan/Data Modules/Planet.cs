@@ -83,14 +83,10 @@ namespace Beyond_Beyaan
 		{
 			get { return regions; }
 		}
-		public Dictionary<Resource, float> Productions
-		{
-			get { return new Dictionary<Resource, float>(); } //productions; }
-		}
-		public Dictionary<Resource, float> Consumptions
-		{
-			get { return _consumptions; }
-		}
+		public Dictionary<Resource, float> Productions { get; private set; }
+		public Dictionary<Resource, float> Consumptions { get; private set; }
+		public Dictionary<Resource, float> Resources { get; private set; }
+		public Dictionary<Resource, float> Shortages { get; private set; }
 
 		/*public string AgricultureStringOutput
 		{
@@ -795,6 +791,50 @@ namespace Beyond_Beyaan
 					else
 					{
 						currentConsumption[consumption.Key] = totalConsumption;
+					}
+				}
+			}
+		}
+
+		public void TallyConsumptions(Dictionary<Resource, float> consumptions)
+		{
+			Consumptions.Clear();
+			foreach (Region region in regions)
+			{
+				foreach (var consumption in region.RegionType.Consumptions)
+				{
+					float totalConsumption = 0;
+
+					foreach (var race in racePopulations)
+					{
+						float value = (race.Value / regions.Count) * consumption.Value;
+						if (race.Key.ConsumptionBonuses.ContainsKey(region.RegionType.RegionTypeName))
+						{
+							value *= race.Key.ConsumptionBonuses[region.RegionType.RegionTypeName];
+						}
+						totalConsumption += value;
+					}
+					if (Consumptions.ContainsKey(consumption.Key))
+					{
+						Consumptions[consumption.Key] += totalConsumption;
+					}
+					else
+					{
+						Consumptions[consumption.Key] = totalConsumption;
+					}
+				}
+			}
+			foreach (KeyValuePair<Resource, float> consumption in Consumptions)
+			{
+				if (consumption.Key.LimitTo != LimitTo.PLANET)
+				{
+					if (consumptions.ContainsKey(consumption.Key))
+					{
+						consumptions[consumption.Key] += consumption.Value;
+					}
+					else
+					{
+						consumptions[consumption.Key] = consumption.Value;
 					}
 				}
 			}

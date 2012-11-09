@@ -39,12 +39,11 @@ namespace Beyond_Beyaan
 		private Race race;
 		private AI ai;
 		private float totalResearchPoints;
-		private Dictionary<Resource, float> resources;
-		private Dictionary<Resource, float> consumptions;
-		private Dictionary<Resource, float> productions;
-		private Dictionary<Resource, float> shortages;
-		private Dictionary<Resource, float> foodConsumptions;
-		private Dictionary<Resource, float> foodShortages;
+		public Dictionary<Resource, float> Productions { get; private set; }
+		public Dictionary<Resource, float> Consumptions { get; private set; }
+		public Dictionary<Resource, float> Resources { get; private set; }
+		public Dictionary<Resource, float> Shortages { get; private set; }
+		public Dictionary<Resource, float> MaintenanceCosts { get; private set; }
 		//private float handicap;
 		#endregion
 
@@ -280,12 +279,11 @@ namespace Beyond_Beyaan
 			planetManager = new PlanetManager();
 			sitRepManager = new SitRepManager();
 			projectManager = new ProjectManager(this);
-			resources = new Dictionary<Resource, float>();
-			productions = new Dictionary<Resource, float>();
-			consumptions = new Dictionary<Resource, float>();
-			shortages = new Dictionary<Resource, float>();
-			foodShortages = new Dictionary<Resource, float>();
-			foodConsumptions = new Dictionary<Resource, float>();
+			Resources = new Dictionary<Resource, float>();
+			Consumptions = new Dictionary<Resource, float>();
+			Shortages = new Dictionary<Resource, float>();
+			Productions = new Dictionary<Resource, float>();
+			MaintenanceCosts = new Dictionary<Resource, float>();
 			reserves = 10;
 			//expenses = 0;
 			//visibleOtherFleets = new List<Squadron>();
@@ -396,7 +394,7 @@ namespace Beyond_Beyaan
 
 		public void UpdateAll()
 		{
-			planetManager.UpdateProduction(productions, consumptions, shortages, resources);
+			//planetManager.UpdateProduction(productions, consumptions, shortages, resources);
 		}
 
 		public void ToggleBorder()
@@ -555,7 +553,7 @@ namespace Beyond_Beyaan
 			//To-do: Add maintenance deductions
 
 			//Second, deduct feeding for people from resources (accumulate the total consumption, then compare it against available resources)
-			planetManager.CalculateFoodConsumption(foodConsumptions);
+			/*planetManager.CalculateFoodConsumption(foodConsumptions);
 
 			foodShortages.Clear();
 			foreach (var foodConsumption in foodConsumptions)
@@ -617,7 +615,7 @@ namespace Beyond_Beyaan
 			}
 
 			//Fifth, and last, calculate population growth, this is last because it affects the consumption/production of regions for next turn
-			planetManager.UpdatePopGrowth(foodShortages);
+			planetManager.UpdatePopGrowth(foodShortages);*/
 		}
 
 		public void HandleAIEmpire()

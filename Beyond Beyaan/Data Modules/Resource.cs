@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Beyond_Beyaan.Data_Modules
 {
+	public enum LimitTo { PLANET, SYSTEM, EMPIRE }
+
 	public class Resource
 	{
 		public string Name { get; set; }
@@ -13,5 +15,6 @@ namespace Beyond_Beyaan.Data_Modules
 		public bool Storable { get; set; }
 		public Resource ConvertsTo { get; set; }
 		public float ConversionRatio { get; set; }
+		public LimitTo LimitTo { get; set; }
 	}
 }
