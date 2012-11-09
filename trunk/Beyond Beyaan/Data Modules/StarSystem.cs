@@ -58,6 +58,10 @@ namespace Beyond_Beyaan
 		public List<Empire> EmpiresWithPlanetsInThisSystem { get; private set; }
 
 		public Dictionary<Empire, float> OwnerPercentage;
+		public Dictionary<Empire, Dictionary<Resource, float>> Productions;
+		public Dictionary<Empire, Dictionary<Resource, float>> Consumptions;
+		public Dictionary<Empire, Dictionary<Resource, float>> Resources;
+		public Dictionary<Empire, Dictionary<Resource, float>> Shortages;
 
 		#region Dijkstra's Algorithm
 		public double Distance { get; set; }
@@ -99,6 +103,11 @@ namespace Beyond_Beyaan
 			Starlanes = new List<Starlane>();
 			InvisibleStarlanes = new List<Starlane>();
 			//stargates = new Dictionary<Empire, Stargate>();
+
+			Productions = new Dictionary<Empire, Dictionary<Resource, float>>();
+			Consumptions = new Dictionary<Empire, Dictionary<Resource, float>>();
+			Resources = new Dictionary<Empire, Dictionary<Resource, float>>();
+			Shortages = new Dictionary<Empire, Dictionary<Resource, float>>();
 		}
 		#endregion
 
@@ -395,6 +404,45 @@ namespace Beyond_Beyaan
 				}
 			}
 			return amount;
+		}
+		public float GetPopulation(Empire whichEmpire)
+		{
+			float pop = 0;
+			foreach (Planet planet in Planets)
+			{
+				if (planet.Owner == whichEmpire)
+				{
+					pop += planet.TotalPopulation;
+				}
+			}
+			return pop;
+		}
+		public void TallyConsumption(Empire whichEmpire, Dictionary<Resource, float> consumptions)
+		{
+			Consumptions.Clear();
+
+			foreach (Planet planet in Planets)
+			{
+				if (planet.Owner == whichEmpire)
+				{
+					planet.TallyConsumptions(Consumptions[whichEmpire]);
+				}
+			}
+
+			foreach (KeyValuePair<Resource, float> consumption in Consumptions[whichEmpire])
+			{
+				if (consumption.Key.LimitTo == LimitTo.EMPIRE)
+				{
+					if (consumptions.ContainsKey(consumption.Key))
+					{
+						consumptions[consumption.Key] += consumption.Value;
+					}
+					else
+					{
+						consumptions[consumption.Key] = consumption.Value;
+					}
+				}
+			}
 		}
 		#endregion
 	}
