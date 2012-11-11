@@ -37,6 +37,15 @@ namespace Beyond_Beyaan.Data_Managers
 						newResource.ConvertsTo = resources[element.Attribute("convertsTo").Value];
 						newResource.ConversionRatio = float.Parse(element.Attribute("ratio").Value);
 					}
+					switch (element.Attribute("limitTo").Value)
+					{
+						case "Planet": newResource.LimitTo = LimitTo.PLANET;
+							break;
+						case "System": newResource.LimitTo = LimitTo.SYSTEM;
+							break;
+						case "Empire": newResource.LimitTo = LimitTo.EMPIRE;
+							break;
+					}
 					resources.Add(newResource.Name, newResource);
 				}
 			}

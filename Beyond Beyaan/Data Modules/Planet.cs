@@ -840,6 +840,25 @@ namespace Beyond_Beyaan
 			}
 		}
 
+		//We build each system and the empire's total resources from each of the planet (we clear all systems and empire's resources before running this)
+		public void TallyResources(Dictionary<Resource, float> resources)
+		{
+			foreach (KeyValuePair<Resource, float> resource in Resources)
+			{
+				if (resource.Key.LimitTo != LimitTo.PLANET)
+				{
+					if (resources.ContainsKey(resource.Key))
+					{
+						resources[resource.Key] += resource.Value;
+					}
+					else
+					{
+						resources[resource.Key] = resource.Value;
+					}
+				}
+			}
+		}
+
 		public void CalculateConsumptionAndProduction(Dictionary<Resource, float> shortages, Dictionary<Resource, float> consumptions, Dictionary<Resource, float> productions)
 		{
 			float inefficiency = CalculateIneffectivity();
