@@ -417,9 +417,9 @@ namespace Beyond_Beyaan
 			}
 			return pop;
 		}
-		public void TallyConsumption(Empire whichEmpire, Dictionary<Resource, float> consumptions)
+		public void TallyConsumptions(Empire whichEmpire, Dictionary<Resource, float> consumptions)
 		{
-			Consumptions.Clear();
+			Consumptions[whichEmpire].Clear();
 
 			foreach (Planet planet in Planets)
 			{
@@ -440,6 +440,33 @@ namespace Beyond_Beyaan
 					else
 					{
 						consumptions[consumption.Key] = consumption.Value;
+					}
+				}
+			}
+		}
+		public void TallyResources(Empire whichEmpire, Dictionary<Resource, float> resources)
+		{
+			Resources[whichEmpire].Clear();
+
+			foreach (Planet planet in Planets)
+			{
+				if (planet.Owner == whichEmpire)
+				{
+					planet.TallyResources(Resources[whichEmpire]);
+				}
+			}
+
+			foreach (KeyValuePair<Resource, float> resource in Resources[whichEmpire])
+			{
+				if (resource.Key.LimitTo == LimitTo.EMPIRE)
+				{
+					if (resources.ContainsKey(resource.Key))
+					{
+						resources[resource.Key] += resource.Value;
+					}
+					else
+					{
+						resources[resource.Key] = resource.Value;
 					}
 				}
 			}
