@@ -85,6 +85,9 @@ namespace Beyond_Beyaan
 		}
 		public Dictionary<Resource, float> Productions { get; private set; }
 		public Dictionary<Resource, float> Consumptions { get; private set; }
+		public Dictionary<Resource, float> AvailableResources { get; private set; }
+		public Dictionary<Resource, float> ResourcesSupplied { get; private set; }
+		public Dictionary<Resource, float> ResourcesShared { get; private set; }
 		public Dictionary<Resource, float> Resources { get; private set; }
 		public Dictionary<Resource, float> Shortages { get; private set; }
 
@@ -145,6 +148,14 @@ namespace Beyond_Beyaan
 				regions.Add(newRegion);
 			}
 			//outputPercentages = new Dictionary<string, int>();
+
+			Productions = new Dictionary<Resource,float>();
+			Consumptions = new Dictionary<Resource,float>();
+			AvailableResources = new Dictionary<Resource,float>();
+			ResourcesSupplied = new Dictionary<Resource,float>();
+			ResourcesShared = new Dictionary<Resource,float>();
+			Resources = new Dictionary<Resource,float>();
+			Shortages = new Dictionary<Resource,float>();
 		}
 		#endregion
 
@@ -855,6 +866,86 @@ namespace Beyond_Beyaan
 					{
 						resources[resource.Key] = resource.Value;
 					}
+				}
+			}
+		}
+
+		//This grabs the resouces, then deducts what it don't need to consume as it is passed to system and empire
+		public void TallyAvailableResourcesAndShortages(Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
+		{
+			//To-do: verify that this copies the dictionary, and not just the reference.  Don't want float changes to affect the original
+			AvailableResources = new Dictionary<Resource, float>(Resources);
+			Shortages.Clear();
+
+			//Calculate what's left after consumpting
+			foreach (KeyValuePair<Resource, float> consumption in Consumptions)
+			{
+				if (AvailableResources.ContainsKey(consumption.Key))
+				{
+					if (AvailableResources[consumption.Key] >= consumption.Value)
+					{
+						AvailableResources[consumption.Key] -= consumption.Value;
+					}
+					else
+					{
+						//We have a shortage here
+						Shortages.Add(consumption.Key, consumption.Value - AvailableResources[consumption.Key]);
+						//Nothing to pass on
+						AvailableResources[consumption.Key] = 0;
+					}
+				}
+				else
+				{
+					//We have a shortage here
+					Shortages.Add(consumption.Key, consumption.Value);
+				}
+			}
+
+			foreach (KeyValuePair<Resource, float> resource in AvailableResources)
+			{
+				if (resource.Key.LimitTo != LimitTo.PLANET)
+				{
+					//Can pass this on
+					if (availableResources.ContainsKey(resource.Key))
+					{
+						availableResources[resource.Key] += resource.Value;
+					}
+					else
+					{
+						availableResources[resource.Key] = resource.Value;
+					}
+				}
+			}
+		}
+
+		//Resources that's donated by other planets are added here
+		public void AddSuppliedResources(Dictionary<Resource, float> resources)
+		{
+			foreach (KeyValuePair<Resource, float> resource in resources)
+			{
+				if (ResourcesSupplied.ContainsKey(resource.Key))
+				{
+					ResourcesSupplied[resource.Key] += resource.Value;
+				}
+				else
+				{
+					ResourcesSupplied[resource.Key] = resource.Value;
+				}
+			}
+		}
+
+		//Resources that's sent to other planets
+		public void AddSharedResources(Dictionary<Resource, float> resources)
+		{
+			foreach (KeyValuePair<Resource, float> resource in resources)
+			{
+				if (ResourcesShared.ContainsKey(resource.Key))
+				{
+					ResourcesShared[resource.Key] += resource.Value;
+				}
+				else
+				{
+					ResourcesShared[resource.Key] = resource.Value;
 				}
 			}
 		}
