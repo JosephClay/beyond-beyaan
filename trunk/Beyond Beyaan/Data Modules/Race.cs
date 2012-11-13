@@ -6,6 +6,7 @@ using System.IO;
 using System.Xml.Linq;
 using GorgonLibrary.Graphics;
 using Beyond_Beyaan.Data_Managers;
+using System.Globalization;
 
 namespace Beyond_Beyaan.Data_Modules
 {
@@ -112,7 +113,7 @@ namespace Beyond_Beyaan.Data_Modules
 				string[] values = consumption.Split(new[] { ',' });
 				if (values.Length == 2)
 				{
-					Consumptions.Add(resourceManager.GetResource(values[0]), float.Parse(values[1]));
+                    Consumptions.Add(resourceManager.GetResource(values[0]), float.Parse(values[1], CultureInfo.InvariantCulture));
 				}
 			}
 			/*if (attributes.Attribute("agriculture") != null)
@@ -145,7 +146,7 @@ namespace Beyond_Beyaan.Data_Modules
 					reason = "Duplicate " + values[0] + " production bonus definition for " + RaceName;
 					return false;
 				}
-				ProductionBonuses.Add(values[0], float.Parse(values[1]));
+                ProductionBonuses.Add(values[0], float.Parse(values[1], CultureInfo.InvariantCulture));
 			}
 
 			bonusAttributes = race.Element("ConsumptionBonuses");
@@ -157,7 +158,7 @@ namespace Beyond_Beyaan.Data_Modules
 					reason = "Duplicate " + values[0] + " consumption bonus definition for " + RaceName;
 					return false;
 				}
-				ConsumptionBonuses.Add(values[0], float.Parse(values[1]));
+                ConsumptionBonuses.Add(values[0], float.Parse(values[1], CultureInfo.InvariantCulture));
 			}
 
 			XElement shipName = race.Element("ShipNames");

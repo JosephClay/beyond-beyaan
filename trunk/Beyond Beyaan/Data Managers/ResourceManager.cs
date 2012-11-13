@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
+using System.Globalization;
 
 namespace Beyond_Beyaan.Data_Managers
 {
@@ -35,7 +36,7 @@ namespace Beyond_Beyaan.Data_Managers
 					if (element.Attribute("convertsTo") != null)
 					{
 						newResource.ConvertsTo = resources[element.Attribute("convertsTo").Value];
-						newResource.ConversionRatio = float.Parse(element.Attribute("ratio").Value);
+						newResource.ConversionRatio = float.Parse(element.Attribute("ratio").Value, CultureInfo.InvariantCulture);
 					}
 					switch (element.Attribute("limitTo").Value)
 					{

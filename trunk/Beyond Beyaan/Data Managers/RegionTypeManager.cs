@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
+using System.Globalization;
 
 namespace Beyond_Beyaan.Data_Managers
 {
@@ -34,7 +35,7 @@ namespace Beyond_Beyaan.Data_Managers
 				string[] color = element.Attribute("color").Value.Split(new[] { ',' });
 				for (int i = 0; i < 3; i++)
 				{
-					regionType.Color[i] = float.Parse(color[i]);
+                    regionType.Color[i] = float.Parse(color[i], CultureInfo.InvariantCulture);
 				}
 				if (element.Attribute("produces") != null)
 				{
@@ -44,7 +45,7 @@ namespace Beyond_Beyaan.Data_Managers
 						string[] split = value.Split(new[] { ',' });
 						if (split.Length == 2)
 						{
-							regionType.Productions.Add(gameMain.resourceManager.GetResource(split[0]), float.Parse(split[1]));
+							regionType.Productions.Add(gameMain.resourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
 						}
 					}
 				}
@@ -56,7 +57,7 @@ namespace Beyond_Beyaan.Data_Managers
 						string[] split = value.Split(new[] { ',' });
 						if (split.Length == 2)
 						{
-							regionType.Consumptions.Add(gameMain.resourceManager.GetResource(split[0]), float.Parse(split[1]));
+                            regionType.Consumptions.Add(gameMain.resourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
 						}
 					}
 				}
