@@ -3,137 +3,138 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Beyond_Beyaan.Data_Managers;
+using System.Globalization;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	/*public class CombatShip : ShipDesign
-	{
-		/*private int amount;
-		public Label AmountLabel { get; private set; }
-		public int Amount
-		{
-			get { return amount; }
-			private set 
-			{ 
-				amount = value;
-				AmountLabel.SetText(amount.ToString());
-			}
-		}
-		public Dictionary<string, string> Values { get; private set; }
-		/*public int X { get; set; }
-		public int Y { get; set; }
-		public float XOffset { get; set; }
-		public float YOffset { get; set; }
-		public float AngleFacing
-		{
-			get { return angleFacing; }
-			set
-			{
-				angleFacing = value;
-				while (angleFacing < 0)
-				{
-					angleFacing += 360;
-				}
-				while (angleFacing > 360)
-				{
-					angleFacing -= 360;
-				}
-			}
-		}
-		public int X { get { return (int.Parse(Values["XPos"]) - CenterOffset); } }
-		public int Y { get { return (int.Parse(Values["YPos"]) - CenterOffset); } }
-		public float Angle { get { return (float)((float.Parse(Values["Angle"]) / Math.PI) * 180.0f); } }
-		public int CenterOffset { get; private set; }
+    /*public class CombatShip : ShipDesign
+    {
+        /*private int amount;
+        public Label AmountLabel { get; private set; }
+        public int Amount
+        {
+            get { return amount; }
+            private set 
+            { 
+                amount = value;
+                AmountLabel.SetText(amount.ToString());
+            }
+        }
+        public Dictionary<string, string> Values { get; private set; }
+        /*public int X { get; set; }
+        public int Y { get; set; }
+        public float XOffset { get; set; }
+        public float YOffset { get; set; }
+        public float AngleFacing
+        {
+            get { return angleFacing; }
+            set
+            {
+                angleFacing = value;
+                while (angleFacing < 0)
+                {
+                    angleFacing += 360;
+                }
+                while (angleFacing > 360)
+                {
+                    angleFacing -= 360;
+                }
+            }
+        }
+        public int X { get { return (int.Parse(Values["XPos"]) - CenterOffset); } }
+        public int Y { get { return (int.Parse(Values["YPos"]) - CenterOffset); } }
+        public float Angle { get { return (float)((float.Parse(Values["Angle"], CultureInfo.InvariantCulture) / Math.PI) * 180.0f); } }
+        public int CenterOffset { get; private set; }
 
-		public bool DoneThisTurn { get; set; }
-		public bool Retreating { get; set; }
-		public bool DoneRetreatWait { get; set; }
+        public bool DoneThisTurn { get; set; }
+        public bool Retreating { get; set; }
+        public bool DoneRetreatWait { get; set; }
 
-		public float CurrentHitPoints { get; set; }
-		public Empire Owner { get; set; }
+        public float CurrentHitPoints { get; set; }
+        public Empire Owner { get; set; }
 
-		public List<Point> path;
+        public List<Point> path;
 
-		//private float angleFacing;
+        //private float angleFacing;
 
-		public CombatShip(ShipDesign ship, Empire owner, int amount)
-			: base(ship)
-		{
-			Values = new Dictionary<string, string>();
-			/*engine = ship.engine;
-			armor = ship.armor;
-			shield = ship.shield;
-			computer = ship.computer;
-			weapons = ship.weapons;
-			Size = ship.Size;
-			WhichStyle = ship.WhichStyle;
-			Name = ship.Name;
-			//CenterOffset = (Size * 16) / 2;
-			path = null;
-			//X = -1;
-			//Y = -1; //-1 to force player to place the ship in placement window
-			/*AmountLabel = new Label(0, 0);
-			Amount = amount;
-			CurrentHitPoints = ship.armor.GetHP(ship.TotalSpace);
-			Owner = owner;
-		}
+        public CombatShip(ShipDesign ship, Empire owner, int amount)
+            : base(ship)
+        {
+            Values = new Dictionary<string, string>();
+            /*engine = ship.engine;
+            armor = ship.armor;
+            shield = ship.shield;
+            computer = ship.computer;
+            weapons = ship.weapons;
+            Size = ship.Size;
+            WhichStyle = ship.WhichStyle;
+            Name = ship.Name;
+            //CenterOffset = (Size * 16) / 2;
+            path = null;
+            //X = -1;
+            //Y = -1; //-1 to force player to place the ship in placement window
+            /*AmountLabel = new Label(0, 0);
+            Amount = amount;
+            CurrentHitPoints = ship.armor.GetHP(ship.TotalSpace);
+            Owner = owner;
+        }
 
-		public Point GetCenterPos()
-		{
-			return new Point(X, Y);
-		}
+        public Point GetCenterPos()
+        {
+            return new Point(X, Y);
+        }
 
-		public void Update(float frameDeltaTime)
-		{
-			/*if (path != null && path.Count > 0)
-			{
-				//Move to next point
-				if (X > path[0].X)
-				{
-					XOffset -= 16 * frameDeltaTime;
-					if ((XOffset / 16) + X <= path[0].X)
-					{
-						X--;
-						XOffset = 0;
-					}
-				}
-				else if (X < path[0].X)
-				{
-					XOffset += 16 * frameDeltaTime;
-					if ((XOffset / 16) + X >= path[0].X)
-					{
-						X++;
-						XOffset = 0;
-					}
-				}
-				if (Y > path[0].Y)
-				{
-					YOffset -= 16 * frameDeltaTime;
-					if ((YOffset / 16) + Y <= path[0].Y)
-					{
-						Y--;
-						YOffset = 0;
-					}
-				}
-				else if (Y < path[0].Y)
-				{
-					YOffset += 16 * frameDeltaTime;
-					if ((YOffset / 16) + Y >= path[0].Y)
-					{
-						Y++;
-						YOffset = 0;
-					}
-				}
+        public void Update(float frameDeltaTime)
+        {
+            /*if (path != null && path.Count > 0)
+            {
+                //Move to next point
+                if (X > path[0].X)
+                {
+                    XOffset -= 16 * frameDeltaTime;
+                    if ((XOffset / 16) + X <= path[0].X)
+                    {
+                        X--;
+                        XOffset = 0;
+                    }
+                }
+                else if (X < path[0].X)
+                {
+                    XOffset += 16 * frameDeltaTime;
+                    if ((XOffset / 16) + X >= path[0].X)
+                    {
+                        X++;
+                        XOffset = 0;
+                    }
+                }
+                if (Y > path[0].Y)
+                {
+                    YOffset -= 16 * frameDeltaTime;
+                    if ((YOffset / 16) + Y <= path[0].Y)
+                    {
+                        Y--;
+                        YOffset = 0;
+                    }
+                }
+                else if (Y < path[0].Y)
+                {
+                    YOffset += 16 * frameDeltaTime;
+                    if ((YOffset / 16) + Y >= path[0].Y)
+                    {
+                        Y++;
+                        YOffset = 0;
+                    }
+                }
 
-				if (X == path[0].X && Y == path[0].Y)
-				{
-					path.Remove(path[0]);
-				}
-			}
-		}
-	}*/
+                if (X == path[0].X && Y == path[0].Y)
+                {
+                    path.Remove(path[0]);
+                }
+            }
+        }
+    }*/
 
-	public class CombatFleet : Squadron
+    public class CombatFleet : Squadron
 	{
 		//public Label EmpireNameLabel;
 		//public static double TwoSquared = Math.Sqrt(2);
