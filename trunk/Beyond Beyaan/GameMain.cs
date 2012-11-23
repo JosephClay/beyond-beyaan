@@ -521,7 +521,6 @@ namespace Beyond_Beyaan
 					taskBar.SetToScreen(Screen.Planets);
 					break;
 				case Screen.Research:
-					empireManager.CurrentEmpire.UpdateResearchPoints();
 					if (researchScreen == null)
 					{
 						researchScreen = new ResearchScreen();

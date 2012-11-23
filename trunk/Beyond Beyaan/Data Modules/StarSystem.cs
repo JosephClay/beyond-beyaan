@@ -60,8 +60,13 @@ namespace Beyond_Beyaan
 		public Dictionary<Empire, float> OwnerPercentage;
 		public Dictionary<Empire, Dictionary<Resource, float>> Productions;
 		public Dictionary<Empire, Dictionary<Resource, float>> Consumptions;
+		public Dictionary<Empire, Dictionary<Resource, float>> AvailableResources;
+		public Dictionary<Empire, Dictionary<Resource, float>> ResourcesSupplied;
+		public Dictionary<Empire, Dictionary<Resource, float>> ResourcesShared;
 		public Dictionary<Empire, Dictionary<Resource, float>> Resources;
 		public Dictionary<Empire, Dictionary<Resource, float>> Shortages;
+		public Dictionary<Empire, Dictionary<Resource, float>> ProjectConsumptions;
+		public Dictionary<Empire, Dictionary<Resource, float>> ProjectInvestments;
 
 		#region Dijkstra's Algorithm
 		public double Distance { get; set; }
@@ -106,8 +111,13 @@ namespace Beyond_Beyaan
 
 			Productions = new Dictionary<Empire, Dictionary<Resource, float>>();
 			Consumptions = new Dictionary<Empire, Dictionary<Resource, float>>();
+			AvailableResources = new Dictionary<Empire, Dictionary<Resource, float>>();
+			ResourcesSupplied = new Dictionary<Empire, Dictionary<Resource, float>>();
+			ResourcesShared = new Dictionary<Empire, Dictionary<Resource, float>>();
 			Resources = new Dictionary<Empire, Dictionary<Resource, float>>();
 			Shortages = new Dictionary<Empire, Dictionary<Resource, float>>();
+			ProjectConsumptions = new Dictionary<Empire, Dictionary<Resource, float>>();
+			ProjectInvestments = new Dictionary<Empire, Dictionary<Resource, float>>();
 		}
 		#endregion
 
@@ -467,6 +477,56 @@ namespace Beyond_Beyaan
 					else
 					{
 						resources[resource.Key] = resource.Value;
+					}
+				}
+			}
+		}
+		public void TallyProjectConsumptions(Empire whichEmpire)
+		{
+			ProjectConsumptions[whichEmpire].Clear();
+			// TODO: Add project
+		}
+
+		//This grabs the resouces, then deducts what it don't need to consume as it is passed to system and empire
+		public void TallyAvailableResourcesAndShortages(Empire whichEmpire, Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
+		{
+			AvailableResources[whichEmpire].Clear();
+			Shortages[whichEmpire].Clear();
+
+			foreach (Planet planet in Planets)
+			{
+				if (planet.Owner == whichEmpire)
+				{
+					planet.TallyAvailableResourcesAndShortages(AvailableResources[whichEmpire], Shortages[whichEmpire]);
+				}
+			}
+
+			foreach (KeyValuePair<Resource, float> resource in AvailableResources[whichEmpire])
+			{
+				if (resource.Key.LimitTo == LimitTo.EMPIRE)
+				{
+					if (availableResources.ContainsKey(resource.Key))
+					{
+						availableResources[resource.Key] += resource.Value;
+					}
+					else
+					{
+						availableResources[resource.Key] = resource.Value;
+					}
+				}
+			}
+
+			foreach (KeyValuePair<Resource, float> resource in Shortages[whichEmpire])
+			{
+				if (resource.Key.LimitTo == LimitTo.EMPIRE)
+				{
+					if (shortages.ContainsKey(resource.Key))
+					{
+						shortages[resource.Key] += resource.Value;
+					}
+					else
+					{
+						shortages[resource.Key] = resource.Value;
 					}
 				}
 			}
