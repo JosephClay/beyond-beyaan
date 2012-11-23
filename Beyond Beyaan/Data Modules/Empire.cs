@@ -27,6 +27,7 @@ namespace Beyond_Beyaan
         //private int lastPlanetSelected;
 		private int fleetSelected;
 		private PlanetManager planetManager;
+		private StarSystemManager starSystemManager;
 		private FleetManager fleetManager;
 		private ItemManager itemManager;
 		private TechnologyManager technologyManager;
@@ -38,12 +39,37 @@ namespace Beyond_Beyaan
 		//private List<Squadron> visibleOtherFleets;
 		private Race race;
 		private AI ai;
-		private float totalResearchPoints;
-		public Dictionary<Resource, float> Productions { get; private set; }
-		public Dictionary<Resource, float> Consumptions { get; private set; }
-		public Dictionary<Resource, float> Resources { get; private set; }
-		public Dictionary<Resource, float> Shortages { get; private set; }
-		public Dictionary<Resource, float> MaintenanceCosts { get; private set; }
+		//private float totalResearchPoints;
+
+
+		#region Economy Data
+		private Dictionary<Resource, float> productions;
+		private Dictionary<Resource, float> consumptions;
+		private Dictionary<Resource, float> resources;
+		private Dictionary<Resource, float> shortages;
+		private Dictionary<Resource, float> availableResources;
+
+		public Dictionary<Resource, float> Productions
+		{
+			get { return productions; }
+		}
+		public Dictionary<Resource, float> Consumptions
+		{
+			get { return consumptions; }
+		}
+		public Dictionary<Resource, float> Resources
+		{
+			get { return resources; }
+		}
+		public Dictionary<Resource, float> Shortages
+		{
+			get { return shortages; }
+		}
+		public Dictionary<Resource, float> AvailableResources
+		{ 
+			get { return availableResources; } 
+		}
+		#endregion
 		//private float handicap;
 		#endregion
 
@@ -251,10 +277,10 @@ namespace Beyond_Beyaan
 			get;
 			private set;
 		}
-		public float ResearchPoints
+		/*public float ResearchPoints
 		{
 			get { return totalResearchPoints; }
-		}
+		}*/
 		public Race EmpireRace
 		{
 			get { return race; }
@@ -277,13 +303,14 @@ namespace Beyond_Beyaan
 			technologyManager = new TechnologyManager();
 			fleetManager = new FleetManager(this);
 			planetManager = new PlanetManager();
+			starSystemManager = new StarSystemManager(this);
 			sitRepManager = new SitRepManager();
 			projectManager = new ProjectManager(this);
-			Resources = new Dictionary<Resource, float>();
-			Consumptions = new Dictionary<Resource, float>();
-			Shortages = new Dictionary<Resource, float>();
-			Productions = new Dictionary<Resource, float>();
-			MaintenanceCosts = new Dictionary<Resource, float>();
+			resources = new Dictionary<Resource, float>();
+			consumptions = new Dictionary<Resource, float>();
+			shortages = new Dictionary<Resource, float>();
+			productions = new Dictionary<Resource, float>();
+			availableResources = new Dictionary<Resource, float>();
 			reserves = 10;
 			//expenses = 0;
 			//visibleOtherFleets = new List<Squadron>();
@@ -299,6 +326,7 @@ namespace Beyond_Beyaan
 			selectedSystem = startingSystems[0];
 			lastSelectedSystem = startingSystems[0];
 			planetManager.Planets.AddRange(planets);
+			starSystemManager.StarSystems.AddRange(startingSystems);
 			//fleetManager.SetupStarterFleet(homeSystem.X + homeSystem.Size, homeSystem.Y);
 			//homePlanet.ShipBeingBuilt = fleetManager.ShipDesigns[0];
 		}
@@ -538,13 +566,11 @@ namespace Beyond_Beyaan
 			visibleOtherFleets = fleets;
 		}*/
 
-		public void UpdateResearchPoints()
+		public void RefreshEconomy()
 		{
-			totalResearchPoints = 0;
-			foreach (Planet planet in planetManager.Planets)
-			{
-				//totalResearchPoints += planet.ResearchOutput;
-			}
+			starSystemManager.TallyConsumption(out consumptions);
+			starSystemManager.TallyResources(out resources);
+			starSystemManager.TallyAvailableResourcesAndShortages(out availableResources, out shortages);
 		}
 
 		public void ProcessTurn()

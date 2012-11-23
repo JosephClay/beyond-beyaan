@@ -59,5 +59,15 @@ namespace Beyond_Beyaan.Data_Managers
 				starSystem.TallyResources(empire, resources);
 			}
 		}
+
+		public void TallyAvailableResourcesAndShortages(out Dictionary<Resource, float> availableResources, out Dictionary<Resource, float> shortages)
+		{
+			availableResources = new Dictionary<Resource, float>();
+			shortages = new Dictionary<Resource, float>();
+			foreach (StarSystem starSystem in StarSystems)
+			{
+				starSystem.TallyAvailableResourcesAndShortages(empire, availableResources, shortages);
+			}
+		}
 	}
 }
