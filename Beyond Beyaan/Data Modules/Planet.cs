@@ -458,34 +458,38 @@ namespace Beyond_Beyaan
 		}
 
 		//Resources that's donated by other planets are added here
-		public void AddSuppliedResources(Dictionary<Resource, float> resources)
+		public void AddSuppliedResources(Resource resourceSupplied, float amount)
 		{
-			foreach (KeyValuePair<Resource, float> resource in resources)
+			if (ResourcesSupplied.ContainsKey(resourceSupplied))
 			{
-				if (ResourcesSupplied.ContainsKey(resource.Key))
-				{
-					ResourcesSupplied[resource.Key] += resource.Value;
-				}
-				else
-				{
-					ResourcesSupplied[resource.Key] = resource.Value;
-				}
+				ResourcesSupplied[resourceSupplied] += amount;
+			}
+			else
+			{
+				ResourcesSupplied[resourceSupplied] = amount;
+			}
+			Shortages[resourceSupplied] -= amount;
+			if (Shortages[resourceSupplied] <= 0)
+			{
+				Shortages.Remove(resourceSupplied);
 			}
 		}
 
 		//Resources that's sent to other planets
-		public void AddSharedResources(Dictionary<Resource, float> resources)
+		public void AddSharedResources(Resource resourceShared, float amount)
 		{
-			foreach (KeyValuePair<Resource, float> resource in resources)
+			if (ResourcesShared.ContainsKey(resourceShared))
 			{
-				if (ResourcesShared.ContainsKey(resource.Key))
-				{
-					ResourcesShared[resource.Key] += resource.Value;
-				}
-				else
-				{
-					ResourcesShared[resource.Key] = resource.Value;
-				}
+				ResourcesShared[resourceShared] += amount;
+			}
+			else
+			{
+				ResourcesShared[resourceShared] = amount;
+			}
+			AvailableResources[resourceShared] -= amount;
+			if (AvailableResources[resourceShared] <= 0)
+			{
+				AvailableResources.Remove(resourceShared);
 			}
 		}
 

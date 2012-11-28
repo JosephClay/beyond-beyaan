@@ -571,6 +571,13 @@ namespace Beyond_Beyaan
 			starSystemManager.TallyConsumption(out consumptions);
 			starSystemManager.TallyResources(out resources);
 			starSystemManager.TallyAvailableResourcesAndShortages(out availableResources, out shortages);
+			planetManager.PoolResources(availableResources, shortages);
+		}
+
+		public void CheckAvailableResources(Dictionary<Resource, float> planetAvailableResources, out Dictionary<Resource, float> resourcesUsed)
+		{
+			resourcesUsed = new Dictionary<Resource, float>();
+			// TODO: Process projects here
 		}
 
 		public void ProcessTurn()

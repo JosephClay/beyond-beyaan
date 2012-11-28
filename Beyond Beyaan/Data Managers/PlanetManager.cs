@@ -47,6 +47,80 @@ namespace Beyond_Beyaan
 			}
 		}
 
+		public void PoolResources(Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
+		{
+			// TODO: Update star systems' available resources and shortages for display
+
+			for (int i = 0; i < planets.Count; i++)
+			{
+				for (int j = i + 1; j < planets.Count; j++)
+				{
+					var planetA = planets[i];
+					var planetB = planets[j];
+					//quick check to see if a planet is in demand, and another have some resources
+					if (planetA.Shortages.Count > 0 && planetB.AvailableResources.Count > 0)
+					{
+						foreach (KeyValuePair<Resource, float> shortage in planetA.Shortages)
+						{
+							if (planetB.AvailableResources.ContainsKey(shortage.Key))
+							{
+								if (planetB.AvailableResources[shortage.Key] >= shortage.Value)
+								{
+									planetA.AddSuppliedResources(shortage.Key, shortage.Value);
+									planetB.AddSharedResources(shortage.Key, shortage.Value);
+									availableResources[shortage.Key] -= shortage.Value;
+									if (availableResources[shortage.Key] <= 0)
+									{
+										availableResources.Remove(shortage.Key);
+									}
+								}
+								else
+								{
+									planetA.AddSuppliedResources(shortage.Key, planetB.AvailableResources[shortage.Key]);
+									planetB.AddSharedResources(shortage.Key, planetB.AvailableResources[shortage.Key]);
+									availableResources[shortage.Key] -= planetB.AvailableResources[shortage.Key];
+									if (availableResources[shortage.Key] <= 0)
+									{
+										availableResources.Remove(shortage.Key);
+									}
+								}
+							}
+						}
+					}
+					//quick check to see if a planet is in demand, and another have some resources
+					if (planetB.Shortages.Count > 0 && planetA.AvailableResources.Count > 0)
+					{
+						foreach (KeyValuePair<Resource, float> shortage in planetB.Shortages)
+						{
+							if (planetA.AvailableResources.ContainsKey(shortage.Key))
+							{
+								if (planetA.AvailableResources[shortage.Key] >= shortage.Value)
+								{
+									planetB.AddSuppliedResources(shortage.Key, shortage.Value);
+									planetA.AddSharedResources(shortage.Key, shortage.Value);
+									availableResources[shortage.Key] -= shortage.Value;
+									if (availableResources[shortage.Key] <= 0)
+									{
+										availableResources.Remove(shortage.Key);
+									}
+								}
+								else
+								{
+									planetB.AddSuppliedResources(shortage.Key, planetA.AvailableResources[shortage.Key]);
+									planetA.AddSharedResources(shortage.Key, planetA.AvailableResources[shortage.Key]);
+									availableResources[shortage.Key] -= planetA.AvailableResources[shortage.Key];
+									if (availableResources[shortage.Key] <= 0)
+									{
+										availableResources.Remove(shortage.Key);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 		/*public void UpdateProduction(Dictionary<Resource, float> productions, Dictionary<Resource, float> consumptions, Dictionary<Resource, float> shortages, Dictionary<Resource, float> resources)
 		{
 			consumptions.Clear();

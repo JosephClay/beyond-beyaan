@@ -497,7 +497,58 @@ namespace Beyond_Beyaan
 			{
 				if (planet.Owner == whichEmpire)
 				{
-					planet.TallyAvailableResourcesAndShortages(AvailableResources[whichEmpire], Shortages[whichEmpire]);
+					Dictionary<Resource, float> tempAvailableResources = new Dictionary<Resource, float>();
+					planet.TallyAvailableResourcesAndShortages(tempAvailableResources, Shortages[whichEmpire]);
+					foreach (KeyValuePair<Resource, float> projectConsumption in ProjectConsumptions[whichEmpire])
+					{
+						if (tempAvailableResources.ContainsKey(projectConsumption.Key))
+						{
+							/* TODO: if (project allows multiple items produced at once)
+							{
+								ProjectInvestments[projectConsumption.Key] = AvailableResources[projectConsumption.Key];
+								AvailableResources[projectConsumption.Key] = 0;
+							}
+							else*/
+							{
+								if (tempAvailableResources[projectConsumption.Key] >= projectConsumption.Value)
+								{
+									//Sufficient to finish this portion of the project's cost
+									// TODO: add project here
+									planet.AddSharedResources(projectConsumption.Key, projectConsumption.Value);
+									tempAvailableResources[projectConsumption.Key] -= projectConsumption.Value;
+								}
+								else
+								{
+									//Not sufficient, but still make progress, so put in all the available resources
+									// TODO: add project here
+									planet.AddSharedResources(projectConsumption.Key, tempAvailableResources[projectConsumption.Key]);
+									tempAvailableResources[projectConsumption.Key] = 0;
+								}
+							}
+							if (tempAvailableResources[projectConsumption.Key] <= 0)
+							{
+								tempAvailableResources.Remove(projectConsumption.Key);
+							}
+						}
+					}
+					Dictionary<Resource, float> amountUsed;
+					//Process empire's projects
+					whichEmpire.CheckAvailableResources(tempAvailableResources, out amountUsed);
+					foreach (KeyValuePair<Resource, float> resource in amountUsed)
+					{
+						planet.AddSharedResources(resource.Key, resource.Value);
+					}
+					foreach (KeyValuePair<Resource, float> resource in tempAvailableResources)
+					{
+						if (AvailableResources[whichEmpire].ContainsKey(resource.Key))
+						{
+							AvailableResources[whichEmpire][resource.Key] += resource.Value;
+						}
+						else
+						{
+							AvailableResources[whichEmpire][resource.Key] = resource.Value;
+						}
+					}
 				}
 			}
 
