@@ -568,11 +568,12 @@ namespace Beyond_Beyaan
 
 		public void RefreshEconomy()
 		{
-			starSystemManager.TallyConsumption(out consumptions);
+			starSystemManager.TallyConsumptions(out consumptions);
 			starSystemManager.TallyResources(out resources);
 			starSystemManager.TallyAvailableResourcesAndShortages(out availableResources, out shortages);
 			planetManager.PoolResources(availableResources, shortages);
 			starSystemManager.CalculatePopGrowth();
+			starSystemManager.TallyProductions(out productions);
 		}
 
 		public void CheckAvailableResources(Dictionary<Resource, float> planetAvailableResources, out Dictionary<Resource, float> resourcesUsed)

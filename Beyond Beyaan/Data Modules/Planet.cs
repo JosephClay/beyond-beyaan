@@ -452,6 +452,63 @@ namespace Beyond_Beyaan
 			}
 		}
 
+		public void TallyProduction(Dictionary<Resource, float> productions)
+		{
+			Productions.Clear();
+			foreach (Region region in regions)
+			{
+				float shortage = 1.0f;
+				//First, find out shortages
+				foreach (var consumption in region.RegionType.Consumptions)
+				{
+					if (Shortages.ContainsKey(consumption.Key))
+					{
+						float amount = 1.0f - (Shortages[consumption.Key] / Consumptions[consumption.Key]);
+						if (shortage > amount)
+						{
+							shortage = amount;
+						}
+					}
+				}
+				foreach (var production in region.RegionType.Productions)
+				{
+					float totalProduction = 0;
+					foreach (var race in Population)
+					{
+						float value = (race.Value / regions.Count) * production.Value;
+						if (race.Key.ProductionBonuses.ContainsKey(region.RegionType.RegionTypeName))
+						{
+							value *= race.Key.ProductionBonuses[region.RegionType.RegionTypeName];
+						}
+						value *= shortage;
+						totalProduction += value;
+					}
+					if (Productions.ContainsKey(production.Key))
+					{
+						Productions[production.Key] += totalProduction;
+					}
+					else
+					{
+						Productions[production.Key] = totalProduction;
+					}
+				}
+			}
+			foreach (KeyValuePair<Resource, float> production in Productions)
+			{
+				if (production.Key.LimitTo != LimitTo.PLANET)
+				{
+					if (productions.ContainsKey(production.Key))
+					{
+						productions[production.Key] += production.Value;
+					}
+					else
+					{
+						productions[production.Key] = production.Value;
+					}
+				}
+			}
+		}
+
 		//Resources that's donated by other planets are added here
 		public void AddSuppliedResources(Resource resourceSupplied, float amount)
 		{

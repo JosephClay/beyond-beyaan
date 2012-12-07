@@ -593,6 +593,34 @@ namespace Beyond_Beyaan
 				}
 			}
 		}
+
+		public void TallyProductions(Empire whichEmpire, Dictionary<Resource, float> productions)
+		{
+			Productions[whichEmpire].Clear();
+
+			foreach (Planet planet in Planets)
+			{
+				if (planet.Owner == whichEmpire)
+				{
+					planet.TallyProduction(Productions[whichEmpire]);
+				}
+			}
+
+			foreach (KeyValuePair<Resource, float> production in Productions[whichEmpire])
+			{
+				if (production.Key.LimitTo == LimitTo.EMPIRE)
+				{
+					if (productions.ContainsKey(production.Key))
+					{
+						productions[production.Key] += production.Value;
+					}
+					else
+					{
+						productions[production.Key] = production.Value;
+					}
+				}
+			}
+		}
 		#endregion
 	}
 }
