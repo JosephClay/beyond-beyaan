@@ -582,6 +582,17 @@ namespace Beyond_Beyaan
 				}
 			}
 		}
+
+		public void CalculatePopGrowth(Empire empire)
+		{
+			foreach (Planet planet in planets)
+			{
+				if (planet.Owner == empire)
+				{
+					planet.CalculatePopGrowth();
+				}
+			}
+		}
 		#endregion
 	}
 }

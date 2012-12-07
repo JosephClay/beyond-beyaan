@@ -69,5 +69,13 @@ namespace Beyond_Beyaan.Data_Managers
 				starSystem.TallyAvailableResourcesAndShortages(empire, availableResources, shortages);
 			}
 		}
+
+		public void CalculatePopGrowth()
+		{
+			foreach (StarSystem starSystem in StarSystems)
+			{
+				starSystem.CalculatePopGrowth(empire);
+			}
+		}
 	}
 }
