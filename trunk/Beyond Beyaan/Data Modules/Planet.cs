@@ -25,7 +25,6 @@ namespace Beyond_Beyaan
 		private float spaceUsage;
 		private Dictionary<Resource, float> _productions;
 		private Dictionary<Resource, float> _consumptions;
-		private Dictionary<Race, float> racePopulations;
 		private List<Race> races;
 		#endregion
 
@@ -60,7 +59,7 @@ namespace Beyond_Beyaan
 				float totalPopulation = 0.0f;
 				foreach (Race race in races)
 				{
-					totalPopulation += racePopulations[race];
+					totalPopulation += Population[race];
 				}
 				return totalPopulation;
 			}
@@ -89,6 +88,9 @@ namespace Beyond_Beyaan
 		public Dictionary<Resource, float> Shortages { get; private set; }
 		public Dictionary<Resource, float> ProjectConsumptions { get; private set; }
 		public Dictionary<Resource, float> ProjectInvestments { get; private set; }
+
+		public Dictionary<Race, float> PopGrowth { get; private set; }
+		public Dictionary<Race, float> Population { get; private set; }
 		#endregion
 
 		#region Constructor
@@ -98,7 +100,8 @@ namespace Beyond_Beyaan
 			this.name = name;
 			this.numericName = numericName;
 			races = new List<Race>();
-			racePopulations = new Dictionary<Race, float>();
+			Population = new Dictionary<Race, float>();
+			PopGrowth = new Dictionary<Race, float>();
 
 			this.planetType = planetType;
 
@@ -163,7 +166,7 @@ namespace Beyond_Beyaan
 			{
 				this.owner = owner;
 				races.Add(owner.EmpireRace);
-				racePopulations.Add(owner.EmpireRace, planet.Population);
+				Population.Add(owner.EmpireRace, planet.Population);
 				//outputPercentages = new Dictionary<string, int>(planet.OutputSliderValues);
 			}
 			CalculateSpaceUsage();
@@ -191,12 +194,12 @@ namespace Beyond_Beyaan
 			//CheckPollutionLevel(planetTypeManager, r);
 
 			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
-			foreach (Race race in races)
+			/*foreach (Race race in races)
 			{
-				racePopulations[race] += CalculateRaceGrowth(race, foodShortages);
-			}
+				Population[race] += CalculateRaceGrowth(race, foodShortages);
+			}*/
 
-			races.Sort((Race a, Race b) => { return (racePopulations[a].CompareTo(racePopulations[b])); });
+			races.Sort((Race a, Race b) => { return (Population[a].CompareTo(Population[b])); });
 
 			//CalculateOutputs();
 
@@ -205,41 +208,33 @@ namespace Beyond_Beyaan
 			CalculateSpaceUsage();
 		}
 
-		private float CalculateTotalPopGrowth(Dictionary<Resource, float> shortages)
+		public void CalculatePopGrowth()
 		{
-			//Factor in food surplus/starvation
-			//float foodModifier = (AgricultureOutput - TotalPopulation) / TotalPopulation;
-
-			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
-			float popGrowth = 0;
 			foreach (Race race in races)
 			{
-				popGrowth += CalculateRaceGrowth(race, shortages);
-			}
-
-			return popGrowth;
-		}
-
-		private float CalculateRaceGrowth(Race race, Dictionary<Resource, float> shortages)
-		{
-			//First, find the lowest shortage (a race may consume more than one resource)
-			float shortage = 1.0f;
-			foreach (var consumption in race.Consumptions)
-			{
-				if (shortages[consumption.Key] < shortage)
+				//First, find the lowest shortage (a race may consume more than one resource)
+				float shortage = 1.0f;
+				foreach (var consumption in race.Consumptions)
 				{
-					shortage = shortages[consumption.Key];
+					if (Shortages.ContainsKey(consumption.Key))
+					{
+						float amount = 1.0f - (Shortages[consumption.Key] / Consumptions[consumption.Key]);
+						if (shortage > amount)
+						{
+							shortage = amount;
+						}
+					}
 				}
-			}
 
-			//Last, calculate the growth formula.  If there's a shortage that exceeds the percentage of space used, there's starvation
-			//If space usage exceeds the planet's capacity, there's overcrowding and will always exceed the max 1.0f value for shortage
-			return racePopulations[race] * 0.05f * (shortage - (spaceUsage / (regions.Count * 10)));
+				//Last, calculate the growth formula.  If there's a shortage that exceeds the percentage of space used, there's starvation
+				//If space usage exceeds the planet's capacity, there's overcrowding and will always exceed the max 1.0f value for shortage
+				PopGrowth[race] = Population[race] * 0.05f * (shortage - (spaceUsage / (regions.Count * 10)));
+			}
 		}
 
 		public void CalculateFoodConsumption(Dictionary<Resource, float> foodConsumption)
 		{
-			foreach (var race in racePopulations)
+			foreach (var race in Population)
 			{
 				foreach (var consumption in race.Key.Consumptions)
 				{
@@ -257,7 +252,7 @@ namespace Beyond_Beyaan
 
 		public void ConsumeFood(Dictionary<Resource, float> resources, Dictionary<Resource, float> shortages)
 		{
-			foreach (var race in racePopulations)
+			foreach (var race in Population)
 			{
 				foreach (var consumption in race.Key.Consumptions)
 				{
@@ -292,7 +287,7 @@ namespace Beyond_Beyaan
 					//To-do - include specials and buildings
 					float totalConsumption = 0;
 
-					foreach (var race in racePopulations)
+					foreach (var race in Population)
 					{
 						float value = (race.Value / regions.Count) * rate;
 						if (race.Key.ConsumptionBonuses.ContainsKey(region.RegionType.RegionTypeName))
@@ -322,7 +317,7 @@ namespace Beyond_Beyaan
 				{
 					float totalConsumption = 0;
 
-					foreach (var race in racePopulations)
+					foreach (var race in Population)
 					{
 						float value = (race.Value / regions.Count) * consumption.Value;
 						if (race.Key.ConsumptionBonuses.ContainsKey(region.RegionType.RegionTypeName))
@@ -524,7 +519,7 @@ namespace Beyond_Beyaan
 					//To-do - include specials and buildings in rate equation
 					float totalConsumption = 0;
 
-					foreach (var race in racePopulations)
+					foreach (var race in Population)
 					{
 						float value = (race.Value / regions.Count) * rate;
 						if (race.Key.ConsumptionBonuses.ContainsKey(region.RegionType.RegionTypeName))
@@ -563,7 +558,7 @@ namespace Beyond_Beyaan
 					//To-do - include specials and buildings in rate equation
 					float totalProduction = 0;
 
-					foreach (var race in racePopulations)
+					foreach (var race in Population)
 					{
 						float value = (race.Value / regions.Count) * rate;
 						if (race.Key.ProductionBonuses.ContainsKey(region.RegionType.RegionTypeName))
@@ -601,7 +596,7 @@ namespace Beyond_Beyaan
 		private float CalculateIneffectivity()
 		{
 			float spaceUsage = 0;
-			foreach (var race in racePopulations)
+			foreach (var race in Population)
 			{
 				spaceUsage += race.Value * 1.0f; //race.Key.SpaceUsage
 			}
@@ -618,7 +613,7 @@ namespace Beyond_Beyaan
 
 		public float GetRacePopulation(Race whichRace)
 		{
-			return racePopulations[whichRace];
+			return Population[whichRace];
 		}
 		public KeyValuePair<Race, int> GetDominantRacePop()
 		{
@@ -626,9 +621,9 @@ namespace Beyond_Beyaan
 			Race whichRace = null;
 			foreach (Race race in races)
 			{
-				if (racePopulations[race] > pop)
+				if (Population[race] > pop)
 				{
-					pop = (int)racePopulations[race];
+					pop = (int)Population[race];
 					whichRace = race;
 				}
 			}
@@ -637,39 +632,39 @@ namespace Beyond_Beyaan
 
 		public void AddRacePopulation(Race whichRace, float amount)
 		{
-			if (!racePopulations.ContainsKey(whichRace))
+			if (!Population.ContainsKey(whichRace))
 			{
-				racePopulations.Add(whichRace, amount);
+				Population.Add(whichRace, amount);
 				races.Add(whichRace);
 			}
 			else
 			{
-				racePopulations[whichRace] += amount;
+				Population[whichRace] += amount;
 			}
 			CalculateSpaceUsage();
 		}
 
 		public void RemoveRacePopulation(Race whichRace, float amount)
 		{
-			racePopulations[whichRace] -= amount;
-			if (racePopulations[whichRace] < 0.1f)
+			Population[whichRace] -= amount;
+			if (Population[whichRace] < 0.1f)
 			{
 				//Must have at least 1.0 to have self-sustaining population
-				racePopulations.Remove(whichRace);
+				Population.Remove(whichRace);
 				races.Remove(whichRace);
 			}
 		}
 
 		public void RemoveRace(Race whichRace)
 		{
-			racePopulations.Remove(whichRace);
+			Population.Remove(whichRace);
 			races.Remove(whichRace);
 			CalculateSpaceUsage();
 		}
 
 		public void RemoveAllRaces()
 		{
-			racePopulations.Clear();
+			Population.Clear();
 			races.Clear();
 			CalculateSpaceUsage();
 		}
@@ -677,7 +672,7 @@ namespace Beyond_Beyaan
 		private void CalculateSpaceUsage()
 		{
 			spaceUsage = 0;
-			foreach (var race in racePopulations)
+			foreach (var race in Population)
 			{
 				spaceUsage += race.Value * 1.0f; // race.Key.SpaceUsage[planetType.InternalName];
 			}
