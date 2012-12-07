@@ -42,7 +42,7 @@ namespace Beyond_Beyaan.Data_Managers
 			}
 		}
 
-		public void TallyConsumption(out Dictionary<Resource, float> consumptions)
+		public void TallyConsumptions(out Dictionary<Resource, float> consumptions)
 		{
 			consumptions = new Dictionary<Resource, float>();
 			foreach (StarSystem starSystem in StarSystems)
@@ -75,6 +75,15 @@ namespace Beyond_Beyaan.Data_Managers
 			foreach (StarSystem starSystem in StarSystems)
 			{
 				starSystem.CalculatePopGrowth(empire);
+			}
+		}
+
+		public void TallyProductions(out Dictionary<Resource, float> productions)
+		{
+			productions = new Dictionary<Resource, float>();
+			foreach (StarSystem starSystem in StarSystems)
+			{
+				starSystem.TallyProductions(empire, productions);
 			}
 		}
 	}
