@@ -30,7 +30,7 @@ namespace Beyond_Beyaan.Data_Modules
 		public bool Owned { get; set; }
 		public int Population { get; set; }
 		public List<string> Regions { get; set; }
-		public Dictionary<string, int> OutputSliderValues { get; set; }
+		public Dictionary<string, float> Resources { get; set; }
 	}
 	public class StartingSquadron
 	{
@@ -340,14 +340,14 @@ namespace Beyond_Beyaan.Data_Modules
 							planet.Population = int.Parse(item.Attribute("population").Value);
 						}
 						planet.Regions = new List<string>();
-						planet.OutputSliderValues = new Dictionary<string, int>();
+						planet.Resources = new Dictionary<string, float>();
 						foreach (XElement value in item.Elements())
 						{
 							switch (value.Name.LocalName)
 							{
 								case "Region": planet.Regions.Add(value.Attribute("type").Value);
 									break;
-								case "OutputSlider": planet.OutputSliderValues.Add(value.Attribute("type").Value, int.Parse(value.Attribute("value").Value));
+								case "Resource": planet.Resources.Add(value.Attribute("type").Value, float.Parse(value.Attribute("amount").Value, CultureInfo.InvariantCulture));
 									break;
 							}
 						}

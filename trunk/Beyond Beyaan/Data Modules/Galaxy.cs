@@ -549,7 +549,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Setup
-		public List<StarSystem> SetStartingSystems(Empire empire, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, out List<Planet> startingPlanets)
+		public List<StarSystem> SetStartingSystems(Empire empire, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, out List<Planet> startingPlanets)
 		{
 			Random r = new Random();
 			List<StarSystem> startingSystems = new List<StarSystem>();
@@ -565,7 +565,7 @@ namespace Beyond_Beyaan
 						int starIter = r.Next(starSystems.Count);
 						if (starSystems[starIter].Type.Inhabitable && starSystems[starIter].EmpiresWithPlanetsInThisSystem.Count == 0)
 						{
-							starSystems[starIter].SetSystem(empire, empire.EmpireRace.StartingSystems[i], planetTypeManager, regionTypeManager, r, out ownedPlanets);
+							starSystems[starIter].SetSystem(empire, empire.EmpireRace.StartingSystems[i], planetTypeManager, regionTypeManager, resourceManager, r, out ownedPlanets);
 							starSystems[starIter].UpdateOwners();
 							startingSystems.Add(starSystems[starIter]);
 							startingPlanets.AddRange(ownedPlanets);
@@ -597,7 +597,7 @@ namespace Beyond_Beyaan
 							}
 						}
 					}
-					potentialSystem.SetSystem(empire, empire.EmpireRace.StartingSystems[i], planetTypeManager, regionTypeManager, r, out ownedPlanets);
+					potentialSystem.SetSystem(empire, empire.EmpireRace.StartingSystems[i], planetTypeManager, regionTypeManager, resourceManager, r, out ownedPlanets);
 					potentialSystem.UpdateOwners();
 					startingPlanets.AddRange(ownedPlanets);
 					startingSystems.Add(potentialSystem);

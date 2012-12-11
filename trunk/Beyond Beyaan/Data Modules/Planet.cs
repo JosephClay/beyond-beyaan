@@ -23,8 +23,6 @@ namespace Beyond_Beyaan
 		string numericName;
 		private List<Region> regions;
 		private float spaceUsage;
-		private Dictionary<Resource, float> _productions;
-		private Dictionary<Resource, float> _consumptions;
 		private List<Race> races;
 		#endregion
 
@@ -151,7 +149,7 @@ namespace Beyond_Beyaan
 			this.name = name;
 			this.numericName = numericName;
 		}
-		public void SetPlanet(Empire owner, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, StartingPlanet planet) //Set this planet to the specified information
+		public void SetPlanet(Empire owner, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, StartingPlanet planet) //Set this planet to the specified information
 		{
 			planetType = planetTypeManager.GetPlanet(planet.PlanetType);
 			regions = new List<Region>();
@@ -168,6 +166,14 @@ namespace Beyond_Beyaan
 				races.Add(owner.EmpireRace);
 				Population.Add(owner.EmpireRace, planet.Population);
 				//outputPercentages = new Dictionary<string, int>(planet.OutputSliderValues);
+			}
+			foreach (var startingResource in planet.Resources)
+			{
+				Resource resource = resourceManager.GetResource(startingResource.Key);
+				if (resource != null)
+				{
+					Resources[resource] = startingResource.Value;
+				}
 			}
 			CalculateSpaceUsage();
 		}
@@ -232,82 +238,6 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void CalculateFoodConsumption(Dictionary<Resource, float> foodConsumption)
-		{
-			foreach (var race in Population)
-			{
-				foreach (var consumption in race.Key.Consumptions)
-				{
-					if (foodConsumption.ContainsKey(consumption.Key))
-					{
-						foodConsumption[consumption.Key] += race.Value * consumption.Value;
-					}
-					else
-					{
-						foodConsumption[consumption.Key] = race.Value * consumption.Value;
-					}
-				}
-			}
-		}
-
-		public void ConsumeFood(Dictionary<Resource, float> resources, Dictionary<Resource, float> shortages)
-		{
-			foreach (var race in Population)
-			{
-				foreach (var consumption in race.Key.Consumptions)
-				{
-					if (resources.ContainsKey(consumption.Key))
-					{
-						resources[consumption.Key] -= race.Value * consumption.Value * shortages[consumption.Key];
-					}
-				}
-			}
-		}
-
-		public void CalculateOptimalConsumption(Dictionary<Resource, float> currentConsumption)
-		{
-			float inefficiency = CalculateIneffectivity();
-
-			//To-do: include maintenance for buildings
-
-			
-
-			//Calculate the initial region consumption (add up all the regional bonuses then average them)
-			Dictionary<string, Dictionary<Resource, float>> regionConsumptions = new Dictionary<string, Dictionary<Resource, float>>();
-			foreach (Region region in regions)
-			{
-				if (region.RegionType.Consumptions.Count == 0)
-				{
-					//Skip those that don't consume anything, i.e. farming or mining
-					continue;
-				}
-				foreach (var consumption in region.RegionType.Consumptions)
-				{
-					float rate = consumption.Value * inefficiency;
-					//To-do - include specials and buildings
-					float totalConsumption = 0;
-
-					foreach (var race in Population)
-					{
-						float value = (race.Value / regions.Count) * rate;
-						if (race.Key.ConsumptionBonuses.ContainsKey(region.RegionType.RegionTypeName))
-						{
-							value *= race.Key.ConsumptionBonuses[region.RegionType.RegionTypeName];
-						}
-						totalConsumption += value;
-					}
-					if (currentConsumption.ContainsKey(consumption.Key))
-					{
-						currentConsumption[consumption.Key] += totalConsumption;
-					}
-					else
-					{
-						currentConsumption[consumption.Key] = totalConsumption;
-					}
-				}
-			}
-		}
-
 		public void TallyConsumptions(Dictionary<Resource, float> consumptions)
 		{
 			Consumptions.Clear();
@@ -336,6 +266,24 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+			foreach (var race in Population)
+			{
+				foreach (var consumption in race.Key.Consumptions)
+				{
+					float value = consumption.Value * race.Value;
+					if (Consumptions.ContainsKey(consumption.Key))
+					{
+						Consumptions[consumption.Key] += value;
+					}
+					else
+					{
+						Consumptions[consumption.Key] = value;
+					}
+				}
+			}
+
+			// TODO: Tally building maintenance
+
 			foreach (KeyValuePair<Resource, float> consumption in Consumptions)
 			{
 				if (consumption.Key.LimitTo != LimitTo.PLANET)
@@ -543,129 +491,6 @@ namespace Beyond_Beyaan
 			{
 				AvailableResources.Remove(resourceShared);
 			}
-		}
-
-		public void CalculateConsumptionAndProduction(Dictionary<Resource, float> shortages, Dictionary<Resource, float> consumptions, Dictionary<Resource, float> productions)
-		{
-			float inefficiency = CalculateIneffectivity();
-
-			//Calculate the initial region consumption and production (add up all the regional bonuses then average them)
-			Dictionary<string, Dictionary<Resource, float>> regionConsumptions = new Dictionary<string, Dictionary<Resource, float>>();
-			Dictionary<string, Dictionary<Resource, float>> regionProductions = new Dictionary<string, Dictionary<Resource, float>>();
-
-			_productions = new Dictionary<Resource, float>();
-			_consumptions = new Dictionary<Resource, float>();
-
-			foreach (Region region in regions)
-			{
-				//Find the lowest shortage for the region
-				float lowestShortage = 1.0f;
-				foreach (var consumption in region.RegionType.Consumptions)
-				{
-					if (shortages[consumption.Key] < lowestShortage)
-					{
-						lowestShortage = shortages[consumption.Key];
-					}
-				}
-				region.CurrentConsumptions = new Dictionary<Resource, float>();
-				region.CurrentProductions = new Dictionary<Resource, float>();
-				foreach (var consumption in region.RegionType.Consumptions)
-				{
-					// Get the regular consumption,
-					float rate = consumption.Value * inefficiency * lowestShortage;
-					//To-do - include specials and buildings in rate equation
-					float totalConsumption = 0;
-
-					foreach (var race in Population)
-					{
-						float value = (race.Value / regions.Count) * rate;
-						if (race.Key.ConsumptionBonuses.ContainsKey(region.RegionType.RegionTypeName))
-						{
-							value *= race.Key.ConsumptionBonuses[region.RegionType.RegionTypeName];
-						}
-						totalConsumption += value;
-					}
-					//Region Consumptions
-					region.CurrentConsumptions[consumption.Key] = totalConsumption;
-
-					//Planet Consumptions
-					if (_consumptions.ContainsKey(consumption.Key))
-					{
-						_consumptions[consumption.Key] += totalConsumption;
-					}
-					else
-					{
-						_consumptions[consumption.Key] = totalConsumption;
-					}
-
-					//Empire Consumptions
-					if (consumptions.ContainsKey(consumption.Key))
-					{
-						consumptions[consumption.Key] += totalConsumption;
-					}
-					else
-					{
-						consumptions[consumption.Key] = totalConsumption;
-					}
-				}
-				foreach (var production in region.RegionType.Productions)
-				{
-					// Get the regular production,
-					float rate = production.Value * inefficiency * lowestShortage;
-					//To-do - include specials and buildings in rate equation
-					float totalProduction = 0;
-
-					foreach (var race in Population)
-					{
-						float value = (race.Value / regions.Count) * rate;
-						if (race.Key.ProductionBonuses.ContainsKey(region.RegionType.RegionTypeName))
-						{
-							value *= race.Key.ProductionBonuses[region.RegionType.RegionTypeName];
-						}
-						totalProduction += value;
-					}
-					//Region Productions
-					region.CurrentProductions[production.Key] = totalProduction;
-
-					//Planet Productions
-					if (_productions.ContainsKey(production.Key))
-					{
-						_productions[production.Key] += totalProduction;
-					}
-					else
-					{
-						_productions[production.Key] = totalProduction;
-					}
-
-					//Empire Productions
-					if (productions.ContainsKey(production.Key))
-					{
-						productions[production.Key] += totalProduction;
-					}
-					else
-					{
-						productions[production.Key] = totalProduction;
-					}
-				}
-			}
-		}
-
-		private float CalculateIneffectivity()
-		{
-			float spaceUsage = 0;
-			foreach (var race in Population)
-			{
-				spaceUsage += race.Value * 1.0f; //race.Key.SpaceUsage
-			}
-
-			Dictionary<string, float> ineffectivities = new Dictionary<string, float>();
-			//Calculate ineffectivity - If people assigned are greater than planet capacity, diminish the optimal output 
-
-			if (spaceUsage > regions.Count * 10)
-			{
-				return (float)(Math.Sqrt((regions.Count * 10) / spaceUsage));
-			}
-			return 1.0f;
 		}
 
 		public float GetRacePopulation(Race whichRace)

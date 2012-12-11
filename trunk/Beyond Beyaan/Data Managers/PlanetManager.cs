@@ -30,23 +30,6 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Functions
-		public void CalculateFoodConsumption(Dictionary<Resource, float> foodConsumption)
-		{
-			foodConsumption.Clear();
-			foreach (Planet planet in planets)
-			{
-				planet.CalculateFoodConsumption(foodConsumption);
-			}
-		}
-
-		public void ConsumeFood(Dictionary<Resource, float> resources, Dictionary<Resource, float> shortages)
-		{
-			foreach (Planet planet in planets)
-			{
-				planet.ConsumeFood(resources, shortages);
-			}
-		}
-
 		public void PoolResources(Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
 		{
 			// TODO: Update star systems' available resources and shortages for display
@@ -120,41 +103,6 @@ namespace Beyond_Beyaan
 				}
 			}
 		}
-
-		/*public void UpdateProduction(Dictionary<Resource, float> productions, Dictionary<Resource, float> consumptions, Dictionary<Resource, float> shortages, Dictionary<Resource, float> resources)
-		{
-			consumptions.Clear();
-			foreach (Planet planet in planets)
-			{
-				planet.CalculateOptimalConsumption(consumptions);
-			}
-			shortages.Clear();
-			foreach (var consumption in consumptions)
-			{
-				if (resources.ContainsKey(consumption.Key))
-				{
-					if (resources[consumption.Key] < consumption.Value)
-					{
-						shortages[consumption.Key] = resources[consumption.Key] / consumption.Value;
-					}
-					else
-					{
-						shortages[consumption.Key] = 1.0f;
-					}
-				}
-				else
-				{
-					//No resource, so nothing to produce
-					shortages[consumption.Key] = 0.0f;
-				}
-			}
-			consumptions.Clear();
-			productions.Clear();
-			foreach (Planet planet in planets)
-			{
-				planet.CalculateConsumptionAndProduction(shortages, consumptions, productions);
-			}
-		}*/
 
 		public void UpdatePopGrowth(Dictionary<Resource, float> foodShortages)
 		{
