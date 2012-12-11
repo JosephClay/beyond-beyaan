@@ -163,15 +163,14 @@
           <Region type="Industry" />
           <Region type="Industry" />
           <Region type="Agriculture" />
+          <Region type="Agriculture" />
+          <Region type="Agriculture" />
           <Region type="Research" />
           <Region type="Mining" />
-          <Region type="Undeveloped" />
-          <Region type="Undeveloped" />
-          <Region type="Undeveloped" />
-          <OutputSlider type="Industry" value="25" />
-          <OutputSlider type="Agriculture" value="25" />
-          <OutputSlider type="Research" value="25" />
-          <OutputSlider type="Mining" value="25" />
+          <Region type="Mining" />
+          <Resource type="Food" amount="100" />
+          <Resource type="Billion Credit" amount="50" />
+          <Resource type="Ores" amount="50" />
         </Planet>
         <!--<Squadron name="Scout">
           <Ship name="Scout" count="1" />

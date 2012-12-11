@@ -135,7 +135,7 @@ namespace Beyond_Beyaan
 		}
 		#endregion
 
-		public void SetSystem(Empire empire, StartingSystem system, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, Random r, out List<Planet> ownedPlanets)
+		public void SetSystem(Empire empire, StartingSystem system, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, Random r, out List<Planet> ownedPlanets)
 		{
 			if (system.OverrideSystem) //Replace everything in this system with the specified system's info
 			{
@@ -153,11 +153,11 @@ namespace Beyond_Beyaan
 						if (i >= planets.Count)
 						{
 							planets.Add(new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager));
-							planets[i].SetPlanet(empire, planetTypeManager, regionTypeManager, system.Planets[i]);
+							planets[i].SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
 						}
 						else
 						{
-							planets[i].SetPlanet(empire, planetTypeManager, regionTypeManager, system.Planets[i]);
+							planets[i].SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
 						}
 						if (system.Planets[i].Owned)
 						{
@@ -177,7 +177,7 @@ namespace Beyond_Beyaan
 							int planetToReplace = r.Next(planets.Count);
 							if (!replacedPlanets.Contains(planetToReplace))
 							{
-								planets[planetToReplace].SetPlanet(empire, planetTypeManager, regionTypeManager, system.Planets[i]);
+								planets[planetToReplace].SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
 								if (system.Planets[i].Owned)
 								{
 									ownedPlanets.Add(planets[planetToReplace]);
@@ -195,12 +195,12 @@ namespace Beyond_Beyaan
 							{
 								//add at end
 								planets.Add(new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager));
-								planets[position].SetPlanet(empire, planetTypeManager, regionTypeManager, system.Planets[i]);
+								planets[position].SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
 							}
 							else
 							{
 								planets.Insert(position, new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager));
-								planets[position].SetPlanet(empire, planetTypeManager, regionTypeManager, system.Planets[i]);
+								planets[position].SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
 								//Correct the list
 								for (int p = 0; p < replacedPlanets.Count; p++)
 								{
@@ -225,12 +225,12 @@ namespace Beyond_Beyaan
 					{
 						//add at end
 						planets.Add(new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager));
-						planets[position].SetPlanet(empire, planetTypeManager, regionTypeManager, system.Planets[i]);
+						planets[position].SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
 					}
 					else
 					{
 						planets.Insert(position, new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager));
-						planets[position].SetPlanet(empire, planetTypeManager, regionTypeManager, system.Planets[i]);
+						planets[position].SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
 					}
 					if (system.Planets[position].Owned)
 					{
@@ -429,7 +429,14 @@ namespace Beyond_Beyaan
 		}
 		public void TallyConsumptions(Empire whichEmpire, Dictionary<Resource, float> consumptions)
 		{
-			Consumptions[whichEmpire].Clear();
+			if (Consumptions.ContainsKey(whichEmpire))
+			{
+				Consumptions[whichEmpire].Clear();
+			}
+			else
+			{
+				Consumptions.Add(whichEmpire, new Dictionary<Resource, float>());
+			}
 
 			foreach (Planet planet in Planets)
 			{
@@ -456,7 +463,14 @@ namespace Beyond_Beyaan
 		}
 		public void TallyResources(Empire whichEmpire, Dictionary<Resource, float> resources)
 		{
-			Resources[whichEmpire].Clear();
+			if (Resources.ContainsKey(whichEmpire))
+			{
+				Resources[whichEmpire].Clear();
+			}
+			else
+			{
+				Resources.Add(whichEmpire, new Dictionary<Resource, float>());
+			}
 
 			foreach (Planet planet in Planets)
 			{
@@ -490,8 +504,22 @@ namespace Beyond_Beyaan
 		//This grabs the resouces, then deducts what it don't need to consume as it is passed to system and empire
 		public void TallyAvailableResourcesAndShortages(Empire whichEmpire, Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
 		{
-			AvailableResources[whichEmpire].Clear();
-			Shortages[whichEmpire].Clear();
+			if (AvailableResources.ContainsKey(whichEmpire))
+			{
+				AvailableResources[whichEmpire].Clear();
+			}
+			else
+			{
+				AvailableResources.Add(whichEmpire, new Dictionary<Resource, float>());
+			}
+			if (Shortages.ContainsKey(whichEmpire))
+			{
+				Shortages[whichEmpire].Clear();
+			}
+			else
+			{
+				Shortages.Add(whichEmpire, new Dictionary<Resource, float>());
+			}
 
 			foreach (Planet planet in Planets)
 			{
@@ -499,7 +527,7 @@ namespace Beyond_Beyaan
 				{
 					Dictionary<Resource, float> tempAvailableResources = new Dictionary<Resource, float>();
 					planet.TallyAvailableResourcesAndShortages(tempAvailableResources, Shortages[whichEmpire]);
-					foreach (KeyValuePair<Resource, float> projectConsumption in ProjectConsumptions[whichEmpire])
+					/*foreach (KeyValuePair<Resource, float> projectConsumption in ProjectConsumptions[whichEmpire])
 					{
 						if (tempAvailableResources.ContainsKey(projectConsumption.Key))
 						{
@@ -509,7 +537,7 @@ namespace Beyond_Beyaan
 								AvailableResources[projectConsumption.Key] = 0;
 							}
 							else*/
-							{
+							/*{
 								if (tempAvailableResources[projectConsumption.Key] >= projectConsumption.Value)
 								{
 									//Sufficient to finish this portion of the project's cost
@@ -530,7 +558,7 @@ namespace Beyond_Beyaan
 								tempAvailableResources.Remove(projectConsumption.Key);
 							}
 						}
-					}
+					}*/
 					Dictionary<Resource, float> amountUsed;
 					//Process empire's projects
 					whichEmpire.CheckAvailableResources(tempAvailableResources, out amountUsed);
@@ -596,7 +624,14 @@ namespace Beyond_Beyaan
 
 		public void TallyProductions(Empire whichEmpire, Dictionary<Resource, float> productions)
 		{
-			Productions[whichEmpire].Clear();
+			if (Productions.ContainsKey(whichEmpire))
+			{
+				Productions[whichEmpire].Clear();
+			}
+			else
+			{
+				Productions.Add(whichEmpire, new Dictionary<Resource, float>());
+			}
 
 			foreach (Planet planet in Planets)
 			{

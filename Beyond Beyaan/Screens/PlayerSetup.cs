@@ -352,11 +352,12 @@ namespace Beyond_Beyaan.Screens
 
 						gameMain.empireManager.AddEmpire(empire);
 						List<Planet> ownedPlanets;
-						List<StarSystem> startingSystems = gameMain.galaxy.SetStartingSystems(empire, gameMain.planetTypeManager, gameMain.regionTypeManager, out ownedPlanets);
+						List<StarSystem> startingSystems = gameMain.galaxy.SetStartingSystems(empire, gameMain.planetTypeManager, gameMain.regionTypeManager, gameMain.resourceManager, out ownedPlanets);
 						empire.SetHomeSystem(startingSystems, ownedPlanets);
 						empire.TechnologyManager.AddTechnologies(gameMain.masterTechnologyList.GetRandomizedTechnologies(empire.EmpireRace));
 						empire.TechnologyManager.SetInitialBracket(0, 5, empire.ItemManager);
 						empire.SetStartingFleets(startingSystems, gameMain.masterTechnologyList, gameMain.iconManager);
+						empire.RefreshEconomy();
 					}
 					gameMain.empireManager.SetupContacts();
 					//gameMain.empireManager.UpdateInfluenceMaps(gameMain.galaxy);
