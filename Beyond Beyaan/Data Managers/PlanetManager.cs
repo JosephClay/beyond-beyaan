@@ -30,7 +30,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Functions
-		public void PoolResources(Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
+		/*public void PoolResources(Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
 		{
 			// TODO: Update star systems' available resources and shortages for display
 
@@ -102,7 +102,7 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-		}
+		}*/
 
 		public void UpdatePopGrowth(Dictionary<Resource, float> foodShortages)
 		{

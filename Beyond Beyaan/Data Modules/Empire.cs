@@ -571,15 +571,31 @@ namespace Beyond_Beyaan
 			starSystemManager.TallyConsumptions(out consumptions);
 			starSystemManager.TallyResources(out resources);
 			starSystemManager.TallyAvailableResourcesAndShortages(out availableResources, out shortages);
-			planetManager.PoolResources(availableResources, shortages);
+
+			Dictionary<Resource, float> percentageAvailableShared = new Dictionary<Resource, float>();
+			Dictionary<Resource, float> percentageSharedConsumed = new Dictionary<Resource, float>();
+
+			foreach (var shortage in shortages)
+			{
+				if (availableResources.ContainsKey(shortage.Key))
+				{
+					percentageAvailableShared[shortage.Key] = shortage.Value / availableResources[shortage.Key];
+					if (percentageAvailableShared[shortage.Key] > 1)
+					{
+						percentageAvailableShared[shortage.Key] = 1;
+					}
+					percentageSharedConsumed[shortage.Key] = availableResources[shortage.Key] / shortage.Value;
+					if (percentageSharedConsumed[shortage.Key] > 1)
+					{
+						percentageSharedConsumed[shortage.Key] = 1;
+					}
+				}
+			}
+
+			starSystemManager.SetSharedResources(percentageAvailableShared, percentageSharedConsumed);
+
 			starSystemManager.CalculatePopGrowth();
 			starSystemManager.TallyProductions(out productions);
-		}
-
-		public void CheckAvailableResources(Dictionary<Resource, float> planetAvailableResources, out Dictionary<Resource, float> resourcesUsed)
-		{
-			resourcesUsed = new Dictionary<Resource, float>();
-			// TODO: Process projects here
 		}
 
 		public void ProcessTurn()
