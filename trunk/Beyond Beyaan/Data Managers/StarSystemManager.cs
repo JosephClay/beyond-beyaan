@@ -70,6 +70,14 @@ namespace Beyond_Beyaan.Data_Managers
 			}
 		}
 
+		public void SetSharedResources(Dictionary<Resource, float> sharedAvailable, Dictionary<Resource, float> sharedConsumped)
+		{
+			foreach (StarSystem starSystem in StarSystems)
+			{
+				starSystem.SetSharedResources(empire, sharedAvailable, sharedConsumped);
+			}
+		}
+
 		public void CalculatePopGrowth()
 		{
 			foreach (StarSystem starSystem in StarSystems)

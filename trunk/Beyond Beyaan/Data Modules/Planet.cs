@@ -458,38 +458,61 @@ namespace Beyond_Beyaan
 		}
 
 		//Resources that's donated by other planets are added here
-		public void AddSuppliedResources(Resource resourceSupplied, float amount)
+		public void SetSharedResources(Dictionary<Resource, float> empireSharedAvailable, Dictionary<Resource, float> empireConsumpedShared, Dictionary<Resource, float> systemSharedAvailable, Dictionary<Resource, float> systemConsumpedShared)
 		{
-			if (ResourcesSupplied.ContainsKey(resourceSupplied))
+			ResourcesShared.Clear();
+			ResourcesSupplied.Clear();
+			List<Resource> availableToRemove = new List<Resource>();
+			List<Resource> shortageToRemove = new List<Resource>();
+			foreach (var resource in AvailableResources)
 			{
-				ResourcesSupplied[resourceSupplied] += amount;
+				if (empireSharedAvailable.ContainsKey(resource.Key))
+				{
+					ResourcesShared[resource.Key] = resource.Value * empireSharedAvailable[resource.Key];
+					AvailableResources[resource.Key] -= ResourcesShared[resource.Key];
+					if (AvailableResources[resource.Key] <= 0)
+					{
+						availableToRemove.Add(resource.Key);
+					}
+				}
+				else if (systemSharedAvailable.ContainsKey(resource.Key))
+				{
+					ResourcesShared[resource.Key] = resource.Value * systemSharedAvailable[resource.Key];
+					AvailableResources[resource.Key] -= ResourcesShared[resource.Key];
+					if (AvailableResources[resource.Key] <= 0)
+					{
+						availableToRemove.Add(resource.Key);
+					}
+				}
 			}
-			else
+			foreach (var shortage in Shortages)
 			{
-				ResourcesSupplied[resourceSupplied] = amount;
+				if (empireConsumpedShared.ContainsKey(shortage.Key))
+				{
+					ResourcesSupplied[shortage.Key] = shortage.Value * empireConsumpedShared[shortage.Key];
+					Shortages[shortage.Key] -= ResourcesSupplied[shortage.Key];
+					if (Shortages[shortage.Key] <= 0)
+					{
+						shortageToRemove.Add(shortage.Key);
+					}
+				}
+				else if (systemConsumpedShared.ContainsKey(shortage.Key))
+				{
+					ResourcesSupplied[shortage.Key] = shortage.Value * systemConsumpedShared[shortage.Key];
+					Shortages[shortage.Key] -= ResourcesSupplied[shortage.Key];
+					if (Shortages[shortage.Key] <= 0)
+					{
+						shortageToRemove.Add(shortage.Key);
+					}
+				}
 			}
-			Shortages[resourceSupplied] -= amount;
-			if (Shortages[resourceSupplied] <= 0)
+			foreach (var shortage in shortageToRemove)
 			{
-				Shortages.Remove(resourceSupplied);
+				Shortages.Remove(shortage);
 			}
-		}
-
-		//Resources that's sent to other planets
-		public void AddSharedResources(Resource resourceShared, float amount)
-		{
-			if (ResourcesShared.ContainsKey(resourceShared))
+			foreach (var resource in availableToRemove)
 			{
-				ResourcesShared[resourceShared] += amount;
-			}
-			else
-			{
-				ResourcesShared[resourceShared] = amount;
-			}
-			AvailableResources[resourceShared] -= amount;
-			if (AvailableResources[resourceShared] <= 0)
-			{
-				AvailableResources.Remove(resourceShared);
+				AvailableResources.Remove(resource);
 			}
 		}
 

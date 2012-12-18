@@ -559,24 +559,6 @@ namespace Beyond_Beyaan
 							}
 						}
 					}*/
-					Dictionary<Resource, float> amountUsed;
-					//Process empire's projects
-					whichEmpire.CheckAvailableResources(tempAvailableResources, out amountUsed);
-					foreach (KeyValuePair<Resource, float> resource in amountUsed)
-					{
-						planet.AddSharedResources(resource.Key, resource.Value);
-					}
-					foreach (KeyValuePair<Resource, float> resource in tempAvailableResources)
-					{
-						if (AvailableResources[whichEmpire].ContainsKey(resource.Key))
-						{
-							AvailableResources[whichEmpire][resource.Key] += resource.Value;
-						}
-						else
-						{
-							AvailableResources[whichEmpire][resource.Key] = resource.Value;
-						}
-					}
 				}
 			}
 
@@ -607,6 +589,36 @@ namespace Beyond_Beyaan
 					{
 						shortages[resource.Key] = resource.Value;
 					}
+				}
+			}
+		}
+
+		public void SetSharedResources(Empire empire, Dictionary<Resource, float> sharedAvailable, Dictionary<Resource, float> sharedConsumped)
+		{
+			Dictionary<Resource, float> percentageAvailableShared = new Dictionary<Resource, float>();
+			Dictionary<Resource, float> percentageSharedConsumed = new Dictionary<Resource, float>();
+
+			foreach (var shortage in Shortages[empire])
+			{
+				if (shortage.Key.LimitTo == LimitTo.SYSTEM && AvailableResources[empire].ContainsKey(shortage.Key))
+				{
+					percentageAvailableShared[shortage.Key] = shortage.Value / AvailableResources[empire][shortage.Key];
+					if (percentageAvailableShared[shortage.Key] > 1)
+					{
+						percentageAvailableShared[shortage.Key] = 1;
+					}
+					percentageSharedConsumed[shortage.Key] = AvailableResources[empire][shortage.Key] / shortage.Value;
+					if (percentageSharedConsumed[shortage.Key] > 1)
+					{
+						percentageSharedConsumed[shortage.Key] = 1;
+					}
+				}
+			}
+			foreach (Planet planet in planets)
+			{
+				if (planet.Owner == empire)
+				{
+					planet.SetSharedResources(sharedAvailable, sharedConsumped, percentageAvailableShared, percentageSharedConsumed);
 				}
 			}
 		}
