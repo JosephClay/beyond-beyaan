@@ -63,6 +63,7 @@ namespace Beyond_Beyaan.Data_Modules
 		public Dictionary<string, float> ProductionBonuses { get; private set; }
 		public Dictionary<string, float> ConsumptionBonuses { get; private set; }
 		public Dictionary<Resource, float> Consumptions { get; private set; }
+		public Dictionary<Resource, float> Productions { get; private set; }
 
 		public string RaceName { get; private set; }
 		public string RaceDescription { get; private set; }
@@ -100,6 +101,7 @@ namespace Beyond_Beyaan.Data_Modules
 			ProductionBonuses = new Dictionary<string, float>();
 			ConsumptionBonuses = new Dictionary<string, float>();
 			Consumptions = new Dictionary<Resource, float>();
+			Productions = new Dictionary<Resource, float>();
 
 			string reason;
 
@@ -116,27 +118,15 @@ namespace Beyond_Beyaan.Data_Modules
                     Consumptions.Add(resourceManager.GetResource(values[0]), float.Parse(values[1], CultureInfo.InvariantCulture));
 				}
 			}
-			/*if (attributes.Attribute("agriculture") != null)
+			string[] productions = attributes.Attribute("produces").Value.Split(new[] { '|' });
+			foreach (string production in productions)
 			{
-				AgricultureMultipler = int.Parse(attributes.Attribute("agriculture").Value) * 0.01f;
+				string[] values = production.Split(new[] { ',' });
+				if (values.Length == 2)
+				{
+					Productions.Add(resourceManager.GetResource(values[0]), float.Parse(values[1], CultureInfo.InvariantCulture));
+				}
 			}
-			if (attributes.Attribute("environment") != null)
-			{
-				EnvironmentMultipler = int.Parse(attributes.Attribute("environment").Value) * 0.01f;
-			}
-			if (attributes.Attribute("commerce") != null)
-			{
-				CommerceMultipler = int.Parse(attributes.Attribute("commerce").Value) * 0.01f;
-			}
-			if (attributes.Attribute("research") != null)
-			{
-				ResearchMultipler = int.Parse(attributes.Attribute("research").Value) * 0.01f;
-			}
-			if (attributes.Attribute("construction") != null)
-			{
-				ConstructionMultipler = int.Parse(attributes.Attribute("construction").Value) * 0.01f;
-			}*/
-
 			XElement bonusAttributes = race.Element("ProductionBonuses");
 			foreach (XElement element in bonusAttributes.Elements())
 			{

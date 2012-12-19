@@ -441,6 +441,21 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+			//Now add races' passive productions
+			foreach (var race in Population)
+			{
+				foreach (var production in race.Key.Productions)
+				{
+					if (Productions.ContainsKey(production.Key))
+					{
+						Productions[production.Key] += production.Value * race.Value;
+					}
+					else
+					{
+						Productions[production.Key] = production.Value * race.Value;
+					}
+				}
+			}
 			foreach (KeyValuePair<Resource, float> production in Productions)
 			{
 				if (production.Key.LimitTo != LimitTo.PLANET)
