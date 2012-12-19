@@ -6,4 +6,5 @@
   <Resource name="Industry" abbreviation="ID" icon="Industry" storable="False" convertsTo="Billion Credit" ratio="0.75" limitTo="System" />
   <Resource name="Research" abbreviation="RP" icon="Research" storable="False" limitTo="Empire" />
   <Resource name="Radioactives" abbreviation="RA" icon="Research" storable="True" limitTo="Empire" />
+  <Resource name="Development" abbreviation="DM" icon="Industry" storable="False" limitTo="Planet" convertsTo="Billion Credit" ratio="0.5" />
 </Resources>
