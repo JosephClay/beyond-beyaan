@@ -91,7 +91,7 @@ namespace Beyond_Beyaan.Data_Managers
 			{
 				//Projects that are done, such as terraforming planets, need to be removed
 				projects.Remove(projectsCompleted[i]);
-				empire.SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, projectsCompleted[i].Location, projectsCompleted[i].PlanetToTerraform, new Point(projectsCompleted[i].Location.X, projectsCompleted[i].Location.Y), projectsCompleted[i].PlanetToTerraform.Name + " is fully terraformed, this project is completed."));
+				//empire.SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, projectsCompleted[i].Location, projectsCompleted[i].PlanetToTerraform, new Point(projectsCompleted[i].Location.X, projectsCompleted[i].Location.Y), projectsCompleted[i].PlanetToTerraform.Name + " is fully terraformed, this project is completed."));
 			}
 		}
 

@@ -16,7 +16,7 @@ namespace Beyond_Beyaan.Data_Modules
 		public Dictionary<string, object> Values { get; set; }
 
 		// To-do: Re-work the maintenance formula
-		public float Maintenance { get { return BaseShipDesign.Maintenance; } }
+		public Dictionary<Resource, float> Maintenance { get { return BaseShipDesign.Maintenance; } }
 
 		public List<EffectInstance> PermEffects { get; private set; }
 

@@ -6,39 +6,42 @@ using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan.Data_Modules
 {
+	public enum PROJECT_TYPE { REGION, REGION_BUILDING, PLANET_BUILDING, PLANET_TERRAFORM, SHIP, SYSTEM_BUILDING, RESEARCH }
+
 	public class Project
 	{
-		public StarSystem Location { get; private set; }
-		public float Cost { get; private set; }
-		public double AmountSoFar { get; private set; }
-		public Planet PlanetToTerraform { get; private set; }
+		public PROJECT_TYPE ProjectType { get; private set; }
+		public StarSystem WhichSystem { get; private set; }
+		public Planet WhichPlanet { get; private set; }
+		public Region WhichRegion { get; private set; }
+		public Dictionary<Resource, float> Cost { get; private set; }
+		public Dictionary<Resource, float> AmountSoFar { get; private set; }
+		//public Planet PlanetToTerraform { get; private set; }
 		public ShipDesign ShipToBuild { get; private set; }
-		public int ProductionCapacityRequired { get; private set; }
+		public RegionType RegionTypeToBuild { get; private set; }
+		//public int ProductionCapacityRequired { get; private set; }
 
-		public Project(StarSystem location, Planet planetToTerraform)
+		public Project(PROJECT_TYPE projectType, StarSystem whichSystem = null, Planet whichPlanet = null, Region whichRegion = null,
+			ShipDesign shipToBuild = null, RegionType regionTypeToBuild = null)
 		{
-			Location = location;
-			Cost = planetToTerraform.PlanetType.CostForTerraforming;
-			PlanetToTerraform = planetToTerraform;
-			AmountSoFar = 0;
-			ProductionCapacityRequired = planetToTerraform.PlanetType.ProductionCapacityRequiredForTerraforming;
-		}
+			ProjectType = projectType;
+			WhichSystem = whichSystem;
+			WhichPlanet = whichPlanet;
+			WhichRegion = whichRegion;
 
-		public Project(StarSystem location, ShipDesign shipToBuild)
-		{
-			Location = location;
-			Dictionary<string, object> shipValues = shipToBuild.GetBasicValues();
-			if (shipValues.ContainsKey("cost"))
+			AmountSoFar = new Dictionary<Resource, float>();
+
+			switch (ProjectType)
 			{
-				Cost = (float)shipValues["cost"];
+				case PROJECT_TYPE.REGION:
+					RegionTypeToBuild = regionTypeToBuild;
+					Cost = new Dictionary<Resource, float>(RegionTypeToBuild.DevelopmentCost);
+					break;
+				case PROJECT_TYPE.SHIP:
+					ShipToBuild = shipToBuild;
+					Cost = new Dictionary<Resource, float>(ShipToBuild.DevelopmentCost);
+					break;
 			}
-			else
-			{
-				Cost = 1;
-			}
-			ShipToBuild = shipToBuild;
-			AmountSoFar = 0;
-			ProductionCapacityRequired = shipToBuild.ShipClass.Size;
 		}
 
 		/*public int Update(double amount, PlanetTypeManager planetTypeManager, Random r)
@@ -65,25 +68,14 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public override string ToString()
 		{
-			if (PlanetToTerraform != null)
+			switch (ProjectType)
 			{
-				return "Terraforming " + PlanetToTerraform.Name;
-			}
-			else
-			{
-				return "Building " + ShipToBuild.Name;
-			}
-		}
-
-		public string GetPotentialProjectName()
-		{
-			if (PlanetToTerraform != null)
-			{
-				return "Terraform " + PlanetToTerraform.Name;
-			}
-			else
-			{
-				return "Build " + ShipToBuild.Name;
+				case PROJECT_TYPE.REGION:
+					return "Building " + RegionTypeToBuild.RegionTypeName;
+				case PROJECT_TYPE.SHIP:
+					return "Building " + ShipToBuild.Name;
+				default:
+					return "Error - Unknown";
 			}
 		}
 	}

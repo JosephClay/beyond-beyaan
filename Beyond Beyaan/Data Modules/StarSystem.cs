@@ -367,7 +367,7 @@ namespace Beyond_Beyaan
 		}
 		public List<Project> GetAvailableProjects(Empire whichEmpire)
 		{
-			int totalAmount = GetProductionCapacity(whichEmpire);
+			/*int totalAmount = GetProductionCapacity(whichEmpire);
 			List<Project> availableProjects = new List<Project>();
 			if (totalAmount <= 0)
 			{
@@ -388,7 +388,8 @@ namespace Beyond_Beyaan
 					availableProjects.Add(new Project(this, ship));
 				}
 			}
-			return availableProjects;
+			return availableProjects;*/
+			return null;
 		}
 		public int GetProductionCapacity(Empire whichEmpire)
 		{
@@ -406,14 +407,15 @@ namespace Beyond_Beyaan
 			 * }
 			 **/
 			//Now subtract the existing projects
-			foreach (Project project in whichEmpire.ProjectManager.Projects)
+			/*foreach (Project project in whichEmpire.ProjectManager.Projects)
 			{
 				if (project.Location == this)
 				{
 					amount -= project.ProductionCapacityRequired;
 				}
 			}
-			return amount;
+			return amount;*/
+			return 0;
 		}
 		public float GetPopulation(Empire whichEmpire)
 		{
