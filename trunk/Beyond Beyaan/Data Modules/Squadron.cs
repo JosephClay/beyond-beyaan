@@ -412,14 +412,15 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public float GetExpenses()
+		public Dictionary<Resource, float> GetExpenses()
 		{
-			float amount = 0;
+			// TODO: Tally up expenses
+			/*float amount = 0;
 			foreach (ShipInstance ship in ships)
 			{
 				amount += ship.Maintenance;
-			}
-			return amount;
+			}*/
+			return new Dictionary<Resource, float>();
 		}
 		#endregion
 	}

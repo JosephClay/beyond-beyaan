@@ -235,7 +235,7 @@ namespace Beyond_Beyaan
 			get;
 			private set;
 		}
-		public float ShipMaintenance
+		public Dictionary<Resource, float> ShipMaintenance
 		{
 			get
 			{

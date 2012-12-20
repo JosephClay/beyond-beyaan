@@ -144,14 +144,16 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public float GetExpenses()
+		public Dictionary<Resource, float> GetExpenses()
 		{
-			float amount = 0;
+			//TODO: Tally up expenses
+			/*float amount = 0;
 			foreach (Squadron fleet in fleets)
 			{
 				amount += fleet.GetExpenses();
 			}
-			return amount;
+			return amount;*/
+			return new Dictionary<Resource, float>();
 		}
 
 		public float ScrapShip(ShipDesign ship)

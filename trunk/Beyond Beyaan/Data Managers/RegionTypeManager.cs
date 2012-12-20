@@ -61,6 +61,18 @@ namespace Beyond_Beyaan.Data_Managers
 						}
 					}
 				}
+				if (element.Attribute("cost") != null)
+				{
+					string[] values = element.Attribute("cost").Value.Split(new[] { '|' });
+					foreach (string value in values)
+					{
+						string[] split = value.Split(new[] { ',' });
+						if (split.Length == 2)
+						{
+							regionType.DevelopmentCost.Add(gameMain.resourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
+						}
+					}
+				}
 				regionTypes.Add(regionType.RegionTypeName, regionType);
 			}
 		}

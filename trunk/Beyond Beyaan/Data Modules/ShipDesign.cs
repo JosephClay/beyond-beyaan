@@ -12,8 +12,11 @@ namespace Beyond_Beyaan.Data_Modules
 		public Ship ShipClass { get; set; }
 		public int WhichStyle { get; set; }
 		public List<Equipment> Equipments { get; private set; }
-		public float Maintenance { get { return 0; } }//Cost * 0.1f; } }
 		public Race Race { get; set; }
+
+		public Dictionary<Resource, float> DevelopmentCost { get; set; }
+		public Dictionary<Resource, float> Maintenance { get; set; }
+
 		#endregion
 
 		#region Constructors

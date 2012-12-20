@@ -241,7 +241,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void UpdateProjects()
 		{
-			for (int i = 0; i < maxVisible; i++)
+			/*for (int i = 0; i < maxVisible; i++)
 			{
 				progressBars[i].SetMaxProgress(projectManager.Projects[i + projectScrollBar.TopIndex].Cost);
 				progressBars[i].SetProgress((long)projectManager.Projects[i + projectScrollBar.TopIndex].AmountSoFar);
@@ -283,7 +283,7 @@ namespace Beyond_Beyaan.Screens
 					turnsRemainingString = "Paused";
 				}
 				turnsRemaining[i].SetText(turnsRemainingString);
-			}
+			}*/
 		}
 
 		private void OkClick(Project project)

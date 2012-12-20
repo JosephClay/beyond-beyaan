@@ -292,7 +292,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void LoadProjects()
 		{
-			if (availableProjects.Count > 12)
+			/*if (availableProjects.Count > 12)
 			{
 				maxProjectsVisible = 12;
 				projectScrollBar.SetEnabledState(true);
@@ -307,12 +307,12 @@ namespace Beyond_Beyaan.Screens
 			selectedProject = -1;
 			addButton.Active = false;
 			projectCost.SetText("-");
-			RefreshProjects();
+			RefreshProjects();*/
 		}
 
 		private void RefreshProjects()
 		{
-			for (int i = 0; i < maxProjectsVisible; i++)
+			/*for (int i = 0; i < maxProjectsVisible; i++)
 			{
 				projectButtons[i].Selected = false;
 				if (i == selectedProject - projectScrollBar.TopIndex)
@@ -321,7 +321,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				projectNames[i].SetText(availableProjects[i + projectScrollBar.TopIndex].GetPotentialProjectName());
 				projectProductionRequired[i].SetText(availableProjects[i + projectScrollBar.TopIndex].ProductionCapacityRequired.ToString());
-			}
+			}*/
 		}
 
 		private void RefreshSystems()
