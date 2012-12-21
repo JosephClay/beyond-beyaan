@@ -44,27 +44,47 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
-		/*public int Update(double amount, PlanetTypeManager planetTypeManager, Random r)
+		public int Update(Dictionary<Resource, float> amount, float percentage)
 		{
-			AmountSoFar += amount;
-			int totalProduced = 0;
-			while (AmountSoFar > Cost)
+			//Just add the values, even if it exceeds the cost
+			foreach (var resource in Cost)
 			{
-				totalProduced++;
-				AmountSoFar -= Cost;
-				if (PlanetToTerraform != null)
+				if (amount.ContainsKey(resource.Key))
 				{
-					//Update the cost
-					PlanetToTerraform.SetPlanetType(planetTypeManager.GetPlanet(PlanetToTerraform.PlanetType.PlanetTerraformsTo), r);
-					if (string.IsNullOrEmpty(PlanetToTerraform.PlanetType.PlanetTerraformsTo))
+					if (AmountSoFar.ContainsKey(resource.Key))
 					{
-						return -1; //End this project
+						AmountSoFar[resource.Key] += (amount[resource.Key] * percentage);
 					}
-					Cost = PlanetToTerraform.PlanetType.CostForTerraforming;
+					else
+					{
+						AmountSoFar[resource.Key] = (amount[resource.Key] * percentage);
+					}
+				}
+			}
+
+			int totalProduced = 0;
+			bool sufficientFunds = true;
+			while (sufficientFunds)
+			{
+				foreach (var resource in Cost)
+				{
+					if (!AmountSoFar.ContainsKey(resource.Key) || AmountSoFar[resource.Key] < resource.Value)
+					{
+						sufficientFunds = false;
+						break;
+					}
+				}
+				if (sufficientFunds)
+				{
+					totalProduced++;
+					foreach (var resource in Cost)
+					{
+						AmountSoFar[resource.Key] -= resource.Value;
+					}
 				}
 			}
 			return totalProduced;
-		}*/
+		}
 
 		public override string ToString()
 		{
