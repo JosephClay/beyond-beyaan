@@ -305,7 +305,7 @@ namespace Beyond_Beyaan
 			planetManager = new PlanetManager();
 			starSystemManager = new StarSystemManager(this);
 			sitRepManager = new SitRepManager();
-			projectManager = new ProjectManager(this);
+			projectManager = new ProjectManager(this, false);
 			resources = new Dictionary<Resource, float>();
 			consumptions = new Dictionary<Resource, float>();
 			shortages = new Dictionary<Resource, float>();
@@ -557,7 +557,7 @@ namespace Beyond_Beyaan
 
 		public void UpdateProjects(PlanetTypeManager planetTypeManager, Random r)
 		{
-			projectManager.UpdateProjects(EmpireProduction, planetTypeManager, r);
+			projectManager.UpdateProjects(Resources, planetTypeManager, r);
 			//UpdateNetIncome();
 		}
 

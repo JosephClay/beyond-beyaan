@@ -12,17 +12,20 @@ namespace Beyond_Beyaan.Data_Managers
 		private List<Project> projects;
 		private List<int> percentageAmounts;
 		private List<bool> locked;
+		private bool isQueue; //If planet, it's queue, otherwise, apply development to all projects
 
 		public List<Project> Projects { get { return projects; } }
 		public List<int> PercentageAmounts { get { return percentageAmounts; } }
 		public List<bool> Locked { get { return locked; } }
+		public bool IsQueue { get { return isQueue; } }
 
-		public ProjectManager(Empire empire)
+		public ProjectManager(Empire empire, bool isQueue)
 		{
 			projects = new List<Project>();
 			percentageAmounts = new List<int>();
 			locked = new List<bool>();
 			this.empire = empire;
+			this.isQueue = isQueue;
 		}
 
 		public void AddProject(Project project)
@@ -57,19 +60,27 @@ namespace Beyond_Beyaan.Data_Managers
 			projects.RemoveAt(project);
 		}
 
-		public void UpdateProjects(float amount, PlanetTypeManager planetTypeManager, Random r)
+		public void UpdateProjects(Dictionary<Resource, float> amount, PlanetTypeManager planetTypeManager, Random r)
 		{
 			List<Project> projectsCompleted = new List<Project>();
 			for (int i = 0; i < projects.Count; i++)
 			{
-				/*int amountProduced = projects[i].Update(amount * percentageAmounts[i] * 0.01f, planetTypeManager, r);
-				if (amountProduced == -1)
+				int amountProduced = projects[i].Update(amount, percentageAmounts[i]);
+				if (amountProduced > 0)
 				{
-					projectsCompleted.Add(projects[i]);
-				}
-				else if (amountProduced > 0)
-				{
-					if (projects[i].ShipToBuild != null)
+					switch (projects[i].ProjectType)
+					{
+						case PROJECT_TYPE.REGION:
+							projects[i].WhichRegion.RegionType = projects[i].RegionTypeToBuild;
+							projectsCompleted.Add(projects[i]);
+							break;
+						case PROJECT_TYPE.SHIP:
+							//TODO: Finish this
+							//projects[i].WhichSystem.ShipReserves[empire].Add(ships)
+							break;
+					}
+
+					/*if (projects[i].ShipToBuild != null)
 					{
 						//Built ship
 						Squadron newFleet = new Squadron(projects[i].Location);
@@ -84,13 +95,14 @@ namespace Beyond_Beyaan.Data_Managers
 					else
 					{
 						empire.SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, projects[i].Location, projects[i].PlanetToTerraform, new Point(projects[i].Location.X, projects[i].Location.Y), "Your empire has terraformed " + projects[i].PlanetToTerraform.Name + " to " + projects[i].PlanetToTerraform.PlanetType.Name + " in " + projects[i].Location.Name + " system"));
-					}
-				}*/
+					}*/
+				}
 			}
 			for (int i = 0; i < projectsCompleted.Count; i++)
 			{
 				//Projects that are done, such as terraforming planets, need to be removed
 				projects.Remove(projectsCompleted[i]);
+				// TODO: Add to sitrep whatever projects were completed.
 				//empire.SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, projectsCompleted[i].Location, projectsCompleted[i].PlanetToTerraform, new Point(projectsCompleted[i].Location.X, projectsCompleted[i].Location.Y), projectsCompleted[i].PlanetToTerraform.Name + " is fully terraformed, this project is completed."));
 			}
 		}
