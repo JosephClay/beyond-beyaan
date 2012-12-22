@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	public enum LimitTo { PLANET, SYSTEM, EMPIRE }
+	public enum LimitTo { PLANET, PLANET_DEVELOPMENT, SYSTEM, SYSTEM_DEVELOPMENT, EMPIRE, EMPIRE_DEVELOPMENT }
 
 	public class Resource
 	{
