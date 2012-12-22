@@ -42,9 +42,15 @@ namespace Beyond_Beyaan.Data_Managers
 					{
 						case "Planet": newResource.LimitTo = LimitTo.PLANET;
 							break;
+						case "PlanetDevelopment": newResource.LimitTo = LimitTo.PLANET_DEVELOPMENT;
+							break;
 						case "System": newResource.LimitTo = LimitTo.SYSTEM;
 							break;
+						case "SystemDevelopment": newResource.LimitTo = LimitTo.SYSTEM_DEVELOPMENT;
+							break;
 						case "Empire": newResource.LimitTo = LimitTo.EMPIRE;
+							break;
+						case "EmpireDevelopment": newResource.LimitTo = LimitTo.EMPIRE_DEVELOPMENT;
 							break;
 					}
 					resources.Add(newResource.Name, newResource);
