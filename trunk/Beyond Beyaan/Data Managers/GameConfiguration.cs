@@ -7,11 +7,12 @@ using System.Xml.Linq;
 
 namespace Beyond_Beyaan.Data_Managers
 {
-	public class GameConfiguration
+	public static class GameConfiguration
 	{
-		public bool ShowTutorial { get; set; }
+		public static bool ShowTutorial { get; set; }
+		public static bool UseStarlanes { get; set; }
 
-		public bool LoadConfiguration(string filePath, out string reason)
+		public static bool LoadConfiguration(string filePath, out string reason)
 		{
 			SetDefaults();
 			try
@@ -25,6 +26,8 @@ namespace Beyond_Beyaan.Data_Managers
 					{
 						case "showtutorial": ShowTutorial = bool.Parse(attribute.Value);
 							break;
+						case "usestarlanes": UseStarlanes = bool.Parse(attribute.Value);
+							break;
 					}
 				}
 			}
@@ -37,9 +40,10 @@ namespace Beyond_Beyaan.Data_Managers
 			return true;
 		}
 
-		public void SetDefaults()
+		public static void SetDefaults()
 		{
 			ShowTutorial = false;
+			UseStarlanes = false;
 		}
 	}
 }

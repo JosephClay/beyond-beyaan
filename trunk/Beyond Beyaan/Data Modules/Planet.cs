@@ -84,8 +84,7 @@ namespace Beyond_Beyaan
 		public Dictionary<Resource, float> ResourcesShared { get; private set; }
 		public Dictionary<Resource, float> Resources { get; private set; }
 		public Dictionary<Resource, float> Shortages { get; private set; }
-		public Dictionary<Resource, float> ProjectConsumptions { get; private set; }
-		public Dictionary<Resource, float> ProjectInvestments { get; private set; }
+		public Dictionary<Resource, float> ProjectResources { get; private set; }
 
 		public Dictionary<Race, float> PopGrowth { get; private set; }
 		public Dictionary<Race, float> Population { get; private set; }
@@ -139,8 +138,7 @@ namespace Beyond_Beyaan
 			ResourcesShared = new Dictionary<Resource,float>();
 			Resources = new Dictionary<Resource,float>();
 			Shortages = new Dictionary<Resource,float>();
-			ProjectConsumptions = new Dictionary<Resource, float>();
-			ProjectInvestments = new Dictionary<Resource, float>();
+			ProjectResources = new Dictionary<Resource, float>();
 		}
 		#endregion
 
@@ -303,9 +301,10 @@ namespace Beyond_Beyaan
 		//We build each system and the empire's total resources from each of the planet (we clear all systems and empire's resources before running this)
 		public void TallyResources(Dictionary<Resource, float> resources)
 		{
+			ProjectResources.Clear();
 			foreach (KeyValuePair<Resource, float> resource in Resources)
 			{
-				if (resource.Key.LimitTo != LimitTo.PLANET)
+				if (resource.Key.LimitTo != LimitTo.PLANET && resource.Key.LimitTo != LimitTo.PLANET_DEVELOPMENT)
 				{
 					if (resources.ContainsKey(resource.Key))
 					{
@@ -316,13 +315,11 @@ namespace Beyond_Beyaan
 						resources[resource.Key] = resource.Value;
 					}
 				}
+				else if (resource.Key.LimitTo == LimitTo.PLANET_DEVELOPMENT)
+				{
+					ProjectResources[resource.Key] = resource.Value;
+				}
 			}
-		}
-
-		public void TallyProjectConsumptions(Dictionary<Resource, float> projectConsumptions)
-		{
-			ProjectConsumptions.Clear();
-			// TODO: Add project
 		}
 
 		//This grabs the resouces, then deducts what it don't need to consume as it is passed to system and empire
@@ -331,7 +328,6 @@ namespace Beyond_Beyaan
 			//To-do: verify that this copies the dictionary, and not just the reference.  Don't want float changes to affect the original
 			AvailableResources = new Dictionary<Resource, float>(Resources);
 			Shortages.Clear();
-			ProjectInvestments.Clear();
 
 			//Calculate what's left after consumpting
 			foreach (KeyValuePair<Resource, float> consumption in Consumptions)
@@ -354,32 +350,6 @@ namespace Beyond_Beyaan
 				{
 					//We have a shortage here
 					Shortages.Add(consumption.Key, consumption.Value);
-				}
-			}
-			foreach (KeyValuePair<Resource, float> projectConsumption in ProjectConsumptions)
-			{
-				if (AvailableResources.ContainsKey(projectConsumption.Key))
-				{
-					/* TODO: if (project allows multiple items produced at once)
-					{
-						ProjectInvestments[projectConsumption.Key] = AvailableResources[projectConsumption.Key];
-						AvailableResources[projectConsumption.Key] = 0;
-					}
-					else*/
-					{
-						if (AvailableResources[projectConsumption.Key] >= projectConsumption.Value)
-						{
-							//Sufficient to finish this portion of the project's cost
-							// TODO: add project here
-							AvailableResources[projectConsumption.Key] -= projectConsumption.Value;
-						}
-						else
-						{
-							//Not sufficient, but still make progress, so put in all the available resources
-							// TODO: add project here
-							AvailableResources[projectConsumption.Key] = 0;
-						}
-					}
 				}
 			}
 

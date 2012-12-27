@@ -65,8 +65,7 @@ namespace Beyond_Beyaan
 		public Dictionary<Empire, Dictionary<Resource, float>> ResourcesShared;
 		public Dictionary<Empire, Dictionary<Resource, float>> Resources;
 		public Dictionary<Empire, Dictionary<Resource, float>> Shortages;
-		public Dictionary<Empire, Dictionary<Resource, float>> ProjectConsumptions;
-		public Dictionary<Empire, Dictionary<Resource, float>> ProjectInvestments;
+		public Dictionary<Empire, Dictionary<Resource, float>> ProjectResources;
 
 		#region Dijkstra's Algorithm
 		public double Distance { get; set; }
@@ -116,8 +115,7 @@ namespace Beyond_Beyaan
 			ResourcesShared = new Dictionary<Empire, Dictionary<Resource, float>>();
 			Resources = new Dictionary<Empire, Dictionary<Resource, float>>();
 			Shortages = new Dictionary<Empire, Dictionary<Resource, float>>();
-			ProjectConsumptions = new Dictionary<Empire, Dictionary<Resource, float>>();
-			ProjectInvestments = new Dictionary<Empire, Dictionary<Resource, float>>();
+			ProjectResources = new Dictionary<Empire, Dictionary<Resource, float>>();
 		}
 		#endregion
 
@@ -473,18 +471,36 @@ namespace Beyond_Beyaan
 			{
 				Resources.Add(whichEmpire, new Dictionary<Resource, float>());
 			}
+			if (ProjectResources.ContainsKey(whichEmpire))
+			{
+				ProjectResources[whichEmpire].Clear();
+			}
+			else
+			{
+				ProjectResources.Add(whichEmpire, new Dictionary<Resource, float>());
+			}
 
+			Dictionary<Resource, float> tempResources = new Dictionary<Resource, float>();
 			foreach (Planet planet in Planets)
 			{
 				if (planet.Owner == whichEmpire)
 				{
-					planet.TallyResources(Resources[whichEmpire]);
+					planet.TallyResources(tempResources);
 				}
 			}
 
-			foreach (KeyValuePair<Resource, float> resource in Resources[whichEmpire])
+			foreach (KeyValuePair<Resource, float> resource in tempResources)
 			{
-				if (resource.Key.LimitTo == LimitTo.EMPIRE)
+				if (resource.Key.LimitTo == LimitTo.SYSTEM)
+				{
+					Resources[whichEmpire][resource.Key] = resource.Value;
+				}
+				else if (resource.Key.LimitTo == LimitTo.SYSTEM_DEVELOPMENT)
+				{
+					ProjectResources[whichEmpire][resource.Key] = resource.Value;
+				}
+				//At this point, the remaining resources are at empire-wide level.
+				else
 				{
 					if (resources.ContainsKey(resource.Key))
 					{
@@ -496,11 +512,6 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-		}
-		public void TallyProjectConsumptions(Empire whichEmpire)
-		{
-			ProjectConsumptions[whichEmpire].Clear();
-			// TODO: Add project
 		}
 
 		//This grabs the resouces, then deducts what it don't need to consume as it is passed to system and empire

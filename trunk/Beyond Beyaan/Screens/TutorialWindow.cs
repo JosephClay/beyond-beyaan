@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml.Linq;
+using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -176,7 +177,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (closeButton.MouseUp(x, y))
 			{
-				gameMain.GameConfiguration.ShowTutorial = false;
+				GameConfiguration.ShowTutorial = false;
 				result = true;
 			}
 			if (!result)
