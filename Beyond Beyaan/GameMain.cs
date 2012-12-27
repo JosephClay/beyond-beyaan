@@ -16,7 +16,6 @@ namespace Beyond_Beyaan
 	public class GameMain
 	{
 		Form parentForm;
-		internal GameConfiguration GameConfiguration;
 		internal DrawingManagement DrawingManagement;
 		private ScreenInterface screenInterface;
 		private MainGameMenu mainGameMenu;
@@ -142,7 +141,6 @@ namespace Beyond_Beyaan
 			diplomacyScreen = null;
 			designScreen = null;
 			mainGameMenu = null;
-			GameConfiguration = new GameConfiguration();
 		}
 
 		public void LoadOrRefreshGame()
@@ -181,10 +179,6 @@ namespace Beyond_Beyaan
 				effectManager = new EffectManager();
 			}
 
-			if (GameConfiguration == null)
-			{
-				GameConfiguration = new Data_Managers.GameConfiguration();
-			}
 			if (DrawingManagement == null)
 			{
 				DrawingManagement = new DrawingManagement();

@@ -48,6 +48,7 @@ namespace Beyond_Beyaan
 		private Dictionary<Resource, float> resources;
 		private Dictionary<Resource, float> shortages;
 		private Dictionary<Resource, float> availableResources;
+		private Dictionary<Resource, float> projectResources;
 
 		public Dictionary<Resource, float> Productions
 		{
@@ -68,6 +69,10 @@ namespace Beyond_Beyaan
 		public Dictionary<Resource, float> AvailableResources
 		{ 
 			get { return availableResources; } 
+		}
+		public Dictionary<Resource, float> ProjectResources
+		{
+			get { return projectResources; }
 		}
 		#endregion
 		//private float handicap;
@@ -311,6 +316,7 @@ namespace Beyond_Beyaan
 			shortages = new Dictionary<Resource, float>();
 			productions = new Dictionary<Resource, float>();
 			availableResources = new Dictionary<Resource, float>();
+			projectResources = new Dictionary<Resource, float>();
 			reserves = 10;
 			//expenses = 0;
 			//visibleOtherFleets = new List<Squadron>();
@@ -557,7 +563,7 @@ namespace Beyond_Beyaan
 
 		public void UpdateProjects(PlanetTypeManager planetTypeManager, Random r)
 		{
-			projectManager.UpdateProjects(Resources, planetTypeManager, r);
+			projectManager.UpdateProjects(ProjectResources, planetTypeManager, r);
 			//UpdateNetIncome();
 		}
 
@@ -568,8 +574,23 @@ namespace Beyond_Beyaan
 
 		public void RefreshEconomy()
 		{
+			projectResources.Clear();
+			List<Resource> toRemove = new List<Resource>();
+
 			starSystemManager.TallyConsumptions(out consumptions);
 			starSystemManager.TallyResources(out resources);
+			foreach (var resource in resources)
+			{
+				if (resource.Key.LimitTo == LimitTo.EMPIRE_DEVELOPMENT)
+				{
+					projectResources[resource.Key] = resource.Value;
+					toRemove.Add(resource.Key);
+				}
+			}
+			foreach (var resource in toRemove)
+			{
+				resources.Remove(resource);
+			}
 			starSystemManager.TallyAvailableResourcesAndShortages(out availableResources, out shortages);
 
 			Dictionary<Resource, float> percentageAvailableShared = new Dictionary<Resource, float>();

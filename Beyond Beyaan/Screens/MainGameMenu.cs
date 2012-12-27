@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using GorgonLibrary.InputDevices;
 using System.Windows.Forms;
+using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -186,7 +187,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				gameMain.RegionShader = GorgonLibrary.Graphics.FXShader.FromFile(Path.Combine(Path.Combine(directoryPath, "Shaders"), "CircleShader.fx"), GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 				gameMain.GameDataSet = modComboBox.CurrentText;
-				if (!gameMain.GameConfiguration.LoadConfiguration(Path.Combine(directoryPath, "config.xml"), out reason))
+				if (!GameConfiguration.LoadConfiguration(Path.Combine(directoryPath, "config.xml"), out reason))
 				{
 					MessageBox.Show(reason);
 					return false;
