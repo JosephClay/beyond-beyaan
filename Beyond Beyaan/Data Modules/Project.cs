@@ -44,6 +44,58 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
+		public float EstimatedTurns(Dictionary<Resource, float> amount, float percentage)
+		{
+			Dictionary<Resource, float> amountSoFar = new Dictionary<Resource, float>(AmountSoFar);
+			foreach (var resource in amount)
+			{
+				if (Cost.ContainsKey(resource.Key))
+				{
+					if (amountSoFar.ContainsKey(resource.Key))
+					{
+						amountSoFar[resource.Key] += resource.Value * percentage;
+					}
+					else
+					{
+						amountSoFar[resource.Key] = resource.Value * percentage;
+					}
+				}
+			}
+			float lowestAmount = float.MaxValue;
+			foreach (var resource in amountSoFar)
+			{
+				if (resource.Value == AmountSoFar[resource.Key])
+				{
+					//No change, so this won't ever get completed
+					return 0;
+				}
+				if (resource.Value < Cost[resource.Key])
+				{
+					//More than a turn
+					float time = amount[resource.Key] / (Cost[resource.Key] - AmountSoFar[resource.Key]);
+					if (lowestAmount > time)
+					{
+						lowestAmount = percentage;
+					}
+				}
+				else
+				{
+					float value = resource.Value;
+					float time = 0;
+					while (value > Cost[resource.Key])
+					{
+						time += 1;
+						value -= Cost[resource.Key];
+					}
+					if (time < lowestAmount)
+					{
+						lowestAmount = time;
+					}
+				}
+			}
+			return lowestAmount;
+		}
+
 		public int Update(Dictionary<Resource, float> amount, float percentage)
 		{
 			//Just add the values, even if it exceeds the cost
