@@ -115,6 +115,7 @@
     <Compile Include="Data Modules\Region.cs" />
     <Compile Include="Data Modules\RegionType.cs" />
     <Compile Include="Data Modules\Resource.cs" />
+    <Compile Include="Data Modules\Sector.cs" />
     <Compile Include="Data Modules\ShipDesign.cs" />
     <Compile Include="Data Modules\ShipInstance.cs" />
     <Compile Include="Data Modules\ShipScript.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Screens\ProductionScreen.cs" />
     <Compile Include="Screens\ProjectSelection.cs" />
     <Compile Include="Screens\RaceSelection.cs" />
+    <Compile Include="Screens\SectorControl.cs" />
     <Compile Include="Screens\SelectBattle.cs" />
     <Compile Include="Screens\SelectResearch.cs" />
     <Compile Include="Screens\SettleScreen.cs" />

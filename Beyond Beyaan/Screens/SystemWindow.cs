@@ -8,7 +8,7 @@ namespace Beyond_Beyaan.Screens
 	public class SystemWindow : WindowInterface
 	{
 		//private GorgonLibrary.Graphics.Sprite shipSprite;
-		private InvisibleStretchButton[] planetButtons;
+		/*private InvisibleStretchButton[] planetButtons;
 		private InvisibleStretchButton systemButton;
 		private Label[] planetNames;
 		private Label[] planetPopulationAndRegions;
@@ -18,38 +18,48 @@ namespace Beyond_Beyaan.Screens
 		
 		//private Label planetOwner;
 		
-		private int maxVisible;
+		/*private int maxVisible;
 		private int offSet;
 		private int centerY;
 		private int y;
 
-		StarSystem selectedSystem;
+		
 		Planet selectedPlanet;
 
 		private Label systemNameLabel;
 		//private TextBox systemDescription;
 
-		private bool emptySystem;
-		private PlanetWindow planetWindow;
+		private bool emptySystem;*/
+		//private PlanetWindow planetWindow;
 
 		//private GorgonLibrary.Graphics.FXShader angleShader;
 
-		public SystemWindow(int centerY, GameMain gameMain)
-			: base(-25, centerY, 10, 10, string.Empty, gameMain, false)
+		private StretchableImage systemBackground;
+
+		private StarSystem selectedSystem;
+		private SingleLineTextBox systemName;
+		private TextBox systemDescription;
+
+		public SystemWindow(int centerX, int centerY, GameMain gameMain) : 
+			base (centerX - 420, centerY - 320, 840, 640, null, gameMain, false)
 		{
+			systemBackground = new StretchableImage(xPos + 15, yPos + 15, 300, 200, 30, 13, DrawingManagement.BoxBorder);
+
 			//planetOwner = new Label(x + 10, y + 300);
 
 			selectedSystem = null;
-			selectedPlanet = null;
-			offSet = 0;
-			this.centerY = centerY;
+			systemName = new SingleLineTextBox(xPos + 95, yPos + 28, 210, 35, DrawingManagement.TextBox);
+			systemDescription = new TextBox(xPos + 95, yPos + 65, 210, 100, "systemDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			//selectedPlanet = null;
+			//offSet = 0;
+			//this.centerY = centerY;
 
-			maxVisible = 0;
-			systemNameLabel = new Label(0, 0);
+			//maxVisible = 0;
+			//systemNameLabel = new Label(0, 0);
 
 			//systemDescription = new TextBox(xPos - 135, 30, 270, 90, "systemDescription", string.Empty, gameMain.DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
 
-			planetWindow = new PlanetWindow(275, gameMain.ScreenHeight / 2, gameMain);
+			//planetWindow = new PlanetWindow(centerX, centerY, gameMain);
 
 			//angleShader = GorgonLibrary.Graphics.FXShader.FromFile(@"E:\Brent's Projects\Current Projects\Beyond Beyaan Trunk\Beyond Beyaan\bin\Debug\Data\Default\Shaders\CircleShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 		}
@@ -57,8 +67,23 @@ namespace Beyond_Beyaan.Screens
 		public override void DrawWindow(DrawingManagement drawingManagement)
 		{
 			backGroundImage.Draw(drawingManagement);
+			systemBackground.Draw(drawingManagement);
+
+			GorgonLibrary.Gorgon.CurrentShader = selectedSystem.Type.Shader;
+			if (selectedSystem.Type.Shader != null)
+			{
+				selectedSystem.Type.Shader.Parameters["StarColor"].SetValue(selectedSystem.Type.ShaderValue);
+			}
+			selectedSystem.Type.Sprite.SetPosition(xPos + 55, yPos + 55);
+			selectedSystem.Type.Sprite.SetScale(60.0f / selectedSystem.Type.Sprite.Width, 60.0f / selectedSystem.Type.Sprite.Height);
+			selectedSystem.Type.Sprite.Draw();
+			GorgonLibrary.Gorgon.CurrentShader = null;
+
+			systemName.Draw(drawingManagement);
+			systemDescription.Draw(drawingManagement);
+
 			//systemDescription.Draw(drawingManagement);
-			systemButton.Draw(drawingManagement);
+			/*systemButton.Draw(drawingManagement);
 			systemNameLabel.Draw();
 			GorgonLibrary.Gorgon.CurrentShader = selectedSystem.Type.Shader;
 			if (selectedSystem.Type.Shader != null)
@@ -102,7 +127,7 @@ namespace Beyond_Beyaan.Screens
 
 				image.Blit(xPos - offSet + (i * 70) + 15, yPos + 35);*/
 
-				planetNames[i].Draw();
+				/*planetNames[i].Draw();
 				planetPopulationAndRegions[i].Draw();
 				/*if (selectedSystem.Planets[i].ConstructionBonus != PLANET_CONSTRUCTION_BONUS.AVERAGE)
 				{
@@ -116,19 +141,19 @@ namespace Beyond_Beyaan.Screens
 				{
 					drawingManagement.DrawSprite(Utility.PlanetEntertainmentBonusToSprite(selectedSystem.Planets[i].EntertainmentBonus), xPos - offSet + (i * 70) + 44, yPos + 95, 255, System.Drawing.Color.White);
 				}*/
-			}
+			/*}
 			if (selectedPlanet != null)
 			{
 				if (selectedPlanet.PlanetType.Inhabitable)
 				{
 					planetWindow.DrawWindow(drawingManagement);
 				}
-			}
+			}*/
 		}
 
 		public override bool MouseUp(int x, int y)
 		{
-			bool result = false;
+			/*bool result = false;
 			if (selectedPlanet != null)
 			{
 				if (!planetWindow.MouseUp(x, y))
@@ -183,12 +208,13 @@ namespace Beyond_Beyaan.Screens
 					button.Selected = false;
 				}
 			}
-			return result;
+			return result;*/
+			return false;
 		}
 
 		public override bool MouseDown(int x, int y)
 		{
-			bool result = false;
+			/*bool result = false;
 			if (selectedPlanet != null)
 			{
 				result = planetWindow.MouseDown(x, y);
@@ -206,12 +232,13 @@ namespace Beyond_Beyaan.Screens
 			{
 				result = true;
 			}
-			return result;
+			return result;*/
+			return false;
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			bool result = false;
+			/*bool result = false;
 			if (selectedPlanet != null)
 			{
 				result = planetWindow.MouseHover(x, y, frameDeltaTime);
@@ -229,7 +256,8 @@ namespace Beyond_Beyaan.Screens
 			{
 				result = true;
 			}
-			return result;
+			return result;*/
+			return false;
 		}
 
 		/*private void RefreshPlanets()
@@ -253,8 +281,13 @@ namespace Beyond_Beyaan.Screens
 		public void LoadSystem()
 		{
 			selectedSystem = gameMain.empireManager.CurrentEmpire.SelectedSystem;
+			if (selectedSystem != null)
+			{
+				systemName.SetString(selectedSystem.Name);
+				systemDescription.SetMessage(selectedSystem.Type.Description);
+			}
 
-			if (selectedSystem.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
+			/*if (selectedSystem.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
 			{
 				y = centerY - (selectedSystem.Planets.Count * 35) - 35;
 				int height = selectedSystem.Planets.Count * 70 + 120;
@@ -341,7 +374,7 @@ namespace Beyond_Beyaan.Screens
 				maxVisible = 0;
 
 				backGroundImage = new StretchableImage(-30, y, 305, height, 30, 13, DrawingManagement.BoxBorderBG);
-			}
+			}*/
 		}
 	}
 }
