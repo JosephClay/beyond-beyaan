@@ -38,25 +38,29 @@ namespace Beyond_Beyaan.Data_Managers
 		public void CancelProject(int project)
 		{
 			bool added = false;
-			for (int i = 0; i < projects.Count; i++)
+			if (!IsQueue)
 			{
-				if (!locked[i] && i != project)
+				for (int i = 0; i < projects.Count; i++)
 				{
-					percentageAmounts[i] += percentageAmounts[project];
-					added = true;
-					break;
+					if (!locked[i] && i != project)
+					{
+						percentageAmounts[i] += percentageAmounts[project];
+						added = true;
+						break;
+					}
 				}
-			}
-			if (!added)
-			{
-				//All projects are locked or no projects
-				if (projects.Count > 0)
+				if (!added)
 				{
-					percentageAmounts[0] += percentageAmounts[project];
+					//All projects are locked or no projects
+					if (projects.Count > 0)
+					{
+						percentageAmounts[0] += percentageAmounts[project];
+					}
 				}
+				percentageAmounts.RemoveAt(project);
+				locked.RemoveAt(project);
+				projects.RemoveAt(project);
 			}
-			percentageAmounts.RemoveAt(project);
-			locked.RemoveAt(project);
 			projects.RemoveAt(project);
 		}
 
@@ -65,7 +69,18 @@ namespace Beyond_Beyaan.Data_Managers
 			List<Project> projectsCompleted = new List<Project>();
 			for (int i = 0; i < projects.Count; i++)
 			{
-				int amountProduced = projects[i].Update(amount, percentageAmounts[i]);
+				int amountProduced = 0;
+				if (IsQueue)
+				{
+					if (i == 0)
+					{
+						amountProduced = projects[i].Update(amount, 1.0f);
+					}
+				}
+				else
+				{
+					amountProduced = projects[i].Update(amount, percentageAmounts[i] / 100f);
+				}
 				if (amountProduced > 0)
 				{
 					switch (projects[i].ProjectType)

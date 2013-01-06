@@ -68,7 +68,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			listOfPopTransferScrollBar = new ScrollBar(gameMain.ScreenWidth / 2 + 142, gameMain.ScreenHeight / 2 - 120, 16, 128, 4, 10, false, false, DrawingManagement.VerticalScrollBar);
 
-			systemWindow = new SystemWindow(gameMain.ScreenHeight / 2, gameMain);
+			systemWindow = new SystemWindow(gameMain.ScreenWidth / 2, gameMain.ScreenHeight / 2, gameMain);
 			squadronListWindow = new SquadronListWindow(gameMain.ScreenHeight / 2, gameMain);
 			//splitPopulation = new SplitPopulation(gameMain.ScreenWidth / 2, 220, gameMain, SplitFleet);
 
