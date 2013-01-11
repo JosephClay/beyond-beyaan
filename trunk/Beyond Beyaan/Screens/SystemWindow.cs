@@ -49,7 +49,7 @@ namespace Beyond_Beyaan.Screens
 
 			selectedSystem = null;
 			systemName = new SingleLineTextBox(xPos + 95, yPos + 28, 210, 35, DrawingManagement.TextBox);
-			systemDescription = new TextBox(xPos + 95, yPos + 65, 210, 100, "systemDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			systemDescription = new TextBox(xPos + 25, yPos + 95, 280, 100, "systemDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
 			//selectedPlanet = null;
 			//offSet = 0;
 			//this.centerY = centerY;
@@ -283,8 +283,16 @@ namespace Beyond_Beyaan.Screens
 			selectedSystem = gameMain.empireManager.CurrentEmpire.SelectedSystem;
 			if (selectedSystem != null)
 			{
-				systemName.SetString(selectedSystem.Name);
 				systemDescription.SetMessage(selectedSystem.Type.Description);
+
+				if (selectedSystem.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
+				{
+					systemName.SetString(selectedSystem.Name);
+				}
+				else
+				{
+					systemName.SetString("Unexplored");
+				}
 			}
 
 			/*if (selectedSystem.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
