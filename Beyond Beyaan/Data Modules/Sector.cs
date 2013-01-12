@@ -17,11 +17,12 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public string Name { get; set; }
 
-		public Sector(SECTORTYPE type, Planet planet, string name)
+		public Sector(SECTORTYPE type, Planet planet, string name, Empire owner)
 		{
 			SectorType = type;
 			Planet = planet;
 			Name = name;
+			Owner = owner;
 		}
 	}
 }

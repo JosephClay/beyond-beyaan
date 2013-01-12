@@ -95,7 +95,7 @@ namespace Beyond_Beyaan
 				string numericName = Utility.ConvertNumberToRomanNumberical(i + 1);
 				sb.Append(numericName);
 				Planet newPlanet = planetTypeManager.GenerateRandomPlanet(sb.ToString(), numericName, starType.GetRandomPlanetType(r), r, this, regionTypeManager);
-				Sector newSector = new Sector(SECTORTYPE.PLANET, newPlanet, numericName);
+				Sector newSector = new Sector(SECTORTYPE.PLANET, newPlanet, numericName, null);
 				sectors.Add(newSector);
 			}
 			StarName = new Label(name, 0, 0);
@@ -154,11 +154,12 @@ namespace Beyond_Beyaan
 						{
 							Planet newPlanet = new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager);
 							newPlanet.SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
-							sectors.Add(new Sector(SECTORTYPE.PLANET, newPlanet, name));
+							sectors.Add(new Sector(SECTORTYPE.PLANET, newPlanet, name, empire));
 						}
 						else
 						{
 							sectors[i].Planet.SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
+							sectors[i].Owner = empire;
 						}
 						if (system.Planets[i].Owned)
 						{
@@ -179,6 +180,7 @@ namespace Beyond_Beyaan
 							if (!replacedSectors.Contains(planetToReplace))
 							{
 								sectors[planetToReplace].Planet.SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
+								sectors[planetToReplace].Owner = empire;
 								if (system.Planets[i].Owned)
 								{
 									ownedSectors.Add(sectors[planetToReplace]);
@@ -197,13 +199,13 @@ namespace Beyond_Beyaan
 								//add at end
 								Planet newPlanet = new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager);
 								newPlanet.SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
-								sectors.Add(new Sector(SECTORTYPE.PLANET, newPlanet, name));
+								sectors.Add(new Sector(SECTORTYPE.PLANET, newPlanet, name, empire));
 							}
 							else
 							{
 								Planet newPlanet = new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager);
 								newPlanet.SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
-								sectors.Insert(position, new Sector(SECTORTYPE.PLANET, newPlanet, name));
+								sectors.Insert(position, new Sector(SECTORTYPE.PLANET, newPlanet, name, empire));
 								//Correct the list
 								for (int p = 0; p < replacedSectors.Count; p++)
 								{
@@ -229,13 +231,13 @@ namespace Beyond_Beyaan
 						//add at end
 						Planet newPlanet = new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager);
 						newPlanet.SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
-						sectors.Add(new Sector(SECTORTYPE.PLANET, newPlanet, name));
+						sectors.Add(new Sector(SECTORTYPE.PLANET, newPlanet, name, empire));
 					}
 					else
 					{
 						Planet newPlanet = new Planet(name, string.Empty, planetType, r, this, 1, regionTypeManager);
 						newPlanet.SetPlanet(empire, planetTypeManager, regionTypeManager, resourceManager, system.Planets[i]);
-						sectors.Insert(position, new Sector(SECTORTYPE.PLANET, newPlanet, name));
+						sectors.Insert(position, new Sector(SECTORTYPE.PLANET, newPlanet, name, empire));
 					}
 					if (system.Planets[position].Owned)
 					{
