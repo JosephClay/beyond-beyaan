@@ -327,11 +327,11 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Functions
-		public void SetHomeSystem(List<StarSystem> startingSystems, List<Planet> planets)
+		public void SetHomeSystem(List<StarSystem> startingSystems, List<Sector> sectors)
 		{
 			selectedSystem = startingSystems[0];
 			lastSelectedSystem = startingSystems[0];
-			planetManager.Planets.AddRange(planets);
+			//planetManager.Planets.AddRange(planets);
 			starSystemManager.StarSystems.AddRange(startingSystems);
 			//fleetManager.SetupStarterFleet(homeSystem.X + homeSystem.Size, homeSystem.Y);
 			//homePlanet.ShipBeingBuilt = fleetManager.ShipDesigns[0];
@@ -698,7 +698,7 @@ namespace Beyond_Beyaan
 
 	class SettlerToProcess
 	{
-		public Squadron whichFleet;
-		public StarSystem whichSystem;
+		//public Squadron whichFleet;
+		//public StarSystem whichSystem;
 	}
 }

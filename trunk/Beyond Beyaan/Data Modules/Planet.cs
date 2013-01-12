@@ -18,7 +18,6 @@ namespace Beyond_Beyaan
 		#region Member Variables
 		private StarSystem whichSystem;
 		private PlanetType planetType;
-		private Empire owner;
 		string name;
 		string numericName;
 		private List<Region> regions;
@@ -44,11 +43,6 @@ namespace Beyond_Beyaan
 		{
 			get { return numericName; }
 			set { numericName = value; }
-		}
-		public Empire Owner
-		{
-			get { return owner; }
-			set { owner = value; }
 		}
 		public float TotalPopulation
 		{
@@ -160,9 +154,8 @@ namespace Beyond_Beyaan
 			
 			if (planet.Owned)
 			{
-				this.owner = owner;
 				races.Add(owner.EmpireRace);
-				Population.Add(owner.EmpireRace, planet.Population);
+				Population[owner.EmpireRace] = planet.Population;
 				//outputPercentages = new Dictionary<string, int>(planet.OutputSliderValues);
 			}
 			foreach (var startingResource in planet.Resources)

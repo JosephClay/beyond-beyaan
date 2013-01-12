@@ -552,26 +552,26 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Setup
-		public List<StarSystem> SetStartingSystems(Empire empire, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, out List<Planet> startingPlanets)
+		public List<StarSystem> SetStartingSystems(Empire empire, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, out List<Sector> startingSectors)
 		{
 			Random r = new Random();
 			List<StarSystem> startingSystems = new List<StarSystem>();
-			startingPlanets = new List<Planet>();
+			startingSectors = new List<Sector>();
 			List<StarSystem> addedSystems = new List<StarSystem>(); //for tracking purposes
 			for (int i = 0; i < empire.EmpireRace.StartingSystems.Count; i++)
 			{
-				List<Planet> ownedPlanets = new List<Planet>();
+				List<Sector> ownedSectors = new List<Sector>();
 				if (i == 0) //First system will be randomly placed
 				{
 					while (true)
 					{
 						int starIter = r.Next(starSystems.Count);
-						if (starSystems[starIter].Type.Inhabitable && starSystems[starIter].EmpiresWithPlanetsInThisSystem.Count == 0)
+						if (starSystems[starIter].Type.Inhabitable && starSystems[starIter].EmpiresWithSectorsInThisSystem.Count == 0)
 						{
-							starSystems[starIter].SetSystem(empire, empire.EmpireRace.StartingSystems[i], planetTypeManager, regionTypeManager, resourceManager, r, out ownedPlanets);
+							starSystems[starIter].SetSystem(empire, empire.EmpireRace.StartingSystems[i], planetTypeManager, regionTypeManager, resourceManager, r, out ownedSectors);
 							starSystems[starIter].UpdateOwners();
 							startingSystems.Add(starSystems[starIter]);
-							startingPlanets.AddRange(ownedPlanets);
+							startingSectors.AddRange(ownedSectors);
 							addedSystems.Add(starSystems[starIter]);
 							break;
 						}
@@ -584,7 +584,7 @@ namespace Beyond_Beyaan
 					//Find the closest inhabitable system that are unowned
 					for (int s = 0; s < starSystems.Count; s++)
 					{
-						if (!starSystems[s].Type.Inhabitable || starSystems[s].EmpiresWithPlanetsInThisSystem.Count != 0)
+						if (!starSystems[s].Type.Inhabitable || starSystems[s].EmpiresWithSectorsInThisSystem.Count != 0)
 						{
 							continue;
 						}
@@ -600,9 +600,9 @@ namespace Beyond_Beyaan
 							}
 						}
 					}
-					potentialSystem.SetSystem(empire, empire.EmpireRace.StartingSystems[i], planetTypeManager, regionTypeManager, resourceManager, r, out ownedPlanets);
+					potentialSystem.SetSystem(empire, empire.EmpireRace.StartingSystems[i], planetTypeManager, regionTypeManager, resourceManager, r, out ownedSectors);
 					potentialSystem.UpdateOwners();
-					startingPlanets.AddRange(ownedPlanets);
+					startingSectors.AddRange(ownedSectors);
 					startingSystems.Add(potentialSystem);
 					addedSystems.Add(potentialSystem);
 				}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -35,21 +36,27 @@ namespace Beyond_Beyaan.Screens
 		//private GorgonLibrary.Graphics.FXShader angleShader;
 
 		private StretchableImage systemBackground;
+		private StretchableImage resourcesBackground;
+		private StretchableImage projectsBackground;
 
 		private StarSystem selectedSystem;
 		private SingleLineTextBox systemName;
 		private TextBox systemDescription;
+		private TextBox resourcesDisplay;
 
 		public SystemWindow(int centerX, int centerY, GameMain gameMain) : 
 			base (centerX - 420, centerY - 320, 840, 640, null, gameMain, false)
 		{
 			systemBackground = new StretchableImage(xPos + 15, yPos + 15, 300, 200, 30, 13, DrawingManagement.BoxBorder);
+			resourcesBackground = new StretchableImage(xPos + 15, yPos + 215, 300, 200, 30, 13, DrawingManagement.BoxBorder);
+			projectsBackground = new StretchableImage(xPos + 15, yPos + 415, 300, 200, 30, 13, DrawingManagement.BoxBorder);
 
 			//planetOwner = new Label(x + 10, y + 300);
 
 			selectedSystem = null;
 			systemName = new SingleLineTextBox(xPos + 95, yPos + 28, 210, 35, DrawingManagement.TextBox);
 			systemDescription = new TextBox(xPos + 25, yPos + 95, 280, 100, "systemDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			resourcesDisplay = new TextBox(xPos + 25, yPos + 225, 270, 170, "systemResourcesDisplay", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
 			//selectedPlanet = null;
 			//offSet = 0;
 			//this.centerY = centerY;
@@ -68,6 +75,8 @@ namespace Beyond_Beyaan.Screens
 		{
 			backGroundImage.Draw(drawingManagement);
 			systemBackground.Draw(drawingManagement);
+			resourcesBackground.Draw(drawingManagement);
+			projectsBackground.Draw(drawingManagement);
 
 			GorgonLibrary.Gorgon.CurrentShader = selectedSystem.Type.Shader;
 			if (selectedSystem.Type.Shader != null)
@@ -81,6 +90,8 @@ namespace Beyond_Beyaan.Screens
 
 			systemName.Draw(drawingManagement);
 			systemDescription.Draw(drawingManagement);
+
+			resourcesDisplay.Draw(drawingManagement);
 
 			//systemDescription.Draw(drawingManagement);
 			/*systemButton.Draw(drawingManagement);
@@ -280,6 +291,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadSystem()
 		{
+			var currentEmpire = gameMain.empireManager.CurrentEmpire;
 			selectedSystem = gameMain.empireManager.CurrentEmpire.SelectedSystem;
 			if (selectedSystem != null)
 			{
@@ -288,10 +300,52 @@ namespace Beyond_Beyaan.Screens
 				if (selectedSystem.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
 				{
 					systemName.SetString(selectedSystem.Name);
+
+					StringBuilder sb = new StringBuilder();
+					foreach (KeyValuePair<Resource, float> consumption in selectedSystem.Consumptions[currentEmpire])
+					{
+						if (!selectedSystem.AvailableResources[currentEmpire].ContainsKey(consumption.Key))
+						{
+							if (selectedSystem.Productions[currentEmpire].ContainsKey(consumption.Key))
+							{
+								sb.AppendLine(consumption.Key.Abbreviation + "  " + string.Format("0 ({0:0.00})", selectedSystem.Productions[currentEmpire][consumption.Key] - consumption.Value));
+							}
+							else
+							{
+								sb.AppendLine(consumption.Key.Abbreviation + "  " + string.Format("0 ({0:0.00})", consumption.Value * -1));
+							}
+						}
+					}
+					foreach (KeyValuePair<Resource, float> production in selectedSystem.Productions[currentEmpire])
+					{
+						if (!selectedSystem.AvailableResources[currentEmpire].ContainsKey(production.Key) && !selectedSystem.Consumptions[currentEmpire].ContainsKey(production.Key))
+						{
+							sb.AppendLine(production.Key.Abbreviation + "  " + string.Format("0 ({0:0.00})", production.Value));
+						}
+					}
+					foreach (KeyValuePair<Resource, float> resource in selectedSystem.AvailableResources[currentEmpire])
+					{
+						string value = resource.Key.Abbreviation + "  " + string.Format("{0:0.00}", resource.Value) + " (";
+						float income = 0;
+						if (selectedSystem.Productions[currentEmpire].ContainsKey(resource.Key))
+						{
+							income += selectedSystem.Productions[currentEmpire][resource.Key];
+						}
+						if (selectedSystem.Consumptions[currentEmpire].ContainsKey(resource.Key))
+						{
+							income -= selectedSystem.Consumptions[currentEmpire][resource.Key];
+						}
+						value = value + string.Format("{0:0.00})", income);
+						sb.AppendLine(value);
+					}
+
+					resourcesDisplay.SetMessage(sb.ToString());
 				}
 				else
 				{
 					systemName.SetString("Unexplored");
+
+					resourcesDisplay.SetMessage(string.Empty);
 				}
 			}
 
