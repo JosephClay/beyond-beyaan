@@ -233,10 +233,10 @@ namespace Beyond_Beyaan
 					//Fleet have stopped, and has colony ships
 					if (fleet.ColonizablePlanets.Count > 0 && fleet.TravelNodes == null)
 					{
-						StarSystem system = fleet.System;
+						//StarSystem system = fleet.System;
 
-						bool breakOut = false;
-						foreach (Planet planet in system.Planets)
+						//bool breakOut = false;
+						/*foreach (Planet planet in system.Planets)
 						{
 							if (planet.Owner != null)
 							{
@@ -260,7 +260,7 @@ namespace Beyond_Beyaan
 							{
 								break;
 							}
-						}
+						}*/
 					}
 				}
 			}
@@ -278,7 +278,7 @@ namespace Beyond_Beyaan
 					{
 						StarSystem system = fleet.System;
 
-						foreach (Planet planet in system.Planets)
+						/*foreach (Planet planet in system.Planets)
 						{
 							if (planet.Owner == null)
 							{
@@ -294,7 +294,7 @@ namespace Beyond_Beyaan
 								invadersToProcess.Add(settler);
 								break;
 							}
-						}
+						}*/
 					}
 				}
 			}
@@ -457,7 +457,7 @@ namespace Beyond_Beyaan
 			List<StarSystem> systems = galaxy.GetAllStars();
 			foreach (StarSystem system in systems)
 			{
-				foreach (Empire empire in system.EmpiresWithPlanetsInThisSystem)
+				foreach (Empire empire in system.EmpiresWithSectorsInThisSystem)
 				{
 					empire.SystemsUnderInfluence.Add(system);
 				}

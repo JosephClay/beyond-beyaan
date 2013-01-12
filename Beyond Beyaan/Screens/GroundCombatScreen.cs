@@ -54,9 +54,9 @@ namespace Beyond_Beyaan.Screens
 			planetBeingInvaded.PlanetType.GroundView.SetPosition(x, y);
 			planetBeingInvaded.PlanetType.GroundView.Draw();
 
-			GorgonLibrary.Graphics.Sprite city = planetBeingInvaded.Owner.EmpireRace.GetCity();
-			city.SetPosition(x + 50, y + 400);
-			city.Draw();
+			//GorgonLibrary.Graphics.Sprite city = planetBeingInvaded.Owner.EmpireRace.GetCity();
+			//city.SetPosition(x + 50, y + 400);
+			//city.Draw();
 
 			GorgonLibrary.Graphics.Sprite troopShip = empireInvading.EmpireRace.GetTroopShip();
 			troopShip.SetPosition(x + 450, (int)(y + 400 - landing));
@@ -200,8 +200,8 @@ namespace Beyond_Beyaan.Screens
 					{
 						planetBeingInvaded.AddRacePopulation(unit.race, 1);
 					}
-					planetBeingInvaded.Owner.PlanetManager.Planets.Remove(planetBeingInvaded);
-					planetBeingInvaded.Owner = empireInvading;
+					//planetBeingInvaded.Owner.PlanetManager.Planets.Remove(planetBeingInvaded);
+					//planetBeingInvaded.Owner = empireInvading;
 					empireInvading.PlanetManager.Planets.Add(planetBeingInvaded);
 					//planetBeingInvaded.SetMinimumFoodAndWaste();
 					planetBeingInvaded.System.UpdateOwners();
@@ -213,7 +213,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadScreen(Planet planetBeingInvaded, Empire invadingEmpire, Dictionary<Race, int> invaders)
 		{
-			if (planetBeingInvaded.Owner == invadingEmpire)
+			/*if (planetBeingInvaded.Owner == invadingEmpire)
 			{
 				//Just add population since it's the same empire
 				foreach (KeyValuePair<Race, int> race in invaders)
@@ -221,7 +221,7 @@ namespace Beyond_Beyaan.Screens
 					planetBeingInvaded.AddRacePopulation(race.Key, race.Value);
 				}
 				doneFunction();
-			}
+			}*/
 
 			this.planetBeingInvaded = planetBeingInvaded;
 			this.empireInvading = invadingEmpire;

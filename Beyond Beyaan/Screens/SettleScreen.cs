@@ -43,8 +43,8 @@ namespace Beyond_Beyaan.Screens
 		private GameMain gameMain;
 
 		private ColonizeWindow colonizeWindow;
-		private List<SettlerToProcess> settlersToProcess;
-		private SettlerToProcess currentSettlerToProcess;
+		//private List<SettlerToProcess> settlersToProcess;
+		//private SettlerToProcess currentSettlerToProcess;
 
 		public void Initialize(GameMain gameMain)
 		{
@@ -75,7 +75,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			gameMain.DrawGalaxyBackground();
+			/*gameMain.DrawGalaxyBackground();
 
 			if (currentSettlerToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
 			{
@@ -152,7 +152,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			UpdateBackground(frameDeltaTime);
+			/*UpdateBackground(frameDeltaTime);
 
 			if (currentSettlerToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
 			{
@@ -257,7 +257,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			if (currentSettlerToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
+			/*if (currentSettlerToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
 			{
 				colonizeWindow.MouseDown(x, y);
 			}
@@ -275,7 +275,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			if (currentSettlerToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
+			/*if (currentSettlerToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
 			{
 				colonizeWindow.MouseUp(x, y);
 			}
@@ -476,7 +476,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadScreen(List<SettlerToProcess> settlersToProcess)
 		{
-			this.settlersToProcess = settlersToProcess;
+			/*this.settlersToProcess = settlersToProcess;
 
 			if (settlersToProcess.Count > 0)
 			{
@@ -490,7 +490,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					//Let AI process this
 				}
-			}
+			}*/
 		}
 
 		private void ColonizeFunction(Planet planet)
@@ -499,7 +499,7 @@ namespace Beyond_Beyaan.Screens
 		}
 		private void DoneFunction()
 		{
-			settlersToProcess.RemoveAt(0);
+			/*settlersToProcess.RemoveAt(0);
 			if (settlersToProcess.Count == 0)
 			{
 				gameMain.ChangeToScreen(Screen.ProcessTurn);
@@ -508,7 +508,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				currentSettlerToProcess = settlersToProcess[0];
 				colonizeWindow.LoadScreen(currentSettlerToProcess.whichSystem, currentSettlerToProcess.whichFleet);
-			}
+			}*/
 		}
 		/*
 		public void SetUpScreen()

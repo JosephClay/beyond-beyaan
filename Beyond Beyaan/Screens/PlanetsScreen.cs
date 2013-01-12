@@ -426,7 +426,7 @@ namespace Beyond_Beyaan.Screens
 					//Skip unexplored systems
 					continue;
 				}
-				foreach (Planet planet in system.Planets)
+				/*foreach (Planet planet in system.Planets)
 				{
 					if (!filterButtons[0].IsChecked && planet.Owner == currentEmpire)
 					{
@@ -498,8 +498,8 @@ namespace Beyond_Beyaan.Screens
 						}
 					}*/
 					//If it reaches here, it've passed all the filter conditions
-					planetsShowing.Add(planet);
-				}
+					//planetsShowing.Add(planet);
+				//}
 			}
 
 			planetsShowing.Sort((Planet a, Planet b) => { return string.Compare(a.Name, b.Name); });
@@ -540,7 +540,7 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				planetName[i].SetText(planetsShowing[i + planetIndex].Name);
-				if (planetsShowing[i + planetIndex].Owner != null)
+				/*if (planetsShowing[i + planetIndex].Owner != null)
 				{
 					population[i].SetText(string.Format("{0:0}%", (planetsShowing[i].SpaceUsage / (planetsShowing[i].Regions.Count * 10)) * 100.0f) + " (" + planetsShowing[i].Regions.Count + ")");
 					planetName[i].SetColor(planetsShowing[i + planetIndex].Owner.EmpireColor);
@@ -549,8 +549,8 @@ namespace Beyond_Beyaan.Screens
 				{
 					population[i].SetText("0% (" + planetsShowing[i].Regions.Count + ")");
 					planetName[i].SetColor(System.Drawing.Color.White);
-				}
-				if (planetsShowing[i + planetIndex].Owner == empire)
+				}*/
+				//if (planetsShowing[i + planetIndex].Owner == empire)
 				{
 					/*agriculture[i].SetText(Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].AgricultureOutput));
 					waste[i].SetText(Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].EnvironmentOutput) + "/" + Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].AccumulatedWaste) + " Barrels");

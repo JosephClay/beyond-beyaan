@@ -11,8 +11,8 @@ namespace Beyond_Beyaan.Screens
 		private GameMain gameMain;
 
 		private TransferToPlanet transferWindow;
-		private List<SettlerToProcess> invadersToProcess;
-		private SettlerToProcess currentInvaderToProcess;
+		//private List<SettlerToProcess> invadersToProcess;
+		//private SettlerToProcess currentInvaderToProcess;
 
 		public void Initialize(GameMain gameMain)
 		{
@@ -23,7 +23,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			gameMain.DrawGalaxyBackground();
+			/*gameMain.DrawGalaxyBackground();
 
 			if (currentInvaderToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
 			{
@@ -32,7 +32,7 @@ namespace Beyond_Beyaan.Screens
 			else
 			{
 				//Process AI here
-			}
+			}*/
 		}
 
 		public void UpdateBackground(float frameDeltaTime)
@@ -42,7 +42,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			UpdateBackground(frameDeltaTime);
+			/*UpdateBackground(frameDeltaTime);
 
 			if (currentInvaderToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
 			{
@@ -60,28 +60,28 @@ namespace Beyond_Beyaan.Screens
 					//All done, change back to processing screen
 					gameMain.ChangeToScreen(Screen.ProcessTurn);
 				}
-			}
+			}*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			if (currentInvaderToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
+			/*if (currentInvaderToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
 			{
 				transferWindow.MouseDown(x, y);
-			}
+			}*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			if (currentInvaderToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
+			/*if (currentInvaderToProcess.whichFleet.Empire.Type == PlayerType.HUMAN)
 			{
 				transferWindow.MouseUp(x, y);
-			}
+			}*/
 		}
 
 		private void DoneFunction()
 		{
-			invadersToProcess.RemoveAt(0);
+			/*invadersToProcess.RemoveAt(0);
 			if (invadersToProcess.Count == 0)
 			{
 				gameMain.ChangeToScreen(Screen.ProcessTurn);
@@ -90,12 +90,12 @@ namespace Beyond_Beyaan.Screens
 			{
 				currentInvaderToProcess = invadersToProcess[0];
 				transferWindow.LoadTransfer(currentInvaderToProcess.whichSystem, currentInvaderToProcess.whichFleet);
-			}
+			}*/
 		}
 
 		public void LoadScreen(List<SettlerToProcess> invadersToProcess)
 		{
-			this.invadersToProcess = invadersToProcess;
+			/*this.invadersToProcess = invadersToProcess;
 
 			if (invadersToProcess.Count > 0)
 			{
@@ -109,7 +109,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					//Let AI process this
 				}
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)

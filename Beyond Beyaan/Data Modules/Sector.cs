@@ -5,18 +5,23 @@ using System.Text;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	enum SECTORTYPE { PLANET, DERELICT, EMPTY }
+	public enum SECTORTYPE { PLANET, DERELICT, EMPTY }
 
-	class Sector
+	public class Sector
 	{
 		public SECTORTYPE SectorType { get; private set; }
 
 		public Planet Planet { get; private set; }
 
-		public Sector(SECTORTYPE type, Planet planet)
+		public Empire Owner { get; set; }
+
+		public string Name { get; set; }
+
+		public Sector(SECTORTYPE type, Planet planet, string name)
 		{
 			SectorType = type;
 			Planet = planet;
+			Name = name;
 		}
 	}
 }

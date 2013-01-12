@@ -117,7 +117,7 @@ namespace Beyond_Beyaan.Screens
 				availableSystems[i + systemScrollBar.TopIndex].StarName.Draw();
 				GorgonLibrary.Gorgon.CurrentRenderTarget = oldTarget;
 				//GorgonLibrary.Gorgon.CurrentShader = gameMain.NameShader;
-				foreach (Empire empire in availableSystems[i + systemScrollBar.TopIndex].EmpiresWithPlanetsInThisSystem)
+				foreach (Empire empire in availableSystems[i + systemScrollBar.TopIndex].EmpiresWithSectorsInThisSystem)
 				{
 					/*gameMain.NameShader.Parameters["EmpireColor"].SetValue(empire.ConvertedColor);
 					gameMain.NameShader.Parameters["startPos"].SetValue(percentage);

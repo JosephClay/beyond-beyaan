@@ -12,29 +12,29 @@ namespace Beyond_Beyaan.Screens
 		private DoneFunction doneFunction;
 
 		private GroundCombatScreen groundCombatScreen;
-		private bool showingCombat;
+		//private bool showingCombat;
 
-		private InvisibleStretchButton[] planetButtons;
-		private Label[] planetNumericNames;
+		//private InvisibleStretchButton[] planetButtons;
+		//private Label[] planetNumericNames;
 		private Button transferButton;
 		private Button doneButton;
 		private ScrollBar[] popScrollBars;
 		private Label[] popLabels;
 		private ScrollBar raceScrollBar;
 
-		private Squadron selectedFleet;
-		private StarSystem selectedSystem;
+		//private Squadron selectedFleet;
+		//private StarSystem selectedSystem;
 
-		private int maxPlanetVisible;
-		private int maxRaceVisible;
-		private int planetOffset;
+		//private int maxPlanetVisible;
+		//private int maxRaceVisible;
+		//private int planetOffset;
 
-		private int selectedPlanet;
+		//private int selectedPlanet;
 
-		private int[] populationToMove;
-		private List<Race> races;
+		//private int[] populationToMove;
+		//private List<Race> races;
 
-		private bool[] transferrable;
+		//private bool[] transferrable;
 
 		public TransferToPlanet(int centerX, int centerY, GameMain gameMain, DoneFunction doneFunction)
 			: base(centerX, centerY, 10, 10, string.Empty, gameMain, false)
@@ -61,17 +61,17 @@ namespace Beyond_Beyaan.Screens
 			raceScrollBar = new ScrollBar(centerX + 87, centerY + 132, 16, 158, 4, 4, false, false, DrawingManagement.VerticalScrollBar);
 
 			windowHeight = 400;
-			showingCombat = false;
+			//showingCombat = false;
 		}
 
 		public override void DrawWindow(DrawingManagement drawingManagement)
 		{
 			base.DrawWindow(drawingManagement);
 
-			for (int i = 0; i < maxPlanetVisible; i++)
+			/*for (int i = 0; i < maxPlanetVisible; i++)
 			{
 				planetButtons[i].Draw(drawingManagement);
-				GorgonLibrary.Graphics.Sprite planet = selectedSystem.Planets[i].PlanetType.Sprite;
+				/*GorgonLibrary.Graphics.Sprite planet = selectedSystem.Planets[i].PlanetType.Sprite;
 				planet.SetPosition(xPos - planetOffset + (i * 70) + 15, yPos + 35);
 				if (transferrable[i])
 				{
@@ -81,8 +81,8 @@ namespace Beyond_Beyaan.Screens
 				{
 					planet.Color = System.Drawing.Color.FromArgb(255, 75, 75, 75);
 				}
-				planet.Draw();
-				planetNumericNames[i].Draw();
+				planet.Draw();*/
+				//planetNumericNames[i].Draw();
 				/*if (selectedSystem.Planets[i].ConstructionBonus != PLANET_CONSTRUCTION_BONUS.AVERAGE)
 				{
 					drawingManagement.DrawSprite(Utility.PlanetConstructionBonusToSprite(selectedSystem.Planets[i].ConstructionBonus), xPos - planetOffset + (i * 70) + 10, yPos + 95, 255, System.Drawing.Color.White);
@@ -95,7 +95,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					drawingManagement.DrawSprite(Utility.PlanetEntertainmentBonusToSprite(selectedSystem.Planets[i].EntertainmentBonus), xPos - planetOffset + (i * 70) + 44, yPos + 95, 255, System.Drawing.Color.White);
 				}*/
-			}
+			/*}
 			for (int i = 0; i < maxRaceVisible; i++)
 			{
 				popScrollBars[i].Draw(drawingManagement);
@@ -111,12 +111,12 @@ namespace Beyond_Beyaan.Screens
 			if (showingCombat)
 			{
 				groundCombatScreen.DrawWindow(drawingManagement);
-			}
+			}*/
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			if (showingCombat)
+			/*if (showingCombat)
 			{
 				return groundCombatScreen.MouseHover(x, y, frameDeltaTime);
 			}
@@ -134,13 +134,13 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 			doneButton.MouseHover(x, y, frameDeltaTime);
-			transferButton.MouseHover(x, y, frameDeltaTime);
+			transferButton.MouseHover(x, y, frameDeltaTime);*/
 			return true;
 		}
 
 		public override bool MouseDown(int x, int y)
 		{
-			if (showingCombat)
+			/*if (showingCombat)
 			{
 				return groundCombatScreen.MouseDown(x, y);
 			}
@@ -153,13 +153,13 @@ namespace Beyond_Beyaan.Screens
 				popScrollBars[i].MouseDown(x, y);
 			}
 			doneButton.MouseDown(x, y);
-			transferButton.MouseDown(x, y);
+			transferButton.MouseDown(x, y);*/
 			return true;
 		}
 
 		public override bool MouseUp(int x, int y)
 		{
-			if (showingCombat)
+			/*if (showingCombat)
 			{
 				return groundCombatScreen.MouseUp(x, y);
 			}
@@ -208,28 +208,28 @@ namespace Beyond_Beyaan.Screens
 				}
 
 				showingCombat = true;
-				groundCombatScreen.LoadScreen(selectedSystem.Planets[selectedPlanet], selectedFleet.Empire, invaders);
-			}
+				//groundCombatScreen.LoadScreen(selectedSystem.Planets[selectedPlanet], selectedFleet.Empire, invaders);
+			}*/
 			return true;
 		}
 
 		public void LoadTransfer(StarSystem selectedSystem, Squadron selectedFleet)
 		{
-			this.selectedFleet = selectedFleet;
+			/*this.selectedFleet = selectedFleet;
 			this.selectedSystem = selectedSystem;
 
-			maxPlanetVisible = selectedSystem.Planets.Count;
+			//maxPlanetVisible = selectedSystem.Planets.Count;
 			planetOffset = (int)((maxPlanetVisible / 2.0f) * 70);
 
 			planetButtons = new InvisibleStretchButton[maxPlanetVisible];
 			planetNumericNames = new Label[maxPlanetVisible];
 			transferrable = new bool[maxPlanetVisible];
 
-			bool selected = false;
+			//bool selected = false;
 			for (int i = 0; i < planetButtons.Length; i++)
 			{
 				planetButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos - planetOffset + (70 * i), yPos + 28, 70, 100, 30, 13);
-				transferrable[i] = selectedSystem.Planets[i].Owner != null;
+				/*transferrable[i] = selectedSystem.Planets[i].Owner != null;
 				if (transferrable[i])
 				{
 					planetNumericNames[i] = new Label(selectedSystem.Planets[i].NumericName, 0, 0, selectedSystem.Planets[i].Owner.EmpireColor);
@@ -246,8 +246,8 @@ namespace Beyond_Beyaan.Screens
 					planetNumericNames[i] = new Label(selectedSystem.Planets[i].NumericName, 0, 0, System.Drawing.Color.FromArgb(255, 75, 75, 75));
 					planetNumericNames[i].MoveTo(xPos - planetOffset + (70 * i) - (int)(planetNumericNames[i].GetWidth() / 2) + 35, yPos + 73);
 					planetButtons[i].Active = false;
-				}
-			}
+				}*/
+			/*}
 
 			windowWidth = maxPlanetVisible * 70 + 40;
 			if (windowWidth < 220)
@@ -258,12 +258,12 @@ namespace Beyond_Beyaan.Screens
 			backGroundImage.MoveTo(xPos - windowWidth / 2, yPos);
 			backGroundImage.SetDimensions(windowWidth, windowHeight);
 
-			RefreshData();
+			RefreshData();*/
 		}
 
 		private void RefreshData()
 		{
-			races = new List<Race>();
+			/*races = new List<Race>();
 			foreach (KeyValuePair<Race, int> race in selectedFleet.PopulationInTransit)
 			{
 				races.Add(race.Key);
@@ -296,12 +296,12 @@ namespace Beyond_Beyaan.Screens
 				popLabels[i].SetText("0 / " + (int)selectedFleet.PopulationInTransit[races[i]] + " " + races[i].RaceName);
 			}
 
-			ValidateData();
+			ValidateData();*/
 		}
 
 		private void ValidateData()
 		{
-			for (int i = 0; i < populationToMove.Length; i++)
+			/*for (int i = 0; i < populationToMove.Length; i++)
 			{
 				if (populationToMove[i] > 0)
 				{
@@ -310,12 +310,12 @@ namespace Beyond_Beyaan.Screens
 					return;
 				}
 			}
-			transferButton.Active = false;
+			transferButton.Active = false;*/
 		}
 
 		private void CombatEnded()
 		{
-			showingCombat = false;
+			//showingCombat = false;
 
 			//Now refresh
 			RefreshData();

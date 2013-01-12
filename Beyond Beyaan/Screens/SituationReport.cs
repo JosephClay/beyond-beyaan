@@ -160,13 +160,13 @@ namespace Beyond_Beyaan.Screens
 					}
 					if (item.PlanetEventOccuredAt != null)
 					{
-						for (int j = 0; j < item.SystemEventOccuredAt.Planets.Count; j++)
+						/*for (int j = 0; j < item.SystemEventOccuredAt.Planets.Count; j++)
 						{
 							if (item.SystemEventOccuredAt.Planets[j] == item.PlanetEventOccuredAt)
 							{
 								item.SystemEventOccuredAt.SetPlanetSelected(gameMain.empireManager.CurrentEmpire, j);
 							}
-						}
+						}*/
 					}
 					if (item.PointEventOccuredAt != null)
 					{
