@@ -44,19 +44,25 @@ namespace Beyond_Beyaan.Screens
 		private TextBox systemDescription;
 		private TextBox resourcesDisplay;
 
+		private List<SectorControl> sectorControls;
+		private ScrollBar sectorScrollBar;
+
 		public SystemWindow(int centerX, int centerY, GameMain gameMain) : 
-			base (centerX - 420, centerY - 320, 840, 640, null, gameMain, false)
+			base (centerX - 420, centerY - 320, 655, 640, null, gameMain, false)
 		{
 			systemBackground = new StretchableImage(xPos + 15, yPos + 15, 300, 200, 30, 13, DrawingManagement.BoxBorder);
 			resourcesBackground = new StretchableImage(xPos + 15, yPos + 215, 300, 200, 30, 13, DrawingManagement.BoxBorder);
 			projectsBackground = new StretchableImage(xPos + 15, yPos + 415, 300, 200, 30, 13, DrawingManagement.BoxBorder);
+			sectorScrollBar = new ScrollBar(xPos + 620, yPos + 15, 16, 578, 1, 10, false, false, DrawingManagement.VerticalScrollBar);
 
 			//planetOwner = new Label(x + 10, y + 300);
 
 			selectedSystem = null;
-			systemName = new SingleLineTextBox(xPos + 95, yPos + 28, 210, 35, DrawingManagement.TextBox);
-			systemDescription = new TextBox(xPos + 25, yPos + 95, 280, 100, "systemDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
-			resourcesDisplay = new TextBox(xPos + 25, yPos + 225, 270, 170, "systemResourcesDisplay", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			systemName = new SingleLineTextBox(xPos + 98, yPos + 28, 210, 35, DrawingManagement.TextBox);
+			systemDescription = new TextBox(xPos + 28, yPos + 95, 280, 100, "systemDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			resourcesDisplay = new TextBox(xPos + 28, yPos + 225, 270, 170, "systemResourcesDisplay", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+
+			sectorControls = new List<SectorControl>();
 			//selectedPlanet = null;
 			//offSet = 0;
 			//this.centerY = centerY;
@@ -83,7 +89,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				selectedSystem.Type.Shader.Parameters["StarColor"].SetValue(selectedSystem.Type.ShaderValue);
 			}
-			selectedSystem.Type.Sprite.SetPosition(xPos + 55, yPos + 55);
+			selectedSystem.Type.Sprite.SetPosition(xPos + 58, yPos + 55);
 			selectedSystem.Type.Sprite.SetScale(60.0f / selectedSystem.Type.Sprite.Width, 60.0f / selectedSystem.Type.Sprite.Height);
 			selectedSystem.Type.Sprite.Draw();
 			GorgonLibrary.Gorgon.CurrentShader = null;
@@ -92,6 +98,15 @@ namespace Beyond_Beyaan.Screens
 			systemDescription.Draw(drawingManagement);
 
 			resourcesDisplay.Draw(drawingManagement);
+
+			int height = 0;
+			for (int i = 0; i < sectorControls.Count; i++)
+			{
+				sectorControls[i].Draw(drawingManagement, xPos + 318, yPos + 15 + height);
+				height += sectorControls[i].Height;
+			}
+
+			sectorScrollBar.Draw(drawingManagement);
 
 			//systemDescription.Draw(drawingManagement);
 			/*systemButton.Draw(drawingManagement);
@@ -340,6 +355,12 @@ namespace Beyond_Beyaan.Screens
 					}
 
 					resourcesDisplay.SetMessage(sb.ToString());
+
+					sectorControls.Clear();
+					foreach (Sector sector in selectedSystem.Sectors)
+					{
+						sectorControls.Add(new SectorControl(sector, gameMain));
+					}
 				}
 				else
 				{

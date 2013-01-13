@@ -2745,6 +2745,13 @@ namespace Beyond_Beyaan
 			}
 		}
 
+		public override void MoveTo(int x, int y)
+		{
+			base.MoveTo(x, y);
+			background.MoveTo(x, y);
+			text.MoveTo(x + 6, y + 7);
+		}
+
 		public override void Draw(DrawingManagement drawingManagement)
 		{
 			background.Draw(drawingManagement);
