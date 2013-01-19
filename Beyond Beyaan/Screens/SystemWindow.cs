@@ -38,29 +38,36 @@ namespace Beyond_Beyaan.Screens
 		private StretchableImage systemBackground;
 		private StretchableImage resourcesBackground;
 		private StretchableImage projectsBackground;
+		private StretchableImage regionsBackground;
 
 		private StarSystem selectedSystem;
 		private SingleLineTextBox systemName;
 		private TextBox systemDescription;
 		private TextBox resourcesDisplay;
 
+		private GorgonLibrary.Graphics.RenderImage target;
+
 		private List<SectorControl> sectorControls;
 		private ScrollBar sectorScrollBar;
 
 		public SystemWindow(int centerX, int centerY, GameMain gameMain) : 
-			base (centerX - 420, centerY - 320, 655, 640, null, gameMain, false)
+			base (centerX - 420, centerY - 320, 655, 440, null, gameMain, false)
 		{
 			systemBackground = new StretchableImage(xPos + 15, yPos + 15, 300, 200, 30, 13, DrawingManagement.BoxBorder);
-			resourcesBackground = new StretchableImage(xPos + 15, yPos + 215, 300, 200, 30, 13, DrawingManagement.BoxBorder);
-			projectsBackground = new StretchableImage(xPos + 15, yPos + 415, 300, 200, 30, 13, DrawingManagement.BoxBorder);
-			sectorScrollBar = new ScrollBar(xPos + 620, yPos + 15, 16, 578, 1, 10, false, false, DrawingManagement.VerticalScrollBar);
+			resourcesBackground = new StretchableImage(xPos + 15, yPos + 215, 300, 100, 30, 13, DrawingManagement.BoxBorder);
+			projectsBackground = new StretchableImage(xPos + 15, yPos + 315, 300, 100, 30, 13, DrawingManagement.BoxBorder);
+			regionsBackground = new StretchableImage(xPos + 317, yPos + 15, 320, 400, 30, 13, DrawingManagement.BoxBorder);
+			sectorScrollBar = new ScrollBar(xPos + 615, yPos + 22, 16, 354, 370, 370, false, false, DrawingManagement.VerticalScrollBar);
+
+			target = new GorgonLibrary.Graphics.RenderImage("systemWindowRender", 290, 380, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
+			target.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
 
 			//planetOwner = new Label(x + 10, y + 300);
 
 			selectedSystem = null;
 			systemName = new SingleLineTextBox(xPos + 98, yPos + 28, 210, 35, DrawingManagement.TextBox);
 			systemDescription = new TextBox(xPos + 28, yPos + 95, 280, 100, "systemDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
-			resourcesDisplay = new TextBox(xPos + 28, yPos + 225, 270, 170, "systemResourcesDisplay", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			resourcesDisplay = new TextBox(xPos + 20, yPos + 225, 290, 80, "systemResourcesDisplay", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
 
 			sectorControls = new List<SectorControl>();
 			//selectedPlanet = null;
@@ -82,6 +89,7 @@ namespace Beyond_Beyaan.Screens
 			backGroundImage.Draw(drawingManagement);
 			systemBackground.Draw(drawingManagement);
 			resourcesBackground.Draw(drawingManagement);
+			regionsBackground.Draw(drawingManagement);
 			projectsBackground.Draw(drawingManagement);
 
 			GorgonLibrary.Gorgon.CurrentShader = selectedSystem.Type.Shader;
@@ -99,14 +107,20 @@ namespace Beyond_Beyaan.Screens
 
 			resourcesDisplay.Draw(drawingManagement);
 
+			sectorScrollBar.Draw(drawingManagement);
+
+			GorgonLibrary.Graphics.RenderTarget old = GorgonLibrary.Gorgon.CurrentRenderTarget;
+			GorgonLibrary.Gorgon.CurrentRenderTarget = target;
 			int height = 0;
 			for (int i = 0; i < sectorControls.Count; i++)
 			{
-				sectorControls[i].Draw(drawingManagement, xPos + 318, yPos + 15 + height);
+				sectorControls[i].Draw(drawingManagement, 0, height - sectorScrollBar.TopIndex);
 				height += sectorControls[i].Height;
 			}
+			GorgonLibrary.Gorgon.CurrentRenderTarget = old;
+			target.Blit(xPos + 323, yPos + 21);
 
-			sectorScrollBar.Draw(drawingManagement);
+			
 
 			//systemDescription.Draw(drawingManagement);
 			/*systemButton.Draw(drawingManagement);
@@ -179,6 +193,8 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseUp(int x, int y)
 		{
+			bool result = resourcesDisplay.MouseUp(x, y);
+			result = sectorScrollBar.MouseUp(x, y) || result;
 			/*bool result = false;
 			if (selectedPlanet != null)
 			{
@@ -233,13 +249,14 @@ namespace Beyond_Beyaan.Screens
 				{
 					button.Selected = false;
 				}
-			}
-			return result;*/
-			return false;
+			}*/
+			return result;
 		}
 
 		public override bool MouseDown(int x, int y)
 		{
+			bool result = resourcesDisplay.MouseDown(x, y);
+			result = sectorScrollBar.MouseDown(x, y) || result;
 			/*bool result = false;
 			if (selectedPlanet != null)
 			{
@@ -257,13 +274,14 @@ namespace Beyond_Beyaan.Screens
 			if (x >= xPos - (windowHeight / 2) && x < xPos + (windowWidth / 2) && y >= yPos && y < yPos + windowHeight)
 			{
 				result = true;
-			}
-			return result;*/
-			return false;
+			}*/
+			return result;
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
+			bool result = resourcesDisplay.MouseHover(x, y, frameDeltaTime);
+			result = sectorScrollBar.MouseHover(x, y, frameDeltaTime) || result;
 			/*bool result = false;
 			if (selectedPlanet != null)
 			{
@@ -281,9 +299,8 @@ namespace Beyond_Beyaan.Screens
 			if (x >= xPos - (windowHeight / 2) && x < xPos + (windowWidth / 2) && y >= yPos && y < yPos + windowHeight)
 			{
 				result = true;
-			}
-			return result;*/
-			return false;
+			}*/
+			return result;
 		}
 
 		/*private void RefreshPlanets()
@@ -357,10 +374,16 @@ namespace Beyond_Beyaan.Screens
 					resourcesDisplay.SetMessage(sb.ToString());
 
 					sectorControls.Clear();
+					int total = 0;
 					foreach (Sector sector in selectedSystem.Sectors)
 					{
-						sectorControls.Add(new SectorControl(sector, gameMain));
+						var sectorControl = new SectorControl(sector, gameMain);
+						sectorControls.Add(sectorControl);
+						total += sectorControl.Height;
 					}
+					sectorScrollBar.SetAmountOfItems(total);
+					sectorScrollBar.SetEnabledState(total > 370);
+					sectorScrollBar.TopIndex = 0;
 				}
 				else
 				{
