@@ -64,6 +64,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					yPos = 0;
 				}
+				MoveWindow();
 				return true;
 			}
 			if (x >= xPos && x < xPos + windowWidth && y >= yPos && y < yPos + windowHeight)
@@ -107,6 +108,7 @@ namespace Beyond_Beyaan.Screens
 
 		public virtual void MoveWindow()
 		{
+			backGroundImage.MoveTo(xPos, yPos);
 		}
 	}
 }

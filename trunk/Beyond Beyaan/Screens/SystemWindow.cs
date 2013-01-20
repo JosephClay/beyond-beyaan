@@ -51,13 +51,13 @@ namespace Beyond_Beyaan.Screens
 		private ScrollBar sectorScrollBar;
 
 		public SystemWindow(int centerX, int centerY, GameMain gameMain) : 
-			base (centerX - 420, centerY - 320, 655, 440, null, gameMain, false)
+			base (centerX - 420, centerY - 320, 655, 440, null, gameMain, true)
 		{
 			systemBackground = new StretchableImage(xPos + 15, yPos + 15, 300, 200, 30, 13, DrawingManagement.BoxBorder);
 			resourcesBackground = new StretchableImage(xPos + 15, yPos + 215, 300, 100, 30, 13, DrawingManagement.BoxBorder);
 			projectsBackground = new StretchableImage(xPos + 15, yPos + 315, 300, 100, 30, 13, DrawingManagement.BoxBorder);
 			regionsBackground = new StretchableImage(xPos + 317, yPos + 15, 320, 400, 30, 13, DrawingManagement.BoxBorder);
-			sectorScrollBar = new ScrollBar(xPos + 615, yPos + 22, 16, 354, 370, 370, false, false, DrawingManagement.VerticalScrollBar);
+			sectorScrollBar = new ScrollBar(xPos + 615, yPos + 22, 16, 348, 380, 380, false, false, DrawingManagement.VerticalScrollBar);
 
 			target = new GorgonLibrary.Graphics.RenderImage("systemWindowRender", 290, 380, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
 			target.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
@@ -111,9 +111,16 @@ namespace Beyond_Beyaan.Screens
 
 			GorgonLibrary.Graphics.RenderTarget old = GorgonLibrary.Gorgon.CurrentRenderTarget;
 			GorgonLibrary.Gorgon.CurrentRenderTarget = target;
+			GorgonLibrary.Gorgon.CurrentRenderTarget.Clear(System.Drawing.Color.FromArgb(0,255,255,255));
 			int height = 0;
 			for (int i = 0; i < sectorControls.Count; i++)
 			{
+				if (height + sectorControls[i].Height < sectorScrollBar.TopIndex || height > sectorScrollBar.TopIndex + 380)
+				{
+					height += sectorControls[i].Height;
+					//control is not visible, skip
+					continue;
+				}
 				sectorControls[i].Draw(drawingManagement, 0, height - sectorScrollBar.TopIndex);
 				height += sectorControls[i].Height;
 			}
@@ -250,7 +257,7 @@ namespace Beyond_Beyaan.Screens
 					button.Selected = false;
 				}
 			}*/
-			return result;
+			return result || base.MouseUp(x, y);
 		}
 
 		public override bool MouseDown(int x, int y)
@@ -275,7 +282,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				result = true;
 			}*/
-			return result;
+			return result || base.MouseDown(x, y);
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -300,7 +307,20 @@ namespace Beyond_Beyaan.Screens
 			{
 				result = true;
 			}*/
-			return result;
+			return result || base.MouseHover(x, y, frameDeltaTime);
+		}
+
+		public override void MoveWindow()
+		{
+			base.MoveWindow();
+			systemBackground.MoveTo(xPos + 15, yPos + 15);
+			resourcesBackground.MoveTo(xPos + 15, yPos + 215);
+			projectsBackground.MoveTo(xPos + 15, yPos + 315);
+			regionsBackground.MoveTo(xPos + 317, yPos + 15);
+			sectorScrollBar.MoveTo(xPos + 615, yPos + 22);
+			systemName.MoveTo(xPos + 98, yPos + 28);
+			systemDescription.MoveTo(xPos + 28, yPos + 95);
+			resourcesDisplay.MoveTo(xPos + 20, yPos + 225);
 		}
 
 		/*private void RefreshPlanets()
@@ -328,6 +348,7 @@ namespace Beyond_Beyaan.Screens
 			if (selectedSystem != null)
 			{
 				systemDescription.SetMessage(selectedSystem.Type.Description);
+				sectorControls.Clear();
 
 				if (selectedSystem.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
 				{
@@ -373,7 +394,6 @@ namespace Beyond_Beyaan.Screens
 
 					resourcesDisplay.SetMessage(sb.ToString());
 
-					sectorControls.Clear();
 					int total = 0;
 					foreach (Sector sector in selectedSystem.Sectors)
 					{
@@ -390,6 +410,10 @@ namespace Beyond_Beyaan.Screens
 					systemName.SetString("Unexplored");
 
 					resourcesDisplay.SetMessage(string.Empty);
+
+					sectorScrollBar.SetAmountOfItems(380);
+					sectorScrollBar.TopIndex = 0;
+					sectorScrollBar.SetEnabledState(false);
 				}
 			}
 
