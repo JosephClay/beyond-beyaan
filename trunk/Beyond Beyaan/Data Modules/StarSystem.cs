@@ -58,14 +58,6 @@ namespace Beyond_Beyaan
 		public List<Empire> EmpiresWithSectorsInThisSystem { get; private set; }
 
 		public Dictionary<Empire, float> OwnerPercentage;
-		public Dictionary<Empire, Dictionary<Resource, float>> Productions;
-		public Dictionary<Empire, Dictionary<Resource, float>> Consumptions;
-		public Dictionary<Empire, Dictionary<Resource, float>> AvailableResources;
-		public Dictionary<Empire, Dictionary<Resource, float>> ResourcesSupplied;
-		public Dictionary<Empire, Dictionary<Resource, float>> ResourcesShared;
-		public Dictionary<Empire, Dictionary<Resource, float>> Resources;
-		public Dictionary<Empire, Dictionary<Resource, float>> Shortages;
-		public Dictionary<Empire, Dictionary<Resource, float>> ProjectResources;
 
 		#region Dijkstra's Algorithm
 		public double Distance { get; set; }
@@ -109,15 +101,6 @@ namespace Beyond_Beyaan
 			Starlanes = new List<Starlane>();
 			InvisibleStarlanes = new List<Starlane>();
 			//stargates = new Dictionary<Empire, Stargate>();
-
-			Productions = new Dictionary<Empire, Dictionary<Resource, float>>();
-			Consumptions = new Dictionary<Empire, Dictionary<Resource, float>>();
-			AvailableResources = new Dictionary<Empire, Dictionary<Resource, float>>();
-			ResourcesSupplied = new Dictionary<Empire, Dictionary<Resource, float>>();
-			ResourcesShared = new Dictionary<Empire, Dictionary<Resource, float>>();
-			Resources = new Dictionary<Empire, Dictionary<Resource, float>>();
-			Shortages = new Dictionary<Empire, Dictionary<Resource, float>>();
-			ProjectResources = new Dictionary<Empire, Dictionary<Resource, float>>();
 		}
 		#endregion
 
@@ -438,87 +421,21 @@ namespace Beyond_Beyaan
 		}
 		public void TallyConsumptions(Empire whichEmpire, Dictionary<Resource, float> consumptions)
 		{
-			if (Consumptions.ContainsKey(whichEmpire))
-			{
-				Consumptions[whichEmpire].Clear();
-			}
-			else
-			{
-				Consumptions.Add(whichEmpire, new Dictionary<Resource, float>());
-			}
-
 			foreach (Sector sector in sectors)
 			{
 				if (sector.SectorType == SECTORTYPE.PLANET && sector.Owner == whichEmpire)
 				{
-					sector.Planet.TallyConsumptions(Consumptions[whichEmpire]);
-				}
-			}
-
-			foreach (KeyValuePair<Resource, float> consumption in Consumptions[whichEmpire])
-			{
-				if (consumption.Key.LimitTo == LimitTo.EMPIRE)
-				{
-					if (consumptions.ContainsKey(consumption.Key))
-					{
-						consumptions[consumption.Key] += consumption.Value;
-					}
-					else
-					{
-						consumptions[consumption.Key] = consumption.Value;
-					}
+					sector.Planet.TallyConsumptions(consumptions);
 				}
 			}
 		}
 		public void TallyResources(Empire whichEmpire, Dictionary<Resource, float> resources)
 		{
-			if (Resources.ContainsKey(whichEmpire))
-			{
-				Resources[whichEmpire].Clear();
-			}
-			else
-			{
-				Resources.Add(whichEmpire, new Dictionary<Resource, float>());
-			}
-			if (ProjectResources.ContainsKey(whichEmpire))
-			{
-				ProjectResources[whichEmpire].Clear();
-			}
-			else
-			{
-				ProjectResources.Add(whichEmpire, new Dictionary<Resource, float>());
-			}
-
-			Dictionary<Resource, float> tempResources = new Dictionary<Resource, float>();
 			foreach (Sector sector in sectors)
 			{
 				if (sector.SectorType == SECTORTYPE.PLANET && sector.Owner == whichEmpire)
 				{
-					sector.Planet.TallyResources(tempResources);
-				}
-			}
-
-			foreach (KeyValuePair<Resource, float> resource in tempResources)
-			{
-				if (resource.Key.LimitTo == LimitTo.SYSTEM)
-				{
-					Resources[whichEmpire][resource.Key] = resource.Value;
-				}
-				else if (resource.Key.LimitTo == LimitTo.SYSTEM_DEVELOPMENT)
-				{
-					ProjectResources[whichEmpire][resource.Key] = resource.Value;
-				}
-				//At this point, the remaining resources are at empire-wide level.
-				else
-				{
-					if (resources.ContainsKey(resource.Key))
-					{
-						resources[resource.Key] += resource.Value;
-					}
-					else
-					{
-						resources[resource.Key] = resource.Value;
-					}
+					sector.Planet.TallyResources(resources);
 				}
 			}
 		}
@@ -526,29 +443,11 @@ namespace Beyond_Beyaan
 		//This grabs the resouces, then deducts what it don't need to consume as it is passed to system and empire
 		public void TallyAvailableResourcesAndShortages(Empire whichEmpire, Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
 		{
-			if (AvailableResources.ContainsKey(whichEmpire))
-			{
-				AvailableResources[whichEmpire].Clear();
-			}
-			else
-			{
-				AvailableResources.Add(whichEmpire, new Dictionary<Resource, float>());
-			}
-			if (Shortages.ContainsKey(whichEmpire))
-			{
-				Shortages[whichEmpire].Clear();
-			}
-			else
-			{
-				Shortages.Add(whichEmpire, new Dictionary<Resource, float>());
-			}
-
 			foreach (Sector sector in sectors)
 			{
 				if (sector.SectorType == SECTORTYPE.PLANET && sector.Owner == whichEmpire)
 				{
-					Dictionary<Resource, float> tempAvailableResources = new Dictionary<Resource, float>();
-					sector.Planet.TallyAvailableResourcesAndShortages(tempAvailableResources, Shortages[whichEmpire]);
+					sector.Planet.TallyAvailableResourcesAndShortages(availableResources, shortages);
 					/*foreach (KeyValuePair<Resource, float> projectConsumption in ProjectConsumptions[whichEmpire])
 					{
 						if (tempAvailableResources.ContainsKey(projectConsumption.Key))
@@ -583,36 +482,6 @@ namespace Beyond_Beyaan
 					}*/
 				}
 			}
-
-			foreach (KeyValuePair<Resource, float> resource in AvailableResources[whichEmpire])
-			{
-				if (resource.Key.LimitTo == LimitTo.EMPIRE)
-				{
-					if (availableResources.ContainsKey(resource.Key))
-					{
-						availableResources[resource.Key] += resource.Value;
-					}
-					else
-					{
-						availableResources[resource.Key] = resource.Value;
-					}
-				}
-			}
-
-			foreach (KeyValuePair<Resource, float> resource in Shortages[whichEmpire])
-			{
-				if (resource.Key.LimitTo == LimitTo.EMPIRE)
-				{
-					if (shortages.ContainsKey(resource.Key))
-					{
-						shortages[resource.Key] += resource.Value;
-					}
-					else
-					{
-						shortages[resource.Key] = resource.Value;
-					}
-				}
-			}
 		}
 
 		public void SetSharedResources(Empire empire, Dictionary<Resource, float> sharedAvailable, Dictionary<Resource, float> sharedConsumped)
@@ -620,7 +489,7 @@ namespace Beyond_Beyaan
 			Dictionary<Resource, float> percentageAvailableShared = new Dictionary<Resource, float>();
 			Dictionary<Resource, float> percentageSharedConsumed = new Dictionary<Resource, float>();
 
-			foreach (var shortage in Shortages[empire])
+			/*foreach (var shortage in Shortages[empire])
 			{
 				if (shortage.Key.LimitTo == LimitTo.SYSTEM && AvailableResources[empire].ContainsKey(shortage.Key))
 				{
@@ -635,7 +504,7 @@ namespace Beyond_Beyaan
 						percentageSharedConsumed[shortage.Key] = 1;
 					}
 				}
-			}
+			}*/
 			foreach (Sector sector in sectors)
 			{
 				if (sector.Owner == empire)
@@ -658,35 +527,11 @@ namespace Beyond_Beyaan
 
 		public void TallyProductions(Empire whichEmpire, Dictionary<Resource, float> productions)
 		{
-			if (Productions.ContainsKey(whichEmpire))
-			{
-				Productions[whichEmpire].Clear();
-			}
-			else
-			{
-				Productions.Add(whichEmpire, new Dictionary<Resource, float>());
-			}
-
 			foreach (Sector sector in sectors)
 			{
 				if (sector.SectorType == SECTORTYPE.PLANET && sector.Owner == whichEmpire)
 				{
-					sector.Planet.TallyProduction(Productions[whichEmpire]);
-				}
-			}
-
-			foreach (KeyValuePair<Resource, float> production in Productions[whichEmpire])
-			{
-				if (production.Key.LimitTo == LimitTo.EMPIRE)
-				{
-					if (productions.ContainsKey(production.Key))
-					{
-						productions[production.Key] += production.Value;
-					}
-					else
-					{
-						productions[production.Key] = production.Value;
-					}
+					sector.Planet.TallyProduction(productions);
 				}
 			}
 		}
