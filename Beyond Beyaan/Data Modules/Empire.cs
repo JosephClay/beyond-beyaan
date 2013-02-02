@@ -310,7 +310,7 @@ namespace Beyond_Beyaan
 			planetManager = new PlanetManager();
 			starSystemManager = new StarSystemManager(this);
 			sitRepManager = new SitRepManager();
-			projectManager = new ProjectManager(this, false);
+			projectManager = new ProjectManager(false);
 			resources = new Dictionary<Resource, float>();
 			consumptions = new Dictionary<Resource, float>();
 			shortages = new Dictionary<Resource, float>();

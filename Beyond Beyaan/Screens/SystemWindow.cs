@@ -354,46 +354,6 @@ namespace Beyond_Beyaan.Screens
 				{
 					systemName.SetString(selectedSystem.Name);
 
-					StringBuilder sb = new StringBuilder();
-					foreach (KeyValuePair<Resource, float> consumption in selectedSystem.Consumptions[currentEmpire])
-					{
-						if (!selectedSystem.AvailableResources[currentEmpire].ContainsKey(consumption.Key))
-						{
-							if (selectedSystem.Productions[currentEmpire].ContainsKey(consumption.Key))
-							{
-								sb.AppendLine(consumption.Key.Abbreviation + "  " + string.Format("0 ({0:0.00})", selectedSystem.Productions[currentEmpire][consumption.Key] - consumption.Value));
-							}
-							else
-							{
-								sb.AppendLine(consumption.Key.Abbreviation + "  " + string.Format("0 ({0:0.00})", consumption.Value * -1));
-							}
-						}
-					}
-					foreach (KeyValuePair<Resource, float> production in selectedSystem.Productions[currentEmpire])
-					{
-						if (!selectedSystem.AvailableResources[currentEmpire].ContainsKey(production.Key) && !selectedSystem.Consumptions[currentEmpire].ContainsKey(production.Key))
-						{
-							sb.AppendLine(production.Key.Abbreviation + "  " + string.Format("0 ({0:0.00})", production.Value));
-						}
-					}
-					foreach (KeyValuePair<Resource, float> resource in selectedSystem.AvailableResources[currentEmpire])
-					{
-						string value = resource.Key.Abbreviation + "  " + string.Format("{0:0.00}", resource.Value) + " (";
-						float income = 0;
-						if (selectedSystem.Productions[currentEmpire].ContainsKey(resource.Key))
-						{
-							income += selectedSystem.Productions[currentEmpire][resource.Key];
-						}
-						if (selectedSystem.Consumptions[currentEmpire].ContainsKey(resource.Key))
-						{
-							income -= selectedSystem.Consumptions[currentEmpire][resource.Key];
-						}
-						value = value + string.Format("{0:0.00})", income);
-						sb.AppendLine(value);
-					}
-
-					resourcesDisplay.SetMessage(sb.ToString());
-
 					int total = 0;
 					foreach (Sector sector in selectedSystem.Sectors)
 					{

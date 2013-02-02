@@ -8,7 +8,6 @@ namespace Beyond_Beyaan.Data_Managers
 {
 	public class ProjectManager
 	{
-		private Empire empire;
 		private List<Project> projects;
 		private List<int> percentageAmounts;
 		private List<bool> locked;
@@ -19,12 +18,11 @@ namespace Beyond_Beyaan.Data_Managers
 		public List<bool> Locked { get { return locked; } }
 		public bool IsQueue { get { return isQueue; } }
 
-		public ProjectManager(Empire empire, bool isQueue)
+		public ProjectManager(bool isQueue)
 		{
 			projects = new List<Project>();
 			percentageAmounts = new List<int>();
 			locked = new List<bool>();
-			this.empire = empire;
 			this.isQueue = isQueue;
 		}
 
