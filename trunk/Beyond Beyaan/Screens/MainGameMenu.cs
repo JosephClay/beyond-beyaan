@@ -216,6 +216,11 @@ namespace Beyond_Beyaan.Screens
 				gameMain.masterTechnologyList.LoadTechnologies(directoryPath, gameMain.resourceManager, gameMain.masterItemManager);
 				gameMain.shipScriptManager.LoadShipScripts(Path.Combine(Path.Combine(directoryPath, "Scripts"), "Ship"));
 				gameMain.raceManager = new Data_Managers.RaceManager(directoryPath, Path.Combine(directoryPath, "graphics"), gameMain.masterTechnologyList, gameMain.shipScriptManager, Path.Combine(Path.Combine(directoryPath, "Scripts"), "Technology"), gameMain.iconManager, gameMain.resourceManager);
+				if (!gameMain.sectorTypeManager.LoadSectorTypes(Path.Combine(directoryPath, "sectorObjects.xml"), gameMain, out reason))
+				{
+					MessageBox.Show(reason);
+					return false;
+				}
 				gameMain.planetTypeManager.LoadPlanetTypes(Path.Combine(directoryPath, "planets.xml"), Path.Combine(Path.Combine(directoryPath, "graphics"), "planets.png"), Path.Combine(directoryPath, "graphics"), gameMain);
 				gameMain.regionTypeManager.LoadRegionTypes(Path.Combine(directoryPath, "regions.xml"), gameMain);
 				gameMain.starTypeManager.LoadStarTypes(Path.Combine(directoryPath, "stars.xml"), Path.Combine(Path.Combine(directoryPath, "graphics"), "stars.png"), Path.Combine(directoryPath, "shaders"), gameMain);

@@ -42,6 +42,7 @@ namespace Beyond_Beyaan
 		internal RaceManager raceManager;
 		internal ParticleManager particleManager;
 		internal EffectManager effectManager;
+		internal SectorTypeManager sectorTypeManager;
 		internal PlanetTypeManager planetTypeManager;
 		internal RegionTypeManager regionTypeManager;
 		internal StarTypeManager starTypeManager;
@@ -120,6 +121,7 @@ namespace Beyond_Beyaan
 			masterItemManager = new MasterItemManager();
 			masterTechnologyList = new MasterTechnologyList();
 			starTypeManager = new StarTypeManager();
+			sectorTypeManager = new SectorTypeManager();
 			planetTypeManager = new PlanetTypeManager();
 			regionTypeManager = new RegionTypeManager();
 			particleManager = new ParticleManager();
@@ -148,6 +150,10 @@ namespace Beyond_Beyaan
 			if (planetTypeManager == null)
 			{
 				planetTypeManager = new PlanetTypeManager();
+			}
+			if (sectorTypeManager == null)
+			{
+				sectorTypeManager = new SectorTypeManager();
 			}
 
 			if (regionTypeManager == null)
