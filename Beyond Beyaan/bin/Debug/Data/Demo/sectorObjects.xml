@@ -184,7 +184,7 @@
       improvements="1"
       isGateway="true"
       connectsToAnother="true"
-      connectionAlgorithm="minimum"
+      connectionAlgorithm="closest"
       description="After many years of frequent travel by ships, the space between stars developed a &quot;groove&quot; which is similar to wormholes, but are weakly present.  They make distances shorter for traveling ships." />
   </Starlanes>
   <Wormholes>
@@ -197,7 +197,7 @@
       improvements="1"
       isGateway="true"
       connectsToAnother="true"
-      connectAlgorithm="farthest"
+      connectionAlgorithm="farthest"
       description="At one point in history, something caused those wormholes to form.  Those wormholes allows ships to travel to the other side almost instantly." />
   </Wormholes>
 </SectorTypes>
