@@ -37,7 +37,7 @@ namespace Beyond_Beyaan
 
 			for (int i = 0; i < maxStars; i++)
 			{
-				int whichStar = rand.Next(8);
+				int whichStar = rand.Next(21);
 
 				int size = 0;
 				string starType = "Yellow Star";
@@ -45,36 +45,88 @@ namespace Beyond_Beyaan
 				switch (whichStar)
 				{
 					case 0: 
-						size = 2;
+						size = 1;
 						starType = "Yellow Star";
 						break;
 					case 1:
-						size = 2;
+						size = 1;
 						starType = "Blue Star";
 						break;
 					case 2:
-						size = 2;
+						size = 1;
 						starType = "Orange Star";
 						break;
 					case 3:
-						size = 2;
+						size = 1;
 						starType = "White Star";
 						break;
 					case 4:
-						size = 2;
+						size = 1;
 						starType = "Green Star";
 						break;
 					case 5:
-						size = 2;
+						size = 1;
 						starType = "Red Giant";
 						break;
 					case 6:
-						size = 2;
+						size = 1;
 						starType = "Black Dwarf";
 						break;
 					case 7:
+						size = 4;
+						starType = "Nebula1";
+						break;
+					case 8:
+						size = 3;
+						starType = "Nebula2";
+						break;
+					case 9:
+						size = 3;
+						starType = "Nebula3";
+						break;
+					case 10:
 						size = 2;
+						starType = "Nebula4";
+						break;
+					case 11:
+						size = 4;
+						starType = "Nebula5";
+						break;
+					case 12:
+						size = 3;
+						starType = "Nebula6";
+						break;
+					case 13:
+						size = 1;
 						starType = "Black Hole";
+						break;
+					case 14:
+						size = 1;
+						starType = "Yellow Star";
+						break;
+					case 15:
+						size = 1;
+						starType = "Blue Star";
+						break;
+					case 16:
+						size = 1;
+						starType = "Orange Star";
+						break;
+					case 17:
+						size = 1;
+						starType = "White Star";
+						break;
+					case 18:
+						size = 1;
+						starType = "Green Star";
+						break;
+					case 19:
+						size = 1;
+						starType = "Red Giant";
+						break;
+					case 20:
+						size = 1;
+						starType = "Black Dwarf";
 						break;
 				}
 
