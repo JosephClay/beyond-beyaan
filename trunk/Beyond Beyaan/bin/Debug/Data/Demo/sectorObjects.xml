@@ -7,7 +7,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*10"
       description="Terran planets are brimming with life, with a balanced ecosystem and an excellent atmosphere for living in." />
     <Planet
@@ -16,7 +17,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*10"
       description="Terran planets are brimming with life, with a balanced ecosystem and an excellent atmosphere for living in." />
     <Planet
@@ -25,7 +27,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*8"
       description="Jungle planets are abundant in life, but some of them are hostile or carries parasites." />
     <Planet
@@ -34,7 +37,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*8"
       description="Steppe planets usually are not very fertile, and supports limited amount of life." />
     <Planet
@@ -43,7 +47,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*6"
       description="Oceanic planets have the vast majority of their surface covered with water, with very little if any landmasses." />
     <Planet
@@ -52,7 +57,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*6"
       description="Desert planets have very little water, barely enough to sustain some life." />
     <Planet
@@ -61,7 +67,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*5"
       description="Badlands planets has a fitting name, bad lands.  Usually they have very rocky surfaces, and very little life." />
     <Planet
@@ -70,7 +77,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*5"
       description="Tundra planets are very cold, very little life lives on those kind of planets." />
     <Planet
@@ -79,7 +87,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*4"
       description="Artic planets have an atmosphere, but the temperatures range hundreds below zero on warmest days." />
     <Planet
@@ -88,7 +97,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*4"
       description="Barren planets have an atmosphere, but no life forms.  Atmosphere normally aren't breathable." />
     <Planet
@@ -97,7 +107,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*3"
       description="Dead planets have no atmosphere, no life, and no core activity.  Just a rock hurling in space." />
     <Planet
@@ -106,7 +117,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*3"
       description="Volcanic planets have a very active molten core.  They are rift with massive earthquakes and volcanoes." />
     <Planet
@@ -115,7 +127,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*2"
       description="Toxic planets have corrosive atmosphere, with surface covered with corrosive elements." />
     <Planet
@@ -124,7 +137,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*2"
       description="Toxic planets have corrosive atmosphere, with surface covered with corrosive elements." />
     <Planet
@@ -133,7 +147,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*1"
       description="Radiated planets are the worst inhabitable type of planets, their surfaces are covered with unstable elements, requiring heavy shielding." />
     <Planet
@@ -142,7 +157,8 @@
       inhabitable="true"
       localProjects="true"
       improvements="5,10"
-      miniImprovements="Planet"
+      improvementType="Planet"
+      miniImprovementType="Planet"
       population="#improvements#*1"
       description="Radiated planets are the worst inhabitable type of planets, their surfaces are covered with unstable elements, requiring heavy shielding." />
     <Planet
@@ -162,22 +178,26 @@
     <Starlane
       name="Starlane"
       code="Starlane"
+      generateName="Starlane"
       inhabitable="false"
       localProjects="false"
       improvements="1"
       isGateway="true"
       connectsToAnother="true"
+      connectionAlgorithm="minimum"
       description="After many years of frequent travel by ships, the space between stars developed a &quot;groove&quot; which is similar to wormholes, but are weakly present.  They make distances shorter for traveling ships." />
   </Starlanes>
   <Wormholes>
     <Wormhole
       name="Wormhole"
       code="Wormhole"
+      generateName="Wormhole"
       inhabitable="false"
       localProjects="false"
       improvements="1"
       isGateway="true"
       connectsToAnother="true"
+      connectAlgorithm="farthest"
       description="At one point in history, something caused those wormholes to form.  Those wormholes allows ships to travel to the other side almost instantly." />
   </Wormholes>
 </SectorTypes>

@@ -17,14 +17,10 @@ namespace Beyond_Beyaan
 		private string name;
 
 		private List<Empire> exploredBy;
-		private Dictionary<Empire, int> planetSelected;
-		internal List<Starlane> Starlanes;
-		internal List<Starlane> InvisibleStarlanes;
-		//private Dictionary<Empire, Stargate> stargates;
+		private Dictionary<Empire, int> sectorSelected;
 
-		private List<Sector> sectors;
+		private List<SectorObject> sectorObjects;
 		internal List<Squadron> OrbitingSquadrons;
-		internal Dictionary<Race, List<ShipInstance>> ShipReserves;
 		#endregion
 
 		#region Properties
@@ -42,9 +38,9 @@ namespace Beyond_Beyaan
 		{
 			get { return name; }
 		}
-		public List<Sector> Sectors
+		public List<SectorObject> SectorObjects
 		{
-			get { return sectors; }
+			get { return sectorObjects; }
 		}		
 		public StarType Type
 		{
@@ -67,40 +63,45 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int x, int y, StarType starType, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, Random r)
+		public StarSystem(string name, int x, int y, StarType starType, SectorTypeManager sectorTypeManager, RegionTypeManager regionTypeManager, Random r)
 		{
 			this.name = name;
 			this.x = x;
 			this.y = y;
 
 			exploredBy = new List<Empire>();
+			Dictionary<string, int> generateNameIter = new Dictionary<string, int>();
 
 			this.starType = starType;
-
-			int amountOfPlanets = r.Next(starType.MinPlanets, starType.MaxPlanets);
-			sectors = new List<Sector>();
-			for (int i = 0; i < amountOfPlanets; i++)
+			var objects = starType.GenerateSectorObjects(r);
+			sectorObjects = new List<SectorObject>();
+			foreach (var sectorObject in objects)
 			{
-				StringBuilder sb = new StringBuilder();
-				sb.Append(this.name);
-				sb.Append(" ");
-				string numericName = Utility.ConvertNumberToRomanNumberical(i + 1);
-				sb.Append(numericName);
-				Planet newPlanet = planetTypeManager.GenerateRandomPlanet(sb.ToString(), numericName, starType.GetRandomPlanetType(r), r, this, regionTypeManager);
-				Sector newSector = new Sector(SECTORTYPE.PLANET, newPlanet, numericName, null);
-				sectors.Add(newSector);
+				SectorObject newObject = new SectorObject(sectorObject);
+				int iter;
+				if (generateNameIter.ContainsKey(sectorObject.GenerateName))
+				{
+					iter = generateNameIter[sectorObject.GenerateName];
+					generateNameIter[sectorObject.GenerateName]++;
+				}
+				else
+				{
+					iter = 1;
+					generateNameIter[sectorObject.GenerateName] = 2;
+				}
+				string sectorName = string.IsNullOrEmpty(sectorObject.GenerateName) ? name : sectorObject.GenerateName;
+				sectorName = sectorName + " " + Utility.ConvertNumberToRomanNumberical(iter);
+				newObject.Name = sectorName;
+				sectorObjects.Add(newObject);
 			}
+			
 			StarName = new Label(name, 0, 0);
 			EmpiresWithFleetAdjacentLastTurn = new List<Empire>();
 			EmpiresWithFleetAdjacentThisTurn = new List<Empire>();
 			EmpiresWithSectorsInThisSystem = new List<Empire>();
 			OwnerPercentage = new Dictionary<Empire, float>();
 			OrbitingSquadrons = new List<Squadron>();
-			ShipReserves = new Dictionary<Race, List<ShipInstance>>();
-			planetSelected = new Dictionary<Empire, int>();
-			Starlanes = new List<Starlane>();
-			InvisibleStarlanes = new List<Starlane>();
-			//stargates = new Dictionary<Empire, Stargate>();
+			sectorSelected = new Dictionary<Empire, int>();
 		}
 		#endregion
 
@@ -118,7 +119,7 @@ namespace Beyond_Beyaan
 		}
 		#endregion
 
-		public void SetSystem(Empire empire, StartingSystem system, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, Random r, out List<Sector> ownedSectors)
+		/*public void SetSystem(Empire empire, StartingSystem system, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, Random r, out List<Sector> ownedSectors)
 		{
 			if (system.OverrideSystem) //Replace everything in this system with the specified system's info
 			{
@@ -249,22 +250,22 @@ namespace Beyond_Beyaan
 		public void AddInvisibleStarlane(Starlane starlane)
 		{
 			InvisibleStarlanes.Add(starlane);
-		}
+		}*/
 
 		private void UpdateDominantEmpire()
 		{
 			Dictionary<Empire, int> count = new Dictionary<Empire, int>();
-			foreach (Sector sector in sectors)
+			foreach (SectorObject sector in sectorObjects)
 			{
-				if (sector.Owner != null)
+				if (sector.ClaimedBy != null)
 				{
-					if (count.ContainsKey(sector.Owner))
+					if (count.ContainsKey(sector.ClaimedBy))
 					{
-						count[sector.Owner] = count[sector.Owner] + 1;
+						count[sector.ClaimedBy] = count[sector.ClaimedBy] + 1;
 					}
 					else
 					{
-						count.Add(sector.Owner, 1);
+						count.Add(sector.ClaimedBy, 1);
 					}
 				}
 			}
@@ -292,11 +293,12 @@ namespace Beyond_Beyaan
 		{
 			return EmpiresWithSectorsInThisSystem.Contains(empire);
 		}
-		public bool SystemHaveInhabitablePlanets()
+		public bool SystemHaveInhabitableSectors()
 		{
-			foreach (Sector sector in sectors)
+			foreach (SectorObject sector in sectorObjects)
 			{
-				if (sector.SectorType == SECTORTYPE.PLANET && sector.Planet.PlanetType.Inhabitable)
+				//Look for inhabitable sectors that are unclaimed
+				if (sector.Type.IsInhabitable && sector.ClaimedBy == null)
 				{
 					return true;
 				}
@@ -313,18 +315,18 @@ namespace Beyond_Beyaan
 			int amountOfSectorsOwned = 0;
 			Dictionary<Empire, int> sectorsOwned = new Dictionary<Empire,int>();
 			OwnerPercentage = new Dictionary<Empire, float>();
-			foreach (Sector sector in sectors)
+			foreach (SectorObject sector in sectorObjects)
 			{
-				if (sector.Owner != null)
+				if (sector.ClaimedBy != null)
 				{
-					if (!EmpiresWithSectorsInThisSystem.Contains(sector.Owner))
+					if (!EmpiresWithSectorsInThisSystem.Contains(sector.ClaimedBy))
 					{
-						EmpiresWithSectorsInThisSystem.Add(sector.Owner);
-						sectorsOwned.Add(sector.Owner, 1);
+						EmpiresWithSectorsInThisSystem.Add(sector.ClaimedBy);
+						sectorsOwned.Add(sector.ClaimedBy, 1);
 					}
 					else
 					{
-						sectorsOwned[sector.Owner] += 1;
+						sectorsOwned[sector.ClaimedBy] += 1;
 					}
 					amountOfSectorsOwned++;
 				}
@@ -340,20 +342,20 @@ namespace Beyond_Beyaan
 		}
 		public int GetPlanetSelected(Empire whichEmpire)
 		{
-			if (planetSelected.ContainsKey(whichEmpire))
+			if (sectorSelected.ContainsKey(whichEmpire))
 			{
-				return planetSelected[whichEmpire];
+				return sectorSelected[whichEmpire];
 			}
 			else if (IsThisSystemExploredByEmpire(whichEmpire))
 			{
-				planetSelected.Add(whichEmpire, -1);
+				sectorSelected.Add(whichEmpire, -1);
 			}
 			return -1;
 		}
-		public void SetPlanetSelected(Empire empire, int whichPlanet)
+		public void SetSectorSelected(Empire empire, int whichSector)
 		{
 			//Should already exist, because UI calls GetPlanetSelected first before this can be ever called
-			planetSelected[empire] = whichPlanet;
+			sectorSelected[empire] = whichSector;
 		}
 		public List<Project> GetAvailableProjects(Empire whichEmpire)
 		{
@@ -410,16 +412,16 @@ namespace Beyond_Beyaan
 		public float GetPopulation(Empire whichEmpire)
 		{
 			float pop = 0;
-			foreach (Sector sector in sectors)
+			/*foreach (Sector sector in sectors)
 			{
 				if (sector.SectorType == SECTORTYPE.PLANET && sector.Owner == whichEmpire)
 				{
 					pop += sector.Planet.TotalPopulation;
 				}
-			}
+			}*/
 			return pop;
 		}
-		public void TallyConsumptions(Empire whichEmpire, Dictionary<Resource, float> consumptions)
+		/*public void TallyConsumptions(Empire whichEmpire, Dictionary<Resource, float> consumptions)
 		{
 			foreach (Sector sector in sectors)
 			{
@@ -438,10 +440,10 @@ namespace Beyond_Beyaan
 					sector.Planet.TallyResources(resources);
 				}
 			}
-		}
+		}*/
 
 		//This grabs the resouces, then deducts what it don't need to consume as it is passed to system and empire
-		public void TallyAvailableResourcesAndShortages(Empire whichEmpire, Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
+		/*public void TallyAvailableResourcesAndShortages(Empire whichEmpire, Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
 		{
 			foreach (Sector sector in sectors)
 			{
@@ -480,7 +482,7 @@ namespace Beyond_Beyaan
 							}
 						}
 					}*/
-				}
+				/*}
 			}
 		}
 
@@ -505,7 +507,7 @@ namespace Beyond_Beyaan
 					}
 				}
 			}*/
-			foreach (Sector sector in sectors)
+			/*foreach (Sector sector in sectors)
 			{
 				if (sector.Owner == empire)
 				{
@@ -534,7 +536,7 @@ namespace Beyond_Beyaan
 					sector.Planet.TallyProduction(productions);
 				}
 			}
-		}
+		}*/
 		#endregion
 	}
 }

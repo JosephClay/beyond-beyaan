@@ -223,7 +223,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				gameMain.planetTypeManager.LoadPlanetTypes(Path.Combine(directoryPath, "planets.xml"), Path.Combine(Path.Combine(directoryPath, "graphics"), "planets.png"), Path.Combine(directoryPath, "graphics"), gameMain);
 				gameMain.regionTypeManager.LoadRegionTypes(Path.Combine(directoryPath, "regions.xml"), gameMain);
-				gameMain.starTypeManager.LoadStarTypes(Path.Combine(directoryPath, "stars.xml"), Path.Combine(Path.Combine(directoryPath, "graphics"), "stars.png"), Path.Combine(directoryPath, "shaders"), gameMain);
+				gameMain.starTypeManager.LoadStarTypes(Path.Combine(directoryPath, "stars.xml"), Path.Combine(Path.Combine(directoryPath, "graphics"), "stars.png"), Path.Combine(directoryPath, "shaders"), gameMain.sectorTypeManager, gameMain);
 				gameMain.particleManager.Initialize(directoryPath, Path.Combine(directoryPath, "graphics"));
 				gameMain.effectManager.Initialize(directoryPath);
 				return gameMain.DrawingManagement.LoadGraphics(Path.Combine(directoryPath, "graphics"), out reason);

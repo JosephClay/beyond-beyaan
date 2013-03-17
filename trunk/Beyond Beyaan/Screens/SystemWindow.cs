@@ -355,7 +355,7 @@ namespace Beyond_Beyaan.Screens
 					systemName.SetString(selectedSystem.Name);
 
 					int total = 0;
-					foreach (Sector sector in selectedSystem.Sectors)
+					foreach (SectorObject sector in selectedSystem.SectorObjects)
 					{
 						var sectorControl = new SectorControl(sector, gameMain);
 						sectorControls.Add(sectorControl);

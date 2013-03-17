@@ -329,7 +329,7 @@ namespace Beyond_Beyaan
 			{
 				systemToStartFrom = travelNodes[1].Key;
 			}
-			List<KeyValuePair<StarSystem, Starlane>> path = galaxy.GetPath(systemToStartFrom, destinationSystem, direct, lengthTravelled > 0 ? origin : null, currentEmpire, out tentativeAmount);
+			List<KeyValuePair<StarSystem, Starlane>> path = null; // galaxy.GetPath(systemToStartFrom, destinationSystem, direct, lengthTravelled > 0 ? origin : null, currentEmpire, out tentativeAmount);
 			if (path == null)
 			{
 				tentativeAmount = 0;

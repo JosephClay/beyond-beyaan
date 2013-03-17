@@ -7,7 +7,7 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Data_Managers
 {
-	class SectorTypeManager
+	public class SectorTypeManager
 	{
 		private Dictionary<string, SectorObjectType> sectorTypes;
 
@@ -44,6 +44,15 @@ namespace Beyond_Beyaan.Data_Managers
 			}
 			reason = null;
 			return true;
+		}
+
+		public SectorObjectType GetType(string code)
+		{
+			if (sectorTypes.ContainsKey(code))
+			{
+				return sectorTypes[code];
+			}
+			return null;
 		}
 	}
 }
