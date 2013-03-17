@@ -25,7 +25,7 @@ namespace Beyond_Beyaan.Screens
 		private int xPos;
 		private int yPos;
 
-		int habitableStars;
+		//int habitableStars;
 
 		private Race selectedRace;
 		private RaceSelection raceSelection;
@@ -76,14 +76,14 @@ namespace Beyond_Beyaan.Screens
 		{
 			this.gameMain = gameMain;
 
-			habitableStars = 0;
+			/*habitableStars = 0;
 			foreach (StarSystem system in gameMain.galaxy.GetAllStars())
 			{
 				if (system.Type.Inhabitable)
 				{
 					habitableStars++;
 				}
-			}
+			}*/
 
 			xPos = gameMain.ScreenWidth / 2 - 400;
 			yPos = gameMain.ScreenHeight / 2 - 300;
@@ -351,13 +351,13 @@ namespace Beyond_Beyaan.Screens
 						i++;
 
 						gameMain.empireManager.AddEmpire(empire);
-						List<Sector> ownedSectors;
-						List<StarSystem> startingSystems = gameMain.galaxy.SetStartingSystems(empire, gameMain.planetTypeManager, gameMain.regionTypeManager, gameMain.resourceManager, out ownedSectors);
-						empire.SetHomeSystem(startingSystems, ownedSectors);
+						//List<Sector> ownedSectors;
+						//List<StarSystem> startingSystems = gameMain.galaxy.SetStartingSystems(empire, gameMain.planetTypeManager, gameMain.regionTypeManager, gameMain.resourceManager, out ownedSectors);
+						//empire.SetHomeSystem(startingSystems, ownedSectors);
 						empire.TechnologyManager.AddTechnologies(gameMain.masterTechnologyList.GetRandomizedTechnologies(empire.EmpireRace));
 						empire.TechnologyManager.SetInitialBracket(0, 5, empire.ItemManager);
-						empire.SetStartingFleets(startingSystems, gameMain.masterTechnologyList, gameMain.iconManager);
-						empire.RefreshEconomy();
+						//empire.SetStartingFleets(startingSystems, gameMain.masterTechnologyList, gameMain.iconManager);
+						//empire.RefreshEconomy();
 					}
 					gameMain.empireManager.SetupContacts();
 					//gameMain.empireManager.UpdateInfluenceMaps(gameMain.galaxy);
@@ -472,10 +472,10 @@ namespace Beyond_Beyaan.Screens
 				amountOfSystemsRequired++;
 			}
 			//Add special systems like Beyaan, and others, here
-			if (habitableStars < amountOfSystemsRequired)
+			/*if (habitableStars < amountOfSystemsRequired)
 			{
 				startGame.Active = false;
-			}
+			}*/
 			if (players.Count > playerBorders.Length)
 			{
 				maxVisible = playerBorders.Length;

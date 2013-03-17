@@ -237,16 +237,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					vars[key] = ((NumericUpDown)uiElements[key]).Value.ToString();
 				}
-				if (gameMain.galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.starTypeManager, gameMain.planetTypeManager, gameMain.regionTypeManager))
-				{
-					//overlappingWarning.SetText(string.Empty);
-				}
-				else
-				{
-					numOfStars.SetText(string.Empty);
-					//overlappingWarning.SetText("This script generated overlapping star systems (removed).");
-					//overlappingWarning.SetColor(System.Drawing.Color.Red);
-				}
+				gameMain.galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.starTypeManager, gameMain.sectorTypeManager, gameMain.regionTypeManager);
 				if (gameMain.galaxy.GetAllStars().Count > 0)
 				{
 					nextScreen.Active = true;

@@ -5,7 +5,16 @@ using System.Text;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	class SectorObject
+	public class SectorObject
 	{
+		public SectorObjectType Type { get; private set; }
+		public string Name { get; set; }
+
+		public Empire ClaimedBy { get; set; }
+
+		public SectorObject(SectorObjectType type)
+		{
+			Type = type;
+		}
 	}
 }

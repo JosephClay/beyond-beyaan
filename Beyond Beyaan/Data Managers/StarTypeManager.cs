@@ -10,11 +10,13 @@ namespace Beyond_Beyaan.Data_Managers
 {
 	public class StarTypeManager
 	{
-		private List<StarType> starTypes;
+		private Dictionary<string, StarType> starTypes;
+		private List<string> codes; //Used for random picking
 
-		public void LoadStarTypes(string filePath, string spriteFilePath, string shaderDirectory, GameMain gameMain)
+		public void LoadStarTypes(string filePath, string spriteFilePath, string shaderDirectory, SectorTypeManager sectorTypeManager, GameMain gameMain)
 		{
-			starTypes = new List<StarType>();
+			starTypes = new Dictionary<string, StarType>();
+			codes = new List<string>();
 
 			gameMain.Log(string.Empty);
 			gameMain.Log("Loading StarTypes from " + filePath);
@@ -30,27 +32,9 @@ namespace Beyond_Beyaan.Data_Managers
 				gameMain.Log(string.Empty);
 				StarType starType = new StarType();
 				starType.Name = element.Attribute("name").Value;
-				starType.InternalName = element.Attribute("internalName").Value;
-				gameMain.Log("Loading star type \"" + starType.InternalName + "\"");
+				starType.Code = element.Attribute("code").Value;
+				gameMain.Log("Loading star type \"" + starType.Code + "\"");
 				starType.Description = element.Attribute("description").Value;
-				gameMain.Log("Attempting to int.parse maxPlanets with value of \"" + element.Attribute("maxPlanets").Value + "\"");
-				starType.MaxPlanets = int.Parse(element.Attribute("maxPlanets").Value);
-				gameMain.Log("Attempting to int.parse minPlanets with value of \"" + element.Attribute("minPlanets").Value + "\"");
-				starType.MinPlanets = int.Parse(element.Attribute("minPlanets").Value);
-				gameMain.Log("Attempting to bool.parse inhabitable with value of \"" + element.Attribute("inhabitable").Value + "\"");
-				starType.Inhabitable = bool.Parse(element.Attribute("inhabitable").Value);
-				if (starType.MinPlanets > starType.MaxPlanets)
-				{
-					gameMain.Log(starType.InternalName + " min planets value is higher than max planets value");
-					throw new Exception(starType.InternalName + " min planets value is higher than max planets value");
-				}
-				gameMain.Log("Attempting to int.parse probability with value of \"" + element.Attribute("probability").Value + "\"");
-				starType.Probability = int.Parse(element.Attribute("probability").Value);
-				if (starType.Probability <= 0 || starType.Probability > 100)
-				{
-					gameMain.Log(starType.InternalName + " probability range is out of valid range (1 - 100)");
-					throw new Exception(starType.InternalName + " probability range is out of valid range (1 - 100)");
-				}
 
 				gameMain.Log("Attempting to int.parse spriteX with value of \"" + element.Attribute("spriteX").Value + "\"");
 				int x = int.Parse(element.Attribute("spriteX").Value);
@@ -62,7 +46,7 @@ namespace Beyond_Beyaan.Data_Managers
 				gameMain.Log("Attempting to int.parse spriteHeight with value of \"" + element.Attribute("spriteHeight").Value + "\"");
 				int height = int.Parse(element.Attribute("spriteHeight").Value);
 
-				GorgonLibrary.Graphics.Sprite starSprite = new GorgonLibrary.Graphics.Sprite(starType.InternalName, starsSprite.Image, x, y, width, height);
+				GorgonLibrary.Graphics.Sprite starSprite = new GorgonLibrary.Graphics.Sprite(starType.Code, starsSprite.Image, x, y, width, height);
 				starSprite.SetAxis(width / 2.0f, height / 2.0f);
 				starType.Sprite = starSprite;
 				starType.Width = width;
@@ -87,28 +71,46 @@ namespace Beyond_Beyaan.Data_Managers
 					starType.Shader = GorgonLibrary.Graphics.FXShader.FromFile(Path.Combine(shaderDirectory, (element.Attribute("shader").Value + ".fx")), GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 				}
 
-				starType.AllowedPlanets = new Dictionary<string, int>();
-				foreach (XElement planet in element.Elements())
+				foreach (XElement sectorTypes in element.Elements())
 				{
-					starType.AllowedPlanets.Add(planet.Attribute("internalName").Value, int.Parse(planet.Attribute("probability").Value));
+					if (sectorTypes.Attribute("max") != null)
+					{
+						starType.MaxAmountForSectorType[sectorTypes.Name.ToString()] = int.Parse(sectorTypes.Attribute("max").Value);
+					}
+					foreach (XElement sectorType in sectorTypes.Elements())
+					{
+						SectorObjectType type = sectorTypeManager.GetType(sectorType.Attribute("code").Value);
+						if (type == null)
+						{
+							gameMain.Log("SectorType failed to load, invalid type: " + sectorType.Attribute("code").Value);
+							continue;
+						}
+						starType.SectorObjectTypesInSystem[type] = sectorType.Attribute("amount").Value;
+					}
 				}
-				starTypes.Add(starType);
-				gameMain.Log("Star type \"" + starType.InternalName + "\" loaded!");
+				
+				starTypes.Add(starType.Code, starType);
+				codes.Add(starType.Code);
+				gameMain.Log("Star type \"" + starType.Code + "\" loaded!");
 				gameMain.Log(string.Empty);
 			}
+		}
+
+		public StarType GetType(string code)
+		{
+			if (starTypes.ContainsKey(code))
+			{
+				return starTypes[code];
+			}
+			return null;
 		}
 
 		public StarType GetRandomStarType(Random r)
 		{
 			//Galaxy generation will call this for determining which kind of star the current point should be
-			int value = r.Next(100);
-			foreach (StarType starType in starTypes)
+			if (starTypes.Count > 0)
 			{
-				value -= starType.Probability;
-				if (value < 0)
-				{
-					return starType;
-				}
+				return starTypes[codes[r.Next(starTypes.Count)]];
 			}
 			return null;  //Should have all probability filled out
 		}

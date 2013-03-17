@@ -10,7 +10,6 @@ namespace Beyond_Beyaan.Data_Managers
 	public static class GameConfiguration
 	{
 		public static bool ShowTutorial { get; set; }
-		public static bool UseStarlanes { get; set; }
 
 		public static bool LoadConfiguration(string filePath, out string reason)
 		{
@@ -25,8 +24,6 @@ namespace Beyond_Beyaan.Data_Managers
 					switch (attribute.Name.ToString().ToLower())
 					{
 						case "showtutorial": ShowTutorial = bool.Parse(attribute.Value);
-							break;
-						case "usestarlanes": UseStarlanes = bool.Parse(attribute.Value);
 							break;
 					}
 				}
@@ -43,7 +40,6 @@ namespace Beyond_Beyaan.Data_Managers
 		public static void SetDefaults()
 		{
 			ShowTutorial = false;
-			UseStarlanes = false;
 		}
 	}
 }

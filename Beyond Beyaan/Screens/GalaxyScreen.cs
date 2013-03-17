@@ -196,19 +196,17 @@ namespace Beyond_Beyaan.Screens
 			int top = camera.CameraY - 3;
 			int bottom = camera.CameraY + size.Y + 3;
 
-			foreach (Starlane starlane in gameMain.galaxy.Starlanes)
+			/*foreach (Starlane starlane in gameMain.galaxy.Starlanes)
 			{
 				if (Utility.LineRectangleIntersected(starlane.SystemA.X, starlane.SystemA.Y, starlane.SystemB.X, starlane.SystemB.Y, left, top, right, bottom))
 				/*if ((starlane.SystemA.X >= camera.CameraX - 10 && starlane.SystemA.X < camera.CameraX + 30 &&
 					starlane.SystemA.Y >= camera.CameraY - 10 && starlane.SystemA.Y < camera.CameraY + 30) ||
 					(starlane.SystemB.X >= camera.CameraX - 10 && starlane.SystemB.X < camera.CameraX + 30 &&
 					starlane.SystemB.Y >= camera.CameraY - 10 && starlane.SystemB.Y < camera.CameraY + 30))*/
-				{
+				/*{
 					//Draw Starlanes first so Star will overlap them
 					int X1 = (int)((((starlane.SystemA.X - camera.CameraX) * 32 + (starlane.SystemA.Type.Width / 2)) - camera.XOffset) * camera.Scale);
 					int Y1 = (int)((((starlane.SystemA.Y - camera.CameraY) * 32 + (starlane.SystemA.Type.Height / 2)) - camera.YOffset) * camera.Scale);
-					/*int X2 = (int)(((starlane.SystemB.X - starlane.SystemA.X) * 32) * camera.Scale);
-					int Y2 = (int)(((starlane.SystemB.Y - starlane.SystemA.Y) * 32) * camera.Scale);*/
 
 					if (starlane.Visible)
 					{
@@ -250,8 +248,8 @@ namespace Beyond_Beyaan.Screens
 					{
 						drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.LightGray);
 					}*/
-				}
-			}
+				//}
+			//}
 
 			foreach (StarSystem system in systems)
 			{
@@ -279,7 +277,7 @@ namespace Beyond_Beyaan.Screens
 				system.Type.Sprite.Draw();
 				GorgonLibrary.Gorgon.CurrentShader = null;
 
-				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)) && system.Type.Inhabitable)
+				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)))
 				{
 					int x = (int)((((system.X - camera.CameraX) * 32) + (system.Type.Width / 2) - camera.XOffset) * camera.Scale);
 					x -= (int)(system.StarName.GetWidth() / 2);
@@ -384,7 +382,7 @@ namespace Beyond_Beyaan.Screens
 			int top = camera.CameraY - 3;
 			int bottom = camera.CameraY + size.Y + 3;
 
-			foreach (Starlane starlane in gameMain.galaxy.Starlanes)
+			/*foreach (Starlane starlane in gameMain.galaxy.Starlanes)
 			{
 				if (Utility.LineRectangleIntersected(starlane.SystemA.X, starlane.SystemA.Y, starlane.SystemB.X, starlane.SystemB.Y, left, top, right, bottom))
 				{
@@ -394,7 +392,7 @@ namespace Beyond_Beyaan.Screens
 					/*int X2 = (int)(((starlane.SystemB.X - starlane.SystemA.X) * 32) * camera.Scale);
 					int Y2 = (int)(((starlane.SystemB.Y - starlane.SystemA.Y) * 32) * camera.Scale);*/
 
-					if (starlane.Visible && (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) || starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire)))
+					/*if (starlane.Visible && (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) || starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire)))
 					{
 						starlaneSprite.SetPosition(X1, Y1);
 						starlaneSprite.Width = (float)starlane.Length * camera.Scale;
@@ -434,8 +432,8 @@ namespace Beyond_Beyaan.Screens
 					{
 						drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.LightGray);
 					}*/
-				}
-			}
+				//}
+			//}
 
 			foreach (StarSystem system in systems)
 			{
@@ -495,7 +493,7 @@ namespace Beyond_Beyaan.Screens
 					int max = Math.Max(system.Type.Width, system.Type.Height) + 32;
 					drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)((((system.X - camera.CameraX) * 32) + (system.Type.Width / 2) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) + (system.Type.Height / 2) - camera.YOffset) * camera.Scale), 255, max * scale, max * scale, System.Drawing.Color.White);
 				}
-				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)) && system.Type.Inhabitable)
+				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)))
 				{
 					int x = (int)((((system.X - camera.CameraX) * 32) + (system.Type.Width / 2) - camera.XOffset) * camera.Scale);
 					x -= (int)(system.StarName.GetWidth() / 2);
@@ -710,7 +708,7 @@ namespace Beyond_Beyaan.Screens
 
 					StarSystem destination = gameMain.galaxy.GetStarAtPoint(new Point(mouseOverX, mouseOverY));
 
-					if (destination != null && destination.Type.Inhabitable)
+					if (destination != null)
 					{
 						currentEmpire.SelectedFleetGroup.SetTentativePath(destination, gameMain.galaxy, gameMain.Input.Keyboard.KeyStates[GorgonLibrary.InputDevices.KeyboardKeys.ControlKey] == GorgonLibrary.InputDevices.KeyState.Down, currentEmpire);
 					}

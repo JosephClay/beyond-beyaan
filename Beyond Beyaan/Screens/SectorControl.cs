@@ -8,22 +8,22 @@ namespace Beyond_Beyaan.Screens
 {
 	class SectorControl
 	{
-		private Sector sector;
+		private SectorObject sector;
 		public int Height { get; private set; }
 
 		private StretchableImage background;
-		private List<StretchButton> stretchButtons;
+		//private List<StretchButton> stretchButtons;
 		private SingleLineTextBox sectorName;
 		private StretchButton actionButton;
 
-		public SectorControl(Sector sector, GameMain gameMain)
+		public SectorControl(SectorObject sector, GameMain gameMain)
 		{
 			this.sector = sector;
 			background = new StretchableImage(0, 0, 290, 200, 30, 13, DrawingManagement.BoxBorder);
 			sectorName = new SingleLineTextBox(0, 0, 220, 35, DrawingManagement.TextBox);
 			actionButton = new StretchButton(DrawingManagement.IconButtonBG, DrawingManagement.IconButtonFG, "No Current Project", 0, 0, 270, 35, 10, 10);
 
-			switch (sector.SectorType)
+			/*switch (sector.Type)
 			{
 				case SECTORTYPE.PLANET:
 					{
@@ -40,7 +40,7 @@ namespace Beyond_Beyaan.Screens
 							actionButton.Active = false;
 						}
 					} break;
-			}
+			}*/
 		}
 
 		public void Draw(DrawingManagement drawingManagement, int x, int y)
@@ -48,7 +48,7 @@ namespace Beyond_Beyaan.Screens
 			background.MoveTo(x, y);
 			background.Draw(drawingManagement);
 
-			switch (sector.SectorType)
+			/*switch (sector.Type)
 			{
 				case SECTORTYPE.PLANET:
 					DrawPlanetControl(drawingManagement, x, y);
@@ -56,22 +56,23 @@ namespace Beyond_Beyaan.Screens
 				case SECTORTYPE.EMPTY:
 					DrawEmptyControl(drawingManagement, x, y);
 					break;
-			}
+			}*/
+			DrawEmptyControl(drawingManagement, x, y);
 		}
 
 		private void DrawPlanetControl(DrawingManagement drawingManagement, int x, int y)
 		{
-			sector.Planet.PlanetType.Sprite.SetPosition(x + 10, y + 10);
-			sector.Planet.PlanetType.Sprite.Draw();
+			//sector.Planet.PlanetType.Sprite.SetPosition(x + 10, y + 10);
+			//sector.Planet.PlanetType.Sprite.Draw();
 
 			sectorName.MoveTo(x + 60, y + 13);
 			sectorName.Draw(drawingManagement);
 
-			for (int i = 0; i < stretchButtons.Count; i++)
+			/*for (int i = 0; i < stretchButtons.Count; i++)
 			{
 				stretchButtons[i].MoveTo(x + 10, y + 90 + i * 35);
 				stretchButtons[i].Draw(drawingManagement);
-			}
+			}*/
 
 			actionButton.MoveTo(x + 10, y + Height - 50);
 			actionButton.Draw(drawingManagement);

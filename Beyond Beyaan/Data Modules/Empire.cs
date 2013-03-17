@@ -572,7 +572,7 @@ namespace Beyond_Beyaan
 			visibleOtherFleets = fleets;
 		}*/
 
-		public void RefreshEconomy()
+		/*public void RefreshEconomy()
 		{
 			projectResources.Clear();
 			List<Resource> toRemove = new List<Resource>();
@@ -617,7 +617,7 @@ namespace Beyond_Beyaan
 
 			starSystemManager.CalculatePopGrowth();
 			starSystemManager.TallyProductions(out productions);
-		}
+		}*/
 
 		public void ProcessTurn()
 		{

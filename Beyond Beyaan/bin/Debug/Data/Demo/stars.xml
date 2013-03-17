@@ -1,79 +1,129 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Stars>
-  <Star name="Yellow Star" internalName="Yellow Star" description="Yellow stars usually have planets that can sustain life." maxPlanets="8" minPlanets="2" shaderValue="1,1,0,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" probability="15" inhabitable="True" >
-    <Planet internalName="Terran1" probability="10" />
-    <Planet internalName="Terran2" probability="10" />
-    <Planet internalName="Jungle" probability="10" />
-    <Planet internalName="Steppe" probability="10" />
-    <Planet internalName="Oceanic" probability="10" />
-    <Planet internalName="Desert" probability="10" />
-    <Planet internalName="Badland" probability="10" />
-    <Planet internalName="Tundra" probability="10" />
-    <Planet internalName="Barren" probability="10" />
-    <Planet internalName="Dead" probability="10" />
+  <Star name="Yellow Star" code="Yellow Star" description="Yellow stars usually have planets that can sustain life." shaderValue="1,1,0,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" >
+    <Planets max="10">
+      <Planet code="Terran1" amount="0,1" />
+      <Planet code="Terran2" amount="0,1" />
+      <Planet code="Jungle" amount="0,1" />
+      <Planet code="Steppe" amount="0,1" />
+      <Planet code="Oceanic" amount="0,1" />
+      <Planet code="Desert" amount="0,2" />
+      <Planet code="Badlands" amount="0,2" />
+      <Planet code="Tundra" amount="0,3" />
+      <Planet code="Barren" amount="0,3" />
+      <Planet code="Dead" amount="0,4" />
+    </Planets>
+    <Starlanes>
+      <Starlane code="Starlane" amount="1,4" />
+    </Starlanes>
+    <Wormholes>
+      <Wormhole code="Wormhole" amount="0,1,0.05" />
+    </Wormholes>
   </Star>
-  <Star name="Blue Star" internalName="Blue Star" description="Blue stars are relatively newly formed, with very high temperature compared to other types of stars." maxPlanets="5" minPlanets="0" shaderValue="0,0,1,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" probability="10" inhabitable="True" >
-    <Planet internalName="Dead" probability="10" />
-    <Planet internalName="Volcanic" probability="10" />
-    <Planet internalName="Toxic1" probability="10" />
-    <Planet internalName="Toxic2" probability="10" />
-    <Planet internalName="Radiated1" probability="10" />
-    <Planet internalName="Radiated2" probability="10" />
-    <Planet internalName="Asteroids" probability="20" />
-    <Planet internalName="Gas Giant" probability="20" />
+  <Star name="Blue Star" code="Blue Star" description="Blue stars are relatively newly formed, with very high temperature compared to other types of stars." shaderValue="0,0,1,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" >
+    <Planets max="6">
+      <Planet code="Dead" amount="0,1" />
+      <Planet code="Volcanic" amount="0,1" />
+      <Planet code="Toxic1" amount="0,1" />
+      <Planet code="Toxic2" amount="0,1" />
+      <Planet code="Radiated1" amount="0,2" />
+      <Planet code="Radiated2" amount="0,2" />
+      <Planet code="Asteroids" amount="0,2" />
+      <Planet code="Gas Giant" amount="0,3" />
+    </Planets>
+    <Starlanes>
+      <Starlane code="Starlane" amount="1,4" />
+    </Starlanes>
+    <Wormholes>
+      <Wormhole code="Wormhole" amount="0,1,0.05" />
+    </Wormholes>
   </Star>
-  <Star name="Orange Star" internalName="Orange Star" description="Orange stars are fairly common, they usually have fertile planets however they're commonly poor in minerals." maxPlanets="8" minPlanets ="1" shaderValue="1,0.5,0,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" probability="20" inhabitable="True" >
-    <Planet internalName="Terran1" probability="10" />
-    <Planet internalName="Terran2" probability="10" />
-    <Planet internalName="Jungle" probability="10" />
-    <Planet internalName="Steppe" probability="10" />
-    <Planet internalName="Oceanic" probability="10" />
-    <Planet internalName="Desert" probability="10" />
-    <Planet internalName="Volcanic" probability="10" />
-    <Planet internalName="Asteroids" probability="10" />
-    <Planet internalName="Gas Giant" probability="20" />
+  <Star name="Orange Star" code="Orange Star" description="Orange stars are fairly common, they usually have fertile planets however they're commonly poor in minerals." shaderValue="1,0.5,0,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" >
+    <Planets max="8">
+      <Planet code="Terran1" amount="0,1" />
+      <Planet code="Terran2" amount="0,1" />
+      <Planet code="Jungle" amount="0,1" />
+      <Planet code="Steppe" amount="0,1" />
+      <Planet code="Oceanic" amount="0,1" />
+      <Planet code="Desert" amount="0,1" />
+      <Planet code="Volcanic" amount="0,1" />
+      <Planet code="Asteroids" amount="0,1" />
+      <Planet code="Gas Giant" amount="0,2" />
+    </Planets>
+    <Starlanes>
+      <Starlane code="Starlane" amount="1,4" />
+    </Starlanes>
+    <Wormholes>
+      <Wormhole code="Wormhole" amount="0,1,0.05" />
+    </Wormholes>
   </Star>
-  <Star name="White Star" internalName="White Star" description="White stars are newly formed stars, they're in their youth and are very hot.  Planets are usually rich in minerals, but inhospitable." maxPlanets="6" minPlanets ="0" shaderValue="1,1,1,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" probability="20" inhabitable="True" >
-    <Planet internalName="Barren" probability="5" />
-    <Planet internalName="Dead" probability="15" />
-    <Planet internalName="Desert" probability="5" />
-    <Planet internalName="Badland" probability="5" />
-    <Planet internalName="Tundra" probability="5" />
-    <Planet internalName="Volcanic" probability="15" />
-    <Planet internalName="Toxic1" probability="5" />
-    <Planet internalName="Toxic2" probability="5" />
-    <Planet internalName="Radiated1" probability="5" />
-    <Planet internalName="Radiated2" probability="5" />
-    <Planet internalName="Asteroids" probability="30" />
+  <Star name="White Star" code="White Star" description="White stars are newly formed stars, they're in their youth and are very hot.  Planets are usually rich in minerals, but inhospitable." shaderValue="1,1,1,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" >
+    <Planets max="8">
+      <Planet code="Barren" amount="0,1" />
+      <Planet code="Dead" amount="0,2" />
+      <Planet code="Desert" amount="0,1" />
+      <Planet code="Badland" amount="0,1" />
+      <Planet code="Tundra" amount="0,1" />
+      <Planet code="Volcanic" amount="0,2" />
+      <Planet code="Toxic1" amount="0,1" />
+      <Planet code="Toxic2" amount="0,1" />
+      <Planet code="Radiated1" amount="0,1" />
+      <Planet code="Radiated2" amount="0,1" />
+      <Planet code="Asteroids" amount="1,3" />
+    </Planets>
+    <Starlanes>
+      <Starlane code="Starlane" amount="1,4" />
+    </Starlanes>
+    <Wormholes>
+      <Wormhole code="Wormhole" amount="0,1,0.05" />
+    </Wormholes>
   </Star>
-  <Star name="Green Star" internalName="Green Star" description="Green stars are old stars that has gone through several cycles, resulting in heavier atoms fusing which emits green light.  Usually have a wide variety of planets." maxPlanets="10" minPlanets="4" shaderValue="0,0.75,0,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" probability="10" inhabitable="True" >
-    <Planet internalName="Terran1" probability="5" />
-    <Planet internalName="Terran2" probability="6" />
-    <Planet internalName="Jungle" probability="6" />
-    <Planet internalName="Steppe" probability="6" />
-    <Planet internalName="Oceanic" probability="6" />
-    <Planet internalName="Desert" probability="6" />
-    <Planet internalName="Badland" probability="6" />
-    <Planet internalName="Tundra" probability="6" />
-    <Planet internalName="Barren" probability="6" />
-    <Planet internalName="Dead" probability="6" />
-    <Planet internalName="Volcanic" probability="5" />
-    <Planet internalName="Toxic1" probability="4" />
-    <Planet internalName="Toxic2" probability="4" />
-    <Planet internalName="Radiated1" probability="4" />
-    <Planet internalName="Radiated2" probability="4" />
-    <Planet internalName="Asteroids" probability="10" />
-    <Planet internalName="Gas Giant" probability="10" />
+  <Star name="Green Star" code="Green Star" description="Green stars are old stars that has gone through several cycles, resulting in heavier atoms fusing which emits green light.  Usually have a wide variety of planets." shaderValue="0,0.75,0,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" >
+    <Planets max="10">
+      <Planet code="Terran1" amount="0,2" />
+      <Planet code="Terran2" amount="0,2" />
+      <Planet code="Jungle" amount="0,2" />
+      <Planet code="Steppe" amount="0,2" />
+      <Planet code="Oceanic" amount="0,2" />
+      <Planet code="Desert" amount="0,2" />
+      <Planet code="Badland" amount="0,2" />
+      <Planet code="Tundra" amount="0,2" />
+      <Planet code="Barren" amount="0,2" />
+      <Planet code="Dead" amount="0,4" />
+      <Planet code="Volcanic" amount="0,3" />
+      <Planet code="Toxic1" amount="0,3" />
+      <Planet code="Toxic2" amount="0,3" />
+      <Planet code="Radiated1" amount="0,2" />
+      <Planet code="Radiated2" amount="0,2" />
+      <Planet code="Asteroids" amount="0,2" />
+      <Planet code="Gas Giant" amount="0,2" />
+    </Planets>
+    <Starlanes>
+      <Starlane code="Starlane" amount="1,4" />
+    </Starlanes>
+    <Wormholes>
+      <Wormhole code="Wormhole" amount="0,1,0.05" />
+    </Wormholes>
   </Star>
-  <Star name="Red Giant" internalName="Red Giant" description="Red giants are very old, they've expanded due to most of their elements being fused.  Usually planets are radiated." maxPlanets="4" minPlanets ="0" shaderValue="1,0,0,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" probability="10" inhabitable="True" >
-    <Planet internalName="Radiated1" probability="40" />
-    <Planet internalName="Radiated2" probability="40" />
-    <Planet internalName="Asteroids" probability="10" />
-    <Planet internalName="Gas Giant" probability="10" />
+  <Star name="Red Giant" code="Red Giant" description="Red giants are very old, they've expanded due to most of their elements being fused.  Usually planets are radiated." shaderValue="1,0,0,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" >
+    <Planets max="4">
+      <Planet code="Radiated1" amount="0,2" />
+      <Planet code="Radiated2" amount="0,2" />
+      <Planet code="Asteroids" amount="0,1" />
+      <Planet code="Gas Giant" amount="0,1" />
+    </Planets>
   </Star>
-  <Star name="Black Dwarf" internalName="Black Dwarf" description="Black dwarfs are stars that've cooled down to below 5 degrees K.  All planets are devoid of any life or radioactivity." maxPlanets="2" minPlanets="0" shaderValue="0.01,0.01,0.01,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" probability="5" inhabitable="True" >
-    <Planet internalName="Dead" probability="100" />
+  <Star name="Black Dwarf" code="Black Dwarf" description="Black dwarfs are stars that've cooled down to below 5 degrees K.  All planets are devoid of any life or radioactivity.  They are sometimes hard to access." shaderValue="0.01,0.01,0.01,1" shader="StarShader" spriteX="32" spriteY="32" spriteWidth="64" spriteHeight="64" >
+    <Planets>
+      <Planet code="Dead" amount="0, 6" />
+    </Planets>
+    <Starlanes>
+      <Starlane code="Starlane" amount="1" />
+    </Starlanes>
   </Star>
-  <Star name="Black Hole" internalName="Black Hole" description="Black holes are objects with immense mass, enough to create a gravity well that distorts time and space." maxPlanets="0" minPlanets="0" spriteX="160" spriteY="128" spriteWidth="64" spriteHeight="64" probability="10" inhabitable="False" >
+  <Star name="Black Hole" code="Black Hole" description="Black holes are objects with immense mass, enough to create a gravity well that distorts time and space." spriteX="160" spriteY="128" spriteWidth="64" spriteHeight="64" >
+    <Wormholes>
+      <Wormhole code="Wormhole" amount="0,1" />
+    </Wormholes>
   </Star>
 </Stars>
