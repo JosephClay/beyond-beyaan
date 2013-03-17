@@ -54,5 +54,18 @@ namespace Beyond_Beyaan.Data_Managers
 			}
 			return null;
 		}
+
+		public List<SectorObjectType> GetGatewayTypes()
+		{
+			List<SectorObjectType> gateways = new List<SectorObjectType>();
+			foreach (var type in sectorTypes)
+			{
+				if (type.Value.IsGateway)
+				{
+					gateways.Add(type.Value);
+				}
+			}
+			return gateways;
+		}
 	}
 }

@@ -47,7 +47,7 @@ namespace Beyond_Beyaan
 
 			FillGalaxyWithStars(ret, starTypeManager, sectorTypeManager, regionTypeManager);
 
-			ConnectGateways();
+			ConnectGateways(sectorTypeManager);
 
 			//ConvertNebulaToSprite();
 		}
@@ -90,122 +90,6 @@ namespace Beyond_Beyaan
 		}
 		#endregion
 
-		#region Galaxy Shape Functions
-		/*private bool[][] GenerateCluster(int size)
-		{
-			//Size is actually a diameter, change to radius
-			return Utility.CalculateDisc(size / 2, 1);
-		}
-
-		private bool[][] GenerateRing(int size)
-		{
-			//Size is actually a diameter, change to radius
-			bool[][] grid = Utility.CalculateDisc(size / 2, 1);
-
-			int quarterSize = size / 4;
-
-			bool[][] discToSubtract = Utility.CalculateDisc(quarterSize, 1);
-
-			for (int i = 0; i < discToSubtract.Length; i++)
-			{
-				for (int j = 0; j < discToSubtract[i].Length; j++)
-				{
-					if (discToSubtract[i][j])
-					{
-						grid[quarterSize + i][quarterSize + j] = false;
-					}
-				}
-			}
-
-			return grid;
-		}
-
-		private bool[][] GenerateRandom(int size)
-		{
-			bool[][] grid = new bool[size][];
-			for (int i = 0; i < grid.Length; i++)
-			{
-				grid[i] = new bool[size];
-			}
-
-			for (int i = 0; i < size; i++)
-			{
-				for (int j = 0; j < size; j++)
-				{
-					grid[i][j] = true;
-				}
-			}
-
-			return grid;
-		}
-
-		private bool[][] GenerateStar(int size)
-		{
-			bool[][] grid = new bool[size][];
-			for (int i = 0; i < grid.Length; i++)
-			{
-				grid[i] = new bool[size];
-			}
-			int halfSize = size / 2;
-
-			for (int i = 0; i < size; i++)
-			{
-				for (int j = 0; j < size; j++)
-				{
-					int x = i - halfSize;
-					int y = halfSize - j;
-					if (x < 0)
-					{
-						x *= -1;
-					}
-					if (y < 0)
-					{
-						y *= -1;
-					}
-					if ((x * x) * (y * y) <= (size * size * (halfSize / 6)))
-					{
-						grid[i][j] = true;
-					}
-				}
-			}
-
-			return grid;
-		}
-
-		private bool[][] GenerateDiamond(int size)
-		{
-			bool[][] grid = new bool[size][];
-			for (int i = 0; i < grid.Length; i++)
-			{
-				grid[i] = new bool[size];
-			}
-			int halfSize = size / 2;
-
-			for (int i = 0; i < size; i++)
-			{
-				for (int j = 0; j < size; j++)
-				{
-					int x = i - halfSize;
-					int y = halfSize - j;
-					if (x < 0)
-					{
-						x *= -1;
-					}
-					if (y < 0)
-					{
-						y *= -1;
-					}
-					if (x + y <= halfSize)
-					{
-						grid[i][j] = true;
-					}
-				}
-			}
-
-			return grid;
-		}*/
-		#endregion
-
 		#region Galaxy Filling Functions
 		private void FillGalaxyWithStars(List<Dictionary<string, object>> starPoints, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, RegionTypeManager regionTypeManager)
 		{
@@ -225,7 +109,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Enhancements
-		public void ConnectGateways()
+		public void ConnectGateways(SectorTypeManager sectorTypeManager)
 		{
 			// spencer's new and improved super-awesome nebula-generating code of awesomeness-ness
 			/*LibNoise.RidgedMultifractal density = new LibNoise.RidgedMultifractal();
@@ -258,7 +142,33 @@ namespace Beyond_Beyaan
 			blue.Seed = DateTime.Now.Minute + DateTime.Now.Millisecond;
 			blue.Frequency = 0.02;*/
 
-
+			foreach (var gateWayType in sectorTypeManager.GetGatewayTypes())
+			{
+				//Not a direct connection, so no need to hook it up
+				if (!gateWayType.ConnectsToAnother)
+				{
+					continue;
+				}
+				switch (gateWayType.ConnectionAlgorithm)
+				{
+					case ConnectionAlgorithm.CLOSEST:
+						{
+							ConnectClosest(gateWayType);
+						} break;
+					case ConnectionAlgorithm.FARTHEST:
+						{
+							ConnectFarthest(gateWayType);
+						} break;
+					case ConnectionAlgorithm.RANDOM:
+						{
+							ConnectRandom(gateWayType);
+						} break;
+					case ConnectionAlgorithm.MINIMUM:
+						{
+							ConnectMinimumSpanning(gateWayType);
+						} break;
+				}
+			}
 
 			/*StarSystem[][] systemGrid = new StarSystem[GalaxySize][];
 			for (int i = 0; i < GalaxySize; i++)
@@ -405,6 +315,210 @@ namespace Beyond_Beyaan
 		}*/
 		}
 
+		#region Connecting Functions
+		private void ConnectClosest(SectorObjectType type)
+		{
+			List<StarSystem> systemsWithType = new List<StarSystem>();
+			foreach (var system in starSystems)
+			{
+				foreach (var sector in system.SectorObjects)
+				{
+					if (sector.Type == type)
+					{
+						systemsWithType.Add(system);
+						break;
+					}
+				}
+			}
+			for (int i = 0; i < systemsWithType.Count - 1; i++)
+			{
+				int amountNeedToConnect = 0;
+				foreach (var sector in starSystems[i].SectorObjects)
+				{
+					if (sector.Type == type && sector.ConnectsTo == null)
+					{
+						amountNeedToConnect++;
+					}
+				}
+				if (amountNeedToConnect > 0)
+				{
+					Dictionary<StarSystem, long> closestSystems = new Dictionary<StarSystem, long>();
+					for (int j = i + 1; j < systemsWithType.Count; j++)
+					{
+						int xDiff = systemsWithType[i].X - systemsWithType[j].X;
+						int yDiff = systemsWithType[i].Y - systemsWithType[j].Y;
+						long distance = xDiff * xDiff + yDiff * yDiff;
+						if (closestSystems.Count < amountNeedToConnect)
+						{
+							//Just add it since we don't have a full set to compare
+							closestSystems.Add(systemsWithType[j], distance);
+						}
+						else
+						{
+							//Compare each and replace the farthest if it's closer than one of them
+							StarSystem farthestSystem = null;
+							long farthestDistance = -1;
+							bool isCloser = false;
+							foreach (var system in closestSystems)
+							{
+								if (farthestSystem == null || system.Value > farthestDistance)
+								{
+									farthestSystem = system.Key;
+									farthestDistance = system.Value;
+								}
+								if (distance < system.Value)
+								{
+									//It's closer than at least one system, loop through to find the farthest star
+									isCloser = true;
+								}
+							}
+							if (isCloser)
+							{
+								closestSystems.Remove(farthestSystem);
+								closestSystems.Add(systemsWithType[j], distance);
+							}
+						}
+					}
+					//Now that we have the closest systems, hook them up
+					foreach (var sector in systemsWithType[i].SectorObjects)
+					{
+						if (closestSystems.Count == 0)
+						{
+							//Ran out of systems to connect
+							break;
+						}
+						if (sector.Type != type || sector.ConnectsTo != null)
+						{
+							//*jedi wave* Those are not the sectors you're looking for
+							continue;
+						}
+						//This foreach is to get the first item in a dictionary...
+						foreach (var closestSystem in closestSystems)
+						{
+							foreach (var targetSector in closestSystem.Key.SectorObjects)
+							{
+								if (targetSector.Type != type || targetSector.ConnectsTo != null)
+								{
+									//*jedi wave* Those are not the sectors you're looking for
+									continue;
+								}
+								//Success! We found two sectors that are not connected yet, connect them!
+								targetSector.ConnectsTo = systemsWithType[i];
+								sector.ConnectsTo = closestSystem.Key;
+								break;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		private void ConnectFarthest(SectorObjectType type)
+		{
+			List<StarSystem> systemsWithType = new List<StarSystem>();
+			foreach (var system in starSystems)
+			{
+				foreach (var sector in system.SectorObjects)
+				{
+					if (sector.Type == type)
+					{
+						systemsWithType.Add(system);
+						break;
+					}
+				}
+			}
+			for (int i = 0; i < systemsWithType.Count - 1; i++)
+			{
+				int amountNeedToConnect = 0;
+				foreach (var sector in starSystems[i].SectorObjects)
+				{
+					if (sector.Type == type && sector.ConnectsTo == null)
+					{
+						amountNeedToConnect++;
+					}
+				}
+				if (amountNeedToConnect > 0)
+				{
+					Dictionary<StarSystem, long> farthestSystems = new Dictionary<StarSystem, long>();
+					for (int j = i + 1; j < systemsWithType.Count; j++)
+					{
+						int xDiff = systemsWithType[i].X - systemsWithType[j].X;
+						int yDiff = systemsWithType[i].Y - systemsWithType[j].Y;
+						long distance = xDiff * xDiff + yDiff * yDiff;
+						if (farthestSystems.Count < amountNeedToConnect)
+						{
+							//Just add it since we don't have a full set to compare
+							farthestSystems.Add(systemsWithType[j], distance);
+						}
+						else
+						{
+							//Compare each and replace the shortest if it's closer than one of them
+							StarSystem closestSystem = null;
+							long shortestDistance = -1;
+							bool isFarther = false;
+							foreach (var system in farthestSystems)
+							{
+								if (closestSystem == null || system.Value < shortestDistance)
+								{
+									closestSystem = system.Key;
+									shortestDistance = system.Value;
+								}
+								if (distance > system.Value)
+								{
+									//It's closer than at least one system, loop through to find the shortest star
+									isFarther = true;
+								}
+							}
+							if (isFarther)
+							{
+								farthestSystems.Remove(closestSystem);
+								farthestSystems.Add(systemsWithType[j], distance);
+							}
+						}
+					}
+					//Now that we have the closest systems, hook them up
+					foreach (var sector in systemsWithType[i].SectorObjects)
+					{
+						if (farthestSystems.Count == 0)
+						{
+							//Ran out of systems to connect
+							break;
+						}
+						if (sector.Type != type || sector.ConnectsTo != null)
+						{
+							//*jedi wave* Those are not the sectors you're looking for
+							continue;
+						}
+						//This foreach is to get the first item in a dictionary...
+						foreach (var farthestSystem in farthestSystems)
+						{
+							foreach (var targetSector in farthestSystem.Key.SectorObjects)
+							{
+								if (targetSector.Type != type || targetSector.ConnectsTo != null)
+								{
+									//*jedi wave* Those are not the sectors you're looking for
+									continue;
+								}
+								//Success! We found two sectors that are not connected yet, connect them!
+								targetSector.ConnectsTo = systemsWithType[i];
+								sector.ConnectsTo = farthestSystem.Key;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		private void ConnectRandom(SectorObjectType type)
+		{
+		}
+
+		private void ConnectMinimumSpanning(SectorObjectType type)
+		{
+		}
+		#endregion
 		/*private void ConvertNebulaToSprite()
 		{
 			int squaredSize = 2;
