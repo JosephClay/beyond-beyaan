@@ -22,6 +22,7 @@ namespace Beyond_Beyaan.Data_Modules
 		public string MiniImprovementType { get; private set; } //When a MiniImprovement is defined in the data file, this tells the game which type of miniImprovement it uses, if any
 		public string Description { get; private set; }
 		public bool IsGateway { get; private set; }
+		public System.Drawing.Color GatewayColor { get; private set; } //Color of the line
 		public bool ConnectsToAnother { get; private set; }
 		public ConnectionAlgorithm ConnectionAlgorithm { get; private set; }
 
@@ -62,6 +63,11 @@ namespace Beyond_Beyaan.Data_Modules
 							break;
 						case "isgateway": IsGateway = bool.Parse(attribute.Value);
 							break;
+						case "gatewaycolor":
+							{
+								string[] rgb = attribute.Value.Split(new[] { ',' });
+								GatewayColor = System.Drawing.Color.FromArgb(255, int.Parse(rgb[0]), int.Parse(rgb[1]), int.Parse(rgb[2]));
+							} break;
 						case "connectstoanother": ConnectsToAnother = bool.Parse(attribute.Value);
 							break;
 						case "connectionalgorithm":
