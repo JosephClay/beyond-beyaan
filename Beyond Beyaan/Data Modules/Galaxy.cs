@@ -12,9 +12,36 @@ namespace Beyond_Beyaan
 {
 	public enum GALAXYTYPE { RANDOM, CLUSTER, STAR, DIAMOND, RING };
 
+	public class Gateway
+	{
+		public SectorObjectType Type { get; set; }
+		public StarSystem SystemA { get; set; }
+		public StarSystem SystemB { get; set; }
+
+		public double Length { get; private set; }
+		public float Angle { get; private set; }
+
+		public Gateway(SectorObjectType type, StarSystem systemA, StarSystem systemB)
+		{
+			Type = type;
+			SystemA = systemA;
+			SystemB = systemB;
+
+			float deltaX = systemB.X - systemA.X;
+			float deltaY = systemB.Y - systemA.Y;
+			double angle = Math.Atan2(deltaY, deltaX);
+			Angle = (float)(angle * (180 / Math.PI));
+			deltaX *= 32;
+			deltaY *= 32;
+			Length = Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
+		}
+	}
+
 	public class Galaxy
 	{
 		private List<StarSystem> starSystems = new List<StarSystem>();
+
+		public List<Gateway> Gateways { get; set; }
 		QuadNode ParentNode;
 		//GorgonLibrary.Graphics.Sprite nebula;
 
@@ -47,6 +74,7 @@ namespace Beyond_Beyaan
 
 			FillGalaxyWithStars(ret, starTypeManager, sectorTypeManager, regionTypeManager);
 
+			Gateways = new List<Gateway>();
 			ConnectGateways(sectorTypeManager);
 
 			//ConvertNebulaToSprite();
@@ -345,6 +373,21 @@ namespace Beyond_Beyaan
 					Dictionary<StarSystem, long> closestSystems = new Dictionary<StarSystem, long>();
 					for (int j = i + 1; j < systemsWithType.Count; j++)
 					{
+						//Quick check to ensure that it's not already connected
+						bool connected = false;
+						foreach (var sectorObject in systemsWithType[j].SectorObjects)
+						{
+							if (sectorObject.Type == type && sectorObject.ConnectsTo == systemsWithType[i])
+							{
+								//Already connected, skip this star
+								connected = true;
+								break;
+							}
+						}
+						if (connected)
+						{
+							continue;
+						}
 						int xDiff = systemsWithType[i].X - systemsWithType[j].X;
 						int yDiff = systemsWithType[i].Y - systemsWithType[j].Y;
 						long distance = xDiff * xDiff + yDiff * yDiff;
@@ -405,6 +448,7 @@ namespace Beyond_Beyaan
 								//Success! We found two sectors that are not connected yet, connect them!
 								targetSector.ConnectsTo = systemsWithType[i];
 								sector.ConnectsTo = closestSystem.Key;
+								Gateways.Add(new Gateway(type, systemsWithType[i], closestSystem.Key));
 								break;
 							}
 							break;
@@ -443,6 +487,21 @@ namespace Beyond_Beyaan
 					Dictionary<StarSystem, long> farthestSystems = new Dictionary<StarSystem, long>();
 					for (int j = i + 1; j < systemsWithType.Count; j++)
 					{
+						//Quick check to ensure that it's not already connected
+						bool connected = false;
+						foreach (var sectorObject in systemsWithType[j].SectorObjects)
+						{
+							if (sectorObject.Type == type && sectorObject.ConnectsTo == systemsWithType[i])
+							{
+								//Already connected, skip this star
+								connected = true;
+								break;
+							}
+						}
+						if (connected)
+						{
+							continue;
+						}
 						int xDiff = systemsWithType[i].X - systemsWithType[j].X;
 						int yDiff = systemsWithType[i].Y - systemsWithType[j].Y;
 						long distance = xDiff * xDiff + yDiff * yDiff;
@@ -503,6 +562,7 @@ namespace Beyond_Beyaan
 								//Success! We found two sectors that are not connected yet, connect them!
 								targetSector.ConnectsTo = systemsWithType[i];
 								sector.ConnectsTo = farthestSystem.Key;
+								Gateways.Add(new Gateway(type, systemsWithType[i], farthestSystem.Key));
 							}
 							break;
 						}

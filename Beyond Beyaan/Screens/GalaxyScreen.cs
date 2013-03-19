@@ -382,27 +382,28 @@ namespace Beyond_Beyaan.Screens
 			int top = camera.CameraY - 3;
 			int bottom = camera.CameraY + size.Y + 3;
 
-			/*foreach (Starlane starlane in gameMain.galaxy.Starlanes)
+			foreach (Gateway gateway in gameMain.galaxy.Gateways)
 			{
-				if (Utility.LineRectangleIntersected(starlane.SystemA.X, starlane.SystemA.Y, starlane.SystemB.X, starlane.SystemB.Y, left, top, right, bottom))
+				if (Utility.LineRectangleIntersected(gateway.SystemA.X, gateway.SystemA.Y, gateway.SystemB.X, gateway.SystemB.Y, left, top, right, bottom))
 				{
 					//Draw Starlanes first so Star will overlap them
-					int X1 = (int)((((starlane.SystemA.X - camera.CameraX) * 32 + (starlane.SystemA.Type.Width / 2)) - camera.XOffset) * camera.Scale);
-					int Y1 = (int)((((starlane.SystemA.Y - camera.CameraY) * 32 + (starlane.SystemA.Type.Height / 2)) - camera.YOffset) * camera.Scale);
+					int X1 = (int)((((gateway.SystemA.X - camera.CameraX) * 32 + (gateway.SystemA.Type.Width / 2)) - camera.XOffset) * camera.Scale);
+					int Y1 = (int)((((gateway.SystemA.Y - camera.CameraY) * 32 + (gateway.SystemA.Type.Height / 2)) - camera.YOffset) * camera.Scale);
 					/*int X2 = (int)(((starlane.SystemB.X - starlane.SystemA.X) * 32) * camera.Scale);
 					int Y2 = (int)(((starlane.SystemB.Y - starlane.SystemA.Y) * 32) * camera.Scale);*/
 
-					/*if (starlane.Visible && (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) || starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire)))
-					{
+					//if (starlane.Visible && (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) || starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire)))
+					//{
 						starlaneSprite.SetPosition(X1, Y1);
-						starlaneSprite.Width = (float)starlane.Length * camera.Scale;
+						starlaneSprite.Width = (float)gateway.Length * camera.Scale;
 						//starlaneSprite.Height = 5 * camera.Scale;
-						starlaneSprite.Rotation = starlane.Angle;
+						starlaneSprite.Rotation = gateway.Angle;
+						starlaneSprite.Color = gateway.Type.GatewayColor;
 						starlaneSprite.Draw();
 						//Draw the line
 						//drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.White);
 						//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.DimGray);
-					}
+					/*}
 					else
 					{
 						//drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.DimGray);
@@ -432,8 +433,8 @@ namespace Beyond_Beyaan.Screens
 					{
 						drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.LightGray);
 					}*/
-				//}
-			//}
+				}
+			}
 
 			foreach (StarSystem system in systems)
 			{

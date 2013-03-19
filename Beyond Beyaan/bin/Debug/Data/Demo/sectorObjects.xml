@@ -183,6 +183,7 @@
       localProjects="false"
       improvements="1"
       isGateway="true"
+      gatewayColor="255,255,255"
       connectsToAnother="true"
       connectionAlgorithm="closest"
       description="After many years of frequent travel by ships, the space between stars developed a &quot;groove&quot; which is similar to wormholes, but are weakly present.  They make distances shorter for traveling ships." />
@@ -196,6 +197,7 @@
       localProjects="false"
       improvements="1"
       isGateway="true"
+      gatewayColor="0,255,0"
       connectsToAnother="true"
       connectionAlgorithm="farthest"
       description="At one point in history, something caused those wormholes to form.  Those wormholes allows ships to travel to the other side almost instantly." />
