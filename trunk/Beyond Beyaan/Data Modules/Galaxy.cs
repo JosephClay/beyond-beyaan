@@ -75,7 +75,7 @@ namespace Beyond_Beyaan
 			FillGalaxyWithStars(ret, starTypeManager, sectorTypeManager, regionTypeManager);
 
 			Gateways = new List<Gateway>();
-			ConnectGateways(sectorTypeManager);
+			ConnectGateways(sectorTypeManager, r);
 
 			//ConvertNebulaToSprite();
 		}
@@ -137,7 +137,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Enhancements
-		public void ConnectGateways(SectorTypeManager sectorTypeManager)
+		public void ConnectGateways(SectorTypeManager sectorTypeManager, Random r)
 		{
 			// spencer's new and improved super-awesome nebula-generating code of awesomeness-ness
 			/*LibNoise.RidgedMultifractal density = new LibNoise.RidgedMultifractal();
@@ -189,11 +189,11 @@ namespace Beyond_Beyaan
 						} break;
 					case ConnectionAlgorithm.RANDOM:
 						{
-							ConnectRandom(gateWayType);
+							ConnectRandom(gateWayType, r);
 						} break;
 					case ConnectionAlgorithm.MINIMUM:
 						{
-							ConnectMinimumSpanning(gateWayType);
+							ConnectMinimumSpanning(gateWayType, r);
 						} break;
 				}
 			}
@@ -358,102 +358,68 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+			List<Gateway> possibleGateways = new List<Gateway>();
 			for (int i = 0; i < systemsWithType.Count - 1; i++)
 			{
-				int amountNeedToConnect = 0;
-				foreach (var sector in starSystems[i].SectorObjects)
+				for (int j = i + 1; j < systemsWithType.Count; j++)
 				{
-					if (sector.Type == type && sector.ConnectsTo == null)
+					Gateway gateway = new Gateway(type, systemsWithType[i], systemsWithType[j]);
+					possibleGateways.Add(gateway);
+				}
+			}
+			possibleGateways.Sort((a, b) => { return a.Length.CompareTo(b.Length); });
+			foreach (var possibleGateway in possibleGateways)
+			{
+				SectorObject sectorObjectA = null;
+				SectorObject sectorObjectB = null;
+				bool isConnected = false;
+				foreach (SectorObject sectorObject in possibleGateway.SystemA.SectorObjects)
+				{
+					if (sectorObject.Type != type)
 					{
-						amountNeedToConnect++;
+						continue;
+					}
+					if (sectorObject.ConnectsTo != null)
+					{
+						if (sectorObject.ConnectsTo == possibleGateway.SystemB)
+						{
+							isConnected = true;
+							break;
+						}
+						continue;
+					}
+					else
+					{
+						sectorObjectA = sectorObject;
+						break;
 					}
 				}
-				if (amountNeedToConnect > 0)
+				foreach (SectorObject sectorObject in possibleGateway.SystemB.SectorObjects)
 				{
-					Dictionary<StarSystem, long> closestSystems = new Dictionary<StarSystem, long>();
-					for (int j = i + 1; j < systemsWithType.Count; j++)
+					if (sectorObject.Type != type)
 					{
-						//Quick check to ensure that it's not already connected
-						bool connected = false;
-						foreach (var sectorObject in systemsWithType[j].SectorObjects)
-						{
-							if (sectorObject.Type == type && sectorObject.ConnectsTo == systemsWithType[i])
-							{
-								//Already connected, skip this star
-								connected = true;
-								break;
-							}
-						}
-						if (connected)
-						{
-							continue;
-						}
-						int xDiff = systemsWithType[i].X - systemsWithType[j].X;
-						int yDiff = systemsWithType[i].Y - systemsWithType[j].Y;
-						long distance = xDiff * xDiff + yDiff * yDiff;
-						if (closestSystems.Count < amountNeedToConnect)
-						{
-							//Just add it since we don't have a full set to compare
-							closestSystems.Add(systemsWithType[j], distance);
-						}
-						else
-						{
-							//Compare each and replace the farthest if it's closer than one of them
-							StarSystem farthestSystem = null;
-							long farthestDistance = -1;
-							bool isCloser = false;
-							foreach (var system in closestSystems)
-							{
-								if (farthestSystem == null || system.Value > farthestDistance)
-								{
-									farthestSystem = system.Key;
-									farthestDistance = system.Value;
-								}
-								if (distance < system.Value)
-								{
-									//It's closer than at least one system, loop through to find the farthest star
-									isCloser = true;
-								}
-							}
-							if (isCloser)
-							{
-								closestSystems.Remove(farthestSystem);
-								closestSystems.Add(systemsWithType[j], distance);
-							}
-						}
+						continue;
 					}
-					//Now that we have the closest systems, hook them up
-					foreach (var sector in systemsWithType[i].SectorObjects)
+					if (sectorObject.ConnectsTo != null)
 					{
-						if (closestSystems.Count == 0)
+						if (sectorObject.ConnectsTo == possibleGateway.SystemA)
 						{
-							//Ran out of systems to connect
+							isConnected = true;
 							break;
 						}
-						if (sector.Type != type || sector.ConnectsTo != null)
-						{
-							//*jedi wave* Those are not the sectors you're looking for
-							continue;
-						}
-						//This foreach is to get the first item in a dictionary...
-						foreach (var closestSystem in closestSystems)
-						{
-							foreach (var targetSector in closestSystem.Key.SectorObjects)
-							{
-								if (targetSector.Type != type || targetSector.ConnectsTo != null)
-								{
-									//*jedi wave* Those are not the sectors you're looking for
-									continue;
-								}
-								//Success! We found two sectors that are not connected yet, connect them!
-								targetSector.ConnectsTo = systemsWithType[i];
-								sector.ConnectsTo = closestSystem.Key;
-								Gateways.Add(new Gateway(type, systemsWithType[i], closestSystem.Key));
-								break;
-							}
-							break;
-						}
+						continue;
 					}
+					else
+					{
+						sectorObjectB = sectorObject;
+						break;
+					}
+				}
+				if (sectorObjectA != null && sectorObjectB != null && !isConnected)
+				{
+					sectorObjectA.ConnectsTo = possibleGateway.SystemB;
+					sectorObjectB.ConnectsTo = possibleGateway.SystemA;
+					Gateways.Add(possibleGateway);
 				}
 			}
 		}
@@ -472,110 +438,159 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+			List<Gateway> possibleGateways = new List<Gateway>();
 			for (int i = 0; i < systemsWithType.Count - 1; i++)
 			{
-				int amountNeedToConnect = 0;
-				foreach (var sector in starSystems[i].SectorObjects)
+				for (int j = i + 1; j < systemsWithType.Count; j++)
 				{
-					if (sector.Type == type && sector.ConnectsTo == null)
+					Gateway gateway = new Gateway(type, systemsWithType[i], systemsWithType[j]);
+					possibleGateways.Add(gateway);
+				}
+			}
+			possibleGateways.Sort((a, b) => { return b.Length.CompareTo(a.Length); });
+			foreach (var possibleGateway in possibleGateways)
+			{
+				SectorObject sectorObjectA = null;
+				SectorObject sectorObjectB = null;
+				bool isConnected = false;
+				foreach (SectorObject sectorObject in possibleGateway.SystemA.SectorObjects)
+				{
+					if (sectorObject.Type != type)
 					{
-						amountNeedToConnect++;
+						continue;
+					}
+					if (sectorObject.ConnectsTo != null)
+					{
+						if (sectorObject.ConnectsTo == possibleGateway.SystemB)
+						{
+							isConnected = true;
+							break;
+						}
+						continue;
+					}
+					else
+					{
+						sectorObjectA = sectorObject;
+						break;
 					}
 				}
-				if (amountNeedToConnect > 0)
+				foreach (SectorObject sectorObject in possibleGateway.SystemB.SectorObjects)
 				{
-					Dictionary<StarSystem, long> farthestSystems = new Dictionary<StarSystem, long>();
-					for (int j = i + 1; j < systemsWithType.Count; j++)
+					if (sectorObject.Type != type)
 					{
-						//Quick check to ensure that it's not already connected
-						bool connected = false;
-						foreach (var sectorObject in systemsWithType[j].SectorObjects)
-						{
-							if (sectorObject.Type == type && sectorObject.ConnectsTo == systemsWithType[i])
-							{
-								//Already connected, skip this star
-								connected = true;
-								break;
-							}
-						}
-						if (connected)
-						{
-							continue;
-						}
-						int xDiff = systemsWithType[i].X - systemsWithType[j].X;
-						int yDiff = systemsWithType[i].Y - systemsWithType[j].Y;
-						long distance = xDiff * xDiff + yDiff * yDiff;
-						if (farthestSystems.Count < amountNeedToConnect)
-						{
-							//Just add it since we don't have a full set to compare
-							farthestSystems.Add(systemsWithType[j], distance);
-						}
-						else
-						{
-							//Compare each and replace the shortest if it's closer than one of them
-							StarSystem closestSystem = null;
-							long shortestDistance = -1;
-							bool isFarther = false;
-							foreach (var system in farthestSystems)
-							{
-								if (closestSystem == null || system.Value < shortestDistance)
-								{
-									closestSystem = system.Key;
-									shortestDistance = system.Value;
-								}
-								if (distance > system.Value)
-								{
-									//It's closer than at least one system, loop through to find the shortest star
-									isFarther = true;
-								}
-							}
-							if (isFarther)
-							{
-								farthestSystems.Remove(closestSystem);
-								farthestSystems.Add(systemsWithType[j], distance);
-							}
-						}
+						continue;
 					}
-					//Now that we have the closest systems, hook them up
-					foreach (var sector in systemsWithType[i].SectorObjects)
+					if (sectorObject.ConnectsTo != null)
 					{
-						if (farthestSystems.Count == 0)
+						if (sectorObject.ConnectsTo == possibleGateway.SystemA)
 						{
-							//Ran out of systems to connect
+							isConnected = true;
 							break;
 						}
-						if (sector.Type != type || sector.ConnectsTo != null)
-						{
-							//*jedi wave* Those are not the sectors you're looking for
-							continue;
-						}
-						//This foreach is to get the first item in a dictionary...
-						foreach (var farthestSystem in farthestSystems)
-						{
-							foreach (var targetSector in farthestSystem.Key.SectorObjects)
-							{
-								if (targetSector.Type != type || targetSector.ConnectsTo != null)
-								{
-									//*jedi wave* Those are not the sectors you're looking for
-									continue;
-								}
-								//Success! We found two sectors that are not connected yet, connect them!
-								targetSector.ConnectsTo = systemsWithType[i];
-								sector.ConnectsTo = farthestSystem.Key;
-								Gateways.Add(new Gateway(type, systemsWithType[i], farthestSystem.Key));
-							}
-							break;
-						}
+						continue;
 					}
+					else
+					{
+						sectorObjectB = sectorObject;
+						break;
+					}
+				}
+				if (sectorObjectA != null && sectorObjectB != null && !isConnected)
+				{
+					sectorObjectA.ConnectsTo = possibleGateway.SystemB;
+					sectorObjectB.ConnectsTo = possibleGateway.SystemA;
+					Gateways.Add(possibleGateway);
 				}
 			}
 		}
 
-		private void ConnectRandom(SectorObjectType type)
+		private void ConnectRandom(SectorObjectType type, Random r)
 		{
+			List<StarSystem> systemsWithType = new List<StarSystem>();
+			foreach (var system in starSystems)
+			{
+				foreach (var sector in system.SectorObjects)
+				{
+					if (sector.Type == type)
+					{
+						systemsWithType.Add(system);
+						break;
+					}
+				}
+			}
+			List<Gateway> possibleGateways = new List<Gateway>();
+			for (int i = 0; i < systemsWithType.Count - 1; i++)
+			{
+				for (int j = i + 1; j < systemsWithType.Count; j++)
+				{
+					Gateway gateway = new Gateway(type, systemsWithType[i], systemsWithType[j]);
+					possibleGateways.Add(gateway);
+				}
+			}
+			List<Gateway> randomizedGateways = new List<Gateway>();
+			while (possibleGateways.Count > 0)
+			{
+				int random = r.Next(possibleGateways.Count);
+				randomizedGateways.Add(possibleGateways[random]);
+				possibleGateways.RemoveAt(random);
+			}
+			foreach (var possibleGateway in randomizedGateways)
+			{
+				SectorObject sectorObjectA = null;
+				SectorObject sectorObjectB = null;
+				bool isConnected = false;
+				foreach (SectorObject sectorObject in possibleGateway.SystemA.SectorObjects)
+				{
+					if (sectorObject.Type != type)
+					{
+						continue;
+					}
+					if (sectorObject.ConnectsTo != null)
+					{
+						if (sectorObject.ConnectsTo == possibleGateway.SystemB)
+						{
+							isConnected = true;
+							break;
+						}
+						continue;
+					}
+					else
+					{
+						sectorObjectA = sectorObject;
+						break;
+					}
+				}
+				foreach (SectorObject sectorObject in possibleGateway.SystemB.SectorObjects)
+				{
+					if (sectorObject.Type != type)
+					{
+						continue;
+					}
+					if (sectorObject.ConnectsTo != null)
+					{
+						if (sectorObject.ConnectsTo == possibleGateway.SystemA)
+						{
+							isConnected = true;
+							break;
+						}
+						continue;
+					}
+					else
+					{
+						sectorObjectB = sectorObject;
+						break;
+					}
+				}
+				if (sectorObjectA != null && sectorObjectB != null && !isConnected)
+				{
+					sectorObjectA.ConnectsTo = possibleGateway.SystemB;
+					sectorObjectB.ConnectsTo = possibleGateway.SystemA;
+					Gateways.Add(possibleGateway);
+				}
+			}
 		}
 
-		private void ConnectMinimumSpanning(SectorObjectType type)
+		private void ConnectMinimumSpanning(SectorObjectType type, Random r)
 		{
 		}
 		#endregion

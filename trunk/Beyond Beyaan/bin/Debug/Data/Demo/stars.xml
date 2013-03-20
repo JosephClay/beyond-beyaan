@@ -14,7 +14,7 @@
       <Planet code="Dead" amount="0,4" />
     </Planets>
     <Starlanes>
-      <Starlane code="Starlane" amount="2,4" />
+      <Starlane code="Starlane" amount="1,4" />
     </Starlanes>
     <Wormholes>
       <Wormhole code="Wormhole" amount="0,1,0.05" />
@@ -32,7 +32,7 @@
       <Planet code="Gas Giant" amount="0,3" />
     </Planets>
     <Starlanes>
-      <Starlane code="Starlane" amount="2,4" />
+      <Starlane code="Starlane" amount="1,4" />
     </Starlanes>
     <Wormholes>
       <Wormhole code="Wormhole" amount="0,1,0.05" />
@@ -51,7 +51,7 @@
       <Planet code="Gas Giant" amount="0,2" />
     </Planets>
     <Starlanes>
-      <Starlane code="Starlane" amount="2,4" />
+      <Starlane code="Starlane" amount="1,4" />
     </Starlanes>
     <Wormholes>
       <Wormhole code="Wormhole" amount="0,1,0.05" />
@@ -72,7 +72,7 @@
       <Planet code="Asteroids" amount="1,3" />
     </Planets>
     <Starlanes>
-      <Starlane code="Starlane" amount="2,4" />
+      <Starlane code="Starlane" amount="1,4" />
     </Starlanes>
     <Wormholes>
       <Wormhole code="Wormhole" amount="0,1,0.05" />
@@ -99,7 +99,7 @@
       <Planet code="Gas Giant" amount="0,2" />
     </Planets>
     <Starlanes>
-      <Starlane code="Starlane" amount="2,4" />
+      <Starlane code="Starlane" amount="1,4" />
     </Starlanes>
     <Wormholes>
       <Wormhole code="Wormhole" amount="0,1,0.05" />
@@ -112,13 +112,19 @@
       <Planet code="Asteroids" amount="0,1" />
       <Planet code="Gas Giant" amount="0,1" />
     </Planets>
+    <Starlanes>
+      <Starlane code="Starlane" amount="1,4" />
+    </Starlanes>
+    <Wormholes>
+      <Wormhole code="Wormhole" amount="0,1,0.05" />
+    </Wormholes>
   </Star>
   <Star name="Black Dwarf" code="Black Dwarf" description="Black dwarfs are stars that've cooled down to below 5 degrees K.  All planets are devoid of any life or radioactivity.  They are sometimes hard to access." shaderValue="0.01,0.01,0.01,1" shader="StarShader" spriteX="0" spriteY="0" spriteWidth="32" spriteHeight="32" >
     <Planets>
       <Planet code="Dead" amount="0, 6" />
     </Planets>
     <Starlanes>
-      <Starlane code="Starlane" amount="2,3" />
+      <Starlane code="Starlane" amount="1" />
     </Starlanes>
   </Star>
   <Star name="Black Hole" code="Black Hole" description="Black holes are objects with immense mass, enough to create a gravity well that distorts time and space." spriteX="128" spriteY="0" spriteWidth="32" spriteHeight="32" >
