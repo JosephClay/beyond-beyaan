@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Data_Managers
 {
 	public class ContactManager
 	{
-		private List<Contact> contacts;
 		private Empire thisEmpire;
 
-		public List<Contact> Contacts
-		{
-			get { return contacts; }
-		}
+		public List<Contact> Contacts { get; private set; }
 
 		public ContactManager(Empire currentEmpire, List<Empire> allEmpires)
 		{
 			thisEmpire = currentEmpire;
-			contacts = new List<Contact>();
+			Contacts = new List<Contact>();
 			foreach (Empire empire in allEmpires)
 			{
 				if (empire != currentEmpire)
@@ -30,14 +23,14 @@ namespace Beyond_Beyaan.Data_Managers
 					newContact.RelationshipStatus = 100;
 					newContact.OutgoingMessage = MessageType.NONE;
 					newContact.IncomingMessage = MessageType.NONE;
-					contacts.Add(newContact);
+					Contacts.Add(newContact);
 				}
 			}
 		}
 
 		public void EstablishContact(Empire empireContacted, SitRepManager sitRepManager)
 		{
-			foreach (Contact contact in contacts)
+			foreach (Contact contact in Contacts)
 			{
 				if (contact.EmpireInContact == empireContacted && !contact.Contacted)
 				{
@@ -56,7 +49,7 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			//Handle messages
 
-			foreach (Contact contact in contacts)
+			foreach (Contact contact in Contacts)
 			{
 				if (!contact.Contacted)
 				{
@@ -77,7 +70,7 @@ namespace Beyond_Beyaan.Data_Managers
 
 		private MessageType GetMessage(Empire forWhichEmpire, out Empire whichEmpireInRequest)
 		{
-			foreach (Contact contact in contacts)
+			foreach (Contact contact in Contacts)
 			{
 				if (contact.EmpireInContact == forWhichEmpire && contact.OutgoingMessage != MessageType.NONE)
 				{
@@ -96,7 +89,7 @@ namespace Beyond_Beyaan.Data_Managers
 
 		public bool IsContacted(Empire empire)
 		{
-			foreach (Contact contact in contacts)
+			foreach (Contact contact in Contacts)
 			{
 				if (contact.EmpireInContact == empire)
 				{

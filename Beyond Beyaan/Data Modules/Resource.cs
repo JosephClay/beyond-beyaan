@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Beyond_Beyaan.Data_Modules
+﻿namespace Beyond_Beyaan.Data_Modules
 {
 	public enum LimitTo { PLANET, PLANET_DEVELOPMENT, SYSTEM, SYSTEM_DEVELOPMENT, EMPIRE, EMPIRE_DEVELOPMENT }
 

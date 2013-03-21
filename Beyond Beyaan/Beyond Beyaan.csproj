@@ -141,7 +141,6 @@
     <Compile Include="Data Modules\SitRepItem.cs" />
     <Compile Include="Data Modules\Squadron.cs" />
     <Compile Include="Data Modules\SquadronGroup.cs" />
-    <Compile Include="Data Modules\Stargate.cs" />
     <Compile Include="Data Modules\Starlane.cs" />
     <Compile Include="Data Modules\StarType.cs" />
     <Compile Include="GameMain.cs" />

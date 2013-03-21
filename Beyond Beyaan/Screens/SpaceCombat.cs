@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using System.Windows.Forms;
 using Beyond_Beyaan.Data_Modules;
@@ -639,7 +637,7 @@ namespace Beyond_Beyaan.Screens
 										if (!currentFleetTurn.combatShips[iter].Values.ContainsKey("_doneTurn"))
 										{
 											SelectedShip = currentFleetTurn.combatShips[iter];
-											found = false;
+											found = true;
 											break;
 										}
 										iter++;
@@ -737,7 +735,7 @@ namespace Beyond_Beyaan.Screens
 										if (!currentFleetTurn.combatShips[iter].Values.ContainsKey("_doneTurn"))
 										{
 											SelectedShip = currentFleetTurn.combatShips[iter];
-											found = false;
+											found = true;
 											break;
 										}
 										iter--;
@@ -1006,6 +1004,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					fleet.UpdateShipInfo();
 					fleetsInCombat.Add(fleet);
+					i++;
 				}
 				currentFleetTurn = fleetsInCombat[0];
 			}
@@ -1222,7 +1221,7 @@ namespace Beyond_Beyaan.Screens
 			return collisions;
 		}
 
-		private List<Point> LineVsCircleCollision(Point circlePos, float circleRadius, PointF position, PointF dimensions, float angle)
+		private static List<Point> LineVsCircleCollision(Point circlePos, float circleRadius, PointF position, PointF dimensions, float angle)
 		{
 			//First, get the corner positions
 			PointF pos1 = new PointF(position.X, position.Y); //The first corner
@@ -1266,7 +1265,7 @@ namespace Beyond_Beyaan.Screens
 				//No point
 				return null;
 			}
-			double t = 0;
+			double t;
 			if (det == 0)
 			{
 				//One point

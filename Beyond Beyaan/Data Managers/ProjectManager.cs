@@ -1,36 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Data_Managers
 {
 	public class ProjectManager
 	{
-		private List<Project> projects;
-		private List<int> percentageAmounts;
-		private List<bool> locked;
-		private bool isQueue; //If planet, it's queue, otherwise, apply development to all projects
-
-		public List<Project> Projects { get { return projects; } }
-		public List<int> PercentageAmounts { get { return percentageAmounts; } }
-		public List<bool> Locked { get { return locked; } }
-		public bool IsQueue { get { return isQueue; } }
+		public List<Project> Projects { get; private set; }
+		public List<int> PercentageAmounts { get; private set; }
+		public List<bool> Locked { get; private set; }
+		public bool IsQueue { get; private set; }
 
 		public ProjectManager(bool isQueue)
 		{
-			projects = new List<Project>();
-			percentageAmounts = new List<int>();
-			locked = new List<bool>();
-			this.isQueue = isQueue;
+			Projects = new List<Project>();
+			PercentageAmounts = new List<int>();
+			Locked = new List<bool>();
+			this.IsQueue = isQueue;
 		}
 
 		public void AddProject(Project project)
 		{
-			projects.Add(project);
-			percentageAmounts.Add(projects.Count == 1 ? 100 : 0);
-			locked.Add(false);
+			Projects.Add(project);
+			PercentageAmounts.Add(Projects.Count == 1 ? 100 : 0);
+			Locked.Add(false);
 		}
 
 		public void CancelProject(int project)
@@ -38,11 +31,11 @@ namespace Beyond_Beyaan.Data_Managers
 			bool added = false;
 			if (!IsQueue)
 			{
-				for (int i = 0; i < projects.Count; i++)
+				for (int i = 0; i < Projects.Count; i++)
 				{
-					if (!locked[i] && i != project)
+					if (!Locked[i] && i != project)
 					{
-						percentageAmounts[i] += percentageAmounts[project];
+						PercentageAmounts[i] += PercentageAmounts[project];
 						added = true;
 						break;
 					}
@@ -50,42 +43,42 @@ namespace Beyond_Beyaan.Data_Managers
 				if (!added)
 				{
 					//All projects are locked or no projects
-					if (projects.Count > 0)
+					if (Projects.Count > 0)
 					{
-						percentageAmounts[0] += percentageAmounts[project];
+						PercentageAmounts[0] += PercentageAmounts[project];
 					}
 				}
-				percentageAmounts.RemoveAt(project);
-				locked.RemoveAt(project);
-				projects.RemoveAt(project);
+				PercentageAmounts.RemoveAt(project);
+				Locked.RemoveAt(project);
+				Projects.RemoveAt(project);
 			}
-			projects.RemoveAt(project);
+			Projects.RemoveAt(project);
 		}
 
 		public void UpdateProjects(Dictionary<Resource, float> amount, PlanetTypeManager planetTypeManager, Random r)
 		{
 			List<Project> projectsCompleted = new List<Project>();
-			for (int i = 0; i < projects.Count; i++)
+			for (int i = 0; i < Projects.Count; i++)
 			{
 				int amountProduced = 0;
 				if (IsQueue)
 				{
 					if (i == 0)
 					{
-						amountProduced = projects[i].Update(amount, 1.0f);
+						amountProduced = Projects[i].Update(amount, 1.0f);
 					}
 				}
 				else
 				{
-					amountProduced = projects[i].Update(amount, percentageAmounts[i] / 100f);
+					amountProduced = Projects[i].Update(amount, PercentageAmounts[i] / 100f);
 				}
 				if (amountProduced > 0)
 				{
-					switch (projects[i].ProjectType)
+					switch (Projects[i].ProjectType)
 					{
 						case PROJECT_TYPE.REGION:
-							projects[i].WhichRegion.RegionType = projects[i].RegionTypeToBuild;
-							projectsCompleted.Add(projects[i]);
+							Projects[i].WhichRegion.RegionType = Projects[i].RegionTypeToBuild;
+							projectsCompleted.Add(Projects[i]);
 							break;
 						case PROJECT_TYPE.SHIP:
 							//TODO: Finish this
@@ -114,7 +107,7 @@ namespace Beyond_Beyaan.Data_Managers
 			for (int i = 0; i < projectsCompleted.Count; i++)
 			{
 				//Projects that are done, such as terraforming planets, need to be removed
-				projects.Remove(projectsCompleted[i]);
+				Projects.Remove(projectsCompleted[i]);
 				// TODO: Add to sitrep whatever projects were completed.
 				//empire.SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, projectsCompleted[i].Location, projectsCompleted[i].PlanetToTerraform, new Point(projectsCompleted[i].Location.X, projectsCompleted[i].Location.Y), projectsCompleted[i].PlanetToTerraform.Name + " is fully terraformed, this project is completed."));
 			}
@@ -122,27 +115,27 @@ namespace Beyond_Beyaan.Data_Managers
 
 		public void SetLocked(int project, bool locked)
 		{
-			this.locked[project] = locked;
+			this.Locked[project] = locked;
 		}
 
 		public void SetPercentage(int project, int amount)
 		{
 			int remainingPercentile = 100;
-			for (int i = 0; i < projects.Count; i++)
+			for (int i = 0; i < Projects.Count; i++)
 			{
-				if (locked[i])
+				if (Locked[i])
 				{
-					remainingPercentile -= percentageAmounts[i];
+					remainingPercentile -= PercentageAmounts[i];
 				}
 			}
 
 			if (amount >= remainingPercentile)
 			{
-				for (int i = 0; i < locked.Count; i++)
+				for (int i = 0; i < Locked.Count; i++)
 				{
-					if (!locked[i])
+					if (!Locked[i])
 					{
-						percentageAmounts[i] = 0;
+						PercentageAmounts[i] = 0;
 					}
 				}
 				amount = remainingPercentile;
@@ -150,26 +143,25 @@ namespace Beyond_Beyaan.Data_Managers
 
 			//Now scale
 
-			int totalPointsExcludingSelectedProject = 0;
-			percentageAmounts[project] = amount;
-			remainingPercentile -= percentageAmounts[project];
+			int totalPointsExcludingSelectedProject;
+			PercentageAmounts[project] = amount;
+			remainingPercentile -= PercentageAmounts[project];
 			totalPointsExcludingSelectedProject = GetTotalPercentageExcludingProjectAndLocked(project);
 
 			if (remainingPercentile < totalPointsExcludingSelectedProject)
 			{
 				int amountToDeduct = totalPointsExcludingSelectedProject - remainingPercentile;
-				int prevValue;
-				for (int i = 0; i < locked.Count; i++)
+				for (int i = 0; i < Locked.Count; i++)
 				{
 					if (amountToDeduct <= 0)
 					{
 						break;
 					}
-					if (!locked[i] && project != i)
+					if (!Locked[i] && project != i)
 					{
-						prevValue = percentageAmounts[i];
-						percentageAmounts[i] -= percentageAmounts[i] >= amountToDeduct ? amountToDeduct : percentageAmounts[i];
-						amountToDeduct -= (prevValue - percentageAmounts[i]);
+						int prevValue = PercentageAmounts[i];
+						PercentageAmounts[i] -= PercentageAmounts[i] >= amountToDeduct ? amountToDeduct : PercentageAmounts[i];
+						amountToDeduct -= (prevValue - PercentageAmounts[i]);
 					}
 				}
 			}
@@ -177,22 +169,22 @@ namespace Beyond_Beyaan.Data_Managers
 			if (remainingPercentile > totalPointsExcludingSelectedProject)
 			{
 				int amountToAdd = remainingPercentile - totalPointsExcludingSelectedProject;
-				for (int i = 0; i < locked.Count; i++)
+				for (int i = 0; i < Locked.Count; i++)
 				{
 					if (amountToAdd <= 0)
 					{
 						break;
 					}
-					if (!locked[i] && project != i)
+					if (!Locked[i] && project != i)
 					{
-						percentageAmounts[i] += amountToAdd;
+						PercentageAmounts[i] += amountToAdd;
 						amountToAdd = 0;
 					}
 				}
 				if (amountToAdd > 0)
 				{
 					//All projects are already checked, so have to add teh remaining back to the current project
-					percentageAmounts[project] += amountToAdd;
+					PercentageAmounts[project] += amountToAdd;
 				}
 			}
 		}
@@ -200,11 +192,11 @@ namespace Beyond_Beyaan.Data_Managers
 		private int GetTotalPercentageExcludingProjectAndLocked(int whichProject)
 		{
 			int total = 0;
-			for (int i = 0; i < percentageAmounts.Count; i++)
+			for (int i = 0; i < PercentageAmounts.Count; i++)
 			{
-				if (!locked[i] && i != whichProject)
+				if (!Locked[i] && i != whichProject)
 				{
-					total += percentageAmounts[i];
+					total += PercentageAmounts[i];
 				}
 			}
 			return total;

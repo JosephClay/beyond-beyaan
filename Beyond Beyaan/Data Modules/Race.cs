@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Xml.Linq;
 using GorgonLibrary.Graphics;
@@ -73,8 +71,8 @@ namespace Beyond_Beyaan.Data_Modules
 		public Dictionary<int, string> ShipSizeLabels { get { return shipSizeLabels; } }
 		public Dictionary<int, List<Sprite>> ShipSprites { get { return shipSprites; } }*/
 
-		public List<StartingSystem> StartingSystems { get { return startingSystems; } }
-		public List<StartingShip> StartingShips { get { return startingShips; } }
+		public List<StartingSystem> StartingSystems { get; private set; }
+		public List<StartingShip> StartingShips { get; private set; }
 
 		//public TechnologyList RacialTechnologies { get; private set; }
 
@@ -91,10 +89,8 @@ namespace Beyond_Beyaan.Data_Modules
 		private Sprite fleetIcon;
 		private Sprite city;
 		private Sprite troopShip;
-		private List<StartingSystem> startingSystems;
-		private List<StartingShip> startingShips;
 
-		public bool Initialize(XElement race, string graphicDirectory, ShipScriptManager shipScriptManager, IconManager iconManager, ResourceManager resourceManager)
+		public bool Initialize(XElement race, string graphicDirectory, ShipScriptManager shipScriptManager, IconManager iconManager, ResourceManager resourceManager, out string reason)
 		{
 			List<string> errors = new List<string>();
 			shipNames = new Dictionary<int, List<string>>();
@@ -102,8 +98,6 @@ namespace Beyond_Beyaan.Data_Modules
 			ConsumptionBonuses = new Dictionary<string, float>();
 			Consumptions = new Dictionary<Resource, float>();
 			Productions = new Dictionary<Resource, float>();
-
-			string reason;
 
 			XElement attributes = race.Element("Attributes");
 			RaceName = attributes.Attribute("name").Value;
@@ -182,7 +176,7 @@ namespace Beyond_Beyaan.Data_Modules
 				reason = "Duplicate race name: " + RaceName;
 				return false;
 			}
-			Sprite raceGraphic = new Sprite(RaceName, GorgonLibrary.Graphics.Image.FromFile(graphic));
+			Sprite raceGraphic = new Sprite(RaceName, Image.FromFile(graphic));
 
 			int x;
 			int y;
@@ -268,7 +262,7 @@ namespace Beyond_Beyaan.Data_Modules
 			y = int.Parse(troopShipElement.Attribute("yPos").Value);
 			troopShip = new Sprite(RaceName + "troopShip", raceGraphic.Image, x, y, 300, 200);
 
-			startingShips = new List<StartingShip>();
+			StartingShips = new List<StartingShip>();
 			/*XElement startShip = race.Element("StartShips");
 			foreach (XElement element in startShip.Elements())
 			{
@@ -307,7 +301,7 @@ namespace Beyond_Beyaan.Data_Modules
 				startingShips.Add(ship);
 			}*/
 
-			startingSystems = new List<StartingSystem>();
+			StartingSystems = new List<StartingSystem>();
 			XElement startSystem = race.Element("StartSystems");
 			foreach (XElement element in startSystem.Elements())
 			{
@@ -356,9 +350,10 @@ namespace Beyond_Beyaan.Data_Modules
 						system.Squadrons.Add(startingSquadron);
 					}*/
 				}
-				startingSystems.Add(system);
+				StartingSystems.Add(system);
 			}
 
+			reason = null;
 			return errors.Count == 0;
 		}
 

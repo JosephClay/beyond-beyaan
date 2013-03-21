@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using GorgonLibrary.InputDevices;
 using GorgonLibrary.Graphics;
-using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
@@ -15,8 +12,8 @@ namespace Beyond_Beyaan.Screens
 		private GameMain gameMain;
 		private Camera camera;
 
-		private GorgonLibrary.Graphics.RenderTarget oldTarget;
-		private GorgonLibrary.Graphics.RenderImage starName;
+		private RenderTarget oldTarget;
+		private RenderImage starName;
 
 		private float rotation;
 		private bool pressedInWindow;
@@ -39,8 +36,8 @@ namespace Beyond_Beyaan.Screens
 		private Point LastClickedPosition; //used for refreshing fleet list
 		private Point whichGridCellClicked;
 
-		private GorgonLibrary.Graphics.Sprite movementPath;
-		private GorgonLibrary.Graphics.Sprite starlaneSprite;
+		private Sprite movementPath;
+		private Sprite starlaneSprite;
 
 		public void Initialize(GameMain gameMain)
 		{
@@ -51,8 +48,8 @@ namespace Beyond_Beyaan.Screens
 
 			pressedInWindow = false;
 
-			starName = new GorgonLibrary.Graphics.RenderImage("starNameRendered", 1, 1, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
-			starName.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
+			starName = new RenderImage("starNameRendered", 1, 1, ImageBufferFormats.BufferRGB888A8);
+			starName.BlendingMode = BlendingModes.Modulated;
 
 			//transferButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Transfer Population", gameMain.ScreenWidth - 245, 370, 240, 25);
 
@@ -72,8 +69,8 @@ namespace Beyond_Beyaan.Screens
 			squadronListWindow = new SquadronListWindow(gameMain.ScreenHeight / 2, gameMain);
 			//splitPopulation = new SplitPopulation(gameMain.ScreenWidth / 2, 220, gameMain, SplitFleet);
 
-			GorgonLibrary.Graphics.Image starlaneImage = new GorgonLibrary.Graphics.Image("starlaneImage", 1, 3, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
-			GorgonLibrary.Graphics.Image.ImageLockBox newImage0 = starlaneImage.GetImageData();
+			Image starlaneImage = new Image("starlaneImage", 1, 3, ImageBufferFormats.BufferRGB888A8);
+			Image.ImageLockBox newImage0 = starlaneImage.GetImageData();
 			newImage0.Lock(false);
 
 			newImage0[0, 0] = System.Drawing.Color.FromArgb(200, 150, 150, 150).ToArgb();
@@ -84,12 +81,12 @@ namespace Beyond_Beyaan.Screens
 
 			newImage0.Unlock();
 
-			starlaneSprite = new GorgonLibrary.Graphics.Sprite("starlaneSprite", starlaneImage);
-			starlaneSprite.HorizontalWrapMode = GorgonLibrary.Graphics.ImageAddressing.Wrapping;
+			starlaneSprite = new Sprite("starlaneSprite", starlaneImage);
+			starlaneSprite.HorizontalWrapMode = ImageAddressing.Wrapping;
 			starlaneSprite.Axis = new GorgonLibrary.Vector2D(0.5f, 1.0f);
 
-			GorgonLibrary.Graphics.Image movementImage = new GorgonLibrary.Graphics.Image("movementImage", 20, 5, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
-			GorgonLibrary.Graphics.Image.ImageLockBox newImage = movementImage.GetImageData();
+			Image movementImage = new Image("movementImage", 20, 5, ImageBufferFormats.BufferRGB888A8);
+			Image.ImageLockBox newImage = movementImage.GetImageData();
 			newImage.Lock(false);
 
 			for (int i = 0; i < 20; i++)
@@ -106,8 +103,8 @@ namespace Beyond_Beyaan.Screens
 
 			newImage.Unlock();
 
-			movementPath = new GorgonLibrary.Graphics.Sprite("movementPath", movementImage);
-			movementPath.HorizontalWrapMode = GorgonLibrary.Graphics.ImageAddressing.Wrapping;
+			movementPath = new Sprite("movementPath", movementImage);
+			movementPath.HorizontalWrapMode = ImageAddressing.Wrapping;
 			movementPath.Axis = new GorgonLibrary.Vector2D(0.5f, 2.5f);
 
 			backgroundStars = new BackgroundStars(gameMain.galaxy.GalaxySize, gameMain.r, 40);
@@ -299,7 +296,7 @@ namespace Beyond_Beyaan.Screens
 							/*gameMain.NameShader.Parameters["EmpireColor"].SetValue(empire.ConvertedColor);
 							gameMain.NameShader.Parameters["startPos"].SetValue(percentage);
 							gameMain.NameShader.Parameters["endPos"].SetValue(percentage + system.OwnerPercentage[empire]);*/
-							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, GorgonLibrary.Graphics.BlitterSizeMode.Crop);
+							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, BlitterSizeMode.Crop);
 							percentage -= system.OwnerPercentage[empire];
 						}
 						//GorgonLibrary.Gorgon.CurrentShader = null;
@@ -445,11 +442,11 @@ namespace Beyond_Beyaan.Screens
 					{
 						if (system.IsThisSystemExploredByEmpire(currentEmpire))
 						{
-							system.Type.Shader.Parameters["StarColor"].SetValue(system.DominantEmpire == null ? new float[] { 0.5f, 0.5f, 0.5f, 0.5f } : system.DominantEmpire.ConvertedColor);
+							system.Type.Shader.Parameters["StarColor"].SetValue(system.DominantEmpire == null ? new[] { 0.5f, 0.5f, 0.5f, 0.5f } : system.DominantEmpire.ConvertedColor);
 						}
 						else
 						{
-							system.Type.Shader.Parameters["StarColor"].SetValue(new float[] { 0.5f, 0.5f, 0.5f, 0.5f });
+							system.Type.Shader.Parameters["StarColor"].SetValue(new[] { 0.5f, 0.5f, 0.5f, 0.5f });
 						}
 					}
 					else
@@ -517,7 +514,7 @@ namespace Beyond_Beyaan.Screens
 							/*gameMain.NameShader.Parameters["EmpireColor"].SetValue(empire.ConvertedColor);
 							gameMain.NameShader.Parameters["startPos"].SetValue(percentage);
 							gameMain.NameShader.Parameters["endPos"].SetValue(percentage + system.OwnerPercentage[empire]);*/
-							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, GorgonLibrary.Graphics.BlitterSizeMode.Crop);
+							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, BlitterSizeMode.Crop);
 							percentage -= system.OwnerPercentage[empire];
 						}
 						//GorgonLibrary.Gorgon.CurrentShader = null;
@@ -711,7 +708,7 @@ namespace Beyond_Beyaan.Screens
 
 					if (destination != null)
 					{
-						currentEmpire.SelectedFleetGroup.SetTentativePath(destination, gameMain.galaxy, gameMain.Input.Keyboard.KeyStates[GorgonLibrary.InputDevices.KeyboardKeys.ControlKey] == GorgonLibrary.InputDevices.KeyState.Down, currentEmpire);
+						currentEmpire.SelectedFleetGroup.SetTentativePath(destination, gameMain.galaxy, gameMain.Input.Keyboard.KeyStates[KeyboardKeys.ControlKey] == KeyState.Down, currentEmpire);
 					}
 					else
 					{

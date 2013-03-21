@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Managers;
-using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
@@ -13,18 +9,13 @@ namespace Beyond_Beyaan
 		#region Variables
 		private List<Empire> empires;
 		//private List<CombatToProcess> combatsToProcess;
-		private List<SettlerToProcess> colonizersToProcess;
-		private List<SettlerToProcess> invadersToProcess;
-		private Empire currentEmpire;
 		private int empireIter;
 		#endregion
 
 		#region Properties
-		public Empire CurrentEmpire
-		{
-			//Current human empire
-			get { return currentEmpire; }
-		}
+
+		public Empire CurrentEmpire { get; private set; }
+
 		/*public List<CombatToProcess> CombatsToProcess
 		{
 			get { return combatsToProcess; }
@@ -33,18 +24,15 @@ namespace Beyond_Beyaan
 		{
 			get { return combatsToProcess.Count > 0; }
 		}*/
-		public List<SettlerToProcess> ColonizersToProcess
-		{
-			get { return colonizersToProcess; }
-		}
+		public List<SettlerToProcess> ColonizersToProcess { get; private set; }
+
 		public bool HasColonizers
 		{
 			get { return ColonizersToProcess.Count > 0; }
 		}
-		public List<SettlerToProcess> InvadersToProcess
-		{
-			get { return invadersToProcess; }
-		}
+
+		public List<SettlerToProcess> InvadersToProcess { get; private set; }
+
 		public bool HasInvaders
 		{
 			get { return InvadersToProcess.Count > 0; }
@@ -57,8 +45,8 @@ namespace Beyond_Beyaan
 			empires = new List<Empire>();
 			empireIter = -1;
 			//combatsToProcess = new List<CombatToProcess>();
-			colonizersToProcess = new List<SettlerToProcess>();
-			invadersToProcess = new List<SettlerToProcess>();
+			ColonizersToProcess = new List<SettlerToProcess>();
+			InvadersToProcess = new List<SettlerToProcess>();
 		}
 		#endregion
 
@@ -93,7 +81,7 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					currentEmpire = empires[i];
+					CurrentEmpire = empires[i];
 					empireIter = i;
 					break;
 				}
@@ -122,7 +110,7 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					currentEmpire = empires[i];
+					CurrentEmpire = empires[i];
 					break;
 				}
 			}
@@ -225,7 +213,7 @@ namespace Beyond_Beyaan
 
 		public void CheckForColonizers(Galaxy galaxy)
 		{
-			colonizersToProcess.Clear();
+			ColonizersToProcess.Clear();
 			foreach (Empire empire in empires)
 			{
 				foreach (Squadron fleet in empire.FleetManager.GetFleets())
@@ -268,7 +256,7 @@ namespace Beyond_Beyaan
 
 		public void CheckForInvaders(Galaxy galaxy)
 		{
-			invadersToProcess.Clear();
+			InvadersToProcess.Clear();
 			foreach (Empire empire in empires)
 			{
 				foreach (Squadron fleet in empire.FleetManager.GetFleets())

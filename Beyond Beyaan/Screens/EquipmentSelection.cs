@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Beyond_Beyaan.Data_Modules;
+﻿using System.Collections.Generic;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -13,7 +9,7 @@ namespace Beyond_Beyaan.Screens
 		private OkClick OnOkClick;
 		private CancelClick OnCancelClick;
 
-		#region Constants
+		/*#region Constants
 		private const int BEAM = 0;
 		private const int PROJECTILE = 1;
 		private const int SHOCKWAVE = 2;
@@ -27,7 +23,7 @@ namespace Beyond_Beyaan.Screens
 		private const int STELLAR_DRIVE = 10;
 		private const int REACTOR = 11;
 		private const int SPECIAL = 12;
-		#endregion
+		#endregion*/
 
 		#region Member Variables
 		private List<TechnologyItem> mainItems;

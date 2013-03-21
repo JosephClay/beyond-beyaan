@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
@@ -9,12 +7,11 @@ namespace Beyond_Beyaan
 	public class SquadronGroup
 	{
 		#region Member Variables
-		private List<Squadron> squadrons;
+
 		//private List<Ship> ships; //Used for UI component, since Fleet stores a dictionary of ships, which means no iterator
 
-		private List<Squadron> selectedSquadrons;
 		//private Squadron squadronToSplit;
-		private StarSystem currentlyAdjacentSystem;
+		//private StarSystem currentlyAdjacentSystem;
 		private StarSystem origin;
 
 		//private int fleetIndex;
@@ -30,29 +27,19 @@ namespace Beyond_Beyaan
 		private double maxSpeed;
 		private double travelSpeed;
 
-		private int length;
-		private float angle;
-
-		private int tentativeLength;
-		private float tentativeAngle;
-
 		private double lengthTravelled;
 		#endregion
 
 		#region Properties
-		public List<Squadron> SelectedSquadron
-		{
-			get { return selectedSquadrons; }
-		}
+
+		public List<Squadron> SelectedSquadron { get; private set; }
+
 		/*public Squadron SquadronToSplit
 		{
 			get { return squadronToSplit; }
 		}*/
 
-		public List<Squadron> Squadrons
-		{
-			get { return squadrons; }
-		}
+		public List<Squadron> Squadrons { get; private set; }
 
 		public List<KeyValuePair<StarSystem, Starlane>> TravelNodes
 		{
@@ -66,25 +53,13 @@ namespace Beyond_Beyaan
 			set { tentativeNodes = value; }
 		}
 
-		public int Length
-		{
-			get { return length; }
-		}
+		public int Length { get; private set; }
 
-		public float Angle
-		{
-			get { return angle; }
-		}
+		public float Angle { get; private set; }
 
-		public int TentativeLength
-		{
-			get { return tentativeLength; }
-		}
+		public int TentativeLength { get; private set; }
 
-		public float TentativeAngle
-		{
-			get { return tentativeAngle; }
-		}
+		public float TentativeAngle { get; private set; }
 
 		public int TentativeETA
 		{
@@ -143,9 +118,9 @@ namespace Beyond_Beyaan
 		#region Constructors
 		public SquadronGroup(List<Squadron> squadrons, Empire currentEmpire, StarSystem adjacentSystem)
 		{
-			selectedSquadrons = new List<Squadron>();
-			this.squadrons = squadrons;
-			this.currentlyAdjacentSystem = adjacentSystem;
+			SelectedSquadron = new List<Squadron>();
+			this.Squadrons = squadrons;
+			//this.currentlyAdjacentSystem = adjacentSystem;
 			if (squadrons != null && squadrons.Count > 0)
 			{
 				SelectSquadron(0, currentEmpire, false, false);
@@ -156,48 +131,48 @@ namespace Beyond_Beyaan
 		#region Functions
 		public void SelectSquadron(int whichSquadron, Empire currentEmpire, bool ctrlDown, bool shiftDown)
 		{
-			if (whichSquadron < squadrons.Count)
+			if (whichSquadron < Squadrons.Count)
 			{
 				if (!ctrlDown && !shiftDown)
 				{
-					selectedSquadrons.Clear();
-					selectedSquadrons.Add(squadrons[whichSquadron]);
+					SelectedSquadron.Clear();
+					SelectedSquadron.Add(Squadrons[whichSquadron]);
 					lastIndex = whichSquadron;
 				}
 				else if (ctrlDown && !shiftDown)
 				{
-					if (squadrons[whichSquadron].Empire == currentEmpire)
+					if (Squadrons[whichSquadron].Empire == currentEmpire)
 					{
-						if (selectedSquadrons.Contains(squadrons[whichSquadron]))
+						if (SelectedSquadron.Contains(Squadrons[whichSquadron]))
 						{
-							selectedSquadrons.Remove(squadrons[whichSquadron]);
+							SelectedSquadron.Remove(Squadrons[whichSquadron]);
 						}
 						else
 						{
-							selectedSquadrons.Add(squadrons[whichSquadron]);
+							SelectedSquadron.Add(Squadrons[whichSquadron]);
 						}
 						lastIndex = whichSquadron;
 					}
 				}
-				else if (!ctrlDown && shiftDown)
+				else if (!ctrlDown)
 				{
 					List<int> indexes = new List<int>();
-					foreach (Squadron selectedSquadron in selectedSquadrons)
+					foreach (Squadron selectedSquadron in SelectedSquadron)
 					{
-						indexes.Add(squadrons.IndexOf(selectedSquadron));
+						indexes.Add(Squadrons.IndexOf(selectedSquadron));
 					}
 					indexes.Sort();
 					if (lastIndex < whichSquadron)
 					{
 						for (int i = lastIndex + 1; i <= whichSquadron; i++)
 						{
-							if (!selectedSquadrons.Contains(squadrons[i]))
+							if (!SelectedSquadron.Contains(Squadrons[i]))
 							{
-								selectedSquadrons.Add(squadrons[i]);
+								SelectedSquadron.Add(Squadrons[i]);
 							}
 							else
 							{
-								selectedSquadrons.Remove(squadrons[i]);
+								SelectedSquadron.Remove(Squadrons[i]);
 							}
 						}
 					}
@@ -205,45 +180,45 @@ namespace Beyond_Beyaan
 					{
 						for (int i = whichSquadron; i < lastIndex; i++)
 						{
-							if (!selectedSquadrons.Contains(squadrons[i]))
+							if (!SelectedSquadron.Contains(Squadrons[i]))
 							{
-								selectedSquadrons.Add(squadrons[i]);
+								SelectedSquadron.Add(Squadrons[i]);
 							}
 							else
 							{
-								selectedSquadrons.Remove(squadrons[i]);
+								SelectedSquadron.Remove(Squadrons[i]);
 							}
 						}
 					}
 					lastIndex = whichSquadron;
 				}
 			}
-			if (selectedSquadrons.Count > 0)
+			if (SelectedSquadron.Count > 0)
 			{
-				List<KeyValuePair<StarSystem, Starlane>> firstSquadronNodes = selectedSquadrons[0].TravelNodes;
-				lengthTravelled = selectedSquadrons[0].LengthTravelled;
+				List<KeyValuePair<StarSystem, Starlane>> firstSquadronNodes = SelectedSquadron[0].TravelNodes;
+				lengthTravelled = SelectedSquadron[0].LengthTravelled;
 				Empire = SelectedSquadron[0].Empire;
 				origin = SelectedSquadron[0].System;
 				bool same = true;
 
-				for (int i = 1; i < selectedSquadrons.Count; i++)
+				for (int i = 1; i < SelectedSquadron.Count; i++)
 				{
-					if ((firstSquadronNodes != null && selectedSquadrons[i].TravelNodes == null) || (firstSquadronNodes == null && selectedSquadrons[i].TravelNodes != null) || lengthTravelled != selectedSquadrons[i].LengthTravelled || origin != selectedSquadrons[i].System)
+					if ((firstSquadronNodes != null && SelectedSquadron[i].TravelNodes == null) || (firstSquadronNodes == null && SelectedSquadron[i].TravelNodes != null) || lengthTravelled != SelectedSquadron[i].LengthTravelled || origin != SelectedSquadron[i].System)
 					{
 						same = false;
 						break;
 					}
 					if (firstSquadronNodes != null)
 					{
-						if (firstSquadronNodes.Count != selectedSquadrons[i].TravelNodes.Count)
+						if (firstSquadronNodes.Count != SelectedSquadron[i].TravelNodes.Count)
 						{
 							same = false;
 							break;
 						}
 						for (int j = 0; j < firstSquadronNodes.Count; j++)
 						{
-							if (firstSquadronNodes[j].Key != selectedSquadrons[i].TravelNodes[j].Key ||
-								firstSquadronNodes[j].Value != selectedSquadrons[i].TravelNodes[j].Value)
+							if (firstSquadronNodes[j].Key != SelectedSquadron[i].TravelNodes[j].Key ||
+								firstSquadronNodes[j].Value != SelectedSquadron[i].TravelNodes[j].Value)
 							{
 								same = false;
 								break;
@@ -260,14 +235,14 @@ namespace Beyond_Beyaan
 					travelNodes = firstSquadronNodes;
 					travelSpeed = double.MaxValue;
 
-					angle = selectedSquadrons[0].Angle;
-					length = selectedSquadrons[0].Length;
+					Angle = SelectedSquadron[0].Angle;
+					Length = SelectedSquadron[0].Length;
 
-					for (int i = 0; i < selectedSquadrons.Count; i++)
+					for (int i = 0; i < SelectedSquadron.Count; i++)
 					{
-						if (travelSpeed > selectedSquadrons[i].TravelSpeed)
+						if (travelSpeed > SelectedSquadron[i].TravelSpeed)
 						{
-							travelSpeed = selectedSquadrons[i].TravelSpeed;
+							travelSpeed = SelectedSquadron[i].TravelSpeed;
 						}
 					}
 				}
@@ -277,13 +252,13 @@ namespace Beyond_Beyaan
 					origin = null;
 				}
 				maxSpeed = double.MaxValue;
-				for (int i = 0; i < selectedSquadrons.Count; i++)
+				for (int i = 0; i < SelectedSquadron.Count; i++)
 				{
-					if (maxSpeed > selectedSquadrons[i].MaxSpeed)
+					if (maxSpeed > SelectedSquadron[i].MaxSpeed)
 					{
-						maxSpeed = selectedSquadrons[i].MaxSpeed;
+						maxSpeed = SelectedSquadron[i].MaxSpeed;
 					}
-					if (Empire != selectedSquadrons[i].Empire)
+					if (Empire != SelectedSquadron[i].Empire)
 					{
 						Empire = null;
 					}
@@ -312,10 +287,10 @@ namespace Beyond_Beyaan
 				tentativeNodes = new List<KeyValuePair<StarSystem, Starlane>>(travelNodes.ToArray());
 				tentativeAmount = Utility.CalculatePathCost(tentativeNodes);
 
-				int x = (tentativeNodes[1].Key.X * 32 + tentativeNodes[1].Key.Type.Width / 2) - selectedSquadrons[0].FleetLocation.X;
-				int y = (tentativeNodes[1].Key.Y * 32 + tentativeNodes[1].Key.Type.Height / 2) - selectedSquadrons[0].FleetLocation.Y;
-				tentativeLength = (int)Math.Sqrt((x * x) + (y * y));
-				tentativeAngle = (float)(Math.Atan2(y, x) * (180 / Math.PI)) + 180;
+				int x = (tentativeNodes[1].Key.X * 32 + tentativeNodes[1].Key.Type.Width / 2) - SelectedSquadron[0].FleetLocation.X;
+				int y = (tentativeNodes[1].Key.Y * 32 + tentativeNodes[1].Key.Type.Height / 2) - SelectedSquadron[0].FleetLocation.Y;
+				TentativeLength = (int)Math.Sqrt((x * x) + (y * y));
+				TentativeAngle = (float)(Math.Atan2(y, x) * (180 / Math.PI)) + 180;
 				return;
 			}
 			if (tentativeNodes != null && ((destinationSystem == tentativeNodes[tentativeNodes.Count - 1].Key && !direct && tentativeNodes.Count > 2) || (direct && tentativeNodes.Count == 2)))
@@ -324,11 +299,11 @@ namespace Beyond_Beyaan
 				return;
 			}
 
-			StarSystem systemToStartFrom = origin == null ? travelNodes[0].Key : origin;
+			/*StarSystem systemToStartFrom = origin == null ? travelNodes[0].Key : origin;
 			if (lengthTravelled > 0)
 			{
 				systemToStartFrom = travelNodes[1].Key;
-			}
+			}*/
 			List<KeyValuePair<StarSystem, Starlane>> path = null; // galaxy.GetPath(systemToStartFrom, destinationSystem, direct, lengthTravelled > 0 ? origin : null, currentEmpire, out tentativeAmount);
 			if (path == null)
 			{
@@ -345,16 +320,16 @@ namespace Beyond_Beyaan
 			}
 			else
 			{
-				int x = (tentativeNodes[1].Key.X * 32 + tentativeNodes[1].Key.Type.Width / 2) - selectedSquadrons[0].FleetLocation.X;
-				int y = (tentativeNodes[1].Key.Y * 32 + tentativeNodes[1].Key.Type.Height / 2) - selectedSquadrons[0].FleetLocation.Y;
-				tentativeLength = (int)Math.Sqrt((x * x) + (y * y));
-				tentativeAngle = (float)(Math.Atan2(y, x) * (180 / Math.PI)) + 180;
+				int x = (tentativeNodes[1].Key.X * 32 + tentativeNodes[1].Key.Type.Width / 2) - SelectedSquadron[0].FleetLocation.X;
+				int y = (tentativeNodes[1].Key.Y * 32 + tentativeNodes[1].Key.Type.Height / 2) - SelectedSquadron[0].FleetLocation.Y;
+				TentativeLength = (int)Math.Sqrt((x * x) + (y * y));
+				TentativeAngle = (float)(Math.Atan2(y, x) * (180 / Math.PI)) + 180;
 			}
 		}
 
 		public void ConfirmPath()
 		{
-			foreach (Squadron squadron in selectedSquadrons)
+			foreach (Squadron squadron in SelectedSquadron)
 			{
 				squadron.SetPath(tentativeNodes, tentativeAmount);
 			}

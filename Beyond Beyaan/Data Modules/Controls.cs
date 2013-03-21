@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Beyond_Beyaan.Data_Modules
+﻿namespace Beyond_Beyaan.Data_Modules
 {
 	public abstract class BaseControl
 	{
@@ -12,7 +7,7 @@ namespace Beyond_Beyaan.Data_Modules
 		public Label NameLabel { get; protected set; }
 		public Label ValueLabel { get; protected set; }
 
-		public BaseControl(string name, string code)
+		protected BaseControl(string name, string code)
 		{
 			Name = name;
 			Code = code;

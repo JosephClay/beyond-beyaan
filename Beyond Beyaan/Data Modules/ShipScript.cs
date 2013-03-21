@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Reflection;
 using System.CodeDom.Compiler;
@@ -40,7 +38,7 @@ namespace Beyond_Beyaan.Data_Modules
 				throw new Exception(errors);
 			}
 
-			System.Reflection.Assembly a = result.CompiledAssembly;
+			Assembly a = result.CompiledAssembly;
 			string instanceName = "Beyond_Beyaan." + filePath.Name.Substring(0, filePath.Name.Length - 3);
 			scriptInstance = a.CreateInstance(instanceName, false, System.Reflection.BindingFlags.ExactBinding, null, null, null, null);
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.IO;
+﻿using System.Collections.Generic;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -46,11 +40,11 @@ namespace Beyond_Beyaan
 				Technologies.Add(item.Key, item.Value);
 			}
 		}
+
 		/// <summary>
 		/// Adds a discovered technology to list to research
 		/// </summary>
 		/// <param name="item"></param>
-		/// <param name="whichField"></param>
 		public void AddTechnology(TechnologyItem item)
 		{
 			if (!ResearchedItems.Contains(item) && !VisibleItems.Contains(item))

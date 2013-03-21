@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
@@ -27,7 +24,8 @@ namespace Beyond_Beyaan.Data_Managers
 			foreach (XElement raceElement in root.Elements())
 			{
 				Race race = new Race();
-				if (race.Initialize(raceElement, graphicDirectory, shipScriptManager, iconManager, resourceManager))
+				string reason; // TODO: Move this code into initialization function that can return false
+				if (race.Initialize(raceElement, graphicDirectory, shipScriptManager, iconManager, resourceManager, out reason))
 				{
 					//masterTechnologyList.LoadRacialTechnologies(Path.Combine(raceDirectory.FullName, "race technologies.xml"), techScriptDirectory, race);
 					race.ValidateShipDesigns(masterTechnologyList);

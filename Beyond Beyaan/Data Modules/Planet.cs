@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
 
@@ -16,24 +14,18 @@ namespace Beyond_Beyaan
 	public class Planet
 	{
 		#region Member Variables
-		private StarSystem whichSystem;
-		private PlanetType planetType;
+
 		string name;
 		string numericName;
-		private List<Region> regions;
-		private float spaceUsage;
-		private List<Race> races;
+
 		#endregion
 
 		#region Properties
-		public StarSystem System
-		{
-			get { return whichSystem; }
-		}
-		public PlanetType PlanetType
-		{
-			get { return planetType; }
-		}
+
+		public StarSystem System { get; private set; }
+
+		public PlanetType PlanetType { get; private set; }
+
 		public string Name
 		{
 			get { return name; }
@@ -49,28 +41,20 @@ namespace Beyond_Beyaan
 			get 
 			{
 				float totalPopulation = 0.0f;
-				foreach (Race race in races)
+				foreach (Race race in Races)
 				{
 					totalPopulation += Population[race];
 				}
 				return totalPopulation;
 			}
 		}
-		public float SpaceUsage
-		{
-			get
-			{
-				return spaceUsage;
-			}
-		}
-		public List<Race> Races
-		{
-			get	{ return races;	}
-		}
-		public List<Region> Regions
-		{
-			get { return regions; }
-		}
+
+		public float SpaceUsage { get; private set; }
+
+		public List<Race> Races { get; private set; }
+
+		public List<Region> Regions { get; private set; }
+
 		public Dictionary<Resource, float> Productions { get; private set; }
 		public Dictionary<Resource, float> Consumptions { get; private set; }
 		public Dictionary<Resource, float> AvailableResources { get; private set; }
@@ -87,14 +71,14 @@ namespace Beyond_Beyaan
 		#region Constructor
 		public Planet(string name, string numericName, PlanetType planetType, Random r, StarSystem system, int numOfRegions, RegionTypeManager regionTypeManager)
 		{
-			whichSystem = system;
+			System = system;
 			this.name = name;
 			this.numericName = numericName;
-			races = new List<Race>();
+			Races = new List<Race>();
 			Population = new Dictionary<Race, float>();
 			PopGrowth = new Dictionary<Race, float>();
 
-			this.planetType = planetType;
+			this.PlanetType = planetType;
 
 			int[] probabilityRange = new int[16];
 
@@ -116,12 +100,12 @@ namespace Beyond_Beyaan
 				throw new Exception("Planet Type " + planetType.InternalName + " has no default general region type (value of -1), must have 1");
 			}
 
-			regions = new List<Region>();
+			Regions = new List<Region>();
 			for (int i = 0; i < numOfRegions; i++)
 			{
 				Region newRegion = new Region();
 				newRegion.RegionType = regionTypeManager.GetRegionType(defaultRegionForAll);
-				regions.Add(newRegion);
+				Regions.Add(newRegion);
 			}
 			//outputPercentages = new Dictionary<string, int>();
 
@@ -143,18 +127,18 @@ namespace Beyond_Beyaan
 		}
 		public void SetPlanet(Empire owner, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, StartingPlanet planet) //Set this planet to the specified information
 		{
-			planetType = planetTypeManager.GetPlanet(planet.PlanetType);
-			regions = new List<Region>();
+			PlanetType = planetTypeManager.GetPlanet(planet.PlanetType);
+			Regions = new List<Region>();
 			foreach (string region in planet.Regions)
 			{
 				Region newRegion = new Region();
 				newRegion.RegionType = regionTypeManager.GetRegionType(region);
-				regions.Add(newRegion);
+				Regions.Add(newRegion);
 			}
 			
 			if (planet.Owned)
 			{
-				races.Add(owner.EmpireRace);
+				Races.Add(owner.EmpireRace);
 				Population[owner.EmpireRace] = planet.Population;
 				//outputPercentages = new Dictionary<string, int>(planet.OutputSliderValues);
 			}
@@ -196,7 +180,7 @@ namespace Beyond_Beyaan
 				Population[race] += CalculateRaceGrowth(race, foodShortages);
 			}*/
 
-			races.Sort((Race a, Race b) => { return (Population[a].CompareTo(Population[b])); });
+			Races.Sort((a, b) => { return (Population[a].CompareTo(Population[b])); });
 
 			//CalculateOutputs();
 
@@ -207,7 +191,7 @@ namespace Beyond_Beyaan
 
 		public void CalculatePopGrowth()
 		{
-			foreach (Race race in races)
+			foreach (Race race in Races)
 			{
 				//First, find the lowest shortage (a race may consume more than one resource)
 				float shortage = 1.0f;
@@ -225,14 +209,14 @@ namespace Beyond_Beyaan
 
 				//Last, calculate the growth formula.  If there's a shortage that exceeds the percentage of space used, there's starvation
 				//If space usage exceeds the planet's capacity, there's overcrowding and will always exceed the max 1.0f value for shortage
-				PopGrowth[race] = Population[race] * 0.05f * (shortage - (spaceUsage / (regions.Count * 10)));
+				PopGrowth[race] = Population[race] * 0.05f * (shortage - (SpaceUsage / (Regions.Count * 10)));
 			}
 		}
 
 		public void TallyConsumptions(Dictionary<Resource, float> consumptions)
 		{
 			Consumptions.Clear();
-			foreach (Region region in regions)
+			foreach (Region region in Regions)
 			{
 				foreach (var consumption in region.RegionType.Consumptions)
 				{
@@ -240,7 +224,7 @@ namespace Beyond_Beyaan
 
 					foreach (var race in Population)
 					{
-						float value = (race.Value / regions.Count) * consumption.Value;
+						float value = (race.Value / Regions.Count) * consumption.Value;
 						if (race.Key.ConsumptionBonuses.ContainsKey(region.RegionType.RegionTypeName))
 						{
 							value *= race.Key.ConsumptionBonuses[region.RegionType.RegionTypeName];
@@ -366,7 +350,7 @@ namespace Beyond_Beyaan
 		public void TallyProduction(Dictionary<Resource, float> productions)
 		{
 			Productions.Clear();
-			foreach (Region region in regions)
+			foreach (Region region in Regions)
 			{
 				float shortage = 1.0f;
 				//First, find out shortages
@@ -386,7 +370,7 @@ namespace Beyond_Beyaan
 					float totalProduction = 0;
 					foreach (var race in Population)
 					{
-						float value = (race.Value / regions.Count) * production.Value;
+						float value = (race.Value / Regions.Count) * production.Value;
 						if (race.Key.ProductionBonuses.ContainsKey(region.RegionType.RegionTypeName))
 						{
 							value *= race.Key.ProductionBonuses[region.RegionType.RegionTypeName];
@@ -502,7 +486,7 @@ namespace Beyond_Beyaan
 		{
 			int pop = 0;
 			Race whichRace = null;
-			foreach (Race race in races)
+			foreach (Race race in Races)
 			{
 				if (Population[race] > pop)
 				{
@@ -518,7 +502,7 @@ namespace Beyond_Beyaan
 			if (!Population.ContainsKey(whichRace))
 			{
 				Population.Add(whichRace, amount);
-				races.Add(whichRace);
+				Races.Add(whichRace);
 			}
 			else
 			{
@@ -534,30 +518,30 @@ namespace Beyond_Beyaan
 			{
 				//Must have at least 1.0 to have self-sustaining population
 				Population.Remove(whichRace);
-				races.Remove(whichRace);
+				Races.Remove(whichRace);
 			}
 		}
 
 		public void RemoveRace(Race whichRace)
 		{
 			Population.Remove(whichRace);
-			races.Remove(whichRace);
+			Races.Remove(whichRace);
 			CalculateSpaceUsage();
 		}
 
 		public void RemoveAllRaces()
 		{
 			Population.Clear();
-			races.Clear();
+			Races.Clear();
 			CalculateSpaceUsage();
 		}
 
 		private void CalculateSpaceUsage()
 		{
-			spaceUsage = 0;
+			SpaceUsage = 0;
 			foreach (var race in Population)
 			{
-				spaceUsage += race.Value * 1.0f; // race.Key.SpaceUsage[planetType.InternalName];
+				SpaceUsage += race.Value * 1.0f; // race.Key.SpaceUsage[planetType.InternalName];
 			}
 		}
 	}

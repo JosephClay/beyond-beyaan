@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-//using System.Linq;
-using System.Text;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -11,15 +8,13 @@ namespace Beyond_Beyaan
 	public class StarSystem : IComparable<StarSystem>
 	{
 		#region Member Variables
-		StarType starType;
+
 		private int x;
 		private int y;
-		private string name;
 
 		private List<Empire> exploredBy;
 		private Dictionary<Empire, int> sectorSelected;
 
-		private List<SectorObject> sectorObjects;
 		internal List<Squadron> OrbitingSquadrons;
 		#endregion
 
@@ -34,18 +29,13 @@ namespace Beyond_Beyaan
 			get { return y; }
 			set { y = value; }
 		}
-		public string Name
-		{
-			get { return name; }
-		}
-		public List<SectorObject> SectorObjects
-		{
-			get { return sectorObjects; }
-		}		
-		public StarType Type
-		{
-			get { return starType; }
-		}
+
+		public string Name { get; private set; }
+
+		public List<SectorObject> SectorObjects { get; private set; }
+
+		public StarType Type { get; private set; }
+
 		public Label StarName { get; set; }
 		public Empire DominantEmpire { get; private set; }
 
@@ -65,16 +55,16 @@ namespace Beyond_Beyaan
 		#region Constructor
 		public StarSystem(string name, int x, int y, StarType starType, SectorTypeManager sectorTypeManager, RegionTypeManager regionTypeManager, Random r)
 		{
-			this.name = name;
+			this.Name = name;
 			this.x = x;
 			this.y = y;
 
 			exploredBy = new List<Empire>();
 			Dictionary<string, int> generateNameIter = new Dictionary<string, int>();
 
-			this.starType = starType;
+			this.Type = starType;
 			var objects = starType.GenerateSectorObjects(r);
-			sectorObjects = new List<SectorObject>();
+			SectorObjects = new List<SectorObject>();
 			foreach (var sectorObject in objects)
 			{
 				SectorObject newObject = new SectorObject(sectorObject);
@@ -92,7 +82,7 @@ namespace Beyond_Beyaan
 				string sectorName = string.IsNullOrEmpty(sectorObject.GenerateName) ? name : sectorObject.GenerateName;
 				sectorName = sectorName + " " + Utility.ConvertNumberToRomanNumberical(iter);
 				newObject.Name = sectorName;
-				sectorObjects.Add(newObject);
+				SectorObjects.Add(newObject);
 			}
 			
 			StarName = new Label(name, 0, 0);
@@ -255,7 +245,7 @@ namespace Beyond_Beyaan
 		private void UpdateDominantEmpire()
 		{
 			Dictionary<Empire, int> count = new Dictionary<Empire, int>();
-			foreach (SectorObject sector in sectorObjects)
+			foreach (SectorObject sector in SectorObjects)
 			{
 				if (sector.ClaimedBy != null)
 				{
@@ -295,7 +285,7 @@ namespace Beyond_Beyaan
 		}
 		public bool SystemHaveInhabitableSectors()
 		{
-			foreach (SectorObject sector in sectorObjects)
+			foreach (SectorObject sector in SectorObjects)
 			{
 				//Look for inhabitable sectors that are unclaimed
 				if (sector.Type.IsInhabitable && sector.ClaimedBy == null)
@@ -315,7 +305,7 @@ namespace Beyond_Beyaan
 			int amountOfSectorsOwned = 0;
 			Dictionary<Empire, int> sectorsOwned = new Dictionary<Empire,int>();
 			OwnerPercentage = new Dictionary<Empire, float>();
-			foreach (SectorObject sector in sectorObjects)
+			foreach (SectorObject sector in SectorObjects)
 			{
 				if (sector.ClaimedBy != null)
 				{
@@ -335,7 +325,7 @@ namespace Beyond_Beyaan
 			//Update the color percentage here
 			foreach (KeyValuePair<Empire, int> keyValuePair in sectorsOwned)
 			{
-				OwnerPercentage[keyValuePair.Key] = ((float)keyValuePair.Value / (float)amountOfSectorsOwned);
+				OwnerPercentage[keyValuePair.Key] = (keyValuePair.Value / (float)amountOfSectorsOwned);
 			}
 
 			UpdateDominantEmpire();
@@ -346,7 +336,7 @@ namespace Beyond_Beyaan
 			{
 				return sectorSelected[whichEmpire];
 			}
-			else if (IsThisSystemExploredByEmpire(whichEmpire))
+			if (IsThisSystemExploredByEmpire(whichEmpire))
 			{
 				sectorSelected.Add(whichEmpire, -1);
 			}

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+using Beyond_Beyaan.Properties;
 using GorgonLibrary.InputDevices;
 using System.Windows.Forms;
 using Beyond_Beyaan.Data_Managers;
@@ -41,12 +40,12 @@ namespace Beyond_Beyaan.Screens
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show("A fatal error occured in loading data directories: " + e.Message);
+				MessageBox.Show(Resources.A_FATAL_ERROR_OCCURED_IN_LOADING_DATA_DIRECTORIES + e.Message);
 				Environment.Exit(-1);
 			}
 			if (directories.Count == 0)
 			{
-				MessageBox.Show("No data directories to load");
+				MessageBox.Show(Resources.NO_DATA_DIRECTORIES_TO_LOAD);
 				Environment.Exit(0);
 			}
 
@@ -77,7 +76,7 @@ namespace Beyond_Beyaan.Screens
 			buttons[3] = new Button(SpriteName.Options2, SpriteName.Options, string.Empty, 400, gameMain.ScreenHeight - 150, 260, 40);
 			buttons[4] = new Button(SpriteName.Exit2, SpriteName.Exit, string.Empty, 400, gameMain.ScreenHeight - 100, 260, 40);
 
-			string versionString = "Version 0.5.4";
+			string versionString = string.Format(Resources.VERSION_0, "0.5.4");
 			version = new Label(versionString, 5, gameMain.ScreenHeight - 25);
 
 			x = (gameMain.ScreenWidth / 2) - 512;
@@ -157,8 +156,6 @@ namespace Beyond_Beyaan.Screens
 						case 4:
 							gameMain.ExitGame();
 							break;
-						default:
-							break;
 					}
 				}
 			}
@@ -215,7 +212,7 @@ namespace Beyond_Beyaan.Screens
 				gameMain.masterTechnologyList.ResetAll();
 				gameMain.masterTechnologyList.LoadTechnologies(directoryPath, gameMain.resourceManager, gameMain.masterItemManager);
 				gameMain.shipScriptManager.LoadShipScripts(Path.Combine(Path.Combine(directoryPath, "Scripts"), "Ship"));
-				gameMain.raceManager = new Data_Managers.RaceManager(directoryPath, Path.Combine(directoryPath, "graphics"), gameMain.masterTechnologyList, gameMain.shipScriptManager, Path.Combine(Path.Combine(directoryPath, "Scripts"), "Technology"), gameMain.iconManager, gameMain.resourceManager);
+				gameMain.raceManager = new RaceManager(directoryPath, Path.Combine(directoryPath, "graphics"), gameMain.masterTechnologyList, gameMain.shipScriptManager, Path.Combine(Path.Combine(directoryPath, "Scripts"), "Technology"), gameMain.iconManager, gameMain.resourceManager);
 				if (!gameMain.sectorTypeManager.LoadSectorTypes(Path.Combine(directoryPath, "sectorObjects.xml"), gameMain, out reason))
 				{
 					MessageBox.Show(reason);

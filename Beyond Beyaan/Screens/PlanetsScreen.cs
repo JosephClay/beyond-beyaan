@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
@@ -502,7 +499,7 @@ namespace Beyond_Beyaan.Screens
 				//}
 			}
 
-			planetsShowing.Sort((Planet a, Planet b) => { return string.Compare(a.Name, b.Name); });
+			planetsShowing.Sort((a, b) => { return string.Compare(a.Name, b.Name); });
 			planetIndex = 0;
 
 			maxVisible = planetsShowing.Count > planetButtons.Length ? planetButtons.Length : planetsShowing.Count;
