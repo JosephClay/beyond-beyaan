@@ -1,0 +1,170 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Linq;
+using GorgonLibrary.Graphics;
+
+namespace Beyond_Beyaan.Data_Modules
+{
+	public class BaseSprite
+	{
+		public List<GorgonLibrary.Graphics.Sprite> Frames { get; private set; }
+		public List<string> FrameLength { get; private set; }
+		public string Name { get; private set; }
+
+		public BaseSprite()
+		{
+			Frames = new List<GorgonLibrary.Graphics.Sprite>();
+			FrameLength = new List<string>();
+		}
+
+		public bool LoadSprite(XElement spriteValues, DirectoryInfo graphicDirectory, out string reason)
+		{
+			string filename = null;
+			Name = null;
+			foreach (var attribute in spriteValues.Attributes())
+			{
+				//Get the graphic file
+				switch (attribute.Name.ToString().ToLower())
+				{
+					case "file":
+					{
+						filename = attribute.Value;
+						break;
+					}
+					case "name":
+					{
+						Name = attribute.Value;
+						break;
+					}
+				}
+			}
+			if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(filename))
+			{
+				reason = "No sprite name or file location.";
+				return false;
+			}
+			GorgonLibrary.Graphics.Sprite graphicFile;
+			if (ImageCache.Images.Contains(Name))
+			{
+				graphicFile = new GorgonLibrary.Graphics.Sprite(Name, ImageCache.Images[Name]);
+			}
+			else
+			{
+				string path = Path.Combine(graphicDirectory.FullName, filename);
+				if (!File.Exists(path))
+				{
+					reason = "Graphic File doesn't exist: " + path;
+					return false;
+				}
+				graphicFile = new GorgonLibrary.Graphics.Sprite(Name, Image.FromFile(Path.Combine(graphicDirectory.FullName, filename)));
+			}
+
+			int frameCount = 0;
+			foreach (var element in spriteValues.Elements())
+			{
+				int x = 0;
+				int y = 0;
+				int width = 0;
+				int height = 0;
+				int axisX = 0;
+				int axisY = 0;
+				string frameLength = null;
+				//Process each frame
+				foreach (var attribute in element.Attributes())
+				{
+					switch (attribute.Name.ToString().ToLower())
+					{
+						case "x":
+						{
+							x = int.Parse(attribute.Value);
+							break;
+						}
+						case "y":
+						{
+							y = int.Parse(attribute.Value);
+							break;
+						}
+						case "width":
+						{
+							width = int.Parse(attribute.Value);
+							break;
+						}
+						case "height":
+						{
+							height = int.Parse(attribute.Value);
+							break;
+						}
+						case "framelength":
+						{
+							frameLength = attribute.Value;
+							break;
+						}
+						case "axisx":
+						{
+							axisX = int.Parse(attribute.Value);
+							break;
+						}
+						case "axisy":
+						{
+							axisY = int.Parse(attribute.Value);
+							break;
+						}
+					}
+				}
+				var frame = new GorgonLibrary.Graphics.Sprite(Name + frameCount, graphicFile.Image, x, y, width, height, axisX,
+				                                              axisY);
+				Frames.Add(frame);
+				FrameLength.Add(frameLength);
+				frameCount++;
+			}
+			reason = null;
+			return true;
+		}
+	}
+
+	public class Sprite
+	{
+		private BaseSprite _baseSprite;
+		private int _currentFrame;
+		private float _frameTimer;
+
+		public Sprite(BaseSprite baseSprite)
+		{
+			_baseSprite = baseSprite;
+			_currentFrame = 0;
+			_frameTimer = 0;
+		}
+
+		public void Update(float time)
+		{
+			_frameTimer -= time;
+			if (_frameTimer <= 0)
+			{
+				//Advance to next frame
+				_currentFrame++;
+				if (_currentFrame >= _baseSprite.Frames.Count)
+				{
+					_currentFrame = 0;
+				}
+				_frameTimer = Utility.GetIntValue(_baseSprite.FrameLength[_currentFrame], new Random());
+			}
+		}
+
+		public void Draw(int x, int y)
+		{
+			var frame = _baseSprite.Frames[_currentFrame];
+			frame.SetPosition(x, y);
+			frame.SetScale(1.0f, 1.0f);
+			frame.Draw();
+		}
+
+		public void Draw(int x, int y, float scaleX, float scaleY)
+		{
+			var frame = _baseSprite.Frames[_currentFrame];
+			frame.SetPosition(x, y);
+			frame.SetScale(scaleX, scaleY);
+			frame.Draw();
+		}
+	}
+}
