@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
-using System.Windows.Forms;
-using GorgonLibrary.Graphics;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -14,79 +10,46 @@ namespace Beyond_Beyaan
 	public class Empire
 	{
 		#region Member Variables
-		private string empireName;
-		private int empireID; //used to create unique sprite name
-		private float reserves;
+
 		//private float expenses;
 		private Color empireColor;
-		private float[] convertedColor;
 		private PlayerType type;
 		private StarSystem selectedSystem;
 		private StarSystem lastSelectedSystem; //the last system selected by the player (can be the current selected system, used for end of turn processing)
 		//private int planetSelected;
         //private int lastPlanetSelected;
 		private int fleetSelected;
-		private PlanetManager planetManager;
 		private StarSystemManager starSystemManager;
-		private FleetManager fleetManager;
-		private ItemManager itemManager;
-		private TechnologyManager technologyManager;
-		private ContactManager contactManager;
 		private SquadronGroup selectedFleetGroup;
-		private ProjectManager projectManager;
-		private SitRepManager sitRepManager;
 		//GorgonLibrary.Graphics.Sprite influenceMap;
 		//private List<Squadron> visibleOtherFleets;
-		private Race race;
 		private AI ai;
 		//private float totalResearchPoints;
 
 
 		#region Economy Data
-		private Dictionary<Resource, float> productions;
-		private Dictionary<Resource, float> consumptions;
-		private Dictionary<Resource, float> resources;
-		private Dictionary<Resource, float> shortages;
-		private Dictionary<Resource, float> availableResources;
-		private Dictionary<Resource, float> projectResources;
 
-		public Dictionary<Resource, float> Productions
-		{
-			get { return productions; }
-		}
-		public Dictionary<Resource, float> Consumptions
-		{
-			get { return consumptions; }
-		}
-		public Dictionary<Resource, float> Resources
-		{
-			get { return resources; }
-		}
-		public Dictionary<Resource, float> Shortages
-		{
-			get { return shortages; }
-		}
-		public Dictionary<Resource, float> AvailableResources
-		{ 
-			get { return availableResources; } 
-		}
-		public Dictionary<Resource, float> ProjectResources
-		{
-			get { return projectResources; }
-		}
+		public Dictionary<Resource, float> Productions { get; private set; }
+
+		public Dictionary<Resource, float> Consumptions { get; private set; }
+
+		public Dictionary<Resource, float> Resources { get; private set; }
+
+		public Dictionary<Resource, float> Shortages { get; private set; }
+
+		public Dictionary<Resource, float> AvailableResources { get; private set; }
+
+		public Dictionary<Resource, float> ProjectResources { get; private set; }
+
 		#endregion
 		//private float handicap;
 		#endregion
 
 		#region Properties
-		public string EmpireName
-		{
-			get { return empireName; }
-		}
-		public int EmpireID
-		{
-			get { return empireID; }
-		}
+
+		public string EmpireName { get; private set; }
+
+		public int EmpireID { get; private set; }
 
 		public Color EmpireColor
 		{
@@ -94,7 +57,7 @@ namespace Beyond_Beyaan
 			set 
 			{ 
 				empireColor = value;
-				convertedColor = new float[]
+				ConvertedColor = new[]
 				{
 					empireColor.R / 255.0f,
 					empireColor.G / 255.0f,
@@ -104,10 +67,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public float[] ConvertedColor
-		{
-			get { return convertedColor; }
-		}
+		public float[] ConvertedColor { get; private set; }
 
 		public bool ShowBorders
 		{
@@ -144,40 +104,19 @@ namespace Beyond_Beyaan
 			set { fleetSelected = value; }
 		}
 
-		public PlanetManager PlanetManager
-		{
-			get { return planetManager; }
-		}
+		public PlanetManager PlanetManager { get; private set; }
 
-		public FleetManager FleetManager
-		{
-			get { return fleetManager; }
-		}
+		public FleetManager FleetManager { get; private set; }
 
-		public ItemManager ItemManager
-		{
-			get { return itemManager; }
-		}
+		public ItemManager ItemManager { get; private set; }
 
-		public TechnologyManager TechnologyManager
-		{
-			get { return technologyManager; }
-		}
+		public TechnologyManager TechnologyManager { get; private set; }
 
-		public ContactManager ContactManager
-		{
-			get { return contactManager; }
-		}
+		public ContactManager ContactManager { get; private set; }
 
-		public SitRepManager SitRepManager
-		{
-			get { return sitRepManager; }
-		}
+		public SitRepManager SitRepManager { get; private set; }
 
-		public ProjectManager ProjectManager
-		{
-			get { return projectManager; }
-		}
+		public ProjectManager ProjectManager { get; private set; }
 
 		/*public GorgonLibrary.Graphics.Sprite InfluenceMap
 		{
@@ -244,7 +183,7 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				return fleetManager.GetExpenses();
+				return FleetManager.GetExpenses();
 			}
 		}
 		public int EspionageExpense
@@ -252,7 +191,7 @@ namespace Beyond_Beyaan
 			get
 			{
 				int amount = 0;
-				foreach (Contact contact in contactManager.Contacts)
+				foreach (Contact contact in ContactManager.Contacts)
 				{
 					if (contact.Contacted)
 					{
@@ -267,7 +206,7 @@ namespace Beyond_Beyaan
 			get
 			{
 				int amount = 0;
-				foreach (Contact contact in contactManager.Contacts)
+				foreach (Contact contact in ContactManager.Contacts)
 				{
 					if (contact.Contacted)
 					{
@@ -277,47 +216,39 @@ namespace Beyond_Beyaan
 				return amount;
 			}
 		}
-		public float NetIncome
-		{
-			get;
-			private set;
-		}
+		public float NetIncome { get; private set; }
 		/*public float ResearchPoints
 		{
 			get { return totalResearchPoints; }
 		}*/
-		public Race EmpireRace
-		{
-			get { return race; }
-		}
-		public float Reserves
-		{
-			get { return reserves; }
-		}
+		public Race EmpireRace { get; private set; }
+
+		public float Reserves { get; private set; }
+
 		#endregion
 
 		#region Constructors
 		public Empire(string empireName, int empireID, Race race, PlayerType type, AI ai, Color color)
 		{
-			this.empireName = empireName;
-			this.empireID = empireID;
+			this.EmpireName = empireName;
+			this.EmpireID = empireID;
 			this.type = type;
 			EmpireColor = color;
-			this.race = race;
-			itemManager = new ItemManager();
-			technologyManager = new TechnologyManager();
-			fleetManager = new FleetManager(this);
-			planetManager = new PlanetManager();
+			this.EmpireRace = race;
+			ItemManager = new ItemManager();
+			TechnologyManager = new TechnologyManager();
+			FleetManager = new FleetManager(this);
+			PlanetManager = new PlanetManager();
 			starSystemManager = new StarSystemManager(this);
-			sitRepManager = new SitRepManager();
-			projectManager = new ProjectManager(false);
-			resources = new Dictionary<Resource, float>();
-			consumptions = new Dictionary<Resource, float>();
-			shortages = new Dictionary<Resource, float>();
-			productions = new Dictionary<Resource, float>();
-			availableResources = new Dictionary<Resource, float>();
-			projectResources = new Dictionary<Resource, float>();
-			reserves = 10;
+			SitRepManager = new SitRepManager();
+			ProjectManager = new ProjectManager(false);
+			Resources = new Dictionary<Resource, float>();
+			Consumptions = new Dictionary<Resource, float>();
+			Shortages = new Dictionary<Resource, float>();
+			Productions = new Dictionary<Resource, float>();
+			AvailableResources = new Dictionary<Resource, float>();
+			ProjectResources = new Dictionary<Resource, float>();
+			Reserves = 10;
 			//expenses = 0;
 			//visibleOtherFleets = new List<Squadron>();
 			this.ai = ai;
@@ -341,11 +272,11 @@ namespace Beyond_Beyaan
 		{
 			for (int i = 0; i < startingSystems.Count; i++)
 			{
-				if (race.StartingSystems[i].Squadrons.Count == 0)
+				if (EmpireRace.StartingSystems[i].Squadrons.Count == 0)
 				{
 					continue;
 				}
-				foreach (StartingSquadron squadron in race.StartingSystems[i].Squadrons)
+				foreach (StartingSquadron squadron in EmpireRace.StartingSystems[i].Squadrons)
 				{
 					Squadron startingSquadron = new Squadron(startingSystems[i]);
 					startingSquadron.Name = squadron.StartingName;
@@ -353,7 +284,7 @@ namespace Beyond_Beyaan
 					foreach (StartingShip ship in squadron.StartingShips)
 					{
 						StartingShip shipToConvert = null;
-						foreach (StartingShip startingShip in race.StartingShips)
+						foreach (StartingShip startingShip in EmpireRace.StartingShips)
 						{
 							if (startingShip.name == ship.name)
 							{
@@ -371,11 +302,11 @@ namespace Beyond_Beyaan
 						}
 					}
 					startingSquadron.Empire = this;
-					fleetManager.AddFleet(startingSquadron);
+					FleetManager.AddFleet(startingSquadron);
 				}
 			}
 			//Now to add the starting ships to blueprints
-			foreach (StartingShip ship in race.StartingShips)
+			foreach (StartingShip ship in EmpireRace.StartingShips)
 			{
 				if (ship.addToBlueprints)
 				{
@@ -383,14 +314,14 @@ namespace Beyond_Beyaan
 					//fleetManager.AddShipDesign(realShip);
 				}
 			}
-			if (fleetManager.ShipDesigns.Count > 0)
+			if (FleetManager.ShipDesigns.Count > 0)
 			{
-				fleetManager.LastShipDesign = new ShipDesign(fleetManager.ShipDesigns[0]);
+				FleetManager.LastShipDesign = new ShipDesign(FleetManager.ShipDesigns[0]);
 			}
 			else
 			{
-				fleetManager.LastShipDesign = new ShipDesign();
-				fleetManager.LastShipDesign.ShipClass = race.ShipClasses[0];
+				FleetManager.LastShipDesign = new ShipDesign();
+				FleetManager.LastShipDesign.ShipClass = EmpireRace.ShipClasses[0];
 			}
 		}
 
@@ -401,13 +332,13 @@ namespace Beyond_Beyaan
 
 		public void SetUpContacts(List<Empire> allEmpires)
 		{
-			contactManager = new ContactManager(this, allEmpires);
+			ContactManager = new ContactManager(this, allEmpires);
 		}
 
 		public List<StarSystem> GetProductiveSystems()
 		{
 			List<StarSystem> systems = new List<StarSystem>();
-			foreach (Planet planet in planetManager.Planets)
+			foreach (Planet planet in PlanetManager.Planets)
 			{
 				if (!systems.Contains(planet.System))
 				{
@@ -438,14 +369,14 @@ namespace Beyond_Beyaan
 
 		public void CheckExploredSystems(Galaxy galaxy)
 		{
-			foreach (Squadron fleet in fleetManager.GetFleets())
+			foreach (Squadron fleet in FleetManager.GetFleets())
 			{
 				if (fleet.TravelNodes == null || fleet.TravelNodes.Count == 0)
 				{
 					StarSystem systemExplored = fleet.System;
 					if (!systemExplored.IsThisSystemExploredByEmpire(this))
 					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
+						SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
 						systemExplored.AddEmpireExplored(this);
 					}
 				}
@@ -563,7 +494,7 @@ namespace Beyond_Beyaan
 
 		public void UpdateProjects(PlanetTypeManager planetTypeManager, Random r)
 		{
-			projectManager.UpdateProjects(ProjectResources, planetTypeManager, r);
+			ProjectManager.UpdateProjects(ProjectResources, planetTypeManager, r);
 			//UpdateNetIncome();
 		}
 

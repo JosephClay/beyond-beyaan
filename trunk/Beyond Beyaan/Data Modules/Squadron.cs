@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
@@ -9,28 +7,20 @@ namespace Beyond_Beyaan
 	public class Squadron
 	{
 		#region Member Variables
-		private StarSystem system;
 
 		private Empire empire;
 		private List<KeyValuePair<StarSystem, Starlane>> travelNodes;
-		private List<ShipInstance> ships;
 
-		private double maxSpeed;
 		private double fifthMaxSpeed;
 		private double remainingMoves;
-		private double lengthTravelled;
 		private double remainingAmount;
 		private bool finishedMovingThisTurn;
-		private List<string> colonizablePlanets;
-		private int transportCapacity;
-		private Dictionary<Race, int> populationInTransit;
+
 		#endregion
 
 		#region Properties
-		public StarSystem System
-		{
-			get { return system; }
-		}
+
+		public StarSystem System { get; private set; }
 
 		public Point FleetLocation
 		{
@@ -50,27 +40,18 @@ namespace Beyond_Beyaan
 			set { travelNodes = value; }
 		}
 
-		public double LengthTravelled
-		{
-			get { return lengthTravelled; }
-		}
+		public double LengthTravelled { get; private set; }
 
-		public List<string> ColonizablePlanets
-		{
-			get { return colonizablePlanets; }
-		}
+		public List<string> ColonizablePlanets { get; private set; }
 
-		public int TransportCapacity
-		{
-			get { return transportCapacity; }
-		}
+		public int TransportCapacity { get; private set; }
 
 		public int TotalPeopleInTransit
 		{
 			get
 			{
 				int amount = 0;
-				foreach (KeyValuePair<Race, int> race in populationInTransit)
+				foreach (KeyValuePair<Race, int> race in PopulationInTransit)
 				{
 					amount += race.Value;
 				}
@@ -78,14 +59,11 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public Dictionary<Race, int> PopulationInTransit
-		{
-			get { return populationInTransit; }
-		}
+		public Dictionary<Race, int> PopulationInTransit { get; private set; }
 
 		public int ETA
 		{
-			get { return maxSpeed <= 0 ? -1 : (int)((remainingAmount / maxSpeed) + ((remainingAmount % maxSpeed > 0) ? 1 : 0)); }
+			get { return MaxSpeed <= 0 ? -1 : (int)((remainingAmount / MaxSpeed) + ((remainingAmount % MaxSpeed > 0) ? 1 : 0)); }
 		}
 
 		public double RemainingMovement
@@ -94,10 +72,7 @@ namespace Beyond_Beyaan
 			set { remainingAmount = value; }
 		}
 
-		public double MaxSpeed
-		{
-			get { return maxSpeed; }
-		}
+		public double MaxSpeed { get; private set; }
 
 		public double TravelSpeed
 		{
@@ -123,29 +98,24 @@ namespace Beyond_Beyaan
 			set;
 		}
 
-		public List<ShipInstance> Ships
-		{
-			get
-			{
-				return ships;
-			}
-		}
+		public List<ShipInstance> Ships { get; private set; }
+
 		#endregion
 
 		#region Constructors
 		public Squadron(StarSystem system)
 		{
-			ships = new List<ShipInstance>();
-			remainingMoves = maxSpeed;
-			this.system = system;
+			Ships = new List<ShipInstance>();
+			remainingMoves = MaxSpeed;
+			this.System = system;
 			finishedMovingThisTurn = false;
-			populationInTransit = new Dictionary<Race, int>();
+			PopulationInTransit = new Dictionary<Race, int>();
 		}
 		public Squadron(Squadron squadronToCopy)
 		{
-			ships = new List<ShipInstance>();
-			populationInTransit = new Dictionary<Race, int>();
-			system = squadronToCopy.system;
+			Ships = new List<ShipInstance>();
+			PopulationInTransit = new Dictionary<Race, int>();
+			System = squadronToCopy.System;
 			AddShipsThemselves(squadronToCopy.Ships);
 			Name = squadronToCopy.Name;
 		}
@@ -155,21 +125,21 @@ namespace Beyond_Beyaan
 		//Updates speed, radar range, and any other special attributes
 		private void UpdateData()
 		{
-			maxSpeed = float.MaxValue;
-			foreach (ShipInstance ship in ships)
+			MaxSpeed = float.MaxValue;
+			foreach (ShipInstance ship in Ships)
 			{
 				float speed = ship.GetGalaxySpeed();
-				if (speed < maxSpeed)
+				if (speed < MaxSpeed)
 				{
-					maxSpeed = speed;
+					MaxSpeed = speed;
 				}
 			}
 
-			remainingMoves = maxSpeed;
-			fifthMaxSpeed = maxSpeed / 5.0;
+			remainingMoves = MaxSpeed;
+			fifthMaxSpeed = MaxSpeed / 5.0;
 
-			colonizablePlanets = new List<string>();
-			transportCapacity = 0;
+			ColonizablePlanets = new List<string>();
+			TransportCapacity = 0;
 			/*foreach (ShipInstance ship in ships)
 			{
 				foreach (EquipmentInstance equipment in ship.Equipments)
@@ -203,28 +173,28 @@ namespace Beyond_Beyaan
 		{
 			if (travelNodes == null)
 			{
-				FleetLocation = new Point(system.X * 32 + system.Type.Width + 16, system.Y * 32 + 16);
+				FleetLocation = new Point(System.X * 32 + System.Type.Width + 16, System.Y * 32 + 16);
 			}
 			else
 			{
-				if (lengthTravelled == 0)
+				if (LengthTravelled == 0)
 				{
-					FleetLocation = new Point(system.X * 32 - 16, system.Y * 32 + 16);
+					FleetLocation = new Point(System.X * 32 - 16, System.Y * 32 + 16);
 				}
 				else
 				{
 					int x;
 					int y;
-					if (travelNodes[1].Value.SystemA == system)
+					if (travelNodes[1].Value.SystemA == System)
 					{
-						x = (int)((Math.Cos(travelNodes[1].Value.Angle * (Math.PI / 180)) * lengthTravelled) + (system.X * 32 + (system.Type.Width / 2.0f)));
-						y = (int)((Math.Sin(travelNodes[1].Value.Angle * (Math.PI / 180)) * lengthTravelled) + (system.Y * 32 + (system.Type.Height / 2.0f)));
+						x = (int)((Math.Cos(travelNodes[1].Value.Angle * (Math.PI / 180)) * LengthTravelled) + (System.X * 32 + (System.Type.Width / 2.0f)));
+						y = (int)((Math.Sin(travelNodes[1].Value.Angle * (Math.PI / 180)) * LengthTravelled) + (System.Y * 32 + (System.Type.Height / 2.0f)));
 						FleetLocation = new Point(x, y);
 					}
 					else
 					{
-						x = (int)((Math.Cos(travelNodes[1].Value.Angle * (Math.PI / 180) + Math.PI) * lengthTravelled) + (system.X * 32 + (system.Type.Width / 2.0f)));
-						y = (int)((Math.Sin(travelNodes[1].Value.Angle * (Math.PI / 180) + Math.PI) * lengthTravelled) + (system.Y * 32 + (system.Type.Height / 2.0f)));
+						x = (int)((Math.Cos(travelNodes[1].Value.Angle * (Math.PI / 180) + Math.PI) * LengthTravelled) + (System.X * 32 + (System.Type.Width / 2.0f)));
+						y = (int)((Math.Sin(travelNodes[1].Value.Angle * (Math.PI / 180) + Math.PI) * LengthTravelled) + (System.Y * 32 + (System.Type.Height / 2.0f)));
 						FleetLocation = new Point(x, y);
 					}
 
@@ -263,7 +233,7 @@ namespace Beyond_Beyaan
 
 		public void AddShipFromDesign(ShipDesign shipToAdd)
 		{
-			ships.Add(new ShipInstance(shipToAdd, empire));
+			Ships.Add(new ShipInstance(shipToAdd, empire));
 			UpdateData();
 		}
 
@@ -271,14 +241,14 @@ namespace Beyond_Beyaan
 		{
 			foreach (ShipDesign ship in shipsToAdd)
 			{
-				ships.Add(new ShipInstance(ship, empire));
+				Ships.Add(new ShipInstance(ship, empire));
 			}
 			UpdateData();
 		}
 
 		public void AddShipItself(ShipInstance shipToAdd)
 		{
-			ships.Add(shipToAdd);
+			Ships.Add(shipToAdd);
 			UpdateData();
 		}
 
@@ -286,16 +256,16 @@ namespace Beyond_Beyaan
 		{
 			foreach (ShipInstance ship in shipsToAdd)
 			{
-				ships.Add(ship);
+				Ships.Add(ship);
 			}
 			UpdateData();
 		}
 
 		public void SubtractShip(ShipInstance shipToRemove)
 		{
-			if (ships.Contains(shipToRemove))
+			if (Ships.Contains(shipToRemove))
 			{
-				ships.Remove(shipToRemove);
+				Ships.Remove(shipToRemove);
 			}
 			UpdateData();
 		}
@@ -304,9 +274,9 @@ namespace Beyond_Beyaan
 		{
 			foreach (ShipInstance ship in shipsToRemove)
 			{
-				if (ships.Contains(ship))
+				if (Ships.Contains(ship))
 				{
-					ships.Remove(ship);
+					Ships.Remove(ship);
 				}
 			}
 			UpdateData();
@@ -314,28 +284,28 @@ namespace Beyond_Beyaan
 
 		public void AddPeople(Race race, int amount)
 		{
-			if (!populationInTransit.ContainsKey(race))
+			if (!PopulationInTransit.ContainsKey(race))
 			{
-				populationInTransit.Add(race, amount);
+				PopulationInTransit.Add(race, amount);
 			}
 			else
 			{
-				populationInTransit[race] += amount;
+				PopulationInTransit[race] += amount;
 			}
 		}
 
 		public void SubtractPeople(Race race, int amount)
 		{
-			populationInTransit[race] -= amount;
-			if (populationInTransit[race] == 0)
+			PopulationInTransit[race] -= amount;
+			if (PopulationInTransit[race] == 0)
 			{
-				populationInTransit.Remove(race);
+				PopulationInTransit.Remove(race);
 			}
 		}
 
 		public void ClearShips()
 		{
-			ships.Clear();
+			Ships.Clear();
 		}
 
 		/*public void ClearEmptyShips()
@@ -371,7 +341,7 @@ namespace Beyond_Beyaan
 		public void ResetMove()
 		{
 			finishedMovingThisTurn = false;
-			remainingMoves = maxSpeed;
+			remainingMoves = MaxSpeed;
 		}
 
 		public bool Move()
@@ -385,12 +355,12 @@ namespace Beyond_Beyaan
 					{
 						remainingMoves = 0;
 					}
-					lengthTravelled += fifthMaxSpeed;
+					LengthTravelled += fifthMaxSpeed;
 
-					while (lengthTravelled >= travelNodes[1].Value.Length)
+					while (LengthTravelled >= travelNodes[1].Value.Length)
 					{
-						system = travelNodes[1].Key;
-						lengthTravelled -= travelNodes[1].Value.Length;
+						System = travelNodes[1].Key;
+						LengthTravelled -= travelNodes[1].Value.Length;
 						
 						//To-do: add checks for conflict
 
@@ -399,7 +369,7 @@ namespace Beyond_Beyaan
 						{
 							travelNodes = null;
 							finishedMovingThisTurn = true;
-							lengthTravelled = 0;
+							LengthTravelled = 0;
 							SetLocation();
 							return false;
 						}

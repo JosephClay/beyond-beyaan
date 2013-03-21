@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
 using System.IO;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Managers;
@@ -427,7 +423,7 @@ namespace Beyond_Beyaan
 			{
 				case Screen.MainMenu: //Any way we get here means everything needs to be cleared out
 					ClearAll();
-					this.DrawingManagement = new Beyond_Beyaan.DrawingManagement();
+					this.DrawingManagement = new DrawingManagement();
 					mainGameMenu = new MainGameMenu();
 					mainGameMenu.Initialize(this);
 					screenInterface = mainGameMenu;

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Managers;
 
@@ -124,9 +121,9 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			bool result = false;
+			bool result;
 
-			result = displayingPage.MouseDown(x, y) || result;
+			result = displayingPage.MouseDown(x, y);
 			result = firstButton.MouseDown(x, y) || result;
 			result = lastButton.MouseDown(x, y) || result;
 			result = nextButton.MouseDown(x, y) || result;
@@ -147,9 +144,9 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			bool result = false;
+			bool result;
 
-			result = displayingPage.MouseUp(x, y) || result;
+			result = displayingPage.MouseUp(x, y);
 
 			if (firstButton.MouseUp(x, y))
 			{

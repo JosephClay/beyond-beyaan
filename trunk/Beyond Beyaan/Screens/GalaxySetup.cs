@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Beyond_Beyaan.Data_Managers;
 using GorgonLibrary.InputDevices;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;

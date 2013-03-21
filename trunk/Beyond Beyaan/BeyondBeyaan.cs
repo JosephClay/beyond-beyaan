@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
+using Beyond_Beyaan.Properties;
 using Drawing = System.Drawing;
 using GorgonLibrary;
 using GorgonLibrary.Graphics;
@@ -33,8 +30,8 @@ namespace Beyond_Beyaan
 				Gorgon.Initialize(true, false);
 				Gorgon.SetMode(this, 1024, 768, BackBufferFormats.BufferRGB888, true);
 				
-				Gorgon.Idle += new FrameEventHandler(Gorgon_Idle);
-				Gorgon.DeviceReset += new EventHandler(Gorgon_DeviceReset);
+				Gorgon.Idle += Gorgon_Idle;
+				Gorgon.DeviceReset += Gorgon_DeviceReset;
 				Gorgon.FastResize = false;
 
 				//Gorgon.FrameStatsVisible = true;
@@ -45,7 +42,7 @@ namespace Beyond_Beyaan
 				keyboard = input.Keyboard;
 				keyboard.Enabled = true;
 				keyboard.Exclusive = false;
-				keyboard.KeyDown += new KeyboardInputEvent(keyboard_KeyDown);
+				keyboard.KeyDown += keyboard_KeyDown;
 
 				mouse = input.Mouse;
 				mouse.Enabled = true;
@@ -58,7 +55,7 @@ namespace Beyond_Beyaan
 				string reason;
 				if (!gameMain.Initalize(Gorgon.Screen.Width, Gorgon.Screen.Height, this, out reason))
 				{
-					MessageBox.Show("Error loading game resources, error message: \r\n" + reason);
+					MessageBox.Show(string.Format(Resources.ERROR_LOADING_GAME_RESOURCES__ERROR_MESSAGE_0, reason));
 					return;
 				}
 

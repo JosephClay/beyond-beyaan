@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Xml.Linq;
-using System.IO;
 using Beyond_Beyaan.Scripts;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
@@ -31,10 +27,6 @@ namespace Beyond_Beyaan
 		public List<ShipEnhancerItem> ShipEnhancerItemsRemoved { get; private set; }
 		#endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="technologyToLoad">The base technology</param>
 		public TechnologyItem(XElement technologyToLoad, ResourceManager resourceManager, MasterItemManager masterItemManager)
 		{
 			InitializeLists();

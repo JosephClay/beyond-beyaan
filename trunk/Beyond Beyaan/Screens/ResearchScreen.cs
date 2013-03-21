@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorgonLibrary.InputDevices;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Beyond_Beyaan.Data_Modules;
-
-namespace Beyond_Beyaan.Screens
+﻿namespace Beyond_Beyaan.Screens
 {
 	class TransferToShipWindow : WindowInterface
 	{

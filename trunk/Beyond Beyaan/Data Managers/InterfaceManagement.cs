@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
 
@@ -154,7 +152,7 @@ namespace Beyond_Beyaan
 				}
 				return true;
 			}
-			else if (pulse > 0)
+			if (pulse > 0)
 			{
 				pulse -= frameDeltaTime * 2;
 				if (pulse < 0)
@@ -344,7 +342,7 @@ namespace Beyond_Beyaan
 				}
 				return true;
 			}
-			else if (pulse > 0)
+			if (pulse > 0)
 			{
 				pulse -= frameDeltaTime * 2;
 				if (pulse < 0)
@@ -550,7 +548,7 @@ namespace Beyond_Beyaan
 				}
 				return true;
 			}
-			else if (pulse > 0)
+			if (pulse > 0)
 			{
 				pulse -= frameDeltaTime * 2;
 				if (pulse < 0)
@@ -790,7 +788,7 @@ namespace Beyond_Beyaan
 				}
 				return true;
 			}
-			else if (pulse > 0)
+			if (pulse > 0)
 			{
 				pulse -= frameDeltaTime * 2;
 				if (pulse < 0)
@@ -995,7 +993,7 @@ namespace Beyond_Beyaan
 				}
 				return true;
 			}
-			else if (pulse > 0)
+			if (pulse > 0)
 			{
 				pulse -= frameDeltaTime * 2;
 				if (pulse < 0)
@@ -1074,15 +1072,13 @@ namespace Beyond_Beyaan
 		private int minimum;
 		private int maximum;
 		private Label valueLabel;
-		private int value;
 		private int incrementAmount;
 		#endregion
 
 		#region Properties
-		public int Value
-		{
-			get { return value; }
-		}
+
+		public int Value { get; private set; }
+
 		#endregion
 
 		#region Constructors
@@ -1090,7 +1086,7 @@ namespace Beyond_Beyaan
 		{
 			minimum = min;
 			maximum = max;
-			value = initialAmount;
+			Value = initialAmount;
 			valueLabel = new Label(xPos + 20, yPos, System.Drawing.Color.White);
 			CheckAmount();
 
@@ -1111,13 +1107,13 @@ namespace Beyond_Beyaan
 		{
 			if (upButton.MouseUp(x, y))
 			{
-				value += incrementAmount;
+				Value += incrementAmount;
 				CheckAmount();
 				return true;
 			}
 			if (downButton.MouseUp(x, y))
 			{
-				value -= incrementAmount;
+				Value -= incrementAmount;
 				CheckAmount();
 				return true;
 			}
@@ -1179,21 +1175,21 @@ namespace Beyond_Beyaan
 
 		public void SetValue(int value)
 		{
-			this.value = value;
+			this.Value = value;
 			CheckAmount();
 		}
 
 		private void CheckAmount()
 		{
-			if (minimum >= 0 && value < minimum)
+			if (minimum >= 0 && Value < minimum)
 			{
-				value = minimum;
+				Value = minimum;
 			}
-			if (maximum >= 0 && value > maximum)
+			if (maximum >= 0 && Value > maximum)
 			{
-				value = maximum;
+				Value = maximum;
 			}
-			valueLabel.SetText(value.ToString());
+			valueLabel.SetText(Value.ToString());
 		}
 		#endregion
 	}
@@ -1208,7 +1204,6 @@ namespace Beyond_Beyaan
 		private ScrollBar RealScrollBar;
 
 		//ComboBox state information
-		private bool dropped;
 		private bool haveScroll;
 		private int selectedIndex;
 
@@ -1229,10 +1224,9 @@ namespace Beyond_Beyaan
 		{
 			get { return items[selectedIndex]; }
 		}
-		public bool IsDroppedDown
-		{
-			get { return dropped; }
-		}
+
+		public bool IsDroppedDown { get; private set; }
+
 		#endregion
 
 		#region Constructors
@@ -1251,7 +1245,7 @@ namespace Beyond_Beyaan
 		{
 			this.items = items;
 
-			dropped = false;
+			IsDroppedDown = false;
 			downArrowSprite = sprites[2];
 
 			if (items.Count < maxVisible)
@@ -1318,7 +1312,7 @@ namespace Beyond_Beyaan
 			}
 			buttons[0].Draw(drawingManagement);
 			drawingManagement.DrawSprite(downArrowSprite, xPos + width - 33, yPos + 3, 255, System.Drawing.Color.White);
-			if (dropped)
+			if (IsDroppedDown)
 			{
 				for (int i = 0; i < buttons.Count - 1; i++)
 				{
@@ -1337,7 +1331,7 @@ namespace Beyond_Beyaan
 			bool result = false;
 			if (Active)
 			{
-				if (!dropped)
+				if (!IsDroppedDown)
 				{
 					if (buttons[0].MouseHover(x, y, frameDeltaTime))
 					{
@@ -1366,7 +1360,7 @@ namespace Beyond_Beyaan
 		{
 			if (Active)
 			{
-				if (!dropped)
+				if (!IsDroppedDown)
 				{
 					return buttons[0].MouseDown(x, y);
 				}
@@ -1389,11 +1383,11 @@ namespace Beyond_Beyaan
 		{
 			if (Active)
 			{
-				if (!dropped)
+				if (!IsDroppedDown)
 				{
 					if (buttons[0].MouseUp(x, y))
 					{
-						dropped = true;
+						IsDroppedDown = true;
 						return true;
 					}
 				}
@@ -1407,7 +1401,7 @@ namespace Beyond_Beyaan
 							{
 								selectedIndex = i + RealScrollBar.TopIndex - 1;
 							}
-							dropped = false;
+							IsDroppedDown = false;
 							return true;
 						}
 					}
@@ -1417,7 +1411,7 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-			dropped = false;
+			IsDroppedDown = false;
 			return false;
 		}
 		#endregion
@@ -1433,7 +1427,6 @@ namespace Beyond_Beyaan
 		private ScrollBar RealScrollBar;
 
 		//ComboBox state information
-		private bool dropped;
 		private bool haveScroll;
 		private int selectedIndex;
 		private bool dropDirection;
@@ -1460,13 +1453,13 @@ namespace Beyond_Beyaan
 		{
 			get { return items[selectedIndex]; }
 		}
-		public bool IsDroppedDown
-		{
-			get { return dropped; }
-		}
+
+		public bool IsDroppedDown { get; private set; }
+
 		#endregion
 
 		#region Constructors
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -1477,6 +1470,7 @@ namespace Beyond_Beyaan
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <param name="maxVisible"></param>
+		/// <param name="dropDirection"></param>
 		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, bool dropDirection) 
 			: this(sprites, items, xPos, yPos, width, height, maxVisible, dropDirection, 60, 13)
 		{
@@ -1485,7 +1479,7 @@ namespace Beyond_Beyaan
 		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, bool dropDirection, int sectionWidth, int sectionHeight)
 			: base(xPos, yPos, width, height)
 		{
-			dropped = false;
+			IsDroppedDown = false;
 			this.dropDirection = dropDirection;
 			downArrowSprite = sprites[20];
 
@@ -1511,7 +1505,7 @@ namespace Beyond_Beyaan
 				StretchButton button = new StretchButton(backgroundSections, foregroundSections, string.Empty, xPos, yPos + (dropDirection ? (i * height) : (i * height * -1)), width, height, sectionWidth, sectionHeight);
 				buttons.Add(button);
 			}
-			List<SpriteName> scrollbarSections = new List<SpriteName>()
+			List<SpriteName> scrollbarSections = new List<SpriteName>
 			{
 				sprites[18],
 				sprites[19],
@@ -1551,7 +1545,7 @@ namespace Beyond_Beyaan
 			
 			buttons[0].Draw(drawingManagement);
 			drawingManagement.DrawSprite(downArrowSprite, xPos + width - 24, yPos + 8, 255, System.Drawing.Color.White);
-			if (dropped)
+			if (IsDroppedDown)
 			{
 				for (int i = 0; i < actualVisible; i++)
 				{
@@ -1570,7 +1564,7 @@ namespace Beyond_Beyaan
 			bool result = false;
 			if (Active)
 			{
-				if (!dropped)
+				if (!IsDroppedDown)
 				{
 					if (buttons[0].MouseHover(x, y, frameDeltaTime))
 					{
@@ -1599,21 +1593,18 @@ namespace Beyond_Beyaan
 		{
 			if (Active)
 			{
-				if (!dropped)
+				if (!IsDroppedDown)
 				{
 					return buttons[0].MouseDown(x, y);
 				}
-				else
+				for (int i = 0; i < actualVisible + 1; i++)
 				{
-					for (int i = 0; i < actualVisible + 1; i++)
+					if (buttons[i].MouseDown(x, y))
 					{
-						if (buttons[i].MouseDown(x, y))
-						{
-							return true;
-						}
+						return true;
 					}
-					return RealScrollBar.MouseDown(x, y);
 				}
+				return RealScrollBar.MouseDown(x, y);
 			}
 			return false;
 		}
@@ -1622,11 +1613,11 @@ namespace Beyond_Beyaan
 		{
 			if (Active)
 			{
-				if (!dropped)
+				if (!IsDroppedDown)
 				{
 					if (buttons[0].MouseUp(x, y))
 					{
-						dropped = true;
+						IsDroppedDown = true;
 						return true;
 					}
 				}
@@ -1641,7 +1632,7 @@ namespace Beyond_Beyaan
 								selectedIndex = i + RealScrollBar.TopIndex - 1;
 								buttons[0].SetButtonText(items[selectedIndex]);
 							}
-							dropped = false;
+							IsDroppedDown = false;
 							return true;
 						}
 					}
@@ -1651,7 +1642,7 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-			dropped = false;
+			IsDroppedDown = false;
 			return false;
 		}
 
@@ -1946,7 +1937,7 @@ namespace Beyond_Beyaan
 				Scroll.MouseHover(x, y, frameDeltaTime);
 				if (scrollSelected)
 				{
-					int newPosition = 0;
+					int newPosition;
 					if (isHorizontal)
 					{
 						newPosition = initialScrollPos + (x - (isSlider ? (xPos + scrollSize + (scrollButtonLength / 2)) : initialMousePos));
@@ -1963,7 +1954,7 @@ namespace Beyond_Beyaan
 					{
 						newPosition = scrollBarLength - scrollButtonLength;
 					}
-					float itemsPerIncrement = ((float)(amountOfItems - amountVisible) / (float)(scrollBarLength - scrollButtonLength));
+					float itemsPerIncrement = ((amountOfItems - amountVisible) / (float)(scrollBarLength - scrollButtonLength));
 					int oldIndex = topIndex;
 					topIndex = (int)((itemsPerIncrement * newPosition) + 0.5f);
 					SetScrollButtonPosition();
@@ -2094,7 +2085,7 @@ namespace Beyond_Beyaan
 
 		private void UpdateWidth()
 		{
-			currentWidth = (int)(width * ((double)currentItems / (double)maxItems));
+			currentWidth = (int)(width * (currentItems / (double)maxItems));
 			if (currentWidth > width)
 			{
 				//in case we went over
@@ -2105,7 +2096,7 @@ namespace Beyond_Beyaan
 				//Don't want negative progress extending to left
 				currentWidth = 0;
 			}
-			potentialWidth = (int)(width * ((double)potentinalIncrease / (double)maxItems));
+			potentialWidth = (int)(width * (potentinalIncrease / (double)maxItems));
 			if (currentWidth + potentialWidth > width)
 			{
 				potentialWidth = (width - currentWidth);
@@ -2411,7 +2402,7 @@ namespace Beyond_Beyaan
 	public class Label : UIElement
 	{
 		#region Member Variables
-		private string label;
+
 		private bool isRightAligned;
 		private GorgonLibrary.Graphics.TextSprite textSprite;
 		private System.Drawing.Color color;
@@ -2450,8 +2441,6 @@ namespace Beyond_Beyaan
 		#region Functions
 		public void SetText(string label)
 		{
-			this.label = label;
-
 			GorgonLibrary.Graphics.Font font;
 			if (DrawingManagement.fonts.TryGetValue("Computer", out font))
 			{
@@ -3023,8 +3012,8 @@ namespace Beyond_Beyaan
 		{
 			if (showing)
 			{
-				int modifiedX = 0;
-				int modifiedY = 0;
+				int modifiedX;
+				int modifiedY;
 				if (x < screenWidth - textWidth)
 				{
 					modifiedX = x;

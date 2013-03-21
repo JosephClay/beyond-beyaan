@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Xml.Linq;
 
@@ -112,8 +110,8 @@ namespace Beyond_Beyaan.Data_Modules
 	public class Frame
 	{
 		private GorgonLibrary.Graphics.Sprite frameSprite;
-		private int width;
-		private int height;
+		//private int width;
+		//private int height;
 		private WrappingMode wrappingMode;
 
 		public Frame(XElement frame, int width, int height, int axisX, int axisY, WrappingMode wrappingMode, GorgonLibrary.Graphics.Sprite particleGraphic, string name, int iter)
@@ -121,8 +119,8 @@ namespace Beyond_Beyaan.Data_Modules
 			int xPos = int.Parse(frame.Attribute("xPos").Value);
 			int yPos = int.Parse(frame.Attribute("yPos").Value);
 
-			this.width = width;
-			this.height = height;
+			//this.width = width;
+			//this.height = height;
 			this.wrappingMode = wrappingMode;
 
 			frameSprite = new GorgonLibrary.Graphics.Sprite(name + iter, particleGraphic.Image, xPos, yPos, width, height);

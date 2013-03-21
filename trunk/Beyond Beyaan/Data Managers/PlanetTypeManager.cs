@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
@@ -96,16 +94,13 @@ namespace Beyond_Beyaan.Data_Managers
 			{
 				return new Planet(planetName, planetNumerical, planetTypes[planetType], r, system, r.Next(minRegions, maxRegions + 1), regionTypeManager);
 			}
-			else
+			int random = r.Next(planetTypes.Count);
+			foreach (KeyValuePair<string, PlanetType> randomPlanetType in planetTypes)
 			{
-				int random = r.Next(planetTypes.Count);
-				foreach (KeyValuePair<string, PlanetType> randomPlanetType in planetTypes)
+				random--;
+				if (random < 0)
 				{
-					random--;
-					if (random < 0)
-					{
-						return new Planet(planetName, planetNumerical, randomPlanetType.Value, r, system, r.Next(minRegions, maxRegions + 1), regionTypeManager);
-					}
+					return new Planet(planetName, planetNumerical, randomPlanetType.Value, r, system, r.Next(minRegions, maxRegions + 1), regionTypeManager);
 				}
 			}
 			return null;

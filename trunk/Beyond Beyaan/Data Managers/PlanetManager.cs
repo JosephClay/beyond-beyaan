@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Beyond_Beyaan.Data_Modules;
-using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan
 {
@@ -12,20 +8,19 @@ namespace Beyond_Beyaan
 		#region Variables
 		//private float totalResearch;
 		//private float totalCommerce;
-		private List<Planet> planets;
+
 		#endregion
 
 		#region Properties
-		public List<Planet> Planets
-		{
-			get { return planets; }
-		}
+
+		public List<Planet> Planets { get; private set; }
+
 		#endregion
 
 		#region Constructor
 		public PlanetManager()
 		{
-			planets = new List<Planet>();
+			Planets = new List<Planet>();
 		}
 		#endregion
 
@@ -107,7 +102,7 @@ namespace Beyond_Beyaan
 		public void UpdatePopGrowth(Dictionary<Resource, float> foodShortages)
 		{
 			//this function calculates regular pop growth plus any bonuses or negatives
-			foreach (Planet planet in planets)
+			foreach (Planet planet in Planets)
 			{
 				planet.UpdatePlanet(foodShortages);
 				foreach (Race race in planet.Races)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Beyond_Beyaan.Data_Modules;
 using System.Globalization;
@@ -171,8 +170,8 @@ namespace Beyond_Beyaan
 			{
 				return "N";
 			}
-			int[] values = new int[] { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
-			string[] numerals = new string[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+			int[] values = new[] { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+			string[] numerals = new[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
 
 			StringBuilder result = new StringBuilder();
 
@@ -307,11 +306,8 @@ namespace Beyond_Beyaan
 				// F^-1(p) = - G^-1(p)
 				return -RationalApproximation( Math.Sqrt(-2.0*Math.Log(p)) );
 			}
-			else
-			{
-				// F^-1(p) = G^-1(1-p)
-				return RationalApproximation( Math.Sqrt(-2.0*Math.Log(1.0 - p)) );
-			}
+			// F^-1(p) = G^-1(1-p)
+			return RationalApproximation( Math.Sqrt(-2.0*Math.Log(1.0 - p)) );
 		}
 
 
@@ -480,15 +476,6 @@ namespace Beyond_Beyaan
 		{
 			return p1.X != p2.X || p1.Y != p2.Y;
 		}
-
-		public override bool Equals(object obj)
-		{
-			return base.Equals(obj);
-		}
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
-		}
 	}
 	public struct PointF
 	{
@@ -509,15 +496,6 @@ namespace Beyond_Beyaan
 		public static bool operator !=(PointF p1, PointF p2)
 		{
 			return p1.X != p2.X || p1.Y != p2.Y;
-		}
-
-		public override bool Equals(object obj)
-		{
-			return base.Equals(obj);
-		}
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
 		}
 	}
 }

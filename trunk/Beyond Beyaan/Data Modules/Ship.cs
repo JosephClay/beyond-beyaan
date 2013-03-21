@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Linq;
-using System.IO;
 using GorgonLibrary.Graphics;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
@@ -39,14 +36,12 @@ namespace Beyond_Beyaan
 			ClassName = (string)Values["name"];
 			Size = (int)Values["size"];
 
-			int x;
-			int y;
 			int i = 0;
 			Sprites = new List<Sprite>();
 			foreach (XElement element in shipClass.Elements())
 			{
-				x = int.Parse(element.Attribute("xPos").Value);
-				y = int.Parse(element.Attribute("yPos").Value);
+				int x = int.Parse(element.Attribute("xPos").Value);
+				int y = int.Parse(element.Attribute("yPos").Value);
 				int spriteSize = int.Parse(element.Attribute("size").Value);
 				Sprite ship = new Sprite(raceName + Size + ClassName + i.ToString(), graphicSprite.Image, x, y, spriteSize, spriteSize);
 				Sprites.Add(ship);

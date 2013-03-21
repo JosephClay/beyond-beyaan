@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan
 {
@@ -16,8 +15,6 @@ namespace Beyond_Beyaan
 		private float xOffset;
 		private float yOffset;
 
-		private int cameraX, cameraY; //The position where the player is looking at
-		private int zoomDistance; //The distance from the galaxy "plane" the player is looking from
 		private int gridCells; //size of area in terms of gridCells (ie 10x10 is 10)
 
 		private List<Point> gridSizes;
@@ -26,14 +23,15 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Auto Properties
-		public int CameraX { get { return cameraX; } }
-		public int CameraY { get { return cameraY; } }
+
+		public int CameraX { get; private set; }
+		public int CameraY { get; private set; }
 
 		public int XOffset { get { return (int)xOffset; } }
 		public int YOffset { get { return (int)yOffset; } }
 
-		public int ZoomDistance { get { return zoomDistance; } }
-		public float Scale { get { return scales[zoomDistance]; } }
+		public int ZoomDistance { get; private set; }
+		public float Scale { get { return scales[ZoomDistance]; } }
 		#endregion
 
 		#region Constructors
@@ -63,7 +61,7 @@ namespace Beyond_Beyaan
 
 		public Point GetViewSize()
 		{
-			return gridSizes[zoomDistance];
+			return gridSizes[ZoomDistance];
 		}
 
 		private void CalculateZoom()
@@ -97,8 +95,8 @@ namespace Beyond_Beyaan
 
 		public void CenterCamera(int x, int y)
 		{
-			cameraX = x - (gridSizes[zoomDistance].X / 2);
-			cameraY = y - (gridSizes[zoomDistance].Y / 2);
+			CameraX = x - (gridSizes[ZoomDistance].X / 2);
+			CameraY = y - (gridSizes[ZoomDistance].Y / 2);
 
 			CheckPosition();
 		}
@@ -107,25 +105,25 @@ namespace Beyond_Beyaan
 		{
 			xVel = 0;
 			yVel = 0;
-			if (mouseY < 40 && cameraY > -5)
+			if (mouseY < 40 && CameraY > -5)
 			{
 				int y = mouseY - 40;
 				y = y * (-y);
 				yVel = (y / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			else if (mouseY >= screenHeight - 40 && cameraY < (gridCells - gridSizes[zoomDistance].Y) + 5)
+			else if (mouseY >= screenHeight - 40 && CameraY < (gridCells - gridSizes[ZoomDistance].Y) + 5)
 			{
 				int y = 40 - (screenHeight - mouseY);
 				y = y * y;
 				yVel = (y / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			if (mouseX < 40 && cameraX > -5)
+			if (mouseX < 40 && CameraX > -5)
 			{
 				int x = mouseX - 40;
 				x = x * (-x);
 				xVel = (x / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			else if (mouseX >= screenWidth - 40 && cameraX < (gridCells - gridSizes[zoomDistance].X) + 5)
+			else if (mouseX >= screenWidth - 40 && CameraX < (gridCells - gridSizes[ZoomDistance].X) + 5)
 			{
 				int x = 40 - (screenWidth - mouseX);
 				x = x * x;
@@ -145,10 +143,10 @@ namespace Beyond_Beyaan
 
 		public void ZoomOut()
 		{
-			zoomDistance = maxZoom - 1;
+			ZoomDistance = maxZoom - 1;
 
-			cameraX = 0;
-			cameraY = 0;
+			CameraX = 0;
+			CameraY = 0;
 
 			//Redundant, but in case I change the above values, this is a safety catch.
 			CheckPosition();
@@ -156,40 +154,40 @@ namespace Beyond_Beyaan
 
 		public void ZoomIn(int x, int y)
 		{
-			zoomDistance = 0;
+			ZoomDistance = 0;
 
 			CenterCamera(x, y);
 		}
 
 		private void ChangeZoom(bool direction, int mouseX, int mouseY, int screenWidth, int screenHeight)
 		{
-			if (direction == false && zoomDistance < maxZoom - 1)
+			if (direction == false && ZoomDistance < maxZoom - 1)
 			{
-				int xMove = gridSizes[zoomDistance + 1].X - gridSizes[zoomDistance].X;
-				int yMove = gridSizes[zoomDistance + 1].Y - gridSizes[zoomDistance].Y;
+				int xMove = gridSizes[ZoomDistance + 1].X - gridSizes[ZoomDistance].X;
+				int yMove = gridSizes[ZoomDistance + 1].Y - gridSizes[ZoomDistance].Y;
 
-				cameraX -= (xMove / 2);
-				cameraY -= (yMove / 2);
+				CameraX -= (xMove / 2);
+				CameraY -= (yMove / 2);
 
-				zoomDistance++;
+				ZoomDistance++;
 			}
-			else if (direction && zoomDistance > 0)
+			else if (direction && ZoomDistance > 0)
 			{
 				//find the grid cell the mouse is hovering above
-				float size = gridSize * scales[zoomDistance];
+				float size = gridSize * scales[ZoomDistance];
 				int gridX = (int)(mouseX / size);
 				int gridY = (int)(mouseY / size);
 
-				float xPer = (float)gridX / (float)gridSizes[zoomDistance].X;
-				float yPer = (float)gridY / (float)gridSizes[zoomDistance].Y;
+				float xPer = gridX / (float)gridSizes[ZoomDistance].X;
+				float yPer = gridY / (float)gridSizes[ZoomDistance].Y;
 
-				int xMove = (int)((gridSizes[zoomDistance].X - gridSizes[zoomDistance - 1].X) * xPer);
-				int yMove = (int)((gridSizes[zoomDistance].Y - gridSizes[zoomDistance - 1].Y) * yPer);
+				int xMove = (int)((gridSizes[ZoomDistance].X - gridSizes[ZoomDistance - 1].X) * xPer);
+				int yMove = (int)((gridSizes[ZoomDistance].Y - gridSizes[ZoomDistance - 1].Y) * yPer);
 
-				cameraX += xMove;
-				cameraY += yMove;
+				CameraX += xMove;
+				CameraY += yMove;
 
-				zoomDistance--;
+				ZoomDistance--;
 			}
 
 			CheckPosition();
@@ -197,21 +195,21 @@ namespace Beyond_Beyaan
 
 		private void CheckPosition()
 		{
-			if (cameraX > (gridCells - gridSizes[zoomDistance].X) + 5)
+			if (CameraX > (gridCells - gridSizes[ZoomDistance].X) + 5)
 			{
-				cameraX = (gridCells - gridSizes[zoomDistance].X) + 5;
+				CameraX = (gridCells - gridSizes[ZoomDistance].X) + 5;
 			}
-			if (cameraX < -5)
+			if (CameraX < -5)
 			{
-				cameraX = -5;
+				CameraX = -5;
 			}
-			if (cameraY > (gridCells - gridSizes[zoomDistance].Y) + 5)
+			if (CameraY > (gridCells - gridSizes[ZoomDistance].Y) + 5)
 			{
-				cameraY = (gridCells - gridSizes[zoomDistance].Y) + 5;
+				CameraY = (gridCells - gridSizes[ZoomDistance].Y) + 5;
 			}
-			if (cameraY < -5)
+			if (CameraY < -5)
 			{
-				cameraY = -5;
+				CameraY = -5;
 			}
 		}
 
@@ -221,10 +219,10 @@ namespace Beyond_Beyaan
 			while (xOffset < 0)
 			{
 				xOffset += gridSize;
-				cameraX--;
-				if (cameraX < -5)
+				CameraX--;
+				if (CameraX < -5)
 				{
-					cameraX = -5;
+					CameraX = -5;
 					xVel = 0;
 					xOffset = 0;
 					break;
@@ -233,10 +231,10 @@ namespace Beyond_Beyaan
 			while (xOffset >= gridSize)
 			{
 				xOffset -= gridSize;
-				cameraX++;
-				if (cameraX > (gridCells - gridSizes[zoomDistance].X) + 5)
+				CameraX++;
+				if (CameraX > (gridCells - gridSizes[ZoomDistance].X) + 5)
 				{
-					cameraX = (gridCells - gridSizes[zoomDistance].X) + 5;
+					CameraX = (gridCells - gridSizes[ZoomDistance].X) + 5;
 					xVel = 0;
 					xOffset = 0;
 					break;
@@ -246,10 +244,10 @@ namespace Beyond_Beyaan
 			while (yOffset < 0)
 			{
 				yOffset += gridSize;
-				cameraY--;
-				if (cameraY < -5)
+				CameraY--;
+				if (CameraY < -5)
 				{
-					cameraY = -5;
+					CameraY = -5;
 					yVel = 0;
 					yOffset = 0;
 					break;
@@ -258,10 +256,10 @@ namespace Beyond_Beyaan
 			while (yOffset >= gridSize)
 			{
 				yOffset -= gridSize;
-				cameraY++;
-				if (cameraY > (gridCells - gridSizes[zoomDistance].Y) + 5)
+				CameraY++;
+				if (CameraY > (gridCells - gridSizes[ZoomDistance].Y) + 5)
 				{
-					cameraY = (gridCells - gridSizes[zoomDistance].Y) + 5;
+					CameraY = (gridCells - gridSizes[ZoomDistance].Y) + 5;
 					yVel = 0;
 					yOffset = 0;
 					break;

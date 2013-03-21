@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Drawing;
-using System.Text;
-using System.CodeDom.Compiler;
-using Microsoft.CSharp;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
 
@@ -55,8 +50,6 @@ namespace Beyond_Beyaan
 		/// <summary>
 		/// Set up the galaxy
 		/// </summary>
-		/// <param name="galaxyType"></param>
-		/// <param name="starCount"></param>
 		public void GenerateGalaxy(System.Reflection.MethodInfo genGalaxyFunc, Object scriptInstance, Dictionary<string, string> vars, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, RegionTypeManager regionTypeManager)
 		{
 			Random r = new Random();
@@ -91,8 +84,8 @@ namespace Beyond_Beyaan
 		/// </summary>
 		/// <param name="top"></param>
 		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <param name="bottom"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
 		public List<StarSystem> GetStarsInArea(int left, int top, int width, int height)
 		{
 			List<StarSystem> starsInArea = new List<StarSystem>();
@@ -386,7 +379,6 @@ namespace Beyond_Beyaan
 							isConnected = true;
 							break;
 						}
-						continue;
 					}
 					else
 					{
@@ -407,7 +399,6 @@ namespace Beyond_Beyaan
 							isConnected = true;
 							break;
 						}
-						continue;
 					}
 					else
 					{
@@ -466,7 +457,6 @@ namespace Beyond_Beyaan
 							isConnected = true;
 							break;
 						}
-						continue;
 					}
 					else
 					{
@@ -487,7 +477,6 @@ namespace Beyond_Beyaan
 							isConnected = true;
 							break;
 						}
-						continue;
 					}
 					else
 					{
@@ -552,7 +541,6 @@ namespace Beyond_Beyaan
 							isConnected = true;
 							break;
 						}
-						continue;
 					}
 					else
 					{
@@ -573,7 +561,6 @@ namespace Beyond_Beyaan
 							isConnected = true;
 							break;
 						}
-						continue;
 					}
 					else
 					{

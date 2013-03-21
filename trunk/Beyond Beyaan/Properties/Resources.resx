@@ -117,4 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="A_FATAL_ERROR_OCCURED_IN_LOADING_DATA_DIRECTORIES" xml:space="preserve">
+    <value>A fatal error occured in loading data directories: </value>
+  </data>
+  <data name="NO_DATA_DIRECTORIES_TO_LOAD" xml:space="preserve">
+    <value>No data directories to load</value>
+  </data>
+  <data name="VERSION_0" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="ERROR_LOADING_GAME_RESOURCES__ERROR_MESSAGE_0" xml:space="preserve">
+    <value>Error loading game resources, error message: {0}
+</value>
+  </data>
 </root>

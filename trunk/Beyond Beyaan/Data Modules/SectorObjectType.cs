@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace Beyond_Beyaan.Data_Modules
@@ -74,13 +71,13 @@ namespace Beyond_Beyaan.Data_Modules
 							{
 								switch (attribute.Value.ToLower())
 								{
-									case "minimum": ConnectionAlgorithm = Data_Modules.ConnectionAlgorithm.MINIMUM;
+									case "minimum": ConnectionAlgorithm = ConnectionAlgorithm.MINIMUM;
 										break;
-									case "closest": ConnectionAlgorithm = Data_Modules.ConnectionAlgorithm.CLOSEST;
+									case "closest": ConnectionAlgorithm = ConnectionAlgorithm.CLOSEST;
 										break;
-									case "farthest": ConnectionAlgorithm = Data_Modules.ConnectionAlgorithm.FARTHEST;
+									case "farthest": ConnectionAlgorithm = ConnectionAlgorithm.FARTHEST;
 										break;
-									case "random": ConnectionAlgorithm = Data_Modules.ConnectionAlgorithm.RANDOM;
+									case "random": ConnectionAlgorithm = ConnectionAlgorithm.RANDOM;
 										break;
 								}
 							} break;
@@ -109,7 +106,7 @@ namespace Beyond_Beyaan.Data_Modules
 			Description = "No description";
 			IsGateway = false;
 			ConnectsToAnother = false;
-			ConnectionAlgorithm = Data_Modules.ConnectionAlgorithm.RANDOM;
+			ConnectionAlgorithm = ConnectionAlgorithm.RANDOM;
 		}
 	}
 }

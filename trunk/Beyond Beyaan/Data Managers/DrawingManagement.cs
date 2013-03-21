@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using Drawing = System.Drawing;
 using GorgonLibrary;
 using GorgonLibrary.Graphics;
-using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan
 {
@@ -404,7 +401,7 @@ namespace Beyond_Beyaan
 	public class DrawingManagement
 	{
 		#region Static Variables
-		public static List<SpriteName> VerticalScrollBar = new List<SpriteName>()
+		public static List<SpriteName> VerticalScrollBar = new List<SpriteName>
 		{
 			SpriteName.ScrollUpBackgroundButton,
 			SpriteName.ScrollUpForegroundButton,
@@ -419,7 +416,7 @@ namespace Beyond_Beyaan
 			SpriteName.ScrollVerticalBar,
 			SpriteName.ScrollVerticalBar
 		};
-		public static List<SpriteName> HorizontalScrollBar = new List<SpriteName>()
+		public static List<SpriteName> HorizontalScrollBar = new List<SpriteName>
 		{
 			SpriteName.ScrollLeftBackgroundButton,
 			SpriteName.ScrollLeftForegroundButton,
@@ -434,7 +431,7 @@ namespace Beyond_Beyaan
 			SpriteName.ScrollHorizontalBar,
 			SpriteName.ScrollHorizontalBar
 		};
-		public static List<SpriteName> HorizontalSliderBar = new List<SpriteName>()
+		public static List<SpriteName> HorizontalSliderBar = new List<SpriteName>
 		{
 			SpriteName.ScrollLeftBackgroundButton,
 			SpriteName.ScrollLeftForegroundButton,
@@ -449,7 +446,7 @@ namespace Beyond_Beyaan
 			SpriteName.SliderHorizontalBar,
 			SpriteName.SliderHighlightedHorizontalBar
 		};
-		public static List<SpriteName> ComboBox = new List<SpriteName>()
+		public static List<SpriteName> ComboBox = new List<SpriteName>
 		{
 			SpriteName.ButtonBGTL,
 			SpriteName.ButtonBGTC,
@@ -481,7 +478,7 @@ namespace Beyond_Beyaan
 			SpriteName.ScrollVerticalForegroundButton3,
 			SpriteName.ScrollVerticalBar,
 		};
-		public static List<SpriteName> SmallComboBox = new List<SpriteName>()
+		public static List<SpriteName> SmallComboBox = new List<SpriteName>
 		{
 			SpriteName.IconButtonUL,
 			SpriteName.IconButtonUC,
@@ -513,7 +510,7 @@ namespace Beyond_Beyaan
 			SpriteName.ScrollVerticalForegroundButton3,
 			SpriteName.ScrollVerticalBar,
 		};
-		public static List<SpriteName> ButtonBackground = new List<SpriteName>()
+		public static List<SpriteName> ButtonBackground = new List<SpriteName>
 		{
 			SpriteName.ButtonBGTL,
 			SpriteName.ButtonBGTC,
@@ -525,7 +522,7 @@ namespace Beyond_Beyaan
 			SpriteName.ButtonBGBC,
 			SpriteName.ButtonBGBR
 		};
-		public static List<SpriteName> ButtonForeground = new List<SpriteName>()
+		public static List<SpriteName> ButtonForeground = new List<SpriteName>
 		{
 			SpriteName.ButtonFGTL,
 			SpriteName.ButtonFGTC,
@@ -537,7 +534,7 @@ namespace Beyond_Beyaan
 			SpriteName.ButtonFGBC,
 			SpriteName.ButtonFGBR
 		};
-		public static List<SpriteName> TinyButtonBackground = new List<SpriteName>()
+		public static List<SpriteName> TinyButtonBackground = new List<SpriteName>
 		{
 			SpriteName.TinyButtonBGTL,
 			SpriteName.TinyButtonBGTC,
@@ -549,7 +546,7 @@ namespace Beyond_Beyaan
 			SpriteName.TinyButtonBGBC,
 			SpriteName.TinyButtonBGBR,
 		};
-		public static List<SpriteName> TinyButtonForeground = new List<SpriteName>()
+		public static List<SpriteName> TinyButtonForeground = new List<SpriteName>
 		{
 			SpriteName.TinyButtonFGTL,
 			SpriteName.TinyButtonFGTC,
@@ -671,7 +668,7 @@ namespace Beyond_Beyaan
 			SpriteName.RBCBG,
 			SpriteName.RBCFG,
 		};
-		public static List<SpriteName> TextBox = new List<SpriteName>()
+		public static List<SpriteName> TextBox = new List<SpriteName>
 		{
 			SpriteName.TextTL,
 			SpriteName.TextTC,
@@ -695,10 +692,10 @@ namespace Beyond_Beyaan
 		#region Constructors
 		public DrawingManagement()
 		{
-			GorgonLibrary.Graphics.ImageCache.DestroyAll();
-			GorgonLibrary.Graphics.FontCache.DestroyAll();
-			GorgonLibrary.Graphics.RenderTargetCache.DestroyAll();
-			GorgonLibrary.Graphics.ShaderCache.DestroyAll();
+			ImageCache.DestroyAll();
+			FontCache.DestroyAll();
+			RenderTargetCache.DestroyAll();
+			ShaderCache.DestroyAll();
 
 			sprites = new Dictionary<SpriteName, Sprite>();
 			fonts = new Dictionary<string, Font>();
@@ -732,7 +729,7 @@ namespace Beyond_Beyaan
 				}
 				try
 				{
-					GorgonLibrary.Graphics.ImageCache.DestroyAll();
+					ImageCache.DestroyAll();
 					sprites.Clear();
 					if (!LoadGlobalSprites(out reason))
 					{
@@ -2081,11 +2078,11 @@ namespace Beyond_Beyaan
 				Sprite newSprite;
 				if (colorkey)
 				{
-					newSprite = new Sprite(name, GorgonLibrary.Graphics.Image.FromFile(filepath, ImageBufferFormats.BufferUnknown, Drawing.Color.Black));
+					newSprite = new Sprite(name, Image.FromFile(filepath, ImageBufferFormats.BufferUnknown, Drawing.Color.Black));
 				}
 				else
 				{
-					newSprite = new Sprite(name, GorgonLibrary.Graphics.Image.FromFile(filepath));
+					newSprite = new Sprite(name, Image.FromFile(filepath));
 				}
 				sprites.Add(spriteName, newSprite);
 				reason = null;
@@ -2387,7 +2384,7 @@ namespace Beyond_Beyaan
 			reason = null;
 			try
 			{
-				Font font = GorgonLibrary.Graphics.Font.FromFile(filePath, size, false, bold, false, false);
+				Font font = Font.FromFile(filePath, size, false, bold, false, false);
 				fonts.Add(name, font);
 			}
 			catch (Exception e)
@@ -2404,13 +2401,13 @@ namespace Beyond_Beyaan
 		{
 			if (image == null)
 			{
-				image = new GorgonLibrary.Graphics.RenderImage("imageWithShaders", (int)spriteToDraw.Width, (int)spriteToDraw.Height, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
-				image.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
+				image = new RenderImage("imageWithShaders", (int)spriteToDraw.Width, (int)spriteToDraw.Height, ImageBufferFormats.BufferRGB888A8);
+				image.BlendingMode = BlendingModes.Modulated;
 			}
 			if (backBuffer == null)
 			{
-				backBuffer = new GorgonLibrary.Graphics.RenderImage("backBufferWithShaders", (int)spriteToDraw.Width, (int)spriteToDraw.Height, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
-				backBuffer.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
+				backBuffer = new RenderImage("backBufferWithShaders", (int)spriteToDraw.Width, (int)spriteToDraw.Height, ImageBufferFormats.BufferRGB888A8);
+				backBuffer.BlendingMode = BlendingModes.Modulated;
 			}
 			image.Clear();
 			backBuffer.Clear();
@@ -2457,11 +2454,11 @@ namespace Beyond_Beyaan
 		}*/
 		public void DrawSprite(SpriteName spriteName, int x, int y, float width, float height)
 		{
-			DrawSprite(spriteName, x, y, 255, width, height, System.Drawing.Color.White);
+			DrawSprite(spriteName, x, y, 255, width, height, Drawing.Color.White);
 		}
 		public void DrawSprite(SpriteName spriteName, int x, int y, float width, float height, byte alpha)
 		{
-			DrawSprite(spriteName, x, y, alpha, width, height, System.Drawing.Color.White);
+			DrawSprite(spriteName, x, y, alpha, width, height, Drawing.Color.White);
 		}
 		public void DrawSprite(SpriteName spriteName, int x, int y, byte alpha, float width, float height, Drawing.Color color)
 		{
@@ -2490,7 +2487,7 @@ namespace Beyond_Beyaan
 			return sprites[spriteName];
 		}
 
-		public void DrawLine(int x1, int y1, int x2, int y2, System.Drawing.Color color)
+		public void DrawLine(int x1, int y1, int x2, int y2, Drawing.Color color)
 		{
 			Gorgon.Screen.Line(x1, y1, x2, y2, color);
 		}
@@ -2511,7 +2508,7 @@ namespace Beyond_Beyaan
 
 		public static Font GetFont(string name)
 		{
-			Font font = null;
+			Font font;
 			fonts.TryGetValue(name, out font);
 			return font;
 		}

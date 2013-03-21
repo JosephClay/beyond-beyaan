@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
@@ -9,7 +6,7 @@ namespace Beyond_Beyaan
 	public class FleetManager
 	{
 		#region Variables
-		private List<ShipDesign> shipDesigns;
+
 		private List<Squadron> fleets;
 		private Empire empire;
 		#endregion
@@ -17,10 +14,8 @@ namespace Beyond_Beyaan
 		#region Properties
 		public ShipDesign LastShipDesign { get; set; }
 
-		public List<ShipDesign> ShipDesigns 
-		{ 
-			get { return shipDesigns; } 
-		}
+		public List<ShipDesign> ShipDesigns { get; private set; }
+
 		#endregion
 
 		#region Constructor
@@ -28,7 +23,7 @@ namespace Beyond_Beyaan
 		{
 			this.empire = empire;
 			fleets = new List<Squadron>();
-			shipDesigns = new List<ShipDesign>();
+			ShipDesigns = new List<ShipDesign>();
 		}
 		#endregion
 
@@ -80,7 +75,7 @@ namespace Beyond_Beyaan
 		public void AddShipDesign(ShipDesign newShipDesign)
 		{
 			ShipDesign ship = new ShipDesign(newShipDesign); //Make a copy so it don't get modified by accident
-			shipDesigns.Add(ship);
+			ShipDesigns.Add(ship);
 		}
 
 		public bool MoveFleets()
@@ -165,11 +160,11 @@ namespace Beyond_Beyaan
 
 		public void ScrapDesign(ShipDesign ship)
 		{
-			shipDesigns.Remove(ship);
-			if (LastShipDesign.IsThisShipTheSame(ship) && shipDesigns.Count > 0)
+			ShipDesigns.Remove(ship);
+			if (LastShipDesign.IsThisShipTheSame(ship) && ShipDesigns.Count > 0)
 			{
 				//Make a copy so we don't modify the original
-				LastShipDesign = new ShipDesign(shipDesigns[0]);
+				LastShipDesign = new ShipDesign(ShipDesigns[0]);
 			}
 		}
 		#endregion
