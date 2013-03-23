@@ -175,55 +175,58 @@ namespace Beyond_Beyaan.Screens
 
 		private bool LoadGameFiles(out string reason)
 		{
-			string directoryPath = Path.Combine(Environment.CurrentDirectory, "Data");
-
-			//Grab the mod name here
-			directoryPath = Path.Combine(directoryPath, modComboBox.CurrentText);
+			DirectoryInfo directory = new DirectoryInfo(Path.Combine(Path.Combine(Environment.CurrentDirectory, "Data"), modComboBox.CurrentText));
+			DirectoryInfo graphicDirectory = new DirectoryInfo(Path.Combine(directory.FullName, "graphics"));
 
 			try
 			{
-				gameMain.RegionShader = GorgonLibrary.Graphics.FXShader.FromFile(Path.Combine(Path.Combine(directoryPath, "Shaders"), "CircleShader.fx"), GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
+				if (!gameMain.SpriteManager.LoadSprites(directory, graphicDirectory, out reason))
+				{
+					MessageBox.Show(reason);
+					return false;
+				}
+				gameMain.RegionShader = GorgonLibrary.Graphics.FXShader.FromFile(Path.Combine(Path.Combine(directory.FullName, "Shaders"), "CircleShader.fx"), GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 				gameMain.GameDataSet = modComboBox.CurrentText;
-				if (!GameConfiguration.LoadConfiguration(Path.Combine(directoryPath, "config.xml"), out reason))
+				if (!GameConfiguration.LoadConfiguration(Path.Combine(directory.FullName, "config.xml"), out reason))
 				{
 					MessageBox.Show(reason);
 					return false;
 				}
-				if (!gameMain.LoadTutorial(Path.Combine(directoryPath, "tutorial.xml"), out reason))
+				if (!gameMain.LoadTutorial(Path.Combine(directory.FullName, "tutorial.xml"), out reason))
 				{
 					MessageBox.Show(reason);
 					return false;
 				}
-				if (!gameMain.iconManager.Initialize(directoryPath, Path.Combine(directoryPath, "graphics"), out reason))
+				if (!gameMain.iconManager.Initialize(directory.FullName, graphicDirectory.FullName, out reason))
 				{
 					MessageBox.Show(reason);
 					return false;
 				}
-				if (!gameMain.resourceManager.Initialize(directoryPath, gameMain.iconManager, out reason))
+				if (!gameMain.resourceManager.Initialize(directory.FullName, gameMain.iconManager, out reason))
 				{
 					MessageBox.Show(reason);
 					return false;
 				}
-				if (!gameMain.masterItemManager.Initialize(new DirectoryInfo(directoryPath), out reason))
+				if (!gameMain.masterItemManager.Initialize(directory, out reason))
 				{
 					MessageBox.Show(reason);
 					return false;
 				}
 				gameMain.masterTechnologyList.ResetAll();
-				gameMain.masterTechnologyList.LoadTechnologies(directoryPath, gameMain.resourceManager, gameMain.masterItemManager);
-				gameMain.shipScriptManager.LoadShipScripts(Path.Combine(Path.Combine(directoryPath, "Scripts"), "Ship"));
-				gameMain.raceManager = new RaceManager(directoryPath, Path.Combine(directoryPath, "graphics"), gameMain.masterTechnologyList, gameMain.shipScriptManager, Path.Combine(Path.Combine(directoryPath, "Scripts"), "Technology"), gameMain.iconManager, gameMain.resourceManager);
-				if (!gameMain.sectorTypeManager.LoadSectorTypes(Path.Combine(directoryPath, "sectorObjects.xml"), gameMain, out reason))
+				gameMain.masterTechnologyList.LoadTechnologies(directory.FullName, gameMain.resourceManager, gameMain.masterItemManager);
+				gameMain.shipScriptManager.LoadShipScripts(Path.Combine(Path.Combine(directory.FullName, "Scripts"), "Ship"));
+				gameMain.raceManager = new RaceManager(directory.FullName, graphicDirectory.FullName, gameMain.masterTechnologyList, gameMain.shipScriptManager, Path.Combine(Path.Combine(directory.FullName, "Scripts"), "Technology"), gameMain.iconManager, gameMain.resourceManager);
+				if (!gameMain.sectorTypeManager.LoadSectorTypes(Path.Combine(directory.FullName, "sectorObjects.xml"), gameMain, out reason))
 				{
 					MessageBox.Show(reason);
 					return false;
 				}
-				gameMain.planetTypeManager.LoadPlanetTypes(Path.Combine(directoryPath, "planets.xml"), Path.Combine(Path.Combine(directoryPath, "graphics"), "planets.png"), Path.Combine(directoryPath, "graphics"), gameMain);
-				gameMain.regionTypeManager.LoadRegionTypes(Path.Combine(directoryPath, "regions.xml"), gameMain);
-				gameMain.starTypeManager.LoadStarTypes(Path.Combine(directoryPath, "stars.xml"), Path.Combine(Path.Combine(directoryPath, "graphics"), "stars.png"), Path.Combine(directoryPath, "shaders"), gameMain.sectorTypeManager, gameMain);
-				gameMain.particleManager.Initialize(directoryPath, Path.Combine(directoryPath, "graphics"));
-				gameMain.effectManager.Initialize(directoryPath);
-				return gameMain.DrawingManagement.LoadGraphics(Path.Combine(directoryPath, "graphics"), out reason);
+				gameMain.planetTypeManager.LoadPlanetTypes(Path.Combine(directory.FullName, "planets.xml"), Path.Combine(graphicDirectory.FullName, "planets.png"), graphicDirectory.FullName, gameMain);
+				gameMain.regionTypeManager.LoadRegionTypes(Path.Combine(directory.FullName, "regions.xml"), gameMain);
+				gameMain.starTypeManager.LoadStarTypes(Path.Combine(directory.FullName, "stars.xml"), Path.Combine(graphicDirectory.FullName, "stars.png"), Path.Combine(directory.FullName, "shaders"), gameMain.sectorTypeManager, gameMain);
+				gameMain.particleManager.Initialize(directory.FullName, graphicDirectory.FullName);
+				gameMain.effectManager.Initialize(directory.FullName);
+				return gameMain.DrawingManagement.LoadGraphics(graphicDirectory.FullName, out reason);
 			}
 			catch (Exception e)
 			{

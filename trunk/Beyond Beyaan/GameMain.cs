@@ -13,6 +13,7 @@ namespace Beyond_Beyaan
 	{
 		Form parentForm;
 		internal DrawingManagement DrawingManagement;
+		internal SpriteManager SpriteManager;
 		private ScreenInterface screenInterface;
 		private MainGameMenu mainGameMenu;
 		private PlayerSetup playerSetup;
@@ -106,6 +107,7 @@ namespace Beyond_Beyaan
 				catch
 				{ }
 			}
+			SpriteManager = new SpriteManager();
 			taskBar = null;
 			empireManager = new EmpireManager();
 			playerSetup = null;
@@ -184,6 +186,10 @@ namespace Beyond_Beyaan
 			if (DrawingManagement == null)
 			{
 				DrawingManagement = new DrawingManagement();
+			}
+			if (SpriteManager == null)
+			{
+				SpriteManager = new SpriteManager();
 			}
 			galaxy = new Galaxy();
 			empireManager = new EmpireManager();

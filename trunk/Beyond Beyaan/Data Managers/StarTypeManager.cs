@@ -34,21 +34,9 @@ namespace Beyond_Beyaan.Data_Managers
 				gameMain.Log("Loading star type \"" + starType.Code + "\"");
 				starType.Description = element.Attribute("description").Value;
 
-				gameMain.Log("Attempting to int.parse spriteX with value of \"" + element.Attribute("spriteX").Value + "\"");
-				int x = int.Parse(element.Attribute("spriteX").Value);
-				gameMain.Log("Attempting to int.parse spriteY with value of \"" + element.Attribute("spriteY").Value + "\"");
-				int y = int.Parse(element.Attribute("spriteY").Value);
-
-				gameMain.Log("Attempting to int.parse spriteWidth with value of \"" + element.Attribute("spriteWidth").Value + "\"");
-				int width = int.Parse(element.Attribute("spriteWidth").Value);
-				gameMain.Log("Attempting to int.parse spriteHeight with value of \"" + element.Attribute("spriteHeight").Value + "\"");
-				int height = int.Parse(element.Attribute("spriteHeight").Value);
-
-				GorgonLibrary.Graphics.Sprite starSprite = new GorgonLibrary.Graphics.Sprite(starType.Code, starsSprite.Image, x, y, width, height);
-				starSprite.SetAxis(width / 2.0f, height / 2.0f);
-				starType.Sprite = starSprite;
-				starType.Width = width;
-				starType.Height = height;
+				gameMain.Log("Attempting to load sprite with value of \"" + element.Attribute("sprite").Value + "\"");
+				string sprite = element.Attribute("sprite").Value;
+				starType.Sprite = gameMain.SpriteManager.GetSprite(sprite);
 
 				if (element.Attribute("shaderValue") != null)
 				{

@@ -383,9 +383,7 @@ namespace Beyond_Beyaan.Screens
 					{
 						system.Type.Shader.Parameters["StarColor"].SetValue(system.Type.ShaderValue);
 					}
-					system.Type.Sprite.SetPosition(xPos, yPos);
-					system.Type.Sprite.SetScale(0.1f, 0.1f);
-					system.Type.Sprite.Draw();
+					system.Type.Sprite.Draw(xPos, yPos, 0.1f, 0.1f);
 					GorgonLibrary.Gorgon.CurrentShader = null;
 				}
 			}

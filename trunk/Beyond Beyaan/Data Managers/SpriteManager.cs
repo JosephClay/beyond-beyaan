@@ -37,5 +37,14 @@ namespace Beyond_Beyaan.Data_Managers
 			reason = null;
 			return true;
 		}
+
+		public BBSprite GetSprite(string name)
+		{
+			if (Sprites.ContainsKey(name))
+			{
+				return new BBSprite(Sprites[name]);
+			}
+			return null;
+		}
 	}
 }
