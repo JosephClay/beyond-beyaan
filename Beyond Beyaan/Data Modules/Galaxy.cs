@@ -109,6 +109,14 @@ namespace Beyond_Beyaan
 			}
 			return null;
 		}
+		public void UpdateStars(float frameDeltaTime)
+		{
+			float time = frameDeltaTime*100;
+			foreach (StarSystem system in starSystems)
+			{
+				system.Type.Sprite.Update(time);
+			}
+		}
 		#endregion
 
 		#region Galaxy Filling Functions

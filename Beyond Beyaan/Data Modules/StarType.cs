@@ -8,7 +8,7 @@ namespace Beyond_Beyaan.Data_Modules
 		#region Graphics
 		public float[] ShaderValue { get; set; }
 		public GorgonLibrary.Graphics.FXShader Shader { get; set; }
-		public GorgonLibrary.Graphics.Sprite Sprite { get; set; }
+		public BBSprite Sprite { get; set; }
 		#endregion
 
 		#region Star Properties

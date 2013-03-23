@@ -355,9 +355,7 @@ namespace Beyond_Beyaan.Screens
 						system.Type.Shader.Parameters["StarColor"].SetValue(new[] {0.5f, 0.5f, 0.5f, 1});
 					}
 				}
-				system.Type.Sprite.SetPosition(x, y);
-				system.Type.Sprite.SetScale(0.1f, 0.1f);
-				system.Type.Sprite.Draw();
+				system.Type.Sprite.Draw(x, y, 0.1f, 0.1f);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
 			StarSystem systemSelected = availableSystems[selectedSystem];

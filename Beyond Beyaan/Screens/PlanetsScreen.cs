@@ -224,6 +224,7 @@ namespace Beyond_Beyaan.Screens
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
 			UpdateBackground(frameDeltaTime);
+			gameMain.galaxy.UpdateStars(frameDeltaTime);
 
 			if (scrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
 			{
@@ -634,9 +635,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					system.Type.Shader.Parameters["StarColor"].SetValue(system.Type.ShaderValue);
 				}
-				system.Type.Sprite.SetPosition(x, y);
-				system.Type.Sprite.SetScale(0.1f, 0.1f);
-				system.Type.Sprite.Draw();
+				system.Type.Sprite.Draw(x, y, 0.1f, 0.1f);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
 			if (hoveringSystem != null)

@@ -8,13 +8,13 @@ namespace Beyond_Beyaan.Data_Modules
 {
 	public class BaseSprite
 	{
-		public List<GorgonLibrary.Graphics.Sprite> Frames { get; private set; }
+		public List<Sprite> Frames { get; private set; }
 		public List<string> FrameLength { get; private set; }
 		public string Name { get; private set; }
 
 		public BaseSprite()
 		{
-			Frames = new List<GorgonLibrary.Graphics.Sprite>();
+			Frames = new List<Sprite>();
 			FrameLength = new List<string>();
 		}
 
@@ -44,10 +44,10 @@ namespace Beyond_Beyaan.Data_Modules
 				reason = "No sprite name or file location.";
 				return false;
 			}
-			GorgonLibrary.Graphics.Sprite graphicFile;
+			Sprite graphicFile;
 			if (ImageCache.Images.Contains(Name))
 			{
-				graphicFile = new GorgonLibrary.Graphics.Sprite(Name, ImageCache.Images[Name]);
+				graphicFile = new Sprite(Name, ImageCache.Images[Name]);
 			}
 			else
 			{
@@ -57,7 +57,7 @@ namespace Beyond_Beyaan.Data_Modules
 					reason = "Graphic File doesn't exist: " + path;
 					return false;
 				}
-				graphicFile = new GorgonLibrary.Graphics.Sprite(Name, Image.FromFile(Path.Combine(graphicDirectory.FullName, filename)));
+				graphicFile = new Sprite(Name, Image.FromFile(Path.Combine(graphicDirectory.FullName, filename)));
 			}
 
 			int frameCount = 0;
@@ -112,7 +112,7 @@ namespace Beyond_Beyaan.Data_Modules
 						}
 					}
 				}
-				var frame = new GorgonLibrary.Graphics.Sprite(Name + frameCount, graphicFile.Image, x, y, width, height, axisX,
+				var frame = new Sprite(Name + frameCount, graphicFile.Image, x, y, width, height, axisX,
 				                                              axisY);
 				Frames.Add(frame);
 				FrameLength.Add(frameLength);
@@ -123,21 +123,39 @@ namespace Beyond_Beyaan.Data_Modules
 		}
 	}
 
-	public class Sprite
+	public class BBSprite
 	{
 		private BaseSprite _baseSprite;
 		private int _currentFrame;
 		private float _frameTimer;
+		private bool _animated;
 
-		public Sprite(BaseSprite baseSprite)
+		public float Width
+		{
+			get { return _baseSprite.Frames[0].Width; }
+		}
+		public float Height
+		{
+			get { return _baseSprite.Frames[0].Height; }
+		}
+
+		public BBSprite(BaseSprite baseSprite)
 		{
 			_baseSprite = baseSprite;
 			_currentFrame = 0;
-			_frameTimer = 0;
+			_animated = _baseSprite.Frames.Count > 1;
+			if (_animated)
+			{
+				_frameTimer = Utility.GetIntValue(_baseSprite.FrameLength[_currentFrame], new Random());
+			}
 		}
 
 		public void Update(float time)
 		{
+			if (!_animated)
+			{
+				return;
+			}
 			_frameTimer -= time;
 			if (_frameTimer <= 0)
 			{
@@ -151,7 +169,7 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
-		public void Draw(int x, int y)
+		public void Draw(float x, float y)
 		{
 			var frame = _baseSprite.Frames[_currentFrame];
 			frame.SetPosition(x, y);
@@ -159,7 +177,7 @@ namespace Beyond_Beyaan.Data_Modules
 			frame.Draw();
 		}
 
-		public void Draw(int x, int y, float scaleX, float scaleY)
+		public void Draw(float x, float y, float scaleX, float scaleY)
 		{
 			var frame = _baseSprite.Frames[_currentFrame];
 			frame.SetPosition(x, y);
