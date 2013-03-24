@@ -50,7 +50,7 @@ namespace Beyond_Beyaan
 		/// <summary>
 		/// Set up the galaxy
 		/// </summary>
-		public void GenerateGalaxy(System.Reflection.MethodInfo genGalaxyFunc, Object scriptInstance, Dictionary<string, string> vars, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, RegionTypeManager regionTypeManager)
+		public void GenerateGalaxy(System.Reflection.MethodInfo genGalaxyFunc, Object scriptInstance, Dictionary<string, string> vars, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, SpriteManager spriteManager)
 		{
 			Random r = new Random();
 			
@@ -65,7 +65,7 @@ namespace Beyond_Beyaan
 			}
 			GalaxySize += 4;
 
-			FillGalaxyWithStars(ret, starTypeManager, sectorTypeManager, regionTypeManager);
+			FillGalaxyWithStars(ret, starTypeManager, sectorTypeManager, spriteManager);
 
 			Gateways = new List<Gateway>();
 			ConnectGateways(sectorTypeManager, r);
@@ -109,18 +109,18 @@ namespace Beyond_Beyaan
 			}
 			return null;
 		}
-		public void UpdateStars(float frameDeltaTime)
+		public void UpdateStars(float frameDeltaTime, Random r)
 		{
-			float time = frameDeltaTime*100;
+			float time = frameDeltaTime*200;
 			foreach (StarSystem system in starSystems)
 			{
-				system.Type.Sprite.Update(time);
+				system.Sprite.Update(time, r);
 			}
 		}
 		#endregion
 
 		#region Galaxy Filling Functions
-		private void FillGalaxyWithStars(List<Dictionary<string, object>> starPoints, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, RegionTypeManager regionTypeManager)
+		private void FillGalaxyWithStars(List<Dictionary<string, object>> starPoints, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, SpriteManager spriteManager)
 		{
 			starSystems = new List<StarSystem>();
 			NameGenerator nameGenerator = new NameGenerator();
@@ -131,7 +131,7 @@ namespace Beyond_Beyaan
 				StarType type = starTypeManager.GetType((string)newStar["type"]);
 				int x = (int)newStar["x"];
 				int y = (int)newStar["y"];
-				StarSystem newStarSystem = new StarSystem(nameGenerator.GetName(), x, y, type, sectorTypeManager, regionTypeManager, r);
+				StarSystem newStarSystem = new StarSystem(nameGenerator.GetName(), x, y, type, sectorTypeManager, spriteManager, r);
 				starSystems.Add(newStarSystem);
 			}
 		}
@@ -587,6 +587,23 @@ namespace Beyond_Beyaan
 
 		private void ConnectMinimumSpanning(SectorObjectType type, Random r)
 		{
+			List<StarSystem> systemsWithType = new List<StarSystem>();
+			foreach (var system in starSystems)
+			{
+				foreach (var sector in system.SectorObjects)
+				{
+					if (sector.Type == type)
+					{
+						systemsWithType.Add(system);
+						break;
+					}
+				}
+			}
+			while (true)
+			{
+				//Randomly pick a starting star
+				StarSystem system = systemsWithType[r.Next(systemsWithType.Count)];
+			}
 		}
 		#endregion
 		/*private void ConvertNebulaToSprite()

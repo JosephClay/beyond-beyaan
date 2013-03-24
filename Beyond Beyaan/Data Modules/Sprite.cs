@@ -139,7 +139,7 @@ namespace Beyond_Beyaan.Data_Modules
 			get { return _baseSprite.Frames[0].Height; }
 		}
 
-		public BBSprite(BaseSprite baseSprite)
+		public BBSprite(BaseSprite baseSprite, Random r)
 		{
 			_baseSprite = baseSprite;
 			_currentFrame = 0;
@@ -150,7 +150,7 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
-		public void Update(float time)
+		public void Update(float time, Random r)
 		{
 			if (!_animated)
 			{
@@ -165,7 +165,7 @@ namespace Beyond_Beyaan.Data_Modules
 				{
 					_currentFrame = 0;
 				}
-				_frameTimer = Utility.GetIntValue(_baseSprite.FrameLength[_currentFrame], new Random());
+				_frameTimer = Utility.GetIntValue(_baseSprite.FrameLength[_currentFrame], r);
 			}
 		}
 

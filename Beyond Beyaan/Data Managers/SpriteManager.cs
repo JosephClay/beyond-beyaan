@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
@@ -38,11 +39,11 @@ namespace Beyond_Beyaan.Data_Managers
 			return true;
 		}
 
-		public BBSprite GetSprite(string name)
+		public BBSprite GetSprite(string name, Random r)
 		{
 			if (Sprites.ContainsKey(name))
 			{
-				return new BBSprite(Sprites[name]);
+				return new BBSprite(Sprites[name], r);
 			}
 			return null;
 		}

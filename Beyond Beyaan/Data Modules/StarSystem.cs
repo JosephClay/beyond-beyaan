@@ -35,6 +35,7 @@ namespace Beyond_Beyaan
 		public List<SectorObject> SectorObjects { get; private set; }
 
 		public StarType Type { get; private set; }
+		public BBSprite Sprite { get; private set; }
 
 		public Label StarName { get; set; }
 		public Empire DominantEmpire { get; private set; }
@@ -53,7 +54,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int x, int y, StarType starType, SectorTypeManager sectorTypeManager, RegionTypeManager regionTypeManager, Random r)
+		public StarSystem(string name, int x, int y, StarType starType, SectorTypeManager sectorTypeManager, SpriteManager spriteManager, Random r)
 		{
 			this.Name = name;
 			this.x = x;
@@ -84,6 +85,8 @@ namespace Beyond_Beyaan
 				newObject.Name = sectorName;
 				SectorObjects.Add(newObject);
 			}
+
+			Sprite = spriteManager.GetSprite(Type.SpriteName, r);
 			
 			StarName = new Label(name, 0, 0);
 			EmpiresWithFleetAdjacentLastTurn = new List<Empire>();

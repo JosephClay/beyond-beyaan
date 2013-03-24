@@ -269,7 +269,7 @@ namespace Beyond_Beyaan.Screens
 						system.Type.Shader.Parameters["StarColor"].SetValue(system.Type.ShaderValue);
 					}
 				}
-				system.Type.Sprite.Draw(((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), ((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), camera.Scale < 0.25f ? 0.25f : camera.Scale, camera.Scale < 0.25f ? 0.25f : camera.Scale);
+				system.Sprite.Draw(((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), ((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), camera.Scale < 0.25f ? 0.25f : camera.Scale, camera.Scale < 0.25f ? 0.25f : camera.Scale);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 
 				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)))
@@ -394,7 +394,7 @@ namespace Beyond_Beyaan.Screens
 						//starlaneSprite.Height = 5 * camera.Scale;
 						starlaneSprite.Rotation = gateway.Angle;
 						starlaneSprite.Color = gateway.Type.GatewayColor;
-						starlaneSprite.Draw();
+						//starlaneSprite.Draw();
 						//Draw the line
 						//drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.White);
 						//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.DimGray);
@@ -457,7 +457,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					scale = 0.25f;
 				}
-				system.Type.Sprite.Draw((((((system.X - camera.CameraX) * 32) - camera.XOffset) + system.Type.Width / 2.0f) * camera.Scale), (((((system.Y - camera.CameraY) * 32) - camera.YOffset) + system.Type.Height / 2.0f) * camera.Scale), scale, scale);
+				system.Sprite.Draw((((((system.X - camera.CameraX) * 32) - camera.XOffset) + system.Type.Width / 2.0f) * camera.Scale), (((((system.Y - camera.CameraY) * 32) - camera.YOffset) + system.Type.Height / 2.0f) * camera.Scale), scale, scale);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 
 				/*if (system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire) && system.GetStargates().Count > 0)
@@ -672,7 +672,7 @@ namespace Beyond_Beyaan.Screens
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
 			UpdateBackground(frameDeltaTime);
-			gameMain.galaxy.UpdateStars(frameDeltaTime);
+			gameMain.galaxy.UpdateStars(frameDeltaTime, gameMain.r);
 
 			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
 			if (currentEmpire.SelectedSystem != null)
