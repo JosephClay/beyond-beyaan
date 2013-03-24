@@ -94,7 +94,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				selectedSystem.Type.Shader.Parameters["StarColor"].SetValue(selectedSystem.Type.ShaderValue);
 			}
-			selectedSystem.Type.Sprite.Draw(xPos + 58, yPos + 55, 60.0f / selectedSystem.Type.Sprite.Width, 60.0f / selectedSystem.Type.Sprite.Height);
+			selectedSystem.Sprite.Draw(xPos + 58, yPos + 55, 60.0f / selectedSystem.Sprite.Width, 60.0f / selectedSystem.Sprite.Height);
 			GorgonLibrary.Gorgon.CurrentShader = null;
 
 			systemName.Draw(drawingManagement);

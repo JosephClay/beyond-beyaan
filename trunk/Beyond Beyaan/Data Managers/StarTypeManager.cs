@@ -35,8 +35,7 @@ namespace Beyond_Beyaan.Data_Managers
 				starType.Description = element.Attribute("description").Value;
 
 				gameMain.Log("Attempting to load sprite with value of \"" + element.Attribute("sprite").Value + "\"");
-				string sprite = element.Attribute("sprite").Value;
-				starType.Sprite = gameMain.SpriteManager.GetSprite(sprite);
+				starType.SpriteName = element.Attribute("sprite").Value;
 
 				if (element.Attribute("shaderValue") != null)
 				{

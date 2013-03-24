@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Sprites>
   <Sprite name="Star" file="stars.png">
-    <Frame x="0" y="0" width="32" height="32" frameLength="4000,10000" axisX="16" axisY="16"/>
-    <Frame x="32" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="64" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="96" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="64" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="32" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
+    <Frame x="0" y="0" width="32" height="32" frameLength="400,1000" axisX="16" axisY="16"/>
+    <Frame x="32" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="64" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="96" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="64" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="32" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
   </Sprite>
   <Sprite name="BlackHole" file="stars.png">
-    <Frame x="128" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="160" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="192" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="224" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="256" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="288" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="320" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
-    <Frame x="352" y="0" width="32" height="32" frameLength="100" axisX="16" axisY="16"/>
+    <Frame x="128" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="160" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="192" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="224" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="256" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="288" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="320" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
+    <Frame x="352" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
   </Sprite>
   <Sprite name="Nebula1" file="stars.png">
     <Frame x="0" y="32" width="128" height="128" axisX="64" axisY="64"/>

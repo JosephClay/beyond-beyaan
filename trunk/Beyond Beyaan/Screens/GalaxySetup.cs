@@ -234,7 +234,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					vars[key] = ((NumericUpDown)uiElements[key]).Value.ToString();
 				}
-				gameMain.galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.starTypeManager, gameMain.sectorTypeManager, gameMain.regionTypeManager);
+				gameMain.galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.starTypeManager, gameMain.sectorTypeManager, gameMain.SpriteManager);
 				if (gameMain.galaxy.GetAllStars().Count > 0)
 				{
 					nextScreen.Active = true;
@@ -383,7 +383,7 @@ namespace Beyond_Beyaan.Screens
 					{
 						system.Type.Shader.Parameters["StarColor"].SetValue(system.Type.ShaderValue);
 					}
-					system.Type.Sprite.Draw(xPos, yPos, 0.1f, 0.1f);
+					system.Sprite.Draw(xPos, yPos, 0.1f, 0.1f);
 					GorgonLibrary.Gorgon.CurrentShader = null;
 				}
 			}

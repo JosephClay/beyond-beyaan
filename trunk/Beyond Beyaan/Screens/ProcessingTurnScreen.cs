@@ -43,7 +43,7 @@ namespace Beyond_Beyaan.Screens
 				{
 						system.Type.Shader.Parameters["StarColor"].SetValue(system.Type.ShaderValue);
 				}
-				system.Type.Sprite.Draw(((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), ((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 0.25f, 0.25f);
+				system.Sprite.Draw(((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), ((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 0.25f, 0.25f);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
 			foreach (Squadron fleet in gameMain.empireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
