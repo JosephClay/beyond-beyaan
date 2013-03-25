@@ -107,7 +107,7 @@ namespace Beyond_Beyaan.Screens
 			movementPath.HorizontalWrapMode = ImageAddressing.Wrapping;
 			movementPath.Axis = new GorgonLibrary.Vector2D(0.5f, 2.5f);
 
-			backgroundStars = new BackgroundStars(gameMain.galaxy.GalaxySize, gameMain.r, 40);
+			backgroundStars = new BackgroundStars(gameMain.galaxy.GalaxySize, gameMain.r, 40, gameMain.SpriteManager);
 			rotation = 0;
 
 			List<SpriteName> frames = new List<SpriteName>
