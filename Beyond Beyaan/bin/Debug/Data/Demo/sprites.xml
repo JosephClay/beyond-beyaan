@@ -36,4 +36,25 @@
   <Sprite name="Nebula6" file="stars.png">
     <Frame x="256" y="128" width="96" height="64" axisX="48" axisY="32"/>
   </Sprite>
+  <Sprite name="BackgroundStar1" file="main.png">
+	<Frame x="208" y="128" width="16" height="16" axisX="8" axisY="8" />
+  </Sprite>
+  <Sprite name="BackgroundStar2" file="main.png">
+	<Frame x="224" y="128" width="16" height="16" axisX="8" axisY="8" />
+  </Sprite>
+  <Sprite name="BackgroundStar3" file="main.png">
+	<Frame x="240" y="128" width="16" height="16" axisX="8" axisY="8" />
+  </Sprite>
+  <Sprite name="BackgroundStar4" file="main.png">
+	<Frame x="256" y="128" width="16" height="16" axisX="8" axisY="8" />
+  </Sprite>
+  <Sprite name="BackgroundStar5" file="main.png">
+	<Frame x="272" y="128" width="16" height="16" axisX="8" axisY="8" />
+  </Sprite>
+  <Sprite name="BackgroundStar6" file="main.png">
+	<Frame x="288" y="128" width="16" height="16" axisX="8" axisY="8" />
+  </Sprite>
+  <Sprite name="BackgroundStar7" file="main.png">
+	<Frame x="304" y="128" width="16" height="16" axisX="8" axisY="8" />
+  </Sprite>
 </Sprites>

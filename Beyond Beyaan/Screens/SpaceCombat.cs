@@ -1014,7 +1014,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			camera.InitCamera(size, 16);
-			backgroundStars = new BackgroundStars(size, gameMain.r, 40);
+			backgroundStars = new BackgroundStars(size, gameMain.r, 40, gameMain.SpriteManager);
 		}
 
 		public void SetupBattle(List<Squadron> fleets, StarSystem system)

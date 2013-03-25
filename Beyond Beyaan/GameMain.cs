@@ -58,6 +58,7 @@ namespace Beyond_Beyaan
 		internal string GameDataSet;
 		internal Random r;
 		internal Input Input;
+		internal Point MousePos;
 
 		private string logFilePath;
 		//private StreamWriter logger;
@@ -66,6 +67,8 @@ namespace Beyond_Beyaan
 
 		public bool Initalize(int screenWidth, int screenHeight, Form parentForm, out string reason)
 		{
+			MousePos = new Point();
+
 			r = new Random();
 			this.parentForm = parentForm;
 
@@ -255,7 +258,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void ProcessGame(Mouse mouse, float frameDeltaTime)
+		public void ProcessGame(float frameDeltaTime)
 		{
 			bool skipUpdate = false;
 			bool handleTutorial = false;
@@ -270,25 +273,25 @@ namespace Beyond_Beyaan
 			}
 			if (handleTutorial)
 			{
-				if (GameConfiguration.ShowTutorial && tutorialWindow.MouseHover((int)mouse.Position.X, (int)mouse.Position.Y, frameDeltaTime))
+				if (GameConfiguration.ShowTutorial && tutorialWindow.MouseHover(MousePos.X, MousePos.Y, frameDeltaTime))
 				{
 					skipUpdate = true;
 				}
 			}
 			if (handleTaskBar && !skipUpdate)
 			{
-				if (taskBar.Update((int)mouse.Position.X, (int)mouse.Position.Y, frameDeltaTime))
+				if (taskBar.Update(MousePos.X, MousePos.Y, frameDeltaTime))
 				{
 					skipUpdate = true;
 				}
-				if (!skipUpdate && situationReport.Update((int)mouse.Position.X, (int)mouse.Position.Y, frameDeltaTime))
+				if (!skipUpdate && situationReport.Update(MousePos.X, MousePos.Y, frameDeltaTime))
 				{
 					skipUpdate = true;
 				}
 			}
 			if (!skipUpdate)
 			{
-				screenInterface.Update((int)mouse.Position.X, (int)mouse.Position.Y, frameDeltaTime);
+				screenInterface.Update(MousePos.X, MousePos.Y, frameDeltaTime);
 			}
 			else
 			{
@@ -404,9 +407,9 @@ namespace Beyond_Beyaan
 			screenInterface.MouseUp(e.X, e.Y, whichButton);
 		}
 
-		public void MouseScroll(int direction, int mouseX, int mouseY)
+		public void MouseScroll(int delta)
 		{
-			screenInterface.MouseScroll(direction, mouseX, mouseY);
+			screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)

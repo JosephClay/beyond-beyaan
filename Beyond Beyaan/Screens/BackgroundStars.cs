@@ -1,4 +1,6 @@
 ﻿using System;
+using Beyond_Beyaan.Data_Managers;
+using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -7,8 +9,9 @@ namespace Beyond_Beyaan.Screens
 		private BackgroundStar[] stars;
 		private float tick;
 		private int twinkleFrame;
+		private BBSprite[] sprites;
 
-		public BackgroundStars(int galaxySize, Random r, int maxSize)
+		public BackgroundStars(int galaxySize, Random r, int maxSize, SpriteManager spriteManager)
 		{
 			galaxySize += galaxySize;
 			stars = new BackgroundStar[galaxySize * 20];
@@ -28,6 +31,11 @@ namespace Beyond_Beyaan.Screens
 			}
 			tick = 0;
 			twinkleFrame = 0;
+			sprites = new BBSprite[7];
+			for (int i = 1; i < 8; i++)
+			{
+				sprites[i - 1] = spriteManager.GetSprite("BackgroundStar" + i, r);
+			}
 		}
 
 		public void Update(float frameDeltaTime)
@@ -57,46 +65,18 @@ namespace Beyond_Beyaan.Screens
 
 			foreach (BackgroundStar star in stars)
 			{
+				if (threshold < 16 - (star.Size*3))
+				{
+					continue;
+				}
 				//float convertedX = star.X + ((cameraX * 32) * star.Layer);
 				//float convertedY = star.Y + ((cameraY * 32) * star.Layer);
 				float convertedX = (star.X - ((realX + (xOffset * scale)) * (1.0f / star.Layer))) * scale;
 				float convertedY = (star.Y - ((realY + (yOffset * scale)) * (1.0f / star.Layer))) * scale;
 				if (convertedX >= 0 && convertedX < realWidth && convertedY >= 0 && convertedY < realHeight)
 				{
-
-					int size = star.Size;//star.TwinkleMoment == twinkleFrame ? (star.Size + 2) : star.TwinkleMoment == twinkleFrame - 1 ? star.Size + 1 : star.Size;
 					System.Drawing.Color starColor = star.TwinkleMoment == twinkleFrame ? System.Drawing.Color.White : star.color;
-					switch (size)
-					{
-						case 0:
-							if (threshold >= 16)
-								drawingManagement.DrawSprite(SpriteName.BGStar1, (int)(convertedX), (int)(convertedY), 255, scaledSize, scaledSize, starColor);
-							break;
-						case 1:
-							if (threshold >= 13)
-								drawingManagement.DrawSprite(SpriteName.BGStar2, (int)(convertedX), (int)(convertedY), 255, scaledSize, scaledSize, starColor);
-							break;
-						case 2:
-							if (threshold >= 10)
-								drawingManagement.DrawSprite(SpriteName.BGStar3, (int)(convertedX), (int)(convertedY), 255, scaledSize, scaledSize, starColor);
-							break;
-						case 3:
-							if (threshold >= 8)
-								drawingManagement.DrawSprite(SpriteName.BGStar4, (int)(convertedX), (int)(convertedY), 255, scaledSize, scaledSize, starColor);
-							break;
-						case 4:
-							if (threshold >= 6)
-								drawingManagement.DrawSprite(SpriteName.BGStar5, (int)(convertedX), (int)(convertedY), 255, scaledSize, scaledSize, starColor);
-							break;
-						case 5:
-							if (threshold >= 3)
-								drawingManagement.DrawSprite(SpriteName.BGStar6, (int)(convertedX), (int)(convertedY), 255, scaledSize, scaledSize, starColor);
-							break;
-						default:
-							if (threshold >= 1)
-								drawingManagement.DrawSprite(SpriteName.BGStar7, (int)(convertedX), (int)(convertedY), 255, scaledSize, scaledSize, starColor);
-							break;
-					}
+					sprites[star.Size].Draw(convertedX, convertedY, scale, scale, starColor);
 				}
 			}
 		}

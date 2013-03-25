@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Xml.Linq;
 using GorgonLibrary.Graphics;
+using Image = GorgonLibrary.Graphics.Image;
 
 namespace Beyond_Beyaan.Data_Modules
 {
@@ -171,17 +173,20 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public void Draw(float x, float y)
 		{
-			var frame = _baseSprite.Frames[_currentFrame];
-			frame.SetPosition(x, y);
-			frame.SetScale(1.0f, 1.0f);
-			frame.Draw();
+			Draw(x, y, 1.0f, 1.0f, Color.White);
 		}
 
 		public void Draw(float x, float y, float scaleX, float scaleY)
 		{
+			Draw(x, y, scaleX, scaleY, Color.White);
+		}
+
+		public void Draw(float x, float y, float scaleX, float scaleY, Color color)
+		{
 			var frame = _baseSprite.Frames[_currentFrame];
 			frame.SetPosition(x, y);
 			frame.SetScale(scaleX, scaleY);
+			frame.Color = color;
 			frame.Draw();
 		}
 	}
