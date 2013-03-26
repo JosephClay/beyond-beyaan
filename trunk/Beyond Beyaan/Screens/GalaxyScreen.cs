@@ -274,9 +274,9 @@ namespace Beyond_Beyaan.Screens
 
 				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)))
 				{
-					int x = (int)((((system.X - camera.CameraX) * 32) + (system.Type.Width / 2) - camera.XOffset) * camera.Scale);
+					int x = (int)((((system.X - camera.CameraX) * 32) + (system.Sprite.Width / 2) - camera.XOffset) * camera.Scale);
 					x -= (int)(system.StarName.GetWidth() / 2);
-					int y = (int)((((system.Y - camera.CameraY) * 32) + system.Type.Height - camera.YOffset) * camera.Scale);
+					int y = (int)((((system.Y - camera.CameraY) * 32) + system.Sprite.Height - camera.YOffset) * camera.Scale);
 					system.StarName.MoveTo(x, y);
 					if (system.DominantEmpire != null)
 					{
@@ -382,8 +382,8 @@ namespace Beyond_Beyaan.Screens
 				if (Utility.LineRectangleIntersected(gateway.SystemA.X, gateway.SystemA.Y, gateway.SystemB.X, gateway.SystemB.Y, left, top, right, bottom))
 				{
 					//Draw Starlanes first so Star will overlap them
-					int X1 = (int)((((gateway.SystemA.X - camera.CameraX) * 32 + (gateway.SystemA.Type.Width / 2)) - camera.XOffset) * camera.Scale);
-					int Y1 = (int)((((gateway.SystemA.Y - camera.CameraY) * 32 + (gateway.SystemA.Type.Height / 2)) - camera.YOffset) * camera.Scale);
+					int X1 = (int)((((gateway.SystemA.X - camera.CameraX) * 32 + (gateway.SystemA.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
+					int Y1 = (int)((((gateway.SystemA.Y - camera.CameraY) * 32 + (gateway.SystemA.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
 					/*int X2 = (int)(((starlane.SystemB.X - starlane.SystemA.X) * 32) * camera.Scale);
 					int Y2 = (int)(((starlane.SystemB.Y - starlane.SystemA.Y) * 32) * camera.Scale);*/
 
@@ -457,7 +457,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					scale = 0.25f;
 				}
-				system.Sprite.Draw((((((system.X - camera.CameraX) * 32) - camera.XOffset) + system.Type.Width / 2.0f) * camera.Scale), (((((system.Y - camera.CameraY) * 32) - camera.YOffset) + system.Type.Height / 2.0f) * camera.Scale), scale, scale);
+				system.Sprite.Draw((((((system.X - camera.CameraX) * 32) - camera.XOffset) + system.Sprite.Width / 2.0f) * camera.Scale), (((((system.Y - camera.CameraY) * 32) - camera.YOffset) + system.Sprite.Height / 2.0f) * camera.Scale), scale, scale);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 
 				/*if (system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire) && system.GetStargates().Count > 0)
@@ -483,14 +483,14 @@ namespace Beyond_Beyaan.Screens
 				if (currentEmpire != null && system == currentEmpire.SelectedSystem)
 				{
 					drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
-					int max = Math.Max(system.Type.Width, system.Type.Height) + 32;
-					drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)((((system.X - camera.CameraX) * 32) + (system.Type.Width / 2) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) + (system.Type.Height / 2) - camera.YOffset) * camera.Scale), 255, max * scale, max * scale, System.Drawing.Color.White);
+					int max = Math.Max((int)system.Sprite.Width, (int)system.Sprite.Height) + 32;
+					drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)((((system.X - camera.CameraX) * 32) + (system.Sprite.Width / 2) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) + (system.Sprite.Height / 2) - camera.YOffset) * camera.Scale), 255, max * scale, max * scale, System.Drawing.Color.White);
 				}
 				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)))
 				{
-					int x = (int)((((system.X - camera.CameraX) * 32) + (system.Type.Width / 2) - camera.XOffset) * camera.Scale);
+					int x = (int)((((system.X - camera.CameraX) * 32) + (system.Sprite.Width / 2) - camera.XOffset) * camera.Scale);
 					x -= (int)(system.StarName.GetWidth() / 2);
-					int y = (int)((((system.Y - camera.CameraY) * 32) + system.Type.Height - camera.YOffset) * camera.Scale);
+					int y = (int)((((system.Y - camera.CameraY) * 32) + system.Sprite.Height - camera.YOffset) * camera.Scale);
 					system.StarName.MoveTo(x, y);
 					if (system.DominantEmpire != null)
 					{
@@ -568,8 +568,8 @@ namespace Beyond_Beyaan.Screens
 							//X1 = (int)(((selectedFleetGroup.SquadronToSplit.FleetLocation.X - camera.CameraX * 32) - camera.XOffset) * camera.Scale);
 							//Y1 = (int)(((selectedFleetGroup.SquadronToSplit.FleetLocation.Y - camera.CameraY * 32) - camera.YOffset) * camera.Scale);
 
-							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Type.Width / 2)) - camera.XOffset) * camera.Scale);
-							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Type.Height / 2)) - camera.YOffset) * camera.Scale);
+							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
+							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
 
 							movementPath.SetPosition(X1, Y1);
 							movementPath.Width = selectedFleetGroup.Length;
@@ -578,8 +578,8 @@ namespace Beyond_Beyaan.Screens
 						}
 						else
 						{
-							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Type.Width / 2)) - camera.XOffset) * camera.Scale);
-							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Type.Height / 2)) - camera.YOffset) * camera.Scale);
+							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
+							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
 
 							movementPath.SetPosition(X1, Y1);
 							movementPath.Width = (float)starlane.Value.Length;
@@ -611,8 +611,8 @@ namespace Beyond_Beyaan.Screens
 							//X1 = (int)(((selectedFleetGroup.SquadronToSplit.FleetLocation.X - camera.CameraX * 32) - camera.XOffset) * camera.Scale);
 							//Y1 = (int)(((selectedFleetGroup.SquadronToSplit.FleetLocation.Y - camera.CameraY * 32) - camera.YOffset) * camera.Scale);
 
-							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Type.Width / 2)) - camera.XOffset) * camera.Scale);
-							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Type.Height / 2)) - camera.YOffset) * camera.Scale);
+							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
+							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
 
 							movementPath.SetPosition(X1, Y1);
 							movementPath.Width = selectedFleetGroup.TentativeLength;
@@ -621,8 +621,8 @@ namespace Beyond_Beyaan.Screens
 						}
 						else
 						{
-							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Type.Width / 2)) - camera.XOffset) * camera.Scale);
-							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Type.Height / 2)) - camera.YOffset) * camera.Scale);
+							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
+							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
 
 							movementPath.SetPosition(X1, Y1);
 							movementPath.Width = (float)starlane.Value.Length;

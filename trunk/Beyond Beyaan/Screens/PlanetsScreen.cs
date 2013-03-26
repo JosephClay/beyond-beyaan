@@ -640,17 +640,17 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (hoveringSystem != null)
 			{
-				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((hoveringSystem.X + (hoveringSystem.Type.Width / 64)) / (float)gameMain.galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((hoveringSystem.Y + (hoveringSystem.Type.Height / 64)) / (float)gameMain.galaxy.GalaxySize));
+				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((hoveringSystem.X + (hoveringSystem.Sprite.Width / 64)) / gameMain.galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((hoveringSystem.Y + (hoveringSystem.Sprite.Height / 64)) / gameMain.galaxy.GalaxySize));
 				drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
-				drawingManagement.DrawSprite(SpriteName.SelectedStar, x, y, 255, hoveringSystem.Type.Width / 8, hoveringSystem.Type.Height / 8, System.Drawing.Color.White);
+				drawingManagement.DrawSprite(SpriteName.SelectedStar, x, y, 255, hoveringSystem.Sprite.Width / 8, hoveringSystem.Sprite.Height / 8, System.Drawing.Color.White);
 			}
 			else if (selectedSystem != null)
 			{
-				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((selectedSystem.X + (selectedSystem.Type.Width / 64)) / (float)gameMain.galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((selectedSystem.Y + (selectedSystem.Type.Height / 64)) / (float)gameMain.galaxy.GalaxySize));
+				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((selectedSystem.X + (selectedSystem.Sprite.Width / 64)) / gameMain.galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((selectedSystem.Y + (selectedSystem.Sprite.Height / 64)) / gameMain.galaxy.GalaxySize));
 				drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
-				drawingManagement.DrawSprite(SpriteName.SelectedStar, x, y, 255, selectedSystem.Type.Width / 8, selectedSystem.Type.Height / 8, System.Drawing.Color.White);
+				drawingManagement.DrawSprite(SpriteName.SelectedStar, x, y, 255, selectedSystem.Sprite.Width / 8, selectedSystem.Sprite.Height / 8, System.Drawing.Color.White);
 			}
 		}
 	}

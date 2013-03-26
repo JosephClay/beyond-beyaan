@@ -359,10 +359,10 @@ namespace Beyond_Beyaan.Screens
 				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
 			StarSystem systemSelected = availableSystems[selectedSystem];
-			x = xPos + 20 + (276.0f * ((systemSelected.X + (systemSelected.Type.Width / 64)) / (float)gameMain.galaxy.GalaxySize));
-			y = yPos + 290 + (276.0f * ((systemSelected.Y + (systemSelected.Type.Height / 64)) / (float)gameMain.galaxy.GalaxySize));
+			x = xPos + 20 + (276.0f * ((systemSelected.X + (systemSelected.Sprite.Width / 64)) / gameMain.galaxy.GalaxySize));
+			y = yPos + 290 + (276.0f * ((systemSelected.Y + (systemSelected.Sprite.Height / 64)) / gameMain.galaxy.GalaxySize));
 			drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
-			drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)x, (int)y, 255, systemSelected.Type.Width / 8, systemSelected.Type.Height / 8, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)x, (int)y, 255, systemSelected.Sprite.Width / 8, systemSelected.Sprite.Height / 8, System.Drawing.Color.White);
 		}
 	}
 }
