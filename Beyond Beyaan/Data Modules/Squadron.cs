@@ -173,7 +173,7 @@ namespace Beyond_Beyaan
 		{
 			if (travelNodes == null)
 			{
-				FleetLocation = new Point(System.X * 32 + System.Type.Width + 16, System.Y * 32 + 16);
+				FleetLocation = new Point((int)(System.X * 32 + System.Sprite.Width + 16), System.Y * 32 + 16);
 			}
 			else
 			{
@@ -187,19 +187,19 @@ namespace Beyond_Beyaan
 					int y;
 					if (travelNodes[1].Value.SystemA == System)
 					{
-						x = (int)((Math.Cos(travelNodes[1].Value.Angle * (Math.PI / 180)) * LengthTravelled) + (System.X * 32 + (System.Type.Width / 2.0f)));
-						y = (int)((Math.Sin(travelNodes[1].Value.Angle * (Math.PI / 180)) * LengthTravelled) + (System.Y * 32 + (System.Type.Height / 2.0f)));
+						x = (int)((Math.Cos(travelNodes[1].Value.Angle * (Math.PI / 180)) * LengthTravelled) + (System.X * 32 + (System.Sprite.Width / 2.0f)));
+						y = (int)((Math.Sin(travelNodes[1].Value.Angle * (Math.PI / 180)) * LengthTravelled) + (System.Y * 32 + (System.Sprite.Height / 2.0f)));
 						FleetLocation = new Point(x, y);
 					}
 					else
 					{
-						x = (int)((Math.Cos(travelNodes[1].Value.Angle * (Math.PI / 180) + Math.PI) * LengthTravelled) + (System.X * 32 + (System.Type.Width / 2.0f)));
-						y = (int)((Math.Sin(travelNodes[1].Value.Angle * (Math.PI / 180) + Math.PI) * LengthTravelled) + (System.Y * 32 + (System.Type.Height / 2.0f)));
+						x = (int)((Math.Cos(travelNodes[1].Value.Angle * (Math.PI / 180) + Math.PI) * LengthTravelled) + (System.X * 32 + (System.Sprite.Width / 2.0f)));
+						y = (int)((Math.Sin(travelNodes[1].Value.Angle * (Math.PI / 180) + Math.PI) * LengthTravelled) + (System.Y * 32 + (System.Sprite.Height / 2.0f)));
 						FleetLocation = new Point(x, y);
 					}
 
-					x = (travelNodes[1].Key.X * 32 + travelNodes[1].Key.Type.Width / 2) - FleetLocation.X;
-					y = (travelNodes[1].Key.Y * 32 + travelNodes[1].Key.Type.Height / 2) - FleetLocation.Y;
+					x = (int)(travelNodes[1].Key.X * 32 + travelNodes[1].Key.Sprite.Width / 2) - FleetLocation.X;
+					y = (int)(travelNodes[1].Key.Y * 32 + travelNodes[1].Key.Sprite.Height / 2) - FleetLocation.Y;
 					Length = (int)Math.Sqrt((x * x) + (y * y));
 					Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI)) + 180;
 				}
@@ -215,8 +215,8 @@ namespace Beyond_Beyaan
 
 				SetLocation();
 
-				int x = (travelNodes[1].Key.X * 32 + travelNodes[1].Key.Type.Width / 2) - FleetLocation.X;
-				int y = (travelNodes[1].Key.Y * 32 + travelNodes[1].Key.Type.Height / 2) - FleetLocation.Y;
+				int x = (int)(travelNodes[1].Key.X * 32 + travelNodes[1].Key.Sprite.Width / 2) - FleetLocation.X;
+				int y = (int)(travelNodes[1].Key.Y * 32 + travelNodes[1].Key.Sprite.Height / 2) - FleetLocation.Y;
 				Length = (int)Math.Sqrt((x * x) + (y * y));
 				Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI)) + 180;
 			}

@@ -287,8 +287,8 @@ namespace Beyond_Beyaan
 				tentativeNodes = new List<KeyValuePair<StarSystem, Starlane>>(travelNodes.ToArray());
 				tentativeAmount = Utility.CalculatePathCost(tentativeNodes);
 
-				int x = (tentativeNodes[1].Key.X * 32 + tentativeNodes[1].Key.Type.Width / 2) - SelectedSquadron[0].FleetLocation.X;
-				int y = (tentativeNodes[1].Key.Y * 32 + tentativeNodes[1].Key.Type.Height / 2) - SelectedSquadron[0].FleetLocation.Y;
+				int x = (int)(tentativeNodes[1].Key.X * 32 + tentativeNodes[1].Key.Sprite.Width / 2) - SelectedSquadron[0].FleetLocation.X;
+				int y = (int)(tentativeNodes[1].Key.Y * 32 + tentativeNodes[1].Key.Sprite.Height / 2) - SelectedSquadron[0].FleetLocation.Y;
 				TentativeLength = (int)Math.Sqrt((x * x) + (y * y));
 				TentativeAngle = (float)(Math.Atan2(y, x) * (180 / Math.PI)) + 180;
 				return;
@@ -320,8 +320,8 @@ namespace Beyond_Beyaan
 			}
 			else
 			{
-				int x = (tentativeNodes[1].Key.X * 32 + tentativeNodes[1].Key.Type.Width / 2) - SelectedSquadron[0].FleetLocation.X;
-				int y = (tentativeNodes[1].Key.Y * 32 + tentativeNodes[1].Key.Type.Height / 2) - SelectedSquadron[0].FleetLocation.Y;
+				int x = (int)(tentativeNodes[1].Key.X * 32 + tentativeNodes[1].Key.Sprite.Width / 2) - SelectedSquadron[0].FleetLocation.X;
+				int y = (int)(tentativeNodes[1].Key.Y * 32 + tentativeNodes[1].Key.Sprite.Height / 2) - SelectedSquadron[0].FleetLocation.Y;
 				TentativeLength = (int)Math.Sqrt((x * x) + (y * y));
 				TentativeAngle = (float)(Math.Atan2(y, x) * (180 / Math.PI)) + 180;
 			}

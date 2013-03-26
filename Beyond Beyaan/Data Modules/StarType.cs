@@ -17,8 +17,6 @@ namespace Beyond_Beyaan.Data_Modules
 		public string Description { get; set; }
 		public Dictionary<string, int> MaxAmountForSectorType { get; set; }
 		public Dictionary<SectorObjectType, string> SectorObjectTypesInSystem { get; set; }
-		public int Width { get; set; }
-		public int Height { get; set; }
 		#endregion
 
 		public StarType()

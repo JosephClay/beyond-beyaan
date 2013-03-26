@@ -102,7 +102,7 @@ namespace Beyond_Beyaan
 		{
 			foreach (StarSystem starSystem in starSystems)
 			{
-				if (starSystem.X <= point.X && starSystem.X + (starSystem.Type.Width / 32) > point.X && starSystem.Y <= point.Y && starSystem.Y + (starSystem.Type.Height / 32) > point.Y)
+				if (starSystem.X <= point.X && starSystem.X + (starSystem.Sprite.Width / 32) > point.X && starSystem.Y <= point.Y && starSystem.Y + (starSystem.Sprite.Height / 32) > point.Y)
 				{
 					return starSystem;
 				}
