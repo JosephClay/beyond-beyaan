@@ -394,7 +394,7 @@ namespace Beyond_Beyaan.Screens
 						//starlaneSprite.Height = 5 * camera.Scale;
 						starlaneSprite.Rotation = gateway.Angle;
 						starlaneSprite.Color = gateway.Type.GatewayColor;
-						//starlaneSprite.Draw();
+						starlaneSprite.Draw();
 						//Draw the line
 						//drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.White);
 						//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.DimGray);

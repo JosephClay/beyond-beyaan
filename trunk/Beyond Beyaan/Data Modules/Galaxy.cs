@@ -198,150 +198,6 @@ namespace Beyond_Beyaan
 						} break;
 				}
 			}
-
-			/*StarSystem[][] systemGrid = new StarSystem[GalaxySize][];
-			for (int i = 0; i < GalaxySize; i++)
-			{
-				systemGrid[i] = new StarSystem[GalaxySize];
-				for (int j = 0; j < GalaxySize; j++)
-				{
-					double distance = double.MaxValue;
-					StarSystem closestSystem = null;
-					foreach (StarSystem system in starSystems)
-					{
-						if (!system.Type.Inhabitable)
-						{
-							continue;
-						}
-						double value = Math.Sqrt((system.X - i) * (system.X - i) + (system.Y - j) * (system.Y - j));
-						if (value < distance)
-						{
-							distance = value;
-							closestSystem = system;
-						}
-					}
-					if (closestSystem != null)
-					{
-						systemGrid[i][j] = closestSystem;
-					}
-				}
-			}
-
-			for (int i = 0; i < GalaxySize; i++)
-			{
-				for (int j = 0; j < GalaxySize; j++)
-				{
-					if (i > 0) //so we don't go out of bounds
-					{
-						if (systemGrid[i - 1][j] != systemGrid[i][j]) //it's an adjacent star
-						{
-							AddStarlane(systemGrid[i][j], systemGrid[i - 1][j], 1);
-						}
-					}
-					if (i < GalaxySize - 1) //so we don't go out of bounds
-					{
-						if (systemGrid[i + 1][j] != systemGrid[i][j]) //it's an adjacent star
-						{
-							AddStarlane(systemGrid[i][j], systemGrid[i + 1][j], 1);
-						}
-					}
-					if (j > 0) //so we don't go out of bounds
-					{
-						if (systemGrid[i][j - 1] != systemGrid[i][j]) //it's an adjacent star
-						{
-							AddStarlane(systemGrid[i][j], systemGrid[i][j - 1], 1);
-						}
-					}
-					if (j < GalaxySize - 1) //so we don't go out of bounds
-					{
-						if (systemGrid[i][j + 1] != systemGrid[i][j]) //it's an adjacent star
-						{
-							AddStarlane(systemGrid[i][j], systemGrid[i][j + 1], 1);
-						}
-					}
-				}
-			}
-
-			//Go through minimum spanning tree
-			//Pick a random starting star
-			Random r = new Random();
-			StarSystem rootNode = starSystems[r.Next(starSystems.Count)];
-			while (!rootNode.Type.Inhabitable)
-			{
-				rootNode = starSystems[r.Next(starSystems.Count)];
-			}
-			int count = 0;
-			foreach (StarSystem system in starSystems)
-			{
-				if (system.Type.Inhabitable)
-				{
-					count++;
-				}
-			}
-			List<StarSystem> processedSystems = new List<StarSystem>(new[] { rootNode });
-			int starlanesActivated = 0;
-			while (processedSystems.Count < count)
-			{
-				double length = double.MaxValue;
-				Starlane currentLane = null;
-
-				foreach (Starlane starlane in Starlanes)
-				{
-					if (((processedSystems.Contains(starlane.SystemA) && !processedSystems.Contains(starlane.SystemB)) ||
-						(!processedSystems.Contains(starlane.SystemA) && processedSystems.Contains(starlane.SystemB))) && starlane.Length < length)
-					{
-						currentLane = starlane;
-						length = starlane.Length;
-					}
-				}
-
-				if (currentLane != null)
-				{
-					currentLane.Visible = true;
-					if (!processedSystems.Contains(currentLane.SystemA))
-					{
-						processedSystems.Add(currentLane.SystemA);
-					}
-					else
-					{
-						processedSystems.Add(currentLane.SystemB);
-					}
-					starlanesActivated++;
-				}
-			}
-			int percentage = (int)((Starlanes.Count - starlanesActivated) * 0.20);
-			for (int i = 0; i < percentage; i++)
-			{
-				int laneToActivate = r.Next(Starlanes.Count);
-				while (Starlanes[laneToActivate].Visible)
-				{
-					laneToActivate = r.Next(Starlanes.Count);
-				}
-				Starlanes[laneToActivate].Visible = true;
-			}
-			List<Starlane> starlanesToRemove = new List<Starlane>();
-			for (int i = 0; i < Starlanes.Count; i++)
-			{
-				if (!Starlanes[i].Visible)
-				{
-					starlanesToRemove.Add(Starlanes[i]);
-				}
-			}
-			foreach (Starlane starlaneToRemove in starlanesToRemove)
-			{
-				starlaneToRemove.SystemA.Starlanes.Remove(starlaneToRemove);
-				starlaneToRemove.SystemB.Starlanes.Remove(starlaneToRemove);
-				Starlanes.Remove(starlaneToRemove);
-			}
-		}
-
-		for (int i = 0; i < starSystems.Count; i++)
-		{
-			for (int j = i + 1; j < starSystems.Count; j++)
-			{
-				AddInvisibleStarlane(starSystems[i], starSystems[j], 5);
-			}
-		}*/
 		}
 
 		#region Connecting Functions
@@ -599,11 +455,127 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-			while (true)
+			StarSystem[][] grid = new StarSystem[GalaxySize][];
+			for (int i = 0; i < GalaxySize; i++)
 			{
-				//Randomly pick a starting star
-				StarSystem system = systemsWithType[r.Next(systemsWithType.Count)];
+				grid[i] = new StarSystem[GalaxySize];
+				for (int j = 0; j < GalaxySize; j++)
+				{
+					long distance = long.MaxValue;
+					StarSystem closestSystem = null;
+					foreach (StarSystem system in systemsWithType)
+					{
+						long value = (system.X - i)*(system.X - i) + (system.Y - j)*(system.Y - j);
+						if (value < distance)
+						{
+							closestSystem = system;
+							distance = value;
+						}
+					}
+					grid[i][j] = closestSystem;
+				}
 			}
+			
+			List<Gateway> possibleGateways = new List<Gateway>();
+			for (int i = 0; i < GalaxySize; i++)
+			{
+				for (int j = 0; j < GalaxySize; j++)
+				{
+					if (i > 0) //so we don't go out of bounds
+					{
+						if (grid[i - 1][j] != grid[i][j] && !ContainsPossibleGatewayAlready(grid[i - 1][j], grid[i][j], possibleGateways)) //it's an adjacent star
+						{
+							possibleGateways.Add(new Gateway(type, grid[i - 1][j], grid[i][j]));
+						}
+					}
+					if (i < GalaxySize - 1) //so we don't go out of bounds
+					{
+						if (grid[i + 1][j] != grid[i][j] && !ContainsPossibleGatewayAlready(grid[i + 1][j], grid[i][j], possibleGateways)) //it's an adjacent star
+						{
+							possibleGateways.Add(new Gateway(type, grid[i + 1][j], grid[i][j]));
+						}
+					}
+					if (j > 0) //so we don't go out of bounds
+					{
+						if (grid[i][j - 1] != grid[i][j] && !ContainsPossibleGatewayAlready(grid[i][j - 1], grid[i][j], possibleGateways)) //it's an adjacent star
+						{
+							possibleGateways.Add(new Gateway(type, grid[i][j - 1], grid[i][j]));
+						}
+					}
+					if (j < GalaxySize - 1) //so we don't go out of bounds
+					{
+						if (grid[i][j + 1] != grid[i][j] && !ContainsPossibleGatewayAlready(grid[i][j + 1], grid[i][j], possibleGateways)) //it's an adjacent star
+						{
+							possibleGateways.Add(new Gateway(type, grid[i][j + 1], grid[i][j]));
+						}
+					}
+				}
+			}
+			possibleGateways.Sort((a, b) => { return a.Length.CompareTo(b.Length); });
+			foreach (var possibleGateway in possibleGateways)
+			{
+				SectorObject sectorObjectA = null;
+				SectorObject sectorObjectB = null;
+				bool isConnected = false;
+				foreach (SectorObject sectorObject in possibleGateway.SystemA.SectorObjects)
+				{
+					if (sectorObject.Type != type)
+					{
+						continue;
+					}
+					if (sectorObject.ConnectsTo != null)
+					{
+						if (sectorObject.ConnectsTo == possibleGateway.SystemB)
+						{
+							isConnected = true;
+							break;
+						}
+					}
+					else
+					{
+						sectorObjectA = sectorObject;
+						break;
+					}
+				}
+				foreach (SectorObject sectorObject in possibleGateway.SystemB.SectorObjects)
+				{
+					if (sectorObject.Type != type)
+					{
+						continue;
+					}
+					if (sectorObject.ConnectsTo != null)
+					{
+						if (sectorObject.ConnectsTo == possibleGateway.SystemA)
+						{
+							isConnected = true;
+							break;
+						}
+					}
+					else
+					{
+						sectorObjectB = sectorObject;
+						break;
+					}
+				}
+				if (sectorObjectA != null && sectorObjectB != null && !isConnected)
+				{
+					sectorObjectA.ConnectsTo = possibleGateway.SystemB;
+					sectorObjectB.ConnectsTo = possibleGateway.SystemA;
+					Gateways.Add(possibleGateway);
+				}
+			}
+		}
+		private static bool ContainsPossibleGatewayAlready(StarSystem a, StarSystem b, List<Gateway> possibleGateways)
+		{
+			foreach (var gateway in possibleGateways)
+			{
+				if ((gateway.SystemA == a && gateway.SystemB == b) ||
+				    (gateway.SystemB == a && gateway.SystemA == b))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 		#endregion
 		/*private void ConvertNebulaToSprite()

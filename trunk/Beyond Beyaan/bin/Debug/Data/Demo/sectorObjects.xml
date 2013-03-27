@@ -185,7 +185,7 @@
       isGateway="true"
       gatewayColor="255,255,255"
       connectsToAnother="true"
-      connectionAlgorithm="closest"
+      connectionAlgorithm="minimum"
       description="After many years of frequent travel by ships, the space between stars developed a &quot;groove&quot; which is similar to wormholes, but are weakly present.  They make distances shorter for traveling ships." />
   </Starlanes>
   <Wormholes>
