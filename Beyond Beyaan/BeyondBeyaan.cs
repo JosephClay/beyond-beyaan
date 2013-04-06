@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using Beyond_Beyaan.Properties;
 using Drawing = System.Drawing;
@@ -24,10 +26,73 @@ namespace Beyond_Beyaan
 		{
 			base.OnLoad(e);
 
+			List<DirectoryInfo> dataSets = new List<DirectoryInfo>();
+			try
+			{
+				//Check to see if there's data in program directory that's not copied to general application data folder
+				DirectoryInfo di = new DirectoryInfo(Path.Combine(Application.StartupPath, "Data"));
+				DirectoryInfo target = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Beyond Beyaan"));
+				if (!target.Exists)
+				{
+					target.Create();
+				}
+				foreach (var directory in di.GetDirectories())
+				{
+					if (File.Exists(Path.Combine(directory.FullName, "config.xml")) &&
+					    !Directory.Exists(Path.Combine(target.FullName, directory.Name)))
+					{
+						CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
+					}
+				}
+				//Get list of available datasets from general application data folder
+				foreach (var directory in target.GetDirectories())
+				{
+					//Sanity check to ensure that it's a valid dataset
+					if (File.Exists(Path.Combine(directory.FullName, "config.xml")))
+					{
+						dataSets.Add(directory);
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				MessageBox.Show("Failed to copy directories.  Error: " + exception.Message);
+				Close();
+				return;
+			}
+			if (dataSets.Count == 0)
+			{
+				MessageBox.Show("There are no available datasets to choose from.  Ensure that the program is installed correctly.");
+				Close();
+				return;
+			}
+
+			dataSets.Sort((a, b) => a.Name.CompareTo(b.Name));
+
 			try
 			{
 				Gorgon.Initialize(true, false);
-				Gorgon.SetMode(this, 1024, 768, BackBufferFormats.BufferRGB888, true);
+
+				VideoMode videoMode;
+				DirectoryInfo dataset;
+				bool fullScreen;
+
+				using (Configuration configuration = new Configuration())
+				{
+					configuration.FillResolutionList();
+					configuration.FillDatasetList(dataSets);
+					configuration.ShowDialog(this);
+					if (configuration.DialogResult != DialogResult.OK)
+					{
+						Close();
+						return;
+					}
+					videoMode = configuration.VideoMode;
+					fullScreen = configuration.FullScreen;
+					dataset = dataSets[configuration.DataSetIndex];
+				}
+
+				Gorgon.SetMode(this, videoMode.Width, videoMode.Height, BackBufferFormats.BufferRGB888, !fullScreen);
 				
 				Gorgon.Idle += Gorgon_Idle;
 				Gorgon.DeviceReset += Gorgon_DeviceReset;
@@ -59,6 +124,22 @@ namespace Beyond_Beyaan
 			catch (Exception exception)
 			{
 				MessageBox.Show(exception.Message);
+			}
+		}
+
+		private void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
+		{
+			if (!target.Exists)
+			{
+				target.Create();
+			}
+			foreach (var file in source.GetFiles())
+			{
+				file.CopyTo(Path.Combine(target.FullName, file.Name));
+			}
+			foreach (var directory in source.GetDirectories())
+			{
+				CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
 			}
 		}
 
