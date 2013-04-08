@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
@@ -16,24 +17,34 @@ namespace Beyond_Beyaan.Data_Managers
 			particleNames = new List<string>();
 		}
 
-		public bool Initialize(string dataDirectory, string graphicDirectory)
+		public bool Initialize(string dataDirectory, string graphicDirectory, out string reason)
 		{
-			XDocument doc = XDocument.Load(Path.Combine(dataDirectory, "particles.xml"));
-			XElement root = doc.Element("Particles");
-
-			//GorgonLibrary.Graphics.Sprite particleGraphic = new GorgonLibrary.Graphics.Sprite("MainParticleGraphic", GorgonLibrary.Graphics.Image.FromFile(Path.Combine(graphicDirectory, "particles.png")));
-
-			foreach (XElement element in root.Elements())
+			try
 			{
-				string name = element.Attribute("name").Value;
-				if (particleNames.Contains(name))
+				XDocument doc = XDocument.Load(Path.Combine(dataDirectory, "particles.xml"));
+				XElement root = doc.Element("Particles");
+
+				//GorgonLibrary.Graphics.Sprite particleGraphic = new GorgonLibrary.Graphics.Sprite("MainParticleGraphic", GorgonLibrary.Graphics.Image.FromFile(Path.Combine(graphicDirectory, "particles.png")));
+
+				foreach (XElement element in root.Elements())
 				{
-					return false;
+					string name = element.Attribute("name").Value;
+					if (particleNames.Contains(name))
+					{
+						reason = "Duplicate particle name: " + name;
+						return false;
+					}
+					particleNames.Add(name);
+					Particle particle = new Particle(element, graphicDirectory, Path.Combine(Path.Combine(dataDirectory, "Scripts"), "Particle"));
+					particles.Add(particle);
 				}
-				particleNames.Add(name);
-				Particle particle = new Particle(element, graphicDirectory, Path.Combine(Path.Combine(dataDirectory, "Scripts"), "Particle"));
-				particles.Add(particle);
 			}
+			catch (Exception e)
+			{
+				reason = e.Message;
+				return false;
+			}
+			reason = null;
 			return true;
 		}
 

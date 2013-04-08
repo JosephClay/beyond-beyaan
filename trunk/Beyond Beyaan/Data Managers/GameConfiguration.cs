@@ -17,11 +17,11 @@ namespace Beyond_Beyaan.Data_Managers
 
 				foreach (XAttribute attribute in root.Attributes())
 				{
-					switch (attribute.Name.ToString().ToLower())
+					/*switch (attribute.Name.ToString().ToLower())
 					{
 						case "showtutorial": ShowTutorial = bool.Parse(attribute.Value);
 							break;
-					}
+					}*/
 				}
 			}
 			catch (Exception e)

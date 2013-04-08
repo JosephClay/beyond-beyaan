@@ -339,7 +339,7 @@ namespace Beyond_Beyaan.Screens
 					{
 						if (player.race == null)
 						{
-							player.race = gameMain.raceManager.Races[r.Next(gameMain.raceManager.Races.Count)];
+							player.race = gameMain.RaceManager.Races[r.Next(gameMain.RaceManager.Races.Count)];
 							if (string.IsNullOrEmpty(player.empireName))
 							{
 								player.empireName = player.race.GetRandomEmperorName();
@@ -352,7 +352,7 @@ namespace Beyond_Beyaan.Screens
 						//List<Sector> ownedSectors;
 						//List<StarSystem> startingSystems = gameMain.galaxy.SetStartingSystems(empire, gameMain.planetTypeManager, gameMain.regionTypeManager, gameMain.resourceManager, out ownedSectors);
 						//empire.SetHomeSystem(startingSystems, ownedSectors);
-						empire.TechnologyManager.AddTechnologies(gameMain.masterTechnologyList.GetRandomizedTechnologies(empire.EmpireRace));
+						empire.TechnologyManager.AddTechnologies(gameMain.MasterTechnologyList.GetRandomizedTechnologies(empire.EmpireRace));
 						empire.TechnologyManager.SetInitialBracket(0, 5, empire.ItemManager);
 						//empire.SetStartingFleets(startingSystems, gameMain.masterTechnologyList, gameMain.iconManager);
 						//empire.RefreshEconomy();

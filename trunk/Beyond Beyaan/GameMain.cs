@@ -36,26 +36,23 @@ namespace Beyond_Beyaan
 		internal TaskBar taskBar;
 		internal Galaxy galaxy;
 		internal EmpireManager empireManager;
-		internal RaceManager raceManager;
-		internal ParticleManager particleManager;
-		internal EffectManager effectManager;
-		internal SectorTypeManager sectorTypeManager;
-		internal PlanetTypeManager planetTypeManager;
-		internal RegionTypeManager regionTypeManager;
-		internal StarTypeManager starTypeManager;
-		internal IconManager iconManager;
-		internal ResourceManager resourceManager;
+		internal RaceManager RaceManager;
+		internal ParticleManager ParticleManager;
+		internal EffectManager EffectManager;
+		internal SectorTypeManager SectorTypeManager;
+		internal PlanetTypeManager PlanetTypeManager;
+		internal RegionTypeManager RegionTypeManager;
+		internal StarTypeManager StarTypeManager;
+		internal IconManager IconManager;
+		internal ResourceManager ResourceManager;
 		internal AIManager aiManager;
-		internal ShipScriptManager shipScriptManager;
-		internal MasterItemManager masterItemManager;
-		internal MasterTechnologyList masterTechnologyList;
+		internal ShipScriptManager ShipScriptManager;
+		internal MasterItemManager MasterItemManager;
+		internal MasterTechnologyList MasterTechnologyList;
 		internal int ScreenWidth;
 		internal int ScreenHeight;
 		internal GorgonLibrary.Graphics.FXShader ShipShader;
-		internal GorgonLibrary.Graphics.FXShader RegionShader;
-		//internal GorgonLibrary.Graphics.FXShader StarShader;
-		//internal GorgonLibrary.Graphics.FXShader BGStarShader;
-		internal string GameDataSet;
+		internal DirectoryInfo GameDataSet;
 		internal Random r;
 		internal Input Input;
 		internal Point MousePos;
@@ -65,7 +62,7 @@ namespace Beyond_Beyaan
 
 		internal int Turn { get; private set; }
 
-		public bool Initalize(int screenWidth, int screenHeight, Form parentForm, out string reason)
+		public bool Initalize(int screenWidth, int screenHeight, DirectoryInfo dataSet, bool showTutorial, Form parentForm, out string reason)
 		{
 			MousePos = new Point();
 
@@ -75,172 +72,94 @@ namespace Beyond_Beyaan
 			reason = string.Empty;
 			ScreenWidth = screenWidth;
 			ScreenHeight = screenHeight;
+			GameDataSet = dataSet;
+
+			DirectoryInfo graphicDirectory = new DirectoryInfo(Path.Combine(GameDataSet.FullName, "graphics"));
+
+			if (!GameConfiguration.LoadConfiguration(Path.Combine(GameDataSet.FullName, "config.xml"), out reason))
+			{
+				return false;
+			}
+			GameConfiguration.ShowTutorial = showTutorial;
+			SpriteManager = new SpriteManager();
+			IconManager = new IconManager();
+			ResourceManager = new ResourceManager();
+			MasterItemManager = new MasterItemManager();
+			MasterTechnologyList = new MasterTechnologyList();
+			ShipScriptManager = new ShipScriptManager();
+			RaceManager = new RaceManager();
+			PlanetTypeManager = new PlanetTypeManager();
+			RegionTypeManager = new RegionTypeManager();
+			StarTypeManager = new StarTypeManager();
+			ParticleManager = new ParticleManager();
+			EffectManager = new EffectManager();
+			DrawingManagement = new DrawingManagement();
+
+			if (!SpriteManager.LoadSprites(GameDataSet, graphicDirectory, out reason))
+			{
+				return false;
+			}
+			if (!DrawingManagement.LoadGraphics(graphicDirectory.FullName, out reason))
+			{
+				return false;
+			}
+			if (!LoadTutorial(Path.Combine(GameDataSet.FullName, "tutorial.xml"), out reason))
+			{
+				return false;
+			}
+			if (!IconManager.Initialize(GameDataSet.FullName, graphicDirectory.FullName, out reason))
+			{
+				return false;
+			}
+			if (!ResourceManager.Initialize(GameDataSet.FullName, IconManager, out reason))
+			{
+				return false;
+			}
+			if (!MasterItemManager.Initialize(GameDataSet, out reason))
+			{
+				return false;
+			}
+			if (!MasterTechnologyList.LoadTechnologies(GameDataSet.FullName, ResourceManager, MasterItemManager, out reason))
+			{
+				return false;
+			}
+			if (!ShipScriptManager.LoadShipScripts(Path.Combine(Path.Combine(GameDataSet.FullName, "Scripts"), "Ship"), out reason))
+			{
+				return false;
+			}
+			if (!RaceManager.LoadRaces(GameDataSet.FullName, graphicDirectory.FullName, MasterTechnologyList, ShipScriptManager, Path.Combine(Path.Combine(GameDataSet.FullName, "Scripts"), "Technology"), IconManager, ResourceManager, out reason))
+			{
+				return false;
+			}
+			if (!SectorTypeManager.LoadSectorTypes(Path.Combine(GameDataSet.FullName, "sectorObjects.xml"), this, out reason))
+			{
+				return false;
+			}
+			if (!PlanetTypeManager.LoadPlanetTypes(Path.Combine(GameDataSet.FullName, "planets.xml"), Path.Combine(graphicDirectory.FullName, "planets.png"), graphicDirectory.FullName, this, out reason))
+			{
+				return false;
+			}
+			if (!RegionTypeManager.LoadRegionTypes(Path.Combine(GameDataSet.FullName, "regions.xml"), this, out reason))
+			{
+				return false;
+			}
+			if (!StarTypeManager.LoadStarTypes(Path.Combine(GameDataSet.FullName, "stars.xml"), Path.Combine(graphicDirectory.FullName, "stars.png"), Path.Combine(GameDataSet.FullName, "shaders"), SectorTypeManager, this, out reason))
+			{
+				return false;
+			}
+			if (!ParticleManager.Initialize(GameDataSet.FullName, graphicDirectory.FullName, out reason))
+			{
+				return false;
+			}
+			if (!EffectManager.Initialize(GameDataSet.FullName, out reason))
+			{
+				return false;
+			}
 
 			ChangeToScreen(Screen.MainMenu);
 			//StarShader = GorgonLibrary.Graphics.FXShader.FromFile("StarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			//BGStarShader = GorgonLibrary.Graphics.FXShader.FromFile("BGStarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			return true;
-		}
-
-		public void ClearAll()
-		{
-			logFilePath = Path.Combine(Path.GetTempPath(), "Beyond Beyaan");
-			if (!Directory.Exists(logFilePath))
-			{
-				try
-				{
-					Directory.CreateDirectory(logFilePath);
-				}
-				catch
-				{
-					logFilePath = string.Empty;
-				}
-			}
-			//Used when exiting back to main menu, need to clear all memory
-			if (!string.IsNullOrEmpty(logFilePath))
-			{
-				logFilePath = Path.Combine(logFilePath, "loading.log");
-				try
-				{
-					if (File.Exists(logFilePath))
-					{
-						File.Delete(logFilePath);
-					}
-				}
-				catch
-				{ }
-			}
-			SpriteManager = new SpriteManager();
-			taskBar = null;
-			empireManager = new EmpireManager();
-			playerSetup = null;
-			galaxySetup = null;
-			aiManager = new AIManager();
-			shipScriptManager = new ShipScriptManager();
-			galaxyScreen = null;
-			inGameMenu = null;
-			masterItemManager = new MasterItemManager();
-			masterTechnologyList = new MasterTechnologyList();
-			starTypeManager = new StarTypeManager();
-			sectorTypeManager = new SectorTypeManager();
-			planetTypeManager = new PlanetTypeManager();
-			regionTypeManager = new RegionTypeManager();
-			particleManager = new ParticleManager();
-			effectManager = new EffectManager();
-			iconManager = new IconManager();
-			resourceManager = new ResourceManager();
-			invadeScreen = null;
-			tutorialWindow = null;
-			colonizeScreen = null;
-			spaceCombat = null;
-			galaxy = new Galaxy();
-			situationReport = new SituationReport();
-			raceManager = null;
-			researchScreen = null;
-			productionScreen = null;
-			processingTurnScreen = null;
-			planetsScreen = null;
-			fleetListScreen = null;
-			diplomacyScreen = null;
-			designScreen = null;
-			mainGameMenu = null;
-		}
-
-		public void LoadOrRefreshGame()
-		{
-			if (planetTypeManager == null)
-			{
-				planetTypeManager = new PlanetTypeManager();
-			}
-			if (sectorTypeManager == null)
-			{
-				sectorTypeManager = new SectorTypeManager();
-			}
-
-			if (regionTypeManager == null)
-			{
-				regionTypeManager = new RegionTypeManager();
-			}
-
-			if (starTypeManager == null)
-			{
-				starTypeManager = new StarTypeManager();
-			}
-
-			if (masterItemManager == null)
-			{
-				masterItemManager = new MasterItemManager();
-			}
-
-			if (masterTechnologyList == null)
-			{
-				masterTechnologyList = new MasterTechnologyList();
-			}
-
-			if (particleManager == null)
-			{
-				particleManager = new ParticleManager();
-			}
-			if (effectManager == null)
-			{
-				effectManager = new EffectManager();
-			}
-
-			if (DrawingManagement == null)
-			{
-				DrawingManagement = new DrawingManagement();
-			}
-			if (SpriteManager == null)
-			{
-				SpriteManager = new SpriteManager();
-			}
-			galaxy = new Galaxy();
-			empireManager = new EmpireManager();
-
-			if (mainGameMenu == null)
-			{
-				mainGameMenu = new MainGameMenu();
-				mainGameMenu.Initialize(this);
-			}
-
-			screenInterface = mainGameMenu;
-			currentScreen = Screen.MainMenu;
-
-			if (taskBar == null)
-			{
-				taskBar = new TaskBar(this);
-			}
-			if (situationReport == null)
-			{
-				situationReport = new SituationReport();
-				situationReport.Initialize(this);
-			}
-			if (tutorialWindow == null)
-			{
-				tutorialWindow = new TutorialWindow(this, DrawingManagement.GetFont("Computer"));
-			}
-
-			if (aiManager == null)
-			{
-				aiManager = new AIManager();
-			}
-			if (shipScriptManager == null)
-			{
-				shipScriptManager = new ShipScriptManager();
-			}
-			if (iconManager == null)
-			{
-				iconManager = new IconManager();
-			}
-			if (resourceManager == null)
-			{
-				resourceManager = new ResourceManager();
-			}
-
-			if (ShipShader == null)
-			{
-				ShipShader = GorgonLibrary.Graphics.FXShader.FromFile("ColorShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
-			}
 		}
 
 		public void Resize(int screenWidth, int screenHeight)
@@ -431,7 +350,6 @@ namespace Beyond_Beyaan
 			switch (whichScreen)
 			{
 				case Screen.MainMenu: //Any way we get here means everything needs to be cleared out
-					ClearAll();
 					this.DrawingManagement = new DrawingManagement();
 					mainGameMenu = new MainGameMenu();
 					mainGameMenu.Initialize(this);

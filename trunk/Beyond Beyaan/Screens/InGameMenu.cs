@@ -61,11 +61,9 @@ namespace Beyond_Beyaan.Screens
 					switch (i)
 					{
 						case 0:
-							gameMain.LoadOrRefreshGame();
 							gameMain.ChangeToScreen(Screen.GalaxySetup);
 							break;
 						case 4:
-							gameMain.ClearAll();
 							gameMain.ChangeToScreen(Screen.MainMenu);
 							break;
 					}
