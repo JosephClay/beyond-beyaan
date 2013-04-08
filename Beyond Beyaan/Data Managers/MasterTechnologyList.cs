@@ -11,26 +11,37 @@ namespace Beyond_Beyaan.Data_Managers
 		private List<TechnologyItem> technologies;
 		private List<string> technologyNames; //This is to ensure that no two technologies have the same name
 
-		public void ResetAll()
+		public MasterTechnologyList()
 		{
 			technologyNames = new List<string>();
 			technologies = new List<TechnologyItem>();
 		}
 
-		public void LoadTechnologies(string filePath, ResourceManager resourceManager, MasterItemManager masterItemManager)
+		public bool LoadTechnologies(string filePath, ResourceManager resourceManager, MasterItemManager masterItemManager, out string reason)
 		{
-			XDocument doc = XDocument.Load(Path.Combine(filePath, "technologies.xml"));
-			XElement root = doc.Element("Technologies");
-			foreach (XElement element in root.Elements())
+			try
 			{
-				TechnologyItem item = new TechnologyItem(element, resourceManager, masterItemManager);
-				if (technologyNames.Contains(item.Name))
+				XDocument doc = XDocument.Load(Path.Combine(filePath, "technologies.xml"));
+				XElement root = doc.Element("Technologies");
+				foreach (XElement element in root.Elements())
 				{
-					throw new Exception("Duplicate Technology Name: " + item.Name);
+					TechnologyItem item = new TechnologyItem(element, resourceManager, masterItemManager);
+					if (technologyNames.Contains(item.Name))
+					{
+						throw new Exception("Duplicate Technology Name: " + item.Name);
+					}
+					technologyNames.Add(item.Name);
+					technologies.Add(item);
 				}
-				technologyNames.Add(item.Name);
-				technologies.Add(item);
 			}
+			catch (Exception e)
+			{
+				reason = e.Message;
+				return false;
+			}
+			reason = null;
+			return true;
+			
 		}
 
 		/*public void ValidateEquipment(string mainItem, string mountItem, List<string> modifiers, Race whichRace)

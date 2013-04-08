@@ -234,7 +234,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					vars[key] = ((NumericUpDown)uiElements[key]).Value.ToString();
 				}
-				gameMain.galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.starTypeManager, gameMain.sectorTypeManager, gameMain.SpriteManager);
+				gameMain.galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.StarTypeManager, gameMain.SectorTypeManager, gameMain.SpriteManager);
 				if (gameMain.galaxy.GetAllStars().Count > 0)
 				{
 					nextScreen.Active = true;

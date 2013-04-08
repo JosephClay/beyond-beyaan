@@ -13,68 +13,78 @@ namespace Beyond_Beyaan.Data_Managers
 	{
 		private Dictionary<string, RegionType> regionTypes;
 
-		public void LoadRegionTypes(string filePath, GameMain gameMain)
+		public bool LoadRegionTypes(string filePath, GameMain gameMain, out string reason)
 		{
-			regionTypes = new Dictionary<string, RegionType>();
-
-			gameMain.Log(string.Empty);
-			gameMain.Log("Loading PlanetTypes from " + filePath);
-
-			XDocument doc = XDocument.Load(filePath);
-			gameMain.Log("Getting \"RegionData\" Element");
-			XElement root = doc.Element("RegionData");
-
-			XElement regions = root.Element("Regions");
-
-			foreach (XElement element in regions.Elements())
+			try
 			{
+				regionTypes = new Dictionary<string, RegionType>();
+
 				gameMain.Log(string.Empty);
-				RegionType regionType = new RegionType();
-				regionType.RegionTypeName = element.Attribute("name").Value;
-				regionType.Color = new float[3];
-				string[] color = element.Attribute("color").Value.Split(new[] { ',' });
-				for (int i = 0; i < 3; i++)
+				gameMain.Log("Loading PlanetTypes from " + filePath);
+
+				XDocument doc = XDocument.Load(filePath);
+				gameMain.Log("Getting \"RegionData\" Element");
+				XElement root = doc.Element("RegionData");
+
+				XElement regions = root.Element("Regions");
+
+				foreach (XElement element in regions.Elements())
 				{
-                    regionType.Color[i] = float.Parse(color[i], CultureInfo.InvariantCulture);
-				}
-				if (element.Attribute("produces") != null)
-				{
-					string[] values = element.Attribute("produces").Value.Split(new[] { '|' });
-					foreach (string value in values)
+					gameMain.Log(string.Empty);
+					RegionType regionType = new RegionType();
+					regionType.RegionTypeName = element.Attribute("name").Value;
+					regionType.Color = new float[3];
+					string[] color = element.Attribute("color").Value.Split(new[] { ',' });
+					for (int i = 0; i < 3; i++)
 					{
-						string[] split = value.Split(new[] { ',' });
-						if (split.Length == 2)
+						regionType.Color[i] = float.Parse(color[i], CultureInfo.InvariantCulture);
+					}
+					if (element.Attribute("produces") != null)
+					{
+						string[] values = element.Attribute("produces").Value.Split(new[] { '|' });
+						foreach (string value in values)
 						{
-							regionType.Productions.Add(gameMain.resourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
+							string[] split = value.Split(new[] { ',' });
+							if (split.Length == 2)
+							{
+								regionType.Productions.Add(gameMain.ResourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
+							}
 						}
 					}
-				}
-				if (element.Attribute("consumes") != null)
-				{
-					string[] values = element.Attribute("consumes").Value.Split(new[] { '|' });
-					foreach (string value in values)
+					if (element.Attribute("consumes") != null)
 					{
-						string[] split = value.Split(new[] { ',' });
-						if (split.Length == 2)
+						string[] values = element.Attribute("consumes").Value.Split(new[] { '|' });
+						foreach (string value in values)
 						{
-                            regionType.Consumptions.Add(gameMain.resourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
+							string[] split = value.Split(new[] { ',' });
+							if (split.Length == 2)
+							{
+								regionType.Consumptions.Add(gameMain.ResourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
+							}
 						}
 					}
-				}
-				if (element.Attribute("cost") != null)
-				{
-					string[] values = element.Attribute("cost").Value.Split(new[] { '|' });
-					foreach (string value in values)
+					if (element.Attribute("cost") != null)
 					{
-						string[] split = value.Split(new[] { ',' });
-						if (split.Length == 2)
+						string[] values = element.Attribute("cost").Value.Split(new[] { '|' });
+						foreach (string value in values)
 						{
-							regionType.DevelopmentCost.Add(gameMain.resourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
+							string[] split = value.Split(new[] { ',' });
+							if (split.Length == 2)
+							{
+								regionType.DevelopmentCost.Add(gameMain.ResourceManager.GetResource(split[0]), float.Parse(split[1], CultureInfo.InvariantCulture));
+							}
 						}
 					}
+					regionTypes.Add(regionType.RegionTypeName, regionType);
 				}
-				regionTypes.Add(regionType.RegionTypeName, regionType);
 			}
+			catch (Exception e)
+			{
+				reason = e.Message;
+				return false;
+			}
+			reason = null;
+			return true;
 		}
 
 		public RegionType GetRegionType(string regionType)

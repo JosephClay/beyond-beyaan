@@ -96,7 +96,7 @@ namespace Beyond_Beyaan.Screens
 						break;
 					case 1:
 						Random r = new Random();
-						gameMain.empireManager.UpdateEmpires(gameMain.galaxy, gameMain.planetTypeManager, r);
+						gameMain.empireManager.UpdateEmpires(gameMain.galaxy, gameMain.PlanetTypeManager, r);
 						updateText.SetText("Processing Influences");
 						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;

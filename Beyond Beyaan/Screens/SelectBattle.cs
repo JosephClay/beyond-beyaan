@@ -119,9 +119,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadBattles()
 		{
-			path = Path.Combine(Environment.CurrentDirectory, "Data");
-			path = Path.Combine(path, gameMain.GameDataSet);
-			path = Path.Combine(path, "battles");
+			path = Path.Combine(gameMain.GameDataSet.FullName, "battles");
 
 			DirectoryInfo di = new DirectoryInfo(path);
 			FileInfo[] files = di.GetFiles("*.xml");

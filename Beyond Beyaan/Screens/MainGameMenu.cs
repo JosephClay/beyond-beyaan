@@ -12,7 +12,6 @@ namespace Beyond_Beyaan.Screens
 	{
 		GameMain gameMain;
 		Button[] buttons;
-		ComboBoxNoStretch modComboBox;
 		Label version;
 		int x;
 		int y;
@@ -49,27 +48,6 @@ namespace Beyond_Beyaan.Screens
 				Environment.Exit(0);
 			}
 
-			List<SpriteName> modComboBoxSprites = new List<SpriteName>()
-			{
-				SpriteName.Mod,
-				SpriteName.Mod2,
-				SpriteName.ModDown,
-				SpriteName.ModScrollUp,
-				SpriteName.ModScrollUpHighlighted,
-				SpriteName.ModScrollDown,
-				SpriteName.ModScrollDownHighlighted,
-				SpriteName.ModScrollButton1,
-				SpriteName.ModScrollButton2,
-				SpriteName.ModScrollButton3,
-				SpriteName.ModScrollButton1Highlighted,
-				SpriteName.ModScrollButton2Highlighted,
-				SpriteName.ModScrollButton3Highlighted,
-				SpriteName.ModScrollBar,
-				SpriteName.ModScrollBar
-			};
-
-			modComboBox = new ComboBoxNoStretch(modComboBoxSprites, directories, 400, gameMain.ScreenHeight - 245, 260, 36, 6);
-
 			buttons[0] = new Button(SpriteName.Continue2, SpriteName.Continue, string.Empty, 400, gameMain.ScreenHeight - 335, 260, 40);
 			buttons[1] = new Button(SpriteName.NewGame2, SpriteName.NewGame, string.Empty, 400, gameMain.ScreenHeight - 285, 260, 40);
 			buttons[2] = new Button(SpriteName.LoadGame2, SpriteName.LoadGame, string.Empty, 400, gameMain.ScreenHeight - 200, 260, 40);
@@ -98,7 +76,6 @@ namespace Beyond_Beyaan.Screens
 			{
 				button.Draw(drawingManagement);
 			}
-			modComboBox.Draw(drawingManagement);
 			version.Draw();
 		}
 
@@ -108,10 +85,6 @@ namespace Beyond_Beyaan.Screens
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			if (modComboBox.MouseHover(mouseX, mouseY, frameDeltaTime))
-			{
-				return;
-			}
 			foreach (Button button in buttons)
 			{
 				button.MouseHover(mouseX, mouseY, frameDeltaTime);
@@ -120,10 +93,6 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			if (modComboBox.MouseDown(x, y))
-			{
-				return;
-			}
 			foreach (Button button in buttons)
 			{
 				button.MouseDown(x, y);
@@ -132,10 +101,6 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			if (modComboBox.MouseUp(x, y))
-			{
-				return;
-			}
 			for (int i = 0; i < buttons.Length; i++)
 			{
 				if (buttons[i].MouseUp(x, y))
@@ -143,15 +108,7 @@ namespace Beyond_Beyaan.Screens
 					switch (i)
 					{
 						case 1:
-							string reason;
-							if (LoadGameFiles(out reason))
-							{
-								gameMain.ChangeToScreen(Screen.GalaxySetup);
-							}
-							else
-							{
-								gameMain.ClearAll();
-							}
+							gameMain.ChangeToScreen(Screen.GalaxySetup);
 							break;
 						case 4:
 							gameMain.ExitGame();
@@ -171,70 +128,6 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-		}
-
-		private bool LoadGameFiles(out string reason)
-		{
-			DirectoryInfo directory = new DirectoryInfo(Path.Combine(Path.Combine(Environment.CurrentDirectory, "Data"), modComboBox.CurrentText));
-			DirectoryInfo graphicDirectory = new DirectoryInfo(Path.Combine(directory.FullName, "graphics"));
-
-			try
-			{
-				if (!gameMain.SpriteManager.LoadSprites(directory, graphicDirectory, out reason))
-				{
-					MessageBox.Show(reason);
-					return false;
-				}
-				gameMain.RegionShader = GorgonLibrary.Graphics.FXShader.FromFile(Path.Combine(Path.Combine(directory.FullName, "Shaders"), "CircleShader.fx"), GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
-				gameMain.GameDataSet = modComboBox.CurrentText;
-				if (!GameConfiguration.LoadConfiguration(Path.Combine(directory.FullName, "config.xml"), out reason))
-				{
-					MessageBox.Show(reason);
-					return false;
-				}
-				if (!gameMain.LoadTutorial(Path.Combine(directory.FullName, "tutorial.xml"), out reason))
-				{
-					MessageBox.Show(reason);
-					return false;
-				}
-				if (!gameMain.iconManager.Initialize(directory.FullName, graphicDirectory.FullName, out reason))
-				{
-					MessageBox.Show(reason);
-					return false;
-				}
-				if (!gameMain.resourceManager.Initialize(directory.FullName, gameMain.iconManager, out reason))
-				{
-					MessageBox.Show(reason);
-					return false;
-				}
-				if (!gameMain.masterItemManager.Initialize(directory, out reason))
-				{
-					MessageBox.Show(reason);
-					return false;
-				}
-				gameMain.masterTechnologyList.ResetAll();
-				gameMain.masterTechnologyList.LoadTechnologies(directory.FullName, gameMain.resourceManager, gameMain.masterItemManager);
-				gameMain.shipScriptManager.LoadShipScripts(Path.Combine(Path.Combine(directory.FullName, "Scripts"), "Ship"));
-				gameMain.raceManager = new RaceManager(directory.FullName, graphicDirectory.FullName, gameMain.masterTechnologyList, gameMain.shipScriptManager, Path.Combine(Path.Combine(directory.FullName, "Scripts"), "Technology"), gameMain.iconManager, gameMain.resourceManager);
-				if (!gameMain.sectorTypeManager.LoadSectorTypes(Path.Combine(directory.FullName, "sectorObjects.xml"), gameMain, out reason))
-				{
-					MessageBox.Show(reason);
-					return false;
-				}
-				gameMain.planetTypeManager.LoadPlanetTypes(Path.Combine(directory.FullName, "planets.xml"), Path.Combine(graphicDirectory.FullName, "planets.png"), graphicDirectory.FullName, gameMain);
-				gameMain.regionTypeManager.LoadRegionTypes(Path.Combine(directory.FullName, "regions.xml"), gameMain);
-				gameMain.starTypeManager.LoadStarTypes(Path.Combine(directory.FullName, "stars.xml"), Path.Combine(graphicDirectory.FullName, "stars.png"), Path.Combine(directory.FullName, "shaders"), gameMain.sectorTypeManager, gameMain);
-				gameMain.particleManager.Initialize(directory.FullName, graphicDirectory.FullName);
-				gameMain.effectManager.Initialize(directory.FullName);
-				return gameMain.DrawingManagement.LoadGraphics(graphicDirectory.FullName, out reason);
-			}
-			catch (Exception e)
-			{
-				//handle error here
-				MessageBox.Show(e.Message + "\n" + e.StackTrace);
-				reason = e.Message;
-				return false;
-			}
 		}
 	}
 }

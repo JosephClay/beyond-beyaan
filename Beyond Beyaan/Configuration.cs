@@ -67,6 +67,7 @@ namespace Beyond_Beyaan
 		internal int DataSetIndex { get { return _datasetComboBox.SelectedIndex; } }
 		internal VideoMode VideoMode { get { return videoModes[_resolutionComboBox.SelectedIndex]; } }
 		internal bool FullScreen { get { return _fullCB.Checked; } }
+		internal bool ShowTutorial { get { return _showTutorialCB.Checked; } }
 
 		private void _launchButton_Click(object sender, System.EventArgs e)
 		{

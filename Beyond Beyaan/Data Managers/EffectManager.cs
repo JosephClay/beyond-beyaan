@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
@@ -16,24 +17,34 @@ namespace Beyond_Beyaan.Data_Managers
 			effectNames = new List<string>();
 		}
 
-		public bool Initialize(string dataDirectory)
+		public bool Initialize(string dataDirectory, out string reason)
 		{
-			XDocument doc = XDocument.Load(Path.Combine(dataDirectory, "effects.xml"));
-			XElement root = doc.Element("Effects");
-
-			//GorgonLibrary.Graphics.Sprite particleGraphic = new GorgonLibrary.Graphics.Sprite("MainParticleGraphic", GorgonLibrary.Graphics.Image.FromFile(Path.Combine(graphicDirectory, "particles.png")));
-
-			foreach (XElement element in root.Elements())
+			try
 			{
-				string name = element.Attribute("name").Value;
-				if (effectNames.Contains(name))
+				XDocument doc = XDocument.Load(Path.Combine(dataDirectory, "effects.xml"));
+				XElement root = doc.Element("Effects");
+
+				//GorgonLibrary.Graphics.Sprite particleGraphic = new GorgonLibrary.Graphics.Sprite("MainParticleGraphic", GorgonLibrary.Graphics.Image.FromFile(Path.Combine(graphicDirectory, "particles.png")));
+
+				foreach (XElement element in root.Elements())
 				{
-					return false;
+					string name = element.Attribute("name").Value;
+					if (effectNames.Contains(name))
+					{
+						reason = "Duplicate effect name: " + name;
+						return false;
+					}
+					effectNames.Add(name);
+					Effect effect = new Effect(element, Path.Combine(Path.Combine(dataDirectory, "Scripts"), "Effect"));
+					effects.Add(effect);
 				}
-				effectNames.Add(name);
-				Effect effect = new Effect(element, Path.Combine(Path.Combine(dataDirectory, "Scripts"), "Effect"));
-				effects.Add(effect);
 			}
+			catch (Exception e)
+			{
+				reason = e.Message;
+				return false;
+			}
+			reason = null;
 			return true;
 		}
 

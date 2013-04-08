@@ -692,55 +692,42 @@ namespace Beyond_Beyaan
 		#region Constructors
 		public DrawingManagement()
 		{
-			ImageCache.DestroyAll();
-			FontCache.DestroyAll();
-			RenderTargetCache.DestroyAll();
-			ShaderCache.DestroyAll();
-
 			sprites = new Dictionary<SpriteName, Sprite>();
 			fonts = new Dictionary<string, Font>();
-
-			string reason;
-			if (!LoadGlobalSprites(out reason))
-			{
-				MessageBox.Show(reason);
-			}
-
-			if (!AddFont("Arial", "Arial", 10.0f, false, out reason))
-			{
-				MessageBox.Show(reason);
-			}
-			if (!AddFontFromFile("Computer", 11, false, Environment.CurrentDirectory + "\\Data\\Demo\\mainFont.ttf", out reason))
-			{
-				MessageBox.Show(reason);
-			}
 		}
 		#endregion
 
 		#region Functions
 		public bool LoadGraphics(string directory, out string reason)
 		{
-			if (sprites.ContainsKey(SpriteName.Main))
+			if (!LoadGlobalSprites(out reason))
 			{
-				if (!File.Exists(Path.Combine(directory, "Main.png")))
+				return false;
+			}
+			if (!AddFont("Arial", "Arial", 10.0f, false, out reason))
+			{
+				return false;
+			}
+			if (!AddFontFromFile("Computer", 11, false, Environment.CurrentDirectory + "\\Data\\Demo\\mainFont.ttf", out reason))
+			{
+				return false;
+			}
+			if (!File.Exists(Path.Combine(directory, "Main.png")))
+			{
+				reason = "File " + Path.Combine(directory, "Main.png") + " not found";
+				return false;
+			}
+			try
+			{
+				if (!LoadGlobalSprites(out reason))
 				{
-					reason = "File " + Path.Combine(directory, "Main.png") + " not found";
 					return false;
 				}
-				try
-				{
-					ImageCache.DestroyAll();
-					sprites.Clear();
-					if (!LoadGlobalSprites(out reason))
-					{
-						return false;
-					}
-				}
-				catch (Exception exception)
-				{
-					reason = "Exception in loading " + Path.Combine(directory, "Main.png") + "\r\nReason: " + exception.Message;
-					return false;
-				}
+			}
+			catch (Exception exception)
+			{
+				reason = "Exception in loading " + Path.Combine(directory, "Main.png") + "\r\nReason: " + exception.Message;
+				return false;
 			}
 
 			if (!LoadSpriteFromFile("Main", SpriteName.Main, Path.Combine(directory, "main.png"), false, out reason))

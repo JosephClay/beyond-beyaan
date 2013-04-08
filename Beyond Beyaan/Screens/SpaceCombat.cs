@@ -805,7 +805,7 @@ namespace Beyond_Beyaan.Screens
 							string value = (string)result[i]["SpawnParticle"];
 							Dictionary<string, object> newValues = new Dictionary<string, object>(result[i]);
 							newValues.Remove("SpawnParticle");
-							ParticleInstance particleToAdd = gameMain.particleManager.SpawnParticle(value, selectedShip, newValues);
+							ParticleInstance particleToAdd = gameMain.ParticleManager.SpawnParticle(value, selectedShip, newValues);
 							if (particleToAdd != null)
 							{
 								particles.Add(particleToAdd);
@@ -860,7 +860,7 @@ namespace Beyond_Beyaan.Screens
 						string value = (string)result[i]["SpawnParticle"];
 						Dictionary<string, object> newValues = new Dictionary<string, object>(result[i]);
 						newValues.Remove("SpawnParticle");
-						ParticleInstance particleToAdd = gameMain.particleManager.SpawnParticle(value, null, newValues);
+						ParticleInstance particleToAdd = gameMain.ParticleManager.SpawnParticle(value, null, newValues);
 						if (particleToAdd != null)
 						{
 							particlesToAdd.Add(particleToAdd);
@@ -871,7 +871,7 @@ namespace Beyond_Beyaan.Screens
 						string value = (string)result[i]["_spawnTempEffect"];
 						Dictionary<string, object> newValues = new Dictionary<string, object>(result[i]);
 						newValues.Remove("_spawnTempEffect");
-						EffectInstance tempEffectToAdd = gameMain.effectManager.SpawnEffect(value, shipAffected, newValues);
+						EffectInstance tempEffectToAdd = gameMain.EffectManager.SpawnEffect(value, shipAffected, newValues);
 						if (tempEffectToAdd != null)
 						{
 							effectsToAdd.Add(tempEffectToAdd);
@@ -935,7 +935,7 @@ namespace Beyond_Beyaan.Screens
 					string name = empire.Attribute("name").Value;
 					string raceName = empire.Attribute("race").Value;
 					Race realRace = null;
-					foreach (Race race in gameMain.raceManager.Races)
+					foreach (Race race in gameMain.RaceManager.Races)
 					{
 						if (race.RaceName == raceName)
 						{

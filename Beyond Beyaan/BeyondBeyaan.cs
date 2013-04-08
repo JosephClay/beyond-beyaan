@@ -76,6 +76,7 @@ namespace Beyond_Beyaan
 				VideoMode videoMode;
 				DirectoryInfo dataset;
 				bool fullScreen;
+				bool showTutorial;
 
 				using (Configuration configuration = new Configuration())
 				{
@@ -90,6 +91,7 @@ namespace Beyond_Beyaan
 					videoMode = configuration.VideoMode;
 					fullScreen = configuration.FullScreen;
 					dataset = dataSets[configuration.DataSetIndex];
+					showTutorial = configuration.ShowTutorial;
 				}
 
 				Gorgon.SetMode(this, videoMode.Width, videoMode.Height, BackBufferFormats.BufferRGB888, !fullScreen);
@@ -113,9 +115,10 @@ namespace Beyond_Beyaan
 				gameMain.Input = input;
 
 				string reason;
-				if (!gameMain.Initalize(Gorgon.Screen.Width, Gorgon.Screen.Height, this, out reason))
+				if (!gameMain.Initalize(Gorgon.Screen.Width, Gorgon.Screen.Height, dataset, showTutorial, this, out reason))
 				{
 					MessageBox.Show(string.Format(Resources.ERROR_LOADING_GAME_RESOURCES__ERROR_MESSAGE_0, reason));
+					Close();
 					return;
 				}
 
@@ -124,6 +127,7 @@ namespace Beyond_Beyaan
 			catch (Exception exception)
 			{
 				MessageBox.Show(exception.Message);
+				Close();
 			}
 		}
 

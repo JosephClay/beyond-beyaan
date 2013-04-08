@@ -52,7 +52,7 @@ namespace Beyond_Beyaan.Screens
 			racePortraitBackground = new StretchableImage(x + 270, y + 30, 310, 140, 30, 13, DrawingManagement.BoxBorder);
 			raceDescriptionBackground = new StretchableImage(x + 270, y + 170, 310, 260, 30, 13, DrawingManagement.BoxBorder);
 
-			racesAvailable = gameMain.raceManager.Races;
+			racesAvailable = gameMain.RaceManager.Races;
 			maxVisible = (racesAvailable.Count + 1) > 15 ? 15 : (racesAvailable.Count + 1);
 
 			if (racesAvailable.Count + 1 <= 15)
@@ -117,9 +117,9 @@ namespace Beyond_Beyaan.Screens
 					raceRadioButtons[i].IsChecked = true;
 					if (selectedRace > 0)
 					{
-						miniAvatar = gameMain.raceManager.Races[selectedRace - 1].GetMiniAvatar();
+						miniAvatar = gameMain.RaceManager.Races[selectedRace - 1].GetMiniAvatar();
 						miniAvatar.SetPosition(xPos + 361, yPos + 36);
-						raceDescription.SetMessage(gameMain.raceManager.Races[selectedRace - 1].RaceDescription);
+						raceDescription.SetMessage(gameMain.RaceManager.Races[selectedRace - 1].RaceDescription);
 					}
 					else
 					{
