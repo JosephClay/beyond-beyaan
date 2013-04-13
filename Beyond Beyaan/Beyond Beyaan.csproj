@@ -112,12 +112,14 @@
     <Compile Include="Data Managers\RaceManager.cs" />
     <Compile Include="Data Managers\RegionTypeManager.cs" />
     <Compile Include="Data Managers\ResourceManager.cs" />
+    <Compile Include="Data Managers\ScreenManager.cs" />
     <Compile Include="Data Managers\SectorTypeManager.cs" />
     <Compile Include="Data Managers\ShipScriptManager.cs" />
     <Compile Include="Data Managers\SitRepManager.cs" />
     <Compile Include="Data Managers\SpriteManager.cs" />
     <Compile Include="Data Managers\StarSystemManager.cs" />
     <Compile Include="Data Managers\StarTypeManager.cs" />
+    <Compile Include="Data Managers\UITypeManager.cs" />
     <Compile Include="Data Modules\AI.cs" />
     <Compile Include="Data Modules\Camera.cs" />
     <Compile Include="Data Managers\DrawingManagement.cs" />
@@ -139,6 +141,7 @@
     <Compile Include="Data Modules\Region.cs" />
     <Compile Include="Data Modules\RegionType.cs" />
     <Compile Include="Data Modules\Resource.cs" />
+    <Compile Include="Data Modules\Screen.cs" />
     <Compile Include="Data Modules\Sector.cs" />
     <Compile Include="Data Modules\SectorObject.cs" />
     <Compile Include="Data Modules\SectorObjectType.cs" />
@@ -151,6 +154,7 @@
     <Compile Include="Data Modules\SquadronGroup.cs" />
     <Compile Include="Data Modules\Starlane.cs" />
     <Compile Include="Data Modules\StarType.cs" />
+    <Compile Include="Data Modules\UIType.cs" />
     <Compile Include="GameMain.cs" />
     <Compile Include="Data Managers\InterfaceManagement.cs" />
     <Compile Include="Screens\BackgroundStars.cs" />

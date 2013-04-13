@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UITypes>
+  <UIType name="NewGameButton" type="Button" background="NewGameBG" foreground="NewGameFG" />
+  <UIType name="LoadGameButton" type="Button" background="LoadGameBG" foreground="LoadGameFG" />
+  <UIType name="ContinueGameButton" type="Button" background="ContinueGameBG" foreground="ContinueGameFG" />
+  <UIType name="ExitGameButton" type="Button" background="ExitGameBG" foreground="ExitGameFG" />
+  <UIType name="MainBackground" type="Image" background="MainBackground" />
+  <UIType name="MainPlanetBackground" type="Image" background="MainPlanetBackground" />
+  <UIType name="Title" type="Image" background="Title" />
+</UITypes>

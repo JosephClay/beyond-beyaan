@@ -38,10 +38,17 @@ namespace Beyond_Beyaan
 				}
 				foreach (var directory in di.GetDirectories())
 				{
-					if (File.Exists(Path.Combine(directory.FullName, "config.xml")) &&
-					    !Directory.Exists(Path.Combine(target.FullName, directory.Name)))
+					if (File.Exists(Path.Combine(directory.FullName, "config.xml")))
 					{
-						CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
+						if (!Directory.Exists(Path.Combine(target.FullName, directory.Name)))
+						{
+							CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
+						}
+						else
+						{
+							Directory.Delete(Path.Combine(target.FullName, directory.Name), true);
+							CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
+						}
 					}
 				}
 				//Get list of available datasets from general application data folder

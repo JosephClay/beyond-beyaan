@@ -99,7 +99,7 @@ namespace Beyond_Beyaan.Screens
 			if (commenceButton.MouseUp(x, y))
 			{
 				gameMain.LoadBattle(Path.Combine(path, battles[battleSelected]));
-				gameMain.ChangeToScreen(Screen.Battle);
+				gameMain.ChangeToScreen(ScreenEnum.Battle);
 			}
 			for (int i = 0; i < maxBattleVisible; i++)
 			{

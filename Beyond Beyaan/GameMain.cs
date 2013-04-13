@@ -7,13 +7,15 @@ using Beyond_Beyaan.Screens;
 
 namespace Beyond_Beyaan
 {
-	public enum Screen { MainMenu, GalaxySetup, PlayerSetup, Galaxy, InGameMenu, Diplomacy, FleetList, Design, Production, Planets, Research, ProcessTurn, Battle, Colonize, Invade };
+	public enum ScreenEnum { MainMenu, GalaxySetup, PlayerSetup, Galaxy, InGameMenu, Diplomacy, FleetList, Design, Production, Planets, Research, ProcessTurn, Battle, Colonize, Invade };
 
 	public class GameMain
 	{
 		Form parentForm;
 		internal DrawingManagement DrawingManagement;
 		internal SpriteManager SpriteManager;
+		internal UITypeManager UITypeManager;
+		private ScreenManager ScreenManager;
 		private ScreenInterface screenInterface;
 		private MainGameMenu mainGameMenu;
 		private PlayerSetup playerSetup;
@@ -32,7 +34,7 @@ namespace Beyond_Beyaan
 		private InvadeScreen invadeScreen;
 		private SituationReport situationReport;
 		private TutorialWindow tutorialWindow;
-		private Screen currentScreen;
+		private ScreenEnum currentScreen;
 		internal TaskBar taskBar;
 		internal Galaxy galaxy;
 		internal EmpireManager empireManager;
@@ -88,12 +90,15 @@ namespace Beyond_Beyaan
 			MasterTechnologyList = new MasterTechnologyList();
 			ShipScriptManager = new ShipScriptManager();
 			RaceManager = new RaceManager();
+			SectorTypeManager = new SectorTypeManager();
 			PlanetTypeManager = new PlanetTypeManager();
 			RegionTypeManager = new RegionTypeManager();
 			StarTypeManager = new StarTypeManager();
 			ParticleManager = new ParticleManager();
 			EffectManager = new EffectManager();
 			DrawingManagement = new DrawingManagement();
+			UITypeManager = new UITypeManager();
+			ScreenManager = new ScreenManager();
 
 			if (!SpriteManager.LoadSprites(GameDataSet, graphicDirectory, out reason))
 			{
@@ -155,8 +160,16 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
+			if (!UITypeManager.LoadUITypes(GameDataSet, SpriteManager, out reason))
+			{
+				return false;
+			}
+			if (!ScreenManager.Initialize(GameDataSet, this, "MainMenu", r, out reason))
+			{
+				return false;
+			}
 
-			ChangeToScreen(Screen.MainMenu);
+			ChangeToScreen(ScreenEnum.MainMenu);
 			//StarShader = GorgonLibrary.Graphics.FXShader.FromFile("StarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			//BGStarShader = GorgonLibrary.Graphics.FXShader.FromFile("BGStarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			return true;
@@ -179,13 +192,15 @@ namespace Beyond_Beyaan
 
 		public void ProcessGame(float frameDeltaTime)
 		{
-			bool skipUpdate = false;
+			ScreenManager.DrawCurrentScreen();
+			ScreenManager.MouseHover(MousePos.X, MousePos.Y, frameDeltaTime);
+			/*bool skipUpdate = false;
 			bool handleTutorial = false;
 			bool handleTaskBar = false;
-			if (currentScreen != Screen.MainMenu)
+			if (currentScreen != ScreenEnum.MainMenu)
 			{
 				handleTutorial = true;
-				if (currentScreen != Screen.GalaxySetup && currentScreen != Screen.PlayerSetup && currentScreen != Screen.Battle)
+				if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
 				{
 					handleTaskBar = true;
 				}
@@ -225,7 +240,7 @@ namespace Beyond_Beyaan
 			if (GameConfiguration.ShowTutorial)
 			{
 				tutorialWindow.DrawWindow(DrawingManagement);
-			}
+			}*/
 		}
 
 		public void MouseDown(MouseEventArgs e)
@@ -246,12 +261,29 @@ namespace Beyond_Beyaan
 						whichButton = 3;
 					} break;
 			}
+			ScreenManager.MouseDown(e.X, e.Y, whichButton);
+			/*int whichButton = 0;
+			switch (e.Button)
+			{
+				case System.Windows.Forms.MouseButtons.Left:
+					{
+						whichButton = 1;
+					} break;
+				case System.Windows.Forms.MouseButtons.Right:
+					{
+						whichButton = 2;
+					} break;
+				case System.Windows.Forms.MouseButtons.Middle:
+					{
+						whichButton = 3;
+					} break;
+			}
 			bool handleTaskBar = false;
 			bool handleTutorial = false;
-			if (currentScreen != Screen.MainMenu)
+			if (currentScreen != ScreenEnum.MainMenu)
 			{
 				handleTutorial = true;
-				if (currentScreen != Screen.GalaxySetup && currentScreen != Screen.PlayerSetup && currentScreen != Screen.Battle)
+				if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
 				{
 					handleTaskBar = true;
 				}
@@ -274,7 +306,7 @@ namespace Beyond_Beyaan
 					return;
 				}
 			}
-			screenInterface.MouseDown(e.X, e.Y, whichButton);
+			screenInterface.MouseDown(e.X, e.Y, whichButton);*/
 		}
 
 		public void MouseUp(MouseEventArgs e)
@@ -295,12 +327,13 @@ namespace Beyond_Beyaan
 						whichButton = 3;
 					} break;
 			}
-			bool handleTaskBar = false;
+			ScreenManager.MouseUp(e.X, e.Y, whichButton);
+			/*bool handleTaskBar = false;
 			bool handleTutorial = false;
-			if (currentScreen != Screen.MainMenu)
+			if (currentScreen != ScreenEnum.MainMenu)
 			{
 				handleTutorial = true;
-				if (currentScreen != Screen.GalaxySetup && currentScreen != Screen.PlayerSetup && currentScreen != Screen.Battle)
+				if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
 				{
 					handleTaskBar = true;
 				}
@@ -323,17 +356,17 @@ namespace Beyond_Beyaan
 					return;
 				}
 			}
-			screenInterface.MouseUp(e.X, e.Y, whichButton);
+			screenInterface.MouseUp(e.X, e.Y, whichButton);*/
 		}
 
 		public void MouseScroll(int delta)
 		{
-			screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
+			//screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-			screenInterface.KeyDown(e);
+			//screenInterface.KeyDown(e);
 		}
 
 		public void ToggleSitRep()
@@ -341,7 +374,7 @@ namespace Beyond_Beyaan
 			situationReport.ToggleVisibility();
 		}
 
-		public void ChangeToScreen(Screen whichScreen)
+		public void ChangeToScreen(ScreenEnum whichScreen)
 		{
 			if (screenInterface is ProcessingTurnScreen)
 			{
@@ -349,13 +382,13 @@ namespace Beyond_Beyaan
 			}
 			switch (whichScreen)
 			{
-				case Screen.MainMenu: //Any way we get here means everything needs to be cleared out
+				case ScreenEnum.MainMenu: //Any way we get here means everything needs to be cleared out
 					this.DrawingManagement = new DrawingManagement();
 					mainGameMenu = new MainGameMenu();
-					mainGameMenu.Initialize(this);
-					screenInterface = mainGameMenu;
+					//mainGameMenu.Initialize(this);
+					//screenInterface = mainGameMenu;
 					break;
-				case Screen.GalaxySetup:
+				case ScreenEnum.GalaxySetup:
 					if (galaxySetup == null)
 					{
 						galaxySetup = new GalaxySetup();
@@ -363,7 +396,7 @@ namespace Beyond_Beyaan
 					}
 					screenInterface = galaxySetup;
 					break;
-				case Screen.PlayerSetup:
+				case ScreenEnum.PlayerSetup:
 					if (playerSetup == null)
 					{
 						playerSetup = new PlayerSetup();
@@ -372,7 +405,7 @@ namespace Beyond_Beyaan
 					Turn = 1;
 					screenInterface = playerSetup;
 					break;
-				case Screen.Galaxy:
+				case ScreenEnum.Galaxy:
 					if (galaxyScreen == null)
 					{
 						galaxyScreen = new GalaxyScreen();
@@ -382,18 +415,18 @@ namespace Beyond_Beyaan
 					galaxyScreen.CenterScreen();
 					galaxyScreen.LoadScreen();
 					screenInterface = galaxyScreen;
-					taskBar.SetToScreen(Screen.Galaxy);
+					taskBar.SetToScreen(ScreenEnum.Galaxy);
 					break;
-				case Screen.InGameMenu:
+				case ScreenEnum.InGameMenu:
 					if (inGameMenu == null)
 					{
 						inGameMenu = new InGameMenu();
 						inGameMenu.Initialize(this);
 					}
 					screenInterface = inGameMenu;
-					taskBar.SetToScreen(Screen.InGameMenu);
+					taskBar.SetToScreen(ScreenEnum.InGameMenu);
 					break;
-				case Screen.Diplomacy:
+				case ScreenEnum.Diplomacy:
 					if (diplomacyScreen == null)
 					{
 						diplomacyScreen = new DiplomacyScreen();
@@ -401,9 +434,9 @@ namespace Beyond_Beyaan
 					}
 					diplomacyScreen.SetupScreen();
 					screenInterface = diplomacyScreen;
-					taskBar.SetToScreen(Screen.Diplomacy);
+					taskBar.SetToScreen(ScreenEnum.Diplomacy);
 					break;
-				case Screen.FleetList:
+				case ScreenEnum.FleetList:
 					if (fleetListScreen == null)
 					{
 						fleetListScreen = new FleetListScreen();
@@ -411,9 +444,9 @@ namespace Beyond_Beyaan
 					}
 					fleetListScreen.LoadScreen();
 					screenInterface = fleetListScreen;
-					taskBar.SetToScreen(Screen.FleetList);
+					taskBar.SetToScreen(ScreenEnum.FleetList);
 					break;
-				case Screen.Design:
+				case ScreenEnum.Design:
 					if (designScreen == null)
 					{
 						designScreen = new DesignScreen();
@@ -421,9 +454,9 @@ namespace Beyond_Beyaan
 					}
 					screenInterface = designScreen;
 					designScreen.LoadScreen();
-					taskBar.SetToScreen(Screen.Design);
+					taskBar.SetToScreen(ScreenEnum.Design);
 					break;
-				case Screen.Production:
+				case ScreenEnum.Production:
 					if (productionScreen == null)
 					{
 						productionScreen = new ProductionScreen();
@@ -431,9 +464,9 @@ namespace Beyond_Beyaan
 					}
 					productionScreen.Load();
 					screenInterface = productionScreen;
-					taskBar.SetToScreen(Screen.Production);
+					taskBar.SetToScreen(ScreenEnum.Production);
 					break;
-				case Screen.Planets:
+				case ScreenEnum.Planets:
 					if (planetsScreen == null)
 					{
 						planetsScreen = new PlanetsScreen();
@@ -441,9 +474,9 @@ namespace Beyond_Beyaan
 					}
 					screenInterface = planetsScreen;
 					planetsScreen.LoadScreen();
-					taskBar.SetToScreen(Screen.Planets);
+					taskBar.SetToScreen(ScreenEnum.Planets);
 					break;
-				case Screen.Research:
+				case ScreenEnum.Research:
 					if (researchScreen == null)
 					{
 						researchScreen = new ResearchScreen();
@@ -451,9 +484,9 @@ namespace Beyond_Beyaan
 					}
 					researchScreen.LoadPoints();
 					screenInterface = researchScreen;
-					taskBar.SetToScreen(Screen.Research);
+					taskBar.SetToScreen(ScreenEnum.Research);
 					break;
-				case Screen.ProcessTurn:
+				case ScreenEnum.ProcessTurn:
 					empireManager.CurrentEmpire.ClearTurnData();
 					if (processingTurnScreen == null)
 					{
@@ -463,14 +496,14 @@ namespace Beyond_Beyaan
 					if (!empireManager.ProcessNextEmpire())
 					{
 						situationReport.Refresh();
-						ChangeToScreen(Screen.Galaxy);
+						ChangeToScreen(ScreenEnum.Galaxy);
 						break;
 					}
-					taskBar.SetToScreen(Screen.ProcessTurn);
+					taskBar.SetToScreen(ScreenEnum.ProcessTurn);
 					screenInterface = processingTurnScreen;
 					taskBar.Hide = true;
 					break;
-				case Screen.Battle:
+				case ScreenEnum.Battle:
 					if (spaceCombat == null)
 					{
 						spaceCombat = new SpaceCombat();
@@ -478,7 +511,7 @@ namespace Beyond_Beyaan
 					}
 					screenInterface = spaceCombat;
 					break;
-				case Screen.Colonize:
+				case ScreenEnum.Colonize:
 					if (colonizeScreen == null)
 					{
 						colonizeScreen = new ColonizeScreen();
@@ -487,7 +520,7 @@ namespace Beyond_Beyaan
 					colonizeScreen.LoadScreen(empireManager.ColonizersToProcess);
 					screenInterface = colonizeScreen;
 					break;
-				case Screen.Invade:
+				case ScreenEnum.Invade:
 					if (invadeScreen == null)
 					{
 						invadeScreen = new InvadeScreen();

@@ -39,7 +39,7 @@ namespace Beyond_Beyaan.Data_Managers
 					contact.Contacted = true;
 					contact.OutgoingMessage = MessageType.NONE;
 					contact.IncomingMessage = MessageType.NONE;
-					sitRepManager.AddItem(new SitRepItem(Screen.Diplomacy, null, null, new Point(-1, -1), "You have established contact with " + empireContacted.EmpireName + " empire."));
+					sitRepManager.AddItem(new SitRepItem(ScreenEnum.Diplomacy, null, null, new Point(-1, -1), "You have established contact with " + empireContacted.EmpireName + " empire."));
 					return;
 				}
 			}
@@ -60,7 +60,7 @@ namespace Beyond_Beyaan.Data_Managers
 				contact.IncomingEmpireRequest = whichEmpireInRequest;
 				if (contact.IncomingMessage != MessageType.NONE)
 				{
-					sitRepManager.AddItem(new SitRepItem(Screen.Diplomacy, null, null, new Point(), "You have received a message from the " + contact.EmpireInContact.EmpireName + " Empire."));
+					sitRepManager.AddItem(new SitRepItem(ScreenEnum.Diplomacy, null, null, new Point(), "You have received a message from the " + contact.EmpireInContact.EmpireName + " Empire."));
 					HandleMessage(contact, contact.IncomingMessage, contact.IncomingEmpireRequest);
 				}
 			}

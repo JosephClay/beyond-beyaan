@@ -133,23 +133,23 @@
 				{
 					switch (i)
 					{
-						case 0: gameMain.ChangeToScreen(Screen.InGameMenu);
+						case 0: gameMain.ChangeToScreen(ScreenEnum.InGameMenu);
 							break;
-						case 1: gameMain.ChangeToScreen(Screen.Galaxy);
+						case 1: gameMain.ChangeToScreen(ScreenEnum.Galaxy);
 							break;
-						/*case 2: gameMain.ChangeToScreen(Screen.Diplomacy);
+						/*case 2: gameMain.ChangeToScreen(ScreenEnum.Diplomacy);
 							break;
-						case 3: gameMain.ChangeToScreen(Screen.FleetList);
+						case 3: gameMain.ChangeToScreen(ScreenEnum.FleetList);
 							break;*/
-						case 4: gameMain.ChangeToScreen(Screen.Design);
+						case 4: gameMain.ChangeToScreen(ScreenEnum.Design);
 							break;
-						case 5: gameMain.ChangeToScreen(Screen.Production);
+						case 5: gameMain.ChangeToScreen(ScreenEnum.Production);
 							break;
-						case 6: gameMain.ChangeToScreen(Screen.Planets);
+						case 6: gameMain.ChangeToScreen(ScreenEnum.Planets);
 							break;
-						case 7: gameMain.ChangeToScreen(Screen.Research);
+						case 7: gameMain.ChangeToScreen(ScreenEnum.Research);
 							break;
-						case 8: gameMain.ChangeToScreen(Screen.ProcessTurn);
+						case 8: gameMain.ChangeToScreen(ScreenEnum.ProcessTurn);
 							gameMain.HideSitRep();
 							break;
 					}
@@ -159,7 +159,7 @@
 			return false;
 		}
 
-		public void SetToScreen(Screen whichScreen)
+		public void SetToScreen(ScreenEnum whichScreen)
 		{
 			foreach (Button button in TaskButtons)
 			{
@@ -167,31 +167,31 @@
 			}
 			switch (whichScreen)
 			{
-				case Screen.InGameMenu:
+				case ScreenEnum.InGameMenu:
 					TaskButtons[0].Selected = true;
 					break;
-				case Screen.Galaxy:
+				case ScreenEnum.Galaxy:
 					TaskButtons[1].Selected = true;
 					break;
-				case Screen.Diplomacy:
+				case ScreenEnum.Diplomacy:
 					TaskButtons[2].Selected = true;
 					break;
-				case Screen.FleetList:
+				case ScreenEnum.FleetList:
 					TaskButtons[3].Selected = true;
 					break;
-				case Screen.Design:
+				case ScreenEnum.Design:
 					TaskButtons[4].Selected = true;
 					break;
-				case Screen.Production:
+				case ScreenEnum.Production:
 					TaskButtons[5].Selected = true;
 					break;
-				case Screen.Planets:
+				case ScreenEnum.Planets:
 					TaskButtons[6].Selected = true;
 					break;
-				case Screen.Research:
+				case ScreenEnum.Research:
 					TaskButtons[7].Selected = true;
 					break;
-				case Screen.ProcessTurn:
+				case ScreenEnum.ProcessTurn:
 					TaskButtons[8].Selected = true;
 					break;
 			}

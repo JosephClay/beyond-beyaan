@@ -8,9 +8,9 @@ using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan.Screens
 {
-	class MainGameMenu : ScreenInterface
+	class MainGameMenu// : ScreenInterface
 	{
-		GameMain gameMain;
+		/*GameMain gameMain;
 		Button[] buttons;
 		Label version;
 		int x;
@@ -108,7 +108,7 @@ namespace Beyond_Beyaan.Screens
 					switch (i)
 					{
 						case 1:
-							gameMain.ChangeToScreen(Screen.GalaxySetup);
+							gameMain.ChangeToScreen(ScreenEnum.GalaxySetup);
 							break;
 						case 4:
 							gameMain.ExitGame();
@@ -128,6 +128,6 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-		}
+		}*/
 	}
 }

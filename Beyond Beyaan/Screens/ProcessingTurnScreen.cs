@@ -64,7 +64,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (updateSection != -1)
 			{
-				drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (gameMain.ScreenWidth / 2) - 150, (gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
+				//drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (gameMain.ScreenWidth / 2) - 150, (gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
 				updateText.Draw();
 			}
 		}
@@ -117,14 +117,14 @@ namespace Beyond_Beyaan.Screens
 						gameMain.empireManager.CheckForColonizers(gameMain.galaxy);
 						if (gameMain.empireManager.HasColonizers)
 						{
-							gameMain.ChangeToScreen(Screen.Colonize);
+							gameMain.ChangeToScreen(ScreenEnum.Colonize);
 						}
 						break;
 					case 5:
 						gameMain.empireManager.CheckForInvaders(gameMain.galaxy);
 						if (gameMain.empireManager.HasInvaders)
 						{
-							gameMain.ChangeToScreen(Screen.Invade);
+							gameMain.ChangeToScreen(ScreenEnum.Invade);
 						}
 						break;
 					case 6:
@@ -132,7 +132,7 @@ namespace Beyond_Beyaan.Screens
 						gameMain.empireManager.ClearEmptyFleets();
 						gameMain.empireManager.CheckForDefeatedEmpires();
 						gameMain.empireManager.SetInitialEmpireTurn();
-						gameMain.ChangeToScreen(Screen.Galaxy);
+						gameMain.ChangeToScreen(ScreenEnum.Galaxy);
 						stillMoving = true;
 						break;
 				}

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Screen>
+  <UIElement UIType="MainBackground" xPos="0" yPos="0" width="WIDTH" height="HEIGHT" />
+  <UIElement UIType="MainPlanetBackground" xPos="XMIDDLE-512" yPos="YMIDDLE-300" />
+  <UIElement UIType="Title" xPos="XMIDDLE-512" yPos="YMIDDLE-400" />
+  <UIElement UIType="ContinueGameButton" xPos="XMIDDLE-130" yPos="YMIDDLE" width="260" height="40" />
+  <UIElement UIType="NewGameButton" onClick="ChangeTo|GalaxySetup" xPos="XMIDDLE-130" yPos="YMIDDLE+50" width="260" height="40" />
+  <UIElement UIType="LoadGameButton" xPos="XMIDDLE-130" yPos="YMIDDLE+100" width="260" height="40" />
+  <UIElement UIType="ExitGameButton" onClick="Event|Close" xPos="XMIDDLE-130" yPos="YMIDDLE+150" width="260" height="40" />
+</Screen>

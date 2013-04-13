@@ -97,13 +97,13 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			for (int i = 0; i < gameMain.ScreenWidth; i += 1024)
+			/*for (int i = 0; i < gameMain.ScreenWidth; i += 1024)
 			{
 				for (int j = 0; j < gameMain.ScreenHeight; j += 600)
 				{
 					drawingManagement.DrawSprite(SpriteName.TitleNebula, i, j, 255, System.Drawing.Color.White);
 				}
-			}
+			}*/
 			background.Draw(drawingManagement);
 			DrawGalaxyPreview(drawingManagement);
 			galaxyConfigurationBackground.Draw(drawingManagement);
@@ -213,11 +213,11 @@ namespace Beyond_Beyaan.Screens
 
 			if (prevScreen.MouseUp(x, y))
 			{
-				gameMain.ChangeToScreen(Screen.MainMenu);
+				gameMain.ChangeToScreen(ScreenEnum.MainMenu);
 			}
 			if (nextScreen.MouseUp(x, y) && gameMain.galaxy.GalaxySize > 0)
 			{
-				gameMain.ChangeToScreen(Screen.PlayerSetup);
+				gameMain.ChangeToScreen(ScreenEnum.PlayerSetup);
 			}
 
 			permanentAlliance.MouseUp(x, y);

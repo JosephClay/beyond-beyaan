@@ -77,7 +77,7 @@ namespace Beyond_Beyaan.Screens
 			mountsLabel = new Label("Mounts", x + 675, y + 402);
 			shotsLabel = new Label("Shots", x + 730, y + 402);*/
 
-			fleetButtons = new Button[11];
+			/*fleetButtons = new Button[11];
 			shipButtons = new Button[11];
 
 			for (int i = 0; i < fleetButtons.Length; i++)
@@ -89,7 +89,7 @@ namespace Beyond_Beyaan.Screens
 			//scrapFleet = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Scrap this fleet", x + 2, y + 304, 182, 25);
 			showOurFleets = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Show our fleets", x + 2, y + 332, 182, 25);
 			//scrapShip = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Scrap this ship", x + 202, y + 304, 182, 25);
-			showOtherFleets = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Show other fleets", x + 202, y + 332, 182, 25);
+			showOtherFleets = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Show other fleets", x + 202, y + 332, 182, 25);*/
 			
 			List<SpriteName> textBox = new List<SpriteName>()
 			{
@@ -309,7 +309,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(Screen.Galaxy);
+				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
 			}
 			if (e.Key == KeyboardKeys.Space)
 			{
