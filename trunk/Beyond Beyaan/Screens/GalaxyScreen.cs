@@ -53,8 +53,8 @@ namespace Beyond_Beyaan.Screens
 
 			//transferButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Transfer Population", gameMain.ScreenWidth - 245, 370, 240, 25);
 
-			transferOKButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Create Transport", gameMain.ScreenWidth / 2 + 10, gameMain.ScreenHeight / 2 + 70, 150, 25);
-			transferCancelButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Cancel", gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 70, 150, 25);
+			//transferOKButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Create Transport", gameMain.ScreenWidth / 2 + 10, gameMain.ScreenHeight / 2 + 70, 150, 25);
+			//transferCancelButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Cancel", gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 70, 150, 25);
 			transferUpkeepCost = new Label(gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 50, System.Drawing.Color.White);
 			popTransferSliders = new ScrollBar[4];
 			amountPopTransferLabel = new Label[4];
@@ -866,7 +866,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(Screen.InGameMenu);
+				gameMain.ChangeToScreen(ScreenEnum.InGameMenu);
 			}
 			if (e.Key == KeyboardKeys.Space)
 			{

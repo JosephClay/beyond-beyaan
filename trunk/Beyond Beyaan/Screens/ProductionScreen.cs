@@ -203,7 +203,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(Screen.Galaxy);
+				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
 			}
 		}
 

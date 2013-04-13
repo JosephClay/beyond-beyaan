@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Sprites>
+  <!-- Galaxy artwork-->
   <Sprite name="Star" file="stars.png">
     <Frame x="0" y="0" width="32" height="32" frameLength="400,1000" axisX="16" axisY="16"/>
     <Frame x="32" y="0" width="32" height="32" frameLength="50" axisX="16" axisY="16"/>
@@ -37,24 +38,58 @@
     <Frame x="256" y="128" width="96" height="64" axisX="48" axisY="32"/>
   </Sprite>
   <Sprite name="BackgroundStar1" file="main.png">
-	<Frame x="208" y="128" width="16" height="16" axisX="8" axisY="8" />
+	  <Frame x="208" y="128" width="16" height="16" axisX="8" axisY="8" />
   </Sprite>
   <Sprite name="BackgroundStar2" file="main.png">
-	<Frame x="224" y="128" width="16" height="16" axisX="8" axisY="8" />
+	  <Frame x="224" y="128" width="16" height="16" axisX="8" axisY="8" />
   </Sprite>
   <Sprite name="BackgroundStar3" file="main.png">
-	<Frame x="240" y="128" width="16" height="16" axisX="8" axisY="8" />
+	  <Frame x="240" y="128" width="16" height="16" axisX="8" axisY="8" />
   </Sprite>
   <Sprite name="BackgroundStar4" file="main.png">
-	<Frame x="256" y="128" width="16" height="16" axisX="8" axisY="8" />
+	  <Frame x="256" y="128" width="16" height="16" axisX="8" axisY="8" />
   </Sprite>
   <Sprite name="BackgroundStar5" file="main.png">
-	<Frame x="272" y="128" width="16" height="16" axisX="8" axisY="8" />
+	  <Frame x="272" y="128" width="16" height="16" axisX="8" axisY="8" />
   </Sprite>
   <Sprite name="BackgroundStar6" file="main.png">
-	<Frame x="288" y="128" width="16" height="16" axisX="8" axisY="8" />
+	  <Frame x="288" y="128" width="16" height="16" axisX="8" axisY="8" />
   </Sprite>
   <Sprite name="BackgroundStar7" file="main.png">
-	<Frame x="304" y="128" width="16" height="16" axisX="8" axisY="8" />
+	  <Frame x="304" y="128" width="16" height="16" axisX="8" axisY="8" />
+  </Sprite>
+  <!-- Main Menu Buttons-->
+  <Sprite name="ContinueGameBG" file="continueBG.png">
+    <Frame x="0" y="0" width="260" height="40" />
+  </Sprite>
+  <Sprite name="ContinueGameFG" file="continueFG.png">
+    <Frame x="0" y="0" width="260" height="40" />
+  </Sprite>
+  <Sprite name="ExitGameBG" file="exitBG.png">
+    <Frame x="0" y="0" width="260" height="40" />
+  </Sprite>
+  <Sprite name="ExitGameFG" file="exitFG.png">
+    <Frame x="0" y="0" width="260" height="40" />
+  </Sprite>
+  <Sprite name="LoadGameBG" file="loadBG.png">
+    <Frame x="0" y="0" width="260" height="40" />
+  </Sprite>
+  <Sprite name="LoadGameFG" file="loadFG.png">
+    <Frame x="0" y="0" width="260" height="40" />
+  </Sprite>
+  <Sprite name="NewGameBG" file="newGameBG.png">
+    <Frame x="0" y="0" width="260" height="40" />
+  </Sprite>
+  <Sprite name="NewGameFG" file="newGameFG.png">
+    <Frame x="0" y="0" width="260" height="40" />
+  </Sprite>
+  <Sprite name="MainBackground" file="Title nebula.png">
+    <Frame x="0" y="0" width="1024" height="600" />
+  </Sprite>
+  <Sprite name="MainPlanetBackground" file="Title planet.png">
+    <Frame x="0" y="0" width="1024" height="600" />
+  </Sprite>
+  <Sprite name="Title" file="Title name.png">
+    <Frame x="0" y="0" width="1024" height="600" />
   </Sprite>
 </Sprites>

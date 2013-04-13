@@ -11,42 +11,7 @@ namespace Beyond_Beyaan
 	public enum SpriteName 
 	{ 
 		Main,
-		Interface,
-		TitlePlanet,
-		TitleName,
-		TitleNebula,
-		Continue,
-		Customize,
-		Exit,
-		LoadGame,
-		NewGame,
-		Options,
-		Continue2,
-		Customize2,
-		Exit2,
-		LoadGame2,
-		NewGame2,
-		Options2,
-		Mod,
-		Mod2,
-		ModDown,
-		ModMain,
-		ModScrollUp,
-		ModScrollUpHighlighted,
-		ModScrollDown,
-		ModScrollDownHighlighted,
-		ModScrollBar,
-		ModScrollButton1,
-		ModScrollButton2,
-		ModScrollButton3,
-		ModScrollButton1Highlighted,
-		ModScrollButton2Highlighted,
-		ModScrollButton3Highlighted,
 
-		NormalBackgroundButton,
-		NormalForegroundButton,
-		MiniBackgroundButton,
-		MiniForegroundButton,
 /*		GridCell00,
 		GridCell01,
 		GridCell02,
@@ -77,7 +42,6 @@ namespace Beyond_Beyaan
 		SystemShips,
 		SelectedFleet,
 		BlackHole,
-		Screen,
 		ScrollUpBackgroundButton,
 		ScrollUpForegroundButton,
 		ScrollVerticalBar,
@@ -700,33 +664,21 @@ namespace Beyond_Beyaan
 		#region Functions
 		public bool LoadGraphics(string directory, out string reason)
 		{
-			if (!LoadGlobalSprites(out reason))
-			{
-				return false;
-			}
 			if (!AddFont("Arial", "Arial", 10.0f, false, out reason))
 			{
 				return false;
 			}
-			if (!AddFontFromFile("Computer", 11, false, Environment.CurrentDirectory + "\\Data\\Demo\\mainFont.ttf", out reason))
+			if (!AddFont("Computer", "Arial", 10.0f, false, out reason))
 			{
 				return false;
 			}
+			/*if (!AddFontFromFile("Computer", 11, false, Environment.CurrentDirectory + "\\Data\\Demo\\mainFont.ttf", out reason))
+			{
+				return false;
+			}*/
 			if (!File.Exists(Path.Combine(directory, "Main.png")))
 			{
 				reason = "File " + Path.Combine(directory, "Main.png") + " not found";
-				return false;
-			}
-			try
-			{
-				if (!LoadGlobalSprites(out reason))
-				{
-					return false;
-				}
-			}
-			catch (Exception exception)
-			{
-				reason = "Exception in loading " + Path.Combine(directory, "Main.png") + "\r\nReason: " + exception.Message;
 				return false;
 			}
 
@@ -2100,245 +2052,6 @@ namespace Beyond_Beyaan
 				reason = "Exception in loading sprite from another sprite. Reason: " + exception.Message;
 				return false;
 			}
-		}
-		
-		private bool LoadGlobalSprites(out string reason)
-		{
-			//Load from file
-			if (!LoadSpriteFromFile("InterfaceArt", SpriteName.Interface, Environment.CurrentDirectory + "\\Sprites\\InterfaceArt.png", true, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("TitlePlanet", SpriteName.TitlePlanet, Environment.CurrentDirectory + "\\Sprites\\Title planet.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("TitleName", SpriteName.TitleName, Environment.CurrentDirectory + "\\Sprites\\Title name.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("TitleNebula", SpriteName.TitleNebula, Environment.CurrentDirectory + "\\Sprites\\Title nebula.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("CONTINUE", SpriteName.Continue, Environment.CurrentDirectory + "\\Sprites\\bot CONTINUE.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("CUSTOMIZE", SpriteName.Customize, Environment.CurrentDirectory + "\\Sprites\\bot CUSTOMIZE.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("EXIT", SpriteName.Exit, Environment.CurrentDirectory + "\\Sprites\\bot EXIT.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("load game", SpriteName.LoadGame, Environment.CurrentDirectory + "\\Sprites\\bot load game.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("new game", SpriteName.NewGame, Environment.CurrentDirectory + "\\Sprites\\bot new game.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("OPTIONS", SpriteName.Options, Environment.CurrentDirectory + "\\Sprites\\bot OPTIONS.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("CONTINUE2", SpriteName.Continue2, Environment.CurrentDirectory + "\\Sprites\\bot CONTINUE2.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("CUSTOMIZE2", SpriteName.Customize2, Environment.CurrentDirectory + "\\Sprites\\bot CUSTOMIZE2.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("EXIT2", SpriteName.Exit2, Environment.CurrentDirectory + "\\Sprites\\bot EXIT2.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("load game2", SpriteName.LoadGame2, Environment.CurrentDirectory + "\\Sprites\\bot load game2.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("new game2", SpriteName.NewGame2, Environment.CurrentDirectory + "\\Sprites\\bot new game2.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("OPTIONS2", SpriteName.Options2, Environment.CurrentDirectory + "\\Sprites\\bot OPTIONS2.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("MOD", SpriteName.Mod, Environment.CurrentDirectory + "\\Sprites\\drop full 2.PNG", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("MOD2", SpriteName.Mod2, Environment.CurrentDirectory + "\\Sprites\\drop full.PNG", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("MODDown", SpriteName.ModDown, Environment.CurrentDirectory + "\\Sprites\\down.PNG", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("ModMain", SpriteName.ModMain, Environment.CurrentDirectory + "\\Sprites\\scroll.png", true, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollUpBackgroundButton", SpriteName.ModScrollUp, SpriteName.ModMain, 0, 0, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollUpForegroundButton", SpriteName.ModScrollUpHighlighted, SpriteName.ModMain, 16, 0, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollVerticalBar", SpriteName.ModScrollBar, SpriteName.ModMain, 0, 16, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollDownBackgroundButton", SpriteName.ModScrollDown, SpriteName.ModMain, 0, 32, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollDownForegroundButton", SpriteName.ModScrollDownHighlighted, SpriteName.ModMain, 16, 32, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollVerticalBackgroundButton1", SpriteName.ModScrollButton1, SpriteName.ModMain, 0, 48, 16, 7, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollVerticalForegroundButton1", SpriteName.ModScrollButton1Highlighted, SpriteName.ModMain, 16, 48, 16, 7, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollVerticalBackgroundButton2", SpriteName.ModScrollButton2, SpriteName.ModMain, 0, 55, 16, 2, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollVerticalForegroundButton2", SpriteName.ModScrollButton2Highlighted, SpriteName.ModMain, 16, 55, 16, 2, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollVerticalBackgroundButton3", SpriteName.ModScrollButton3, SpriteName.ModMain, 0, 57, 16, 7, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ModScrollVerticalForegroundButton3", SpriteName.ModScrollButton3Highlighted, SpriteName.ModMain, 16, 57, 16, 7, false, false, out reason))
-			{
-				return false;
-			}
-
-			//Load from loaded sprites
-			if (!LoadSpriteFromSprite("SelectCell", SpriteName.SelectCell, SpriteName.Interface, 175, 0, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("NormalBackgroundButton", SpriteName.NormalBackgroundButton, SpriteName.Interface, 0, 0, 175, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("NormalForegroundButton", SpriteName.NormalForegroundButton, SpriteName.Interface, 0, 40, 175, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("MiniBackgroundButton", SpriteName.MiniBackgroundButton, SpriteName.Interface, 0, 344, 175, 25, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("MiniForegroundButton", SpriteName.MiniForegroundButton, SpriteName.Interface, 0, 369, 175, 25, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("Screen", SpriteName.Screen, Environment.CurrentDirectory + "\\Sprites\\Screen.png", false, out reason))
-			{
-				return false;
-			}
-			/*if (!LoadSpriteFromSprite("ControlBackground", SpriteName.ControlBackground, SpriteName.Interface, 0, 80, 175, 200, true, false, out reason))
-			{
-				return false;
-			}*/
-			
-			/*if (!LoadSpriteFromSprite("RelationSlider", SpriteName.RelationSlider, SpriteName.BarSlider, 200, 0, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
-			
-			if (!LoadSpriteFromSprite("EmpireTurnArrow", SpriteName.EmpireTurnArrow, SpriteName.BattleItems, 32, 0, 25, 25, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ShipSelection32", SpriteName.ShipSelection32, SpriteName.BattleItems, 0, 0, 32, 32, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ShipSelection64", SpriteName.ShipSelection64, SpriteName.BattleItems, 0, 32, 64, 64, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ShipSelection96", SpriteName.ShipSelection96, SpriteName.BattleItems, 0, 96, 96, 96, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ShipSelection128", SpriteName.ShipSelection128, SpriteName.BattleItems, 0, 192, 128, 128, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ShipSelection160", SpriteName.ShipSelection160, SpriteName.BattleItems, 0, 320, 160, 160, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("AutoForeground", SpriteName.AutoForeground, SpriteName.BattleItems, 455, 0, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("AutoBackground", SpriteName.AutoBackground, SpriteName.BattleItems, 455, 40, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("RetreatForeground", SpriteName.RetreatForeground, SpriteName.BattleItems, 495, 0, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("RetreatBackground", SpriteName.RetreatBackground, SpriteName.BattleItems, 495, 40, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("PrevShipForeground", SpriteName.PrevShipForeground, SpriteName.BattleItems, 535, 0, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("PrevShipBackground", SpriteName.PrevShipBackground, SpriteName.BattleItems, 535, 40, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DonePrevShipForeground", SpriteName.DonePrevShipForeground, SpriteName.BattleItems, 575, 0, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DonePrevShipBackground", SpriteName.DonePrevShipBackground, SpriteName.BattleItems, 575, 40, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DoneNextShipForeground", SpriteName.DoneNextShipForeground, SpriteName.BattleItems, 615, 0, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DoneNextShipBackground", SpriteName.DoneNextShipBackground, SpriteName.BattleItems, 615, 40, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("NextShipForeground", SpriteName.NextShipForeground, SpriteName.BattleItems, 655, 0, 40, 40, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("NextShipBackground", SpriteName.NextShipBackground, SpriteName.BattleItems, 655, 40, 40, 40, true, false, out reason))
-			{
-				return false;
-			}*/
-
-			return true;
 		}
 
 		private static bool AddFont(string name, string fontFamily, float size, bool bold, out string reason)

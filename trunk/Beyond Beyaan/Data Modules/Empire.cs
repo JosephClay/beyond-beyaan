@@ -376,7 +376,7 @@ namespace Beyond_Beyaan
 					StarSystem systemExplored = fleet.System;
 					if (!systemExplored.IsThisSystemExploredByEmpire(this))
 					{
-						SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
+						SitRepManager.AddItem(new SitRepItem(ScreenEnum.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
 						systemExplored.AddEmpireExplored(this);
 					}
 				}

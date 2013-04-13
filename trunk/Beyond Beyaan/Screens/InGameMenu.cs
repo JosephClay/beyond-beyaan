@@ -61,10 +61,10 @@ namespace Beyond_Beyaan.Screens
 					switch (i)
 					{
 						case 0:
-							gameMain.ChangeToScreen(Screen.GalaxySetup);
+							gameMain.ChangeToScreen(ScreenEnum.GalaxySetup);
 							break;
 						case 4:
-							gameMain.ChangeToScreen(Screen.MainMenu);
+							gameMain.ChangeToScreen(ScreenEnum.MainMenu);
 							break;
 					}
 				}
@@ -83,7 +83,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(Screen.Galaxy);
+				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
 			}
 		}
 	}

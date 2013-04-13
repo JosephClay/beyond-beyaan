@@ -2,13 +2,13 @@
 {
 	public class SitRepItem
 	{
-		public Screen ScreenEventIsIn { get; private set; }
+		public ScreenEnum ScreenEventIsIn { get; private set; }
 		public StarSystem SystemEventOccuredAt { get; private set; }
 		public Planet PlanetEventOccuredAt { get; private set; }
 		public Point PointEventOccuredAt { get; private set; }
 		public string EventMessage { get; private set; }
 
-		public SitRepItem(Screen screen, StarSystem system, Planet planet, Point point, string message)
+		public SitRepItem(ScreenEnum screen, StarSystem system, Planet planet, Point point, string message)
 		{
 			ScreenEventIsIn = screen;
 			SystemEventOccuredAt = system;

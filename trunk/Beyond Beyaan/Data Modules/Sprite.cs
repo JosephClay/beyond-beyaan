@@ -181,6 +181,11 @@ namespace Beyond_Beyaan.Data_Modules
 			Draw(x, y, scaleX, scaleY, Color.White);
 		}
 
+		public void Draw(float x, float y, float scaleX, float scaleY, byte alpha)
+		{
+			Draw(x, y, scaleX, scaleY, Color.FromArgb(alpha, Color.White));
+		}
+
 		public void Draw(float x, float y, float scaleX, float scaleY, Color color)
 		{
 			var frame = _baseSprite.Frames[_currentFrame];

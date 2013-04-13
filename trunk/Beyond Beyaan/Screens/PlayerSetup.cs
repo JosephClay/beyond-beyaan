@@ -327,7 +327,7 @@ namespace Beyond_Beyaan.Screens
 
 				if (galaxySetup.MouseUp(x, y))
 				{
-					gameMain.ChangeToScreen(Screen.GalaxySetup);
+					gameMain.ChangeToScreen(ScreenEnum.GalaxySetup);
 				}
 
 				if (startGame.MouseUp(x, y))
@@ -370,7 +370,7 @@ namespace Beyond_Beyaan.Screens
 					{
 						gameMain.ShipShader = GorgonLibrary.Graphics.FXShader.FromFile("ColorShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 					}
-					gameMain.ChangeToScreen(Screen.Galaxy);
+					gameMain.ChangeToScreen(ScreenEnum.Galaxy);
 				}
 			}
 		}
@@ -393,13 +393,13 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			for (int i = 0; i < gameMain.ScreenWidth; i += 1024)
+			/*for (int i = 0; i < gameMain.ScreenWidth; i += 1024)
 			{
 				for (int j = 0; j < gameMain.ScreenHeight; j += 600)
 				{
 					drawingManagement.DrawSprite(SpriteName.TitleNebula, i, j, 255, System.Drawing.Color.White);
 				}
-			}
+			}*/
 			background.Draw(drawingManagement);
 			listBackground.Draw(drawingManagement);
 			newPlayerBackground.Draw(drawingManagement);
