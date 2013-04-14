@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Sprites>
+  <Sprite name="Cursor" file="Cursor.png">
+    <Frame x="0" y="0" width="24" height="24" frameLength="350" />
+    <Frame x="25" y="0" width="24" height="24" frameLength="350" />
+    <Frame x="50" y="0" width="24" height="24" frameLength="350" />
+    <Frame x="75" y="0" width="24" height="24" frameLength="350" />
+  </Sprite>
   <!-- Galaxy artwork-->
   <Sprite name="Star" file="stars.png">
     <Frame x="0" y="0" width="32" height="32" frameLength="400,1000" axisX="16" axisY="16"/>

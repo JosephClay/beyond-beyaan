@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.IO;
 using GorgonLibrary.InputDevices;
+using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Screens;
 
@@ -58,6 +59,8 @@ namespace Beyond_Beyaan
 		internal Random r;
 		internal Input Input;
 		internal Point MousePos;
+
+		private BBSprite Cursor;
 
 		private string logFilePath;
 		//private StreamWriter logger;
@@ -168,7 +171,12 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-
+			Cursor = SpriteManager.GetSprite("Cursor", r);
+			if (Cursor == null)
+			{
+				reason = "Cursor is not defined in sprites.xml";
+				return false;
+			}
 			ChangeToScreen(ScreenEnum.MainMenu);
 			//StarShader = GorgonLibrary.Graphics.FXShader.FromFile("StarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			//BGStarShader = GorgonLibrary.Graphics.FXShader.FromFile("BGStarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
@@ -193,7 +201,9 @@ namespace Beyond_Beyaan
 		public void ProcessGame(float frameDeltaTime)
 		{
 			ScreenManager.DrawCurrentScreen();
+			Cursor.Draw(MousePos.X, MousePos.Y);
 			ScreenManager.MouseHover(MousePos.X, MousePos.Y, frameDeltaTime);
+			Cursor.Update(frameDeltaTime, r);
 			/*bool skipUpdate = false;
 			bool handleTutorial = false;
 			bool handleTaskBar = false;
@@ -383,7 +393,7 @@ namespace Beyond_Beyaan
 			switch (whichScreen)
 			{
 				case ScreenEnum.MainMenu: //Any way we get here means everything needs to be cleared out
-					this.DrawingManagement = new DrawingManagement();
+					//this.DrawingManagement = new DrawingManagement();
 					mainGameMenu = new MainGameMenu();
 					//mainGameMenu.Initialize(this);
 					//screenInterface = mainGameMenu;
