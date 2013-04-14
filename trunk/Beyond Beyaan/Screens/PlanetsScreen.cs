@@ -224,7 +224,7 @@ namespace Beyond_Beyaan.Screens
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
 			UpdateBackground(frameDeltaTime);
-			gameMain.galaxy.UpdateStars(frameDeltaTime, gameMain.r);
+			gameMain.Galaxy.UpdateStars(frameDeltaTime, gameMain.Random);
 
 			if (scrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
 			{
@@ -398,10 +398,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
 			}
-			if (e.Key == KeyboardKeys.Space)
+			/*if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}
+			}*/
 		}
 
 		public void LoadScreen()
@@ -417,7 +417,7 @@ namespace Beyond_Beyaan.Screens
 			bool showAllCommerce = (!filterButtons[6].IsChecked && !filterButtons[7].IsChecked && !filterButtons[8].IsChecked);
 			planetsShowing = new List<Planet>();
 			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
-			foreach (StarSystem system in gameMain.galaxy.GetAllStars())
+			foreach (StarSystem system in gameMain.Galaxy.GetAllStars())
 			{
 				if (!system.IsThisSystemExploredByEmpire(currentEmpire))
 				{
@@ -624,12 +624,12 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.galaxy.GetAllStars();
+			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
-				int x = (gameMain.ScreenWidth / 2) - 390 + (int)(276.0f * (system.X / (float)gameMain.galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 290) + (int)(276.0f * (system.Y / (float)gameMain.galaxy.GalaxySize));
+				int x = (gameMain.ScreenWidth / 2) - 390 + (int)(276.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 290) + (int)(276.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize));
 				GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
 				if (system.Type.Shader != null)
 				{
@@ -640,15 +640,15 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (hoveringSystem != null)
 			{
-				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((hoveringSystem.X + (hoveringSystem.Sprite.Width / 64)) / gameMain.galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((hoveringSystem.Y + (hoveringSystem.Sprite.Height / 64)) / gameMain.galaxy.GalaxySize));
+				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((hoveringSystem.X + (hoveringSystem.Sprite.Width / 64)) / gameMain.Galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((hoveringSystem.Y + (hoveringSystem.Sprite.Height / 64)) / gameMain.Galaxy.GalaxySize));
 				drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
 				drawingManagement.DrawSprite(SpriteName.SelectedStar, x, y, 255, hoveringSystem.Sprite.Width / 8, hoveringSystem.Sprite.Height / 8, System.Drawing.Color.White);
 			}
 			else if (selectedSystem != null)
 			{
-				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((selectedSystem.X + (selectedSystem.Sprite.Width / 64)) / gameMain.galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((selectedSystem.Y + (selectedSystem.Sprite.Height / 64)) / gameMain.galaxy.GalaxySize));
+				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((selectedSystem.X + (selectedSystem.Sprite.Width / 64)) / gameMain.Galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((selectedSystem.Y + (selectedSystem.Sprite.Height / 64)) / gameMain.Galaxy.GalaxySize));
 				drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
 				drawingManagement.DrawSprite(SpriteName.SelectedStar, x, y, 255, selectedSystem.Sprite.Width / 8, selectedSystem.Sprite.Height / 8, System.Drawing.Color.White);
 			}

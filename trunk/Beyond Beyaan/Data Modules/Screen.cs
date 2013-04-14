@@ -7,10 +7,12 @@ namespace Beyond_Beyaan.Data_Modules
 {
 	public class Screen
 	{
+		private GameMain _gameMain;
 		private List<UIType> UITypes;
 
-		public bool LoadScreen(string filePath, GameMain gameMain, Random r, out string reason)
+		public bool LoadScreen(string filePath, GameMain gameMain, out string reason)
 		{
+			_gameMain = gameMain;
 			UITypes = new List<UIType>();
 
 			try
@@ -26,7 +28,7 @@ namespace Beyond_Beyaan.Data_Modules
 						return false;
 					}
 					string type = element.Attribute("UIType").Value;
-					UIType newUI = gameMain.UITypeManager.GetUI(type, r);
+					UIType newUI = gameMain.UITypeManager.GetUI(type, _gameMain.Random);
 					if (newUI == null)
 					{
 						reason = type + " UI Type in " + filePath + " is not defined in UITypes.xml.";
@@ -43,19 +45,23 @@ namespace Beyond_Beyaan.Data_Modules
 						{
 							case "xpos":
 								{
-									x = GetValue(attribute.Value, gameMain);
+									x = GetValue(attribute.Value);
 								} break;
 							case "ypos":
 								{
-									y = GetValue(attribute.Value, gameMain);
+									y = GetValue(attribute.Value);
 								} break;
 							case "width":
 								{
-									width = GetValue(attribute.Value, gameMain);
+									width = GetValue(attribute.Value);
 								} break;
 							case "height":
 								{
-									height = GetValue(attribute.Value, gameMain);
+									height = GetValue(attribute.Value);
+								} break;
+							case "onclick":
+								{
+									newUI.OnClick = attribute.Value;
 								} break;
 						}
 					}
@@ -72,7 +78,7 @@ namespace Beyond_Beyaan.Data_Modules
 			return true;
 		}
 
-		private int GetValue(string value, GameMain gameMain)
+		private int GetValue(string value)
 		{
 			int result = 0;
 			while (value.Length > 0)
@@ -91,22 +97,22 @@ namespace Beyond_Beyaan.Data_Modules
 				}
 				if (value.StartsWith("WIDTH", StringComparison.CurrentCultureIgnoreCase))
 				{
-					tempValue = gameMain.ScreenWidth;
+					tempValue = _gameMain.ScreenWidth;
 					value = value.Substring(5);
 				}
 				else if (value.StartsWith("HEIGHT", StringComparison.CurrentCultureIgnoreCase))
 				{
-					tempValue = gameMain.ScreenHeight;
+					tempValue = _gameMain.ScreenHeight;
 					value = value.Substring(6);
 				}
 				else if (value.StartsWith("XMIDDLE", StringComparison.CurrentCultureIgnoreCase))
 				{
-					tempValue = gameMain.ScreenWidth / 2;
+					tempValue = _gameMain.ScreenWidth / 2;
 					value = value.Substring(7);
 				}
 				else if (value.StartsWith("YMIDDLE", StringComparison.CurrentCultureIgnoreCase))
 				{
-					tempValue = gameMain.ScreenHeight / 2;
+					tempValue = _gameMain.ScreenHeight / 2;
 					value = value.Substring(7);
 				}
 				else
@@ -152,7 +158,10 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			foreach (var uiType in UITypes)
 			{
-				uiType.MouseUp(x, y);
+				if (uiType.MouseUp(x, y))
+				{
+					_gameMain.OnClick(uiType.OnClick);
+				}
 			}
 		}
 
@@ -161,6 +170,7 @@ namespace Beyond_Beyaan.Data_Modules
 			foreach (var uiType in UITypes)
 			{
 				uiType.MouseHover(x, y, frameDeltaTime);
+				uiType.Update(frameDeltaTime, _gameMain.Random);
 			}
 		}
 	}

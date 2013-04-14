@@ -18,7 +18,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			this.gameMain = gameMain;
 			camera = new Camera(gameMain.ScreenWidth, gameMain.ScreenHeight);
-			camera.InitCamera(gameMain.galaxy.GalaxySize, 32);
+			camera.InitCamera(gameMain.Galaxy.GalaxySize, 32);
 			camera.ZoomOut();
 
 			sizes = new float[4];
@@ -35,7 +35,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
+			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
 			foreach (StarSystem system in systems)
 			{
 				GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
@@ -96,7 +96,7 @@ namespace Beyond_Beyaan.Screens
 						break;
 					case 1:
 						Random r = new Random();
-						gameMain.empireManager.UpdateEmpires(gameMain.galaxy, gameMain.PlanetTypeManager, r);
+						gameMain.empireManager.UpdateEmpires(gameMain.Galaxy, gameMain.PlanetTypeManager, r);
 						updateText.SetText("Processing Influences");
 						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
@@ -106,7 +106,7 @@ namespace Beyond_Beyaan.Screens
 						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 3:
-						gameMain.empireManager.UpdateMigration(gameMain.galaxy);
+						gameMain.empireManager.UpdateMigration(gameMain.Galaxy);
 						gameMain.empireManager.LookForCombat();
 						/*if (gameMain.empireManager.HasCombat)
 						{
@@ -114,14 +114,14 @@ namespace Beyond_Beyaan.Screens
 						}*/
 						break;
 					case 4:
-						gameMain.empireManager.CheckForColonizers(gameMain.galaxy);
+						gameMain.empireManager.CheckForColonizers(gameMain.Galaxy);
 						if (gameMain.empireManager.HasColonizers)
 						{
 							gameMain.ChangeToScreen(ScreenEnum.Colonize);
 						}
 						break;
 					case 5:
-						gameMain.empireManager.CheckForInvaders(gameMain.galaxy);
+						gameMain.empireManager.CheckForInvaders(gameMain.Galaxy);
 						if (gameMain.empireManager.HasInvaders)
 						{
 							gameMain.ChangeToScreen(ScreenEnum.Invade);

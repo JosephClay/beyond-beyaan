@@ -150,7 +150,7 @@
 						case 7: gameMain.ChangeToScreen(ScreenEnum.Research);
 							break;
 						case 8: gameMain.ChangeToScreen(ScreenEnum.ProcessTurn);
-							gameMain.HideSitRep();
+							//gameMain.HideSitRep();
 							break;
 					}
 					return true;

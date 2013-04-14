@@ -56,7 +56,7 @@ namespace Beyond_Beyaan.Screens
 			uiElements = new Dictionary<string, UIElement>();
 			uiLabels = new List<Label>();
 
-			System.IO.DirectoryInfo scriptsDir = new System.IO.DirectoryInfo(Environment.CurrentDirectory + "\\Data\\Demo\\Scripts\\Galaxy");
+			System.IO.DirectoryInfo scriptsDir = new System.IO.DirectoryInfo(System.IO.Path.Combine(gameMain.GameDataSet.FullName, "Scripts\\Galaxy\\"));
 			System.IO.FileInfo[] scripts = scriptsDir.GetFiles("*.cs");
 			List<string> scriptNames = new List<string>();
 			for (int i = 0; i < scripts.Length; i++)
@@ -215,7 +215,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				gameMain.ChangeToScreen(ScreenEnum.MainMenu);
 			}
-			if (nextScreen.MouseUp(x, y) && gameMain.galaxy.GalaxySize > 0)
+			if (nextScreen.MouseUp(x, y) && gameMain.Galaxy.GalaxySize > 0)
 			{
 				gameMain.ChangeToScreen(ScreenEnum.PlayerSetup);
 			}
@@ -234,12 +234,12 @@ namespace Beyond_Beyaan.Screens
 				{
 					vars[key] = ((NumericUpDown)uiElements[key]).Value.ToString();
 				}
-				gameMain.galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.StarTypeManager, gameMain.SectorTypeManager, gameMain.SpriteManager);
-				if (gameMain.galaxy.GetAllStars().Count > 0)
+				gameMain.Galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.StarTypeManager, gameMain.SectorTypeManager, gameMain.SpriteManager);
+				if (gameMain.Galaxy.GetAllStars().Count > 0)
 				{
 					nextScreen.Active = true;
 				}
-				numOfStars.SetText(gameMain.galaxy.GetAllStars().Count.ToString() + " Stars");
+				numOfStars.SetText(gameMain.Galaxy.GetAllStars().Count.ToString() + " Stars");
 				numOfStars.MoveTo(xScreenPos + 650 - (int)(numOfStars.GetWidth() / 2), yScreenPos + 350 - (int)(numOfStars.GetHeight() / 2));
 			}
 
@@ -369,15 +369,15 @@ namespace Beyond_Beyaan.Screens
 				gameMain.galaxy.Nebula.Draw();
 			}*/
 
-			List<StarSystem> systems = gameMain.galaxy.GetAllStars();
+			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
 			if (systems.Count > 0)
 			{
 				galaxyBackground = new StretchableImage(xScreenPos + 475, yScreenPos + 10, 320, 320, 60, 60, DrawingManagement.BorderBorder);
 				foreach (StarSystem system in systems)
 				{
-					int xPos = xScreenPos + 488 + (int)(295.0f * (system.X / (float)(gameMain.galaxy.GalaxySize + 3)));
-					int yPos = yScreenPos + 23 + (int)(295.0f * (system.Y / (float)(gameMain.galaxy.GalaxySize + 3)));
+					int xPos = xScreenPos + 488 + (int)(295.0f * (system.X / (float)(gameMain.Galaxy.GalaxySize + 3)));
+					int yPos = yScreenPos + 23 + (int)(295.0f * (system.Y / (float)(gameMain.Galaxy.GalaxySize + 3)));
 					GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
 					if (system.Type.Shader != null)
 					{

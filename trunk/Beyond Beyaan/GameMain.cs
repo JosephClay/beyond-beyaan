@@ -18,7 +18,6 @@ namespace Beyond_Beyaan
 		internal UITypeManager UITypeManager;
 		private ScreenManager ScreenManager;
 		private ScreenInterface screenInterface;
-		private MainGameMenu mainGameMenu;
 		private PlayerSetup playerSetup;
 		private GalaxySetup galaxySetup;
 		private GalaxyScreen galaxyScreen;
@@ -33,11 +32,11 @@ namespace Beyond_Beyaan
 		private SpaceCombat spaceCombat;
 		private ColonizeScreen colonizeScreen;
 		private InvadeScreen invadeScreen;
-		private SituationReport situationReport;
+		//private SituationReport situationReport;
 		private TutorialWindow tutorialWindow;
 		private ScreenEnum currentScreen;
 		internal TaskBar taskBar;
-		internal Galaxy galaxy;
+		internal Galaxy Galaxy;
 		internal EmpireManager empireManager;
 		internal RaceManager RaceManager;
 		internal ParticleManager ParticleManager;
@@ -48,7 +47,7 @@ namespace Beyond_Beyaan
 		internal StarTypeManager StarTypeManager;
 		internal IconManager IconManager;
 		internal ResourceManager ResourceManager;
-		internal AIManager aiManager;
+		internal AIManager AIManager;
 		internal ShipScriptManager ShipScriptManager;
 		internal MasterItemManager MasterItemManager;
 		internal MasterTechnologyList MasterTechnologyList;
@@ -56,12 +55,13 @@ namespace Beyond_Beyaan
 		internal int ScreenHeight;
 		internal GorgonLibrary.Graphics.FXShader ShipShader;
 		internal DirectoryInfo GameDataSet;
-		internal Random r;
+		internal Random Random;
 		internal Input Input;
 		internal Point MousePos;
 
 		private BBSprite Cursor;
 
+		private bool useOldScreenSystem;
 		private string logFilePath;
 		//private StreamWriter logger;
 
@@ -69,9 +69,10 @@ namespace Beyond_Beyaan
 
 		public bool Initalize(int screenWidth, int screenHeight, DirectoryInfo dataSet, bool showTutorial, Form parentForm, out string reason)
 		{
+			useOldScreenSystem = false;
 			MousePos = new Point();
 
-			r = new Random();
+			Random = new Random();
 			this.parentForm = parentForm;
 
 			reason = string.Empty;
@@ -102,7 +103,14 @@ namespace Beyond_Beyaan
 			DrawingManagement = new DrawingManagement();
 			UITypeManager = new UITypeManager();
 			ScreenManager = new ScreenManager();
+			AIManager = new AIManager();
+			Galaxy = new Galaxy();
+			empireManager = new EmpireManager();
 
+			if (!AIManager.Initialize(GameDataSet, out reason))
+			{
+				return false;
+			}
 			if (!SpriteManager.LoadSprites(GameDataSet, graphicDirectory, out reason))
 			{
 				return false;
@@ -167,11 +175,11 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			if (!ScreenManager.Initialize(GameDataSet, this, "MainMenu", r, out reason))
+			if (!ScreenManager.Initialize(GameDataSet, this, "MainMenu", out reason))
 			{
 				return false;
 			}
-			Cursor = SpriteManager.GetSprite("Cursor", r);
+			Cursor = SpriteManager.GetSprite("Cursor", Random);
 			if (Cursor == null)
 			{
 				reason = "Cursor is not defined in sprites.xml";
@@ -200,57 +208,63 @@ namespace Beyond_Beyaan
 
 		public void ProcessGame(float frameDeltaTime)
 		{
-			ScreenManager.DrawCurrentScreen();
-			Cursor.Draw(MousePos.X, MousePos.Y);
-			ScreenManager.MouseHover(MousePos.X, MousePos.Y, frameDeltaTime);
-			Cursor.Update(frameDeltaTime, r);
-			/*bool skipUpdate = false;
-			bool handleTutorial = false;
-			bool handleTaskBar = false;
-			if (currentScreen != ScreenEnum.MainMenu)
+			if (!useOldScreenSystem)
 			{
-				handleTutorial = true;
-				if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
-				{
-					handleTaskBar = true;
-				}
-			}
-			if (handleTutorial)
-			{
-				if (GameConfiguration.ShowTutorial && tutorialWindow.MouseHover(MousePos.X, MousePos.Y, frameDeltaTime))
-				{
-					skipUpdate = true;
-				}
-			}
-			if (handleTaskBar && !skipUpdate)
-			{
-				if (taskBar.Update(MousePos.X, MousePos.Y, frameDeltaTime))
-				{
-					skipUpdate = true;
-				}
-				if (!skipUpdate && situationReport.Update(MousePos.X, MousePos.Y, frameDeltaTime))
-				{
-					skipUpdate = true;
-				}
-			}
-			if (!skipUpdate)
-			{
-				screenInterface.Update(MousePos.X, MousePos.Y, frameDeltaTime);
+				ScreenManager.DrawCurrentScreen();
+				ScreenManager.MouseHover(MousePos.X, MousePos.Y, frameDeltaTime);
 			}
 			else
 			{
-				screenInterface.UpdateBackground(frameDeltaTime);
+				bool skipUpdate = false;
+				bool handleTutorial = false;
+				bool handleTaskBar = false;
+				if (currentScreen != ScreenEnum.MainMenu)
+				{
+					handleTutorial = true;
+					if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
+					{
+						handleTaskBar = true;
+					}
+				}
+				if (handleTutorial)
+				{
+					if (GameConfiguration.ShowTutorial && tutorialWindow.MouseHover(MousePos.X, MousePos.Y, frameDeltaTime))
+					{
+						skipUpdate = true;
+					}
+				}
+				if (handleTaskBar && !skipUpdate)
+				{
+					if (taskBar.Update(MousePos.X, MousePos.Y, frameDeltaTime))
+					{
+						skipUpdate = true;
+					}
+					/*if (!skipUpdate && situationReport.Update(MousePos.X, MousePos.Y, frameDeltaTime))
+					{
+						skipUpdate = true;
+					}*/
+				}
+				if (!skipUpdate)
+				{
+					screenInterface.Update(MousePos.X, MousePos.Y, frameDeltaTime);
+				}
+				else
+				{
+					screenInterface.UpdateBackground(frameDeltaTime);
+				}
+				screenInterface.DrawScreen(DrawingManagement);
+				if (handleTaskBar)
+				{
+					taskBar.Draw(DrawingManagement);
+					//situationReport.DrawSitRep(DrawingManagement);
+				}
+				if (GameConfiguration.ShowTutorial)
+				{
+					tutorialWindow.DrawWindow(DrawingManagement);
+				}
 			}
-			screenInterface.DrawScreen(DrawingManagement);
-			if (handleTaskBar)
-			{
-				taskBar.Draw(DrawingManagement);
-				situationReport.DrawSitRep(DrawingManagement);
-			}
-			if (GameConfiguration.ShowTutorial)
-			{
-				tutorialWindow.DrawWindow(DrawingManagement);
-			}*/
+			Cursor.Draw(MousePos.X, MousePos.Y);
+			Cursor.Update(frameDeltaTime, Random);
 		}
 
 		public void MouseDown(MouseEventArgs e)
@@ -271,52 +285,42 @@ namespace Beyond_Beyaan
 						whichButton = 3;
 					} break;
 			}
-			ScreenManager.MouseDown(e.X, e.Y, whichButton);
-			/*int whichButton = 0;
-			switch (e.Button)
+			if (!useOldScreenSystem)
 			{
-				case System.Windows.Forms.MouseButtons.Left:
+				ScreenManager.MouseDown(e.X, e.Y, whichButton);
+			}
+			else
+			{
+				bool handleTaskBar = false;
+				bool handleTutorial = false;
+				if (currentScreen != ScreenEnum.MainMenu)
+				{
+					handleTutorial = true;
+					if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
 					{
-						whichButton = 1;
-					} break;
-				case System.Windows.Forms.MouseButtons.Right:
+						handleTaskBar = true;
+					}
+				}
+				if (handleTutorial)
+				{
+					if (GameConfiguration.ShowTutorial && tutorialWindow.MouseDown(e.X, e.Y))
 					{
-						whichButton = 2;
-					} break;
-				case System.Windows.Forms.MouseButtons.Middle:
+						return;
+					}
+				}
+				if (handleTaskBar)
+				{
+					if (taskBar.MouseDown(e.X, e.Y, whichButton))
 					{
-						whichButton = 3;
-					} break;
-			}
-			bool handleTaskBar = false;
-			bool handleTutorial = false;
-			if (currentScreen != ScreenEnum.MainMenu)
-			{
-				handleTutorial = true;
-				if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
-				{
-					handleTaskBar = true;
+						return;
+					}
+					/*if (situationReport.MouseDown(e.X, e.Y))
+					{
+						return;
+					}*/
 				}
+				screenInterface.MouseDown(e.X, e.Y, whichButton);
 			}
-			if (handleTutorial)
-			{
-				if (GameConfiguration.ShowTutorial && tutorialWindow.MouseDown(e.X, e.Y))
-				{
-					return;
-				}
-			}
-			if (handleTaskBar)
-			{
-				if (taskBar.MouseDown(e.X, e.Y, whichButton))
-				{
-					return;
-				}
-				if (situationReport.MouseDown(e.X, e.Y))
-				{
-					return;
-				}
-			}
-			screenInterface.MouseDown(e.X, e.Y, whichButton);*/
 		}
 
 		public void MouseUp(MouseEventArgs e)
@@ -337,52 +341,66 @@ namespace Beyond_Beyaan
 						whichButton = 3;
 					} break;
 			}
-			ScreenManager.MouseUp(e.X, e.Y, whichButton);
-			/*bool handleTaskBar = false;
-			bool handleTutorial = false;
-			if (currentScreen != ScreenEnum.MainMenu)
+			if (!useOldScreenSystem)
 			{
-				handleTutorial = true;
-				if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
-				{
-					handleTaskBar = true;
-				}
+				ScreenManager.MouseUp(e.X, e.Y, whichButton);
 			}
-			if (handleTutorial)
+			else
 			{
-				if (GameConfiguration.ShowTutorial && tutorialWindow.MouseUp(e.X, e.Y))
+				bool handleTaskBar = false;
+				bool handleTutorial = false;
+				if (currentScreen != ScreenEnum.MainMenu)
 				{
-					return;
+					handleTutorial = true;
+					if (currentScreen != ScreenEnum.GalaxySetup && currentScreen != ScreenEnum.PlayerSetup && currentScreen != ScreenEnum.Battle)
+					{
+						handleTaskBar = true;
+					}
 				}
+				if (handleTutorial)
+				{
+					if (GameConfiguration.ShowTutorial && tutorialWindow.MouseUp(e.X, e.Y))
+					{
+						return;
+					}
+				}
+				if (handleTaskBar)
+				{
+					if (taskBar.MouseUp(e.X, e.Y, whichButton))
+					{
+						return;
+					}
+					/*if (situationReport.MouseUp(e.X, e.Y))
+					{
+						return;
+					}*/
+				}
+				screenInterface.MouseUp(e.X, e.Y, whichButton);
 			}
-			if (handleTaskBar)
-			{
-				if (taskBar.MouseUp(e.X, e.Y, whichButton))
-				{
-					return;
-				}
-				if (situationReport.MouseUp(e.X, e.Y))
-				{
-					return;
-				}
-			}
-			screenInterface.MouseUp(e.X, e.Y, whichButton);*/
 		}
 
 		public void MouseScroll(int delta)
 		{
-			//screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
+			if (useOldScreenSystem)
+			{
+				screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
+			}
 		}
 
-		public void KeyDown(KeyboardInputEventArgs e)
+		public bool KeyDown(KeyboardInputEventArgs e)
 		{
-			//screenInterface.KeyDown(e);
+			//Bool to tell the window form that the input was handled, otherwise let the form handle input
+			if (useOldScreenSystem)
+			{
+				screenInterface.KeyDown(e);
+			}
+			return false;
 		}
 
-		public void ToggleSitRep()
+		/*public void ToggleSitRep()
 		{
 			situationReport.ToggleVisibility();
-		}
+		}*/
 
 		public void ChangeToScreen(ScreenEnum whichScreen)
 		{
@@ -392,12 +410,11 @@ namespace Beyond_Beyaan
 			}
 			switch (whichScreen)
 			{
-				case ScreenEnum.MainMenu: //Any way we get here means everything needs to be cleared out
-					//this.DrawingManagement = new DrawingManagement();
-					mainGameMenu = new MainGameMenu();
-					//mainGameMenu.Initialize(this);
-					//screenInterface = mainGameMenu;
-					break;
+				case ScreenEnum.MainMenu:
+					{
+						useOldScreenSystem = false;
+						ScreenManager.ChangeScreen("MainMenu");
+					} break;
 				case ScreenEnum.GalaxySetup:
 					if (galaxySetup == null)
 					{
@@ -505,7 +522,7 @@ namespace Beyond_Beyaan
 					}
 					if (!empireManager.ProcessNextEmpire())
 					{
-						situationReport.Refresh();
+						//situationReport.Refresh();
 						ChangeToScreen(ScreenEnum.Galaxy);
 						break;
 					}
@@ -573,7 +590,7 @@ namespace Beyond_Beyaan
 			}
 			spaceCombat.LoadBattle(filePath);
 		}
-		public void RefreshSitRep()
+		/*public void RefreshSitRep()
 		{
 			situationReport.Refresh();
 		}
@@ -584,7 +601,7 @@ namespace Beyond_Beyaan
 		public void InitializeSitRep()
 		{
 			situationReport.Initialize(this);
-		}
+		}*/
 
 		public void Log(string message)
 		{
@@ -618,5 +635,33 @@ namespace Beyond_Beyaan
 			//dispose of any resources in use
 			parentForm.Close();
 		}
+
+		#region UI Events
+		public void OnClick(string command)
+		{
+			//Handles the OnClick commands here, such as changing screen, etc
+			string[] parts = command.Split(new[] { '|' });
+			for (int i = 0; i < parts.Length; i++)
+			{
+				switch (parts[i].ToLower())
+				{
+					case "changeto":
+						{
+							ScreenManager.ChangeScreen(parts[i + 1]);
+							i++;
+						} break;
+					case "useoldscreensystem":
+						{
+							useOldScreenSystem = true;
+							ChangeToScreen(ScreenEnum.GalaxySetup);
+						} break;
+					case "quitgame":
+						{
+							ExitGame();
+						} break;
+				}
+			}
+		}
+		#endregion
 	}
 }

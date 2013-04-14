@@ -160,7 +160,16 @@ namespace Beyond_Beyaan
 			{
 				Gorgon.Screen.Windowed = !Gorgon.Screen.Windowed;
 			}
-			gameMain.KeyDown(e);
+			if (!gameMain.KeyDown(e))
+			{
+				switch (e.Key)
+				{
+					case KeyboardKeys.F:
+						{
+							Gorgon.FrameStatsVisible = !Gorgon.FrameStatsVisible;
+						} break;
+				}
+			}
 		}
 
 		void Gorgon_DeviceReset(object sender, EventArgs e)

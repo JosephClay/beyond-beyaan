@@ -948,7 +948,7 @@ namespace Beyond_Beyaan.Screens
 					if (isCPU)
 					{
 						string aiName = empire.Attribute("ai").Value;
-						foreach (AI ai in gameMain.aiManager.AIs)
+						foreach (AI ai in gameMain.AIManager.AIs)
 						{
 							if (ai.AIName == aiName)
 							{
@@ -1014,7 +1014,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			camera.InitCamera(size, 16);
-			backgroundStars = new BackgroundStars(size, gameMain.r, 40, gameMain.SpriteManager);
+			backgroundStars = new BackgroundStars(size, gameMain.Random, 40, gameMain.SpriteManager);
 		}
 
 		public void SetupBattle(List<Squadron> fleets, StarSystem system)

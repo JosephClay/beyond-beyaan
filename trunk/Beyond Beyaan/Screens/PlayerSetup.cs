@@ -124,7 +124,7 @@ namespace Beyond_Beyaan.Screens
 
 			List<string> items = new List<string>();
 			items.Add("Random");
-			foreach (AI ai in gameMain.aiManager.AIs)
+			foreach (AI ai in gameMain.AIManager.AIs)
 			{
 				items.Add(ai.AIName);
 			}
@@ -345,7 +345,7 @@ namespace Beyond_Beyaan.Screens
 								player.empireName = player.race.GetRandomEmperorName();
 							}
 						}
-						Empire empire = new Empire(player.empireName, i, player.race, player.isHuman ? PlayerType.HUMAN : PlayerType.CPU, gameMain.aiManager.AIs[player.aiScript - 1], player.color);
+						Empire empire = new Empire(player.empireName, i, player.race, player.isHuman ? PlayerType.HUMAN : PlayerType.CPU, gameMain.AIManager.AIs[player.aiScript - 1], player.color);
 						i++;
 
 						gameMain.empireManager.AddEmpire(empire);
@@ -360,8 +360,8 @@ namespace Beyond_Beyaan.Screens
 					gameMain.empireManager.SetupContacts();
 					//gameMain.empireManager.UpdateInfluenceMaps(gameMain.galaxy);
 					gameMain.empireManager.SetInitialEmpireTurn();
-					gameMain.galaxy.ConstructQuadTree();
-					gameMain.InitializeSitRep();
+					gameMain.Galaxy.ConstructQuadTree();
+					//gameMain.InitializeSitRep();
 					if (gameMain.taskBar == null)
 					{
 						gameMain.taskBar = new TaskBar(gameMain);

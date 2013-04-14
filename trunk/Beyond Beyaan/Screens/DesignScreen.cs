@@ -396,10 +396,10 @@ namespace Beyond_Beyaan.Screens
 				UpdateInformation();
 				return;
 			}
-			if (e.Key == KeyboardKeys.Space)
+			/*if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}
+			}*/
 		}
 
 		private void UpdateInformation()
