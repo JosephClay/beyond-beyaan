@@ -10,7 +10,7 @@ namespace Beyond_Beyaan.Data_Managers
 		private Dictionary<string, Screen> _screens;
 		private Screen _currentScreen;
 
-		public bool Initialize(DirectoryInfo dataset, GameMain gameMain, string firstScreen, Random r, out string reason)
+		public bool Initialize(DirectoryInfo dataset, GameMain gameMain, string firstScreen, out string reason)
 		{
 			DirectoryInfo screenPath = new DirectoryInfo(Path.Combine(dataset.FullName, "Screens"));
 			_screens = new Dictionary<string, Screen>();
@@ -20,7 +20,7 @@ namespace Beyond_Beyaan.Data_Managers
 				foreach (var file in screenPath.GetFiles("*.xml"))
 				{
 					Screen newScreen = new Screen();
-					if (!newScreen.LoadScreen(file.FullName, gameMain, r, out reason))
+					if (!newScreen.LoadScreen(file.FullName, gameMain, out reason))
 					{
 						return false;
 					}
@@ -45,6 +45,18 @@ namespace Beyond_Beyaan.Data_Managers
 		public void DrawCurrentScreen()
 		{
 			_currentScreen.Draw();
+		}
+
+		public void ChangeScreen(string whichScreen)
+		{
+			if (_screens.ContainsKey(whichScreen))
+			{
+				_currentScreen = _screens[whichScreen];
+			}
+			else
+			{
+				System.Windows.Forms.MessageBox.Show("Screen " + whichScreen + " does not exist.");
+			}
 		}
 
 		public void MouseDown(int x, int y, int whichButton)

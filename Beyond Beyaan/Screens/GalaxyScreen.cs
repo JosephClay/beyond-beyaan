@@ -44,7 +44,7 @@ namespace Beyond_Beyaan.Screens
 			this.gameMain = gameMain;
 
 			camera = new Camera(gameMain.ScreenWidth, gameMain.ScreenHeight);
-			camera.InitCamera(gameMain.galaxy.GalaxySize, 32);
+			camera.InitCamera(gameMain.Galaxy.GalaxySize, 32);
 
 			pressedInWindow = false;
 
@@ -107,7 +107,7 @@ namespace Beyond_Beyaan.Screens
 			movementPath.HorizontalWrapMode = ImageAddressing.Wrapping;
 			movementPath.Axis = new GorgonLibrary.Vector2D(0.5f, 2.5f);
 
-			backgroundStars = new BackgroundStars(gameMain.galaxy.GalaxySize, gameMain.r, 40, gameMain.SpriteManager);
+			backgroundStars = new BackgroundStars(gameMain.Galaxy.GalaxySize, gameMain.Random, 40, gameMain.SpriteManager);
 			rotation = 0;
 
 			List<SpriteName> frames = new List<SpriteName>
@@ -183,7 +183,7 @@ namespace Beyond_Beyaan.Screens
 
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
 			SquadronGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
-			List<StarSystem> systems = gameMain.galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
+			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
 			//GridCell[][] gridCells = gameMain.galaxy.GetGridCells();
 			bool displayName = camera.ZoomDistance < 4;
 
@@ -367,7 +367,7 @@ namespace Beyond_Beyaan.Screens
 
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
 			SquadronGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
-			List<StarSystem> systems = gameMain.galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
+			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
 			//GridCell[][] gridCells = gameMain.galaxy.GetGridCells();
 			bool displayName = camera.ZoomDistance < 4;
 
@@ -377,7 +377,7 @@ namespace Beyond_Beyaan.Screens
 			int top = camera.CameraY - 3;
 			int bottom = camera.CameraY + size.Y + 3;
 
-			foreach (Gateway gateway in gameMain.galaxy.Gateways)
+			foreach (Gateway gateway in gameMain.Galaxy.Gateways)
 			{
 				if (Utility.LineRectangleIntersected(gateway.SystemA.X, gateway.SystemA.Y, gateway.SystemB.X, gateway.SystemB.Y, left, top, right, bottom))
 				{
@@ -672,7 +672,7 @@ namespace Beyond_Beyaan.Screens
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
 			UpdateBackground(frameDeltaTime);
-			gameMain.galaxy.UpdateStars(frameDeltaTime, gameMain.r);
+			gameMain.Galaxy.UpdateStars(frameDeltaTime, gameMain.Random);
 
 			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
 			if (currentEmpire.SelectedSystem != null)
@@ -700,11 +700,11 @@ namespace Beyond_Beyaan.Screens
 					int mouseOverX = (int)(((mouseX / camera.Scale) + camera.XOffset) / 32) + camera.CameraX;
 					int mouseOverY = (int)(((mouseY / camera.Scale) + camera.YOffset) / 32) + camera.CameraY;
 
-					StarSystem destination = gameMain.galaxy.GetStarAtPoint(new Point(mouseOverX, mouseOverY));
+					StarSystem destination = gameMain.Galaxy.GetStarAtPoint(new Point(mouseOverX, mouseOverY));
 
 					if (destination != null)
 					{
-						currentEmpire.SelectedFleetGroup.SetTentativePath(destination, gameMain.galaxy, gameMain.Input.Keyboard.KeyStates[KeyboardKeys.ControlKey] == KeyState.Down, currentEmpire);
+						currentEmpire.SelectedFleetGroup.SetTentativePath(destination, gameMain.Galaxy, gameMain.Input.Keyboard.KeyStates[KeyboardKeys.ControlKey] == KeyState.Down, currentEmpire);
 					}
 					else
 					{
@@ -779,7 +779,7 @@ namespace Beyond_Beyaan.Screens
 				whichGridCellClicked.X = (int)(((x / camera.Scale) + camera.XOffset) / 32) + camera.CameraX;
 				whichGridCellClicked.Y = (int)(((y / camera.Scale) + camera.YOffset) / 32) + camera.CameraY;
 
-				StarSystem selectedSystem = gameMain.galaxy.GetStarAtPoint(whichGridCellClicked);
+				StarSystem selectedSystem = gameMain.Galaxy.GetStarAtPoint(whichGridCellClicked);
 				if (selectedSystem != null && selectedSystem == gameMain.empireManager.CurrentEmpire.SelectedSystem)
 				{
 					return;
@@ -795,16 +795,16 @@ namespace Beyond_Beyaan.Screens
 				}
 
 				//See if there is an adjacent system
-				selectedSystem = gameMain.galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X - 1, whichGridCellClicked.Y));
+				selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X - 1, whichGridCellClicked.Y));
 				if (selectedSystem == null)
 				{
-					selectedSystem = gameMain.galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X + 1, whichGridCellClicked.Y));
+					selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X + 1, whichGridCellClicked.Y));
 					if (selectedSystem == null)
 					{
-						selectedSystem = gameMain.galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y - 1));
+						selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y - 1));
 						if (selectedSystem == null)
 						{
-							selectedSystem = gameMain.galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y + 1));
+							selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y + 1));
 						}
 					}
 				}
@@ -827,16 +827,16 @@ namespace Beyond_Beyaan.Screens
 					gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.ConfirmPath();
 					//gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.SplitFleet(gameMain.empireManager.CurrentEmpire, new Dictionary<Race, int>());
 					//See if there is an adjacent system
-					StarSystem selectedSystem = gameMain.galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X - 1, whichGridCellClicked.Y));
+					StarSystem selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X - 1, whichGridCellClicked.Y));
 					if (selectedSystem == null)
 					{
-						selectedSystem = gameMain.galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X + 1, whichGridCellClicked.Y));
+						selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X + 1, whichGridCellClicked.Y));
 						if (selectedSystem == null)
 						{
-							selectedSystem = gameMain.galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y - 1));
+							selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y - 1));
 							if (selectedSystem == null)
 							{
-								selectedSystem = gameMain.galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y + 1));
+								selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y + 1));
 							}
 						}
 					}
@@ -868,10 +868,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				gameMain.ChangeToScreen(ScreenEnum.InGameMenu);
 			}
-			if (e.Key == KeyboardKeys.Space)
+			/*if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}
+			}*/
 			if (e.Key == KeyboardKeys.B)
 			{
 				gameMain.empireManager.CurrentEmpire.ToggleBorder();

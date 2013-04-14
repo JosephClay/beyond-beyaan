@@ -311,10 +311,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
 			}
-			if (e.Key == KeyboardKeys.Space)
+			/*if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}
+			}*/
 		}
 
 		public void LoadScreen()

@@ -9,15 +9,12 @@ namespace Beyond_Beyaan.Data_Managers
 	{
 		public List<AI> AIs { get; private set; }
 
-		public AIManager()
+		public bool Initialize(DirectoryInfo path, out string reason)
 		{
 			AIs = new List<AI>();
 			try
 			{
-				string directory = Path.Combine(Environment.CurrentDirectory, "data");
-				directory = Path.Combine(directory, "demo");
-				directory = Path.Combine(directory, "ai");
-				DirectoryInfo di = new DirectoryInfo(directory);
+				DirectoryInfo di = new DirectoryInfo(Path.Combine(path.FullName, "AI"));
 				foreach (FileInfo fi in di.GetFiles("*.txt"))
 				{
 					AI ai = new AI();
@@ -26,10 +23,13 @@ namespace Beyond_Beyaan.Data_Managers
 						AIs.Add(ai);
 					}
 				}
+				reason = null;
+				return true;
 			}
-			catch
+			catch (Exception e)
 			{
-				//Do nothing, not much we can do at this point
+				reason = e.Message;
+				return false;
 			}
 		}
 	}

@@ -101,6 +101,10 @@ namespace Beyond_Beyaan.Data_Modules
 		public bool Enabled { get; set; }
 		public bool Selected { get; set; }
 
+		#region Events
+		public string OnClick { get; set; }
+		#endregion
+
 		public UIType(BaseUIType baseUIType, Random r)
 		{
 			_sprites = new Dictionary<BaseUISprites, BBSprite>();
@@ -170,6 +174,13 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
+		public void Update(float frameDeltaTime, Random r)
+		{
+			foreach (var sprite in _sprites)
+			{
+				sprite.Value.Update(frameDeltaTime, r);
+			}
+		}
 		#region Individual UI functions
 
 		#region Image functions

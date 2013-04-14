@@ -336,13 +336,13 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.galaxy.GetAllStars();
+			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 			float x;
 			float y;
 			foreach (StarSystem system in systems)
 			{
-				x = (xPos + 20 + (276.0f * (system.X / (float)gameMain.galaxy.GalaxySize)));
-				y = (yPos + 290 + (276.0f * (system.Y / (float)gameMain.galaxy.GalaxySize)));
+				x = (xPos + 20 + (276.0f * (system.X / (float)gameMain.Galaxy.GalaxySize)));
+				y = (yPos + 290 + (276.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize)));
 				GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
 				if (system.Type.Shader != null)
 				{
@@ -359,8 +359,8 @@ namespace Beyond_Beyaan.Screens
 				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
 			StarSystem systemSelected = availableSystems[selectedSystem];
-			x = xPos + 20 + (276.0f * ((systemSelected.X + (systemSelected.Sprite.Width / 64)) / gameMain.galaxy.GalaxySize));
-			y = yPos + 290 + (276.0f * ((systemSelected.Y + (systemSelected.Sprite.Height / 64)) / gameMain.galaxy.GalaxySize));
+			x = xPos + 20 + (276.0f * ((systemSelected.X + (systemSelected.Sprite.Width / 64)) / gameMain.Galaxy.GalaxySize));
+			y = yPos + 290 + (276.0f * ((systemSelected.Y + (systemSelected.Sprite.Height / 64)) / gameMain.Galaxy.GalaxySize));
 			drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
 			drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)x, (int)y, 255, systemSelected.Sprite.Width / 8, systemSelected.Sprite.Height / 8, System.Drawing.Color.White);
 		}
