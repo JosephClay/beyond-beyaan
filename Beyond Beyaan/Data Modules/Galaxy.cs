@@ -111,10 +111,9 @@ namespace Beyond_Beyaan
 		}
 		public void UpdateStars(float frameDeltaTime, Random r)
 		{
-			float time = frameDeltaTime*200;
 			foreach (StarSystem system in starSystems)
 			{
-				system.Sprite.Update(time, r);
+				system.Sprite.Update(frameDeltaTime, r);
 			}
 		}
 		#endregion

@@ -648,7 +648,12 @@ namespace Beyond_Beyaan
 
 		#region Member Variables
 		private Dictionary<SpriteName, Sprite> sprites;
-		public static Dictionary<string, Font> fonts;
+		private static Dictionary<string, Font> _fonts;
+		public static Dictionary<string, Font> Fonts
+		{
+			get { return _fonts; }
+			private set { _fonts = value; }
+		}
 		private static RenderImage image;
 		private static RenderImage backBuffer;
 		#endregion
@@ -657,7 +662,7 @@ namespace Beyond_Beyaan
 		public DrawingManagement()
 		{
 			sprites = new Dictionary<SpriteName, Sprite>();
-			fonts = new Dictionary<string, Font>();
+			Fonts = new Dictionary<string, Font>();
 		}
 		#endregion
 
@@ -2056,7 +2061,7 @@ namespace Beyond_Beyaan
 
 		private static bool AddFont(string name, string fontFamily, float size, bool bold, out string reason)
 		{
-			if (fonts.ContainsKey(name))
+			if (Fonts.ContainsKey(name))
 			{
 				reason = "Key " + name + " already exists";
 				return false;
@@ -2065,7 +2070,7 @@ namespace Beyond_Beyaan
 			try
 			{
 				Font font = new Font(name, fontFamily, size, true, bold);
-				fonts.Add(name, font);
+				Fonts.Add(name, font);
 			}
 			catch (Exception e)
 			{
@@ -2076,7 +2081,7 @@ namespace Beyond_Beyaan
 		}
 		private static bool AddFontFromFile(string name, float size, bool bold, string filePath, out string reason)
 		{
-			if (fonts.ContainsKey(name))
+			if (Fonts.ContainsKey(name))
 			{
 				reason = "Key " + name + " already exists";
 				return false;
@@ -2085,7 +2090,7 @@ namespace Beyond_Beyaan
 			try
 			{
 				Font font = Font.FromFile(filePath, size, false, bold, false, false);
-				fonts.Add(name, font);
+				Fonts.Add(name, font);
 			}
 			catch (Exception e)
 			{
@@ -2196,7 +2201,7 @@ namespace Beyond_Beyaan
 		public bool DrawText(string name, string text, float x, float y, Drawing.Color color)
 		{
 			Font font;
-			if (fonts.TryGetValue(name, out font))
+			if (Fonts.TryGetValue(name, out font))
 			{
 				TextSprite textSprite = new TextSprite(name, text, font, x, y);
 				textSprite.Color = color;
@@ -2209,7 +2214,7 @@ namespace Beyond_Beyaan
 		public static Font GetFont(string name)
 		{
 			Font font;
-			fonts.TryGetValue(name, out font);
+			Fonts.TryGetValue(name, out font);
 			return font;
 		}
 		#endregion

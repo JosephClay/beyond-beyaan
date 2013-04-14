@@ -198,5 +198,15 @@ namespace Beyond_Beyaan
 		{
 			gameMain.MouseScroll(e.Delta);
 		}
+
+		private void BeyondBeyaan_MouseLeave(object sender, EventArgs e)
+		{
+			Cursor.Show();
+		}
+
+		private void BeyondBeyaan_MouseEnter(object sender, EventArgs e)
+		{
+			Cursor.Hide();
+		}
 	}
 }

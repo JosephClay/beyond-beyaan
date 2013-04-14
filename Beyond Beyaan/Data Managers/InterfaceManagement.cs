@@ -2442,9 +2442,9 @@ namespace Beyond_Beyaan
 		public void SetText(string label)
 		{
 			GorgonLibrary.Graphics.Font font;
-			if (DrawingManagement.fonts.TryGetValue("Computer", out font))
+			if (DrawingManagement.Fonts.TryGetValue("Arial", out font))
 			{
-				textSprite = new GorgonLibrary.Graphics.TextSprite("Computer", label, font);
+				textSprite = new GorgonLibrary.Graphics.TextSprite("Arial", label, font);
 				SetAlignment(isRightAligned);
 				Text = label;
 			}
