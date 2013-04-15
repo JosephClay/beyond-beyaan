@@ -50,7 +50,7 @@ namespace Beyond_Beyaan
 		/// <summary>
 		/// Set up the galaxy
 		/// </summary>
-		public void GenerateGalaxy(System.Reflection.MethodInfo genGalaxyFunc, Object scriptInstance, Dictionary<string, string> vars, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, SpriteManager spriteManager)
+		public void GenerateGalaxy(System.Reflection.MethodInfo genGalaxyFunc, Object scriptInstance, Dictionary<string, string> vars, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, SpriteManager spriteManager, GameMain gameMain)
 		{
 			Random r = new Random();
 			
@@ -65,7 +65,7 @@ namespace Beyond_Beyaan
 			}
 			GalaxySize += 4;
 
-			FillGalaxyWithStars(ret, starTypeManager, sectorTypeManager, spriteManager);
+			FillGalaxyWithStars(ret, starTypeManager, sectorTypeManager, spriteManager, gameMain);
 
 			Gateways = new List<Gateway>();
 			ConnectGateways(sectorTypeManager, r);
@@ -119,7 +119,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Filling Functions
-		private void FillGalaxyWithStars(List<Dictionary<string, object>> starPoints, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, SpriteManager spriteManager)
+		private void FillGalaxyWithStars(List<Dictionary<string, object>> starPoints, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, SpriteManager spriteManager, GameMain gameMain)
 		{
 			starSystems = new List<StarSystem>();
 			NameGenerator nameGenerator = new NameGenerator();
@@ -130,7 +130,7 @@ namespace Beyond_Beyaan
 				StarType type = starTypeManager.GetType((string)newStar["type"]);
 				int x = (int)newStar["x"];
 				int y = (int)newStar["y"];
-				StarSystem newStarSystem = new StarSystem(nameGenerator.GetName(), x, y, type, sectorTypeManager, spriteManager, r);
+				StarSystem newStarSystem = new StarSystem(nameGenerator.GetName(), x, y, type, sectorTypeManager, spriteManager, r, gameMain.FontManager.GetDefaultFont());
 				starSystems.Add(newStarSystem);
 			}
 		}

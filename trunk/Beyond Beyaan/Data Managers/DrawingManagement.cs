@@ -11,23 +11,6 @@ namespace Beyond_Beyaan
 	public enum SpriteName 
 	{ 
 		Main,
-
-/*		GridCell00,
-		GridCell01,
-		GridCell02,
-		GridCell03,
-		GridCell04,
-		GridCell05,
-		GridCell06,
-		GridCell07,
-		GridCell08,
-		GridCell09,
-		GridCell10,
-		GridCell11,
-		GridCell12,
-		GridCell13,
-		GridCell14,
-		GridCell15,*/
 		BGStar1,
 		BGStar2,
 		BGStar3,
@@ -72,7 +55,6 @@ namespace Beyond_Beyaan
 		SliderHorizontalForegroundButton2,
 		SliderHorizontalBackgroundButton3,
 		SliderHorizontalForegroundButton3,
-		//ControlBackground,
 		SelectCell,
 		GameMenu,
 		HighlightedGameMenu,
@@ -159,12 +141,6 @@ namespace Beyond_Beyaan
 		IncomingMessageForeground,
 		OutgoingMessageBackground,
 		OutgoingMessageForeground,
-		/*EmpireTurnArrow,
-		ShipSelection32,
-		ShipSelection64,
-		ShipSelection96,
-		ShipSelection128,
-		ShipSelection160,*/
 		TextTL,
 		TextTC,
 		TextTR,
@@ -648,12 +624,6 @@ namespace Beyond_Beyaan
 
 		#region Member Variables
 		private Dictionary<SpriteName, Sprite> sprites;
-		private static Dictionary<string, Font> _fonts;
-		public static Dictionary<string, Font> Fonts
-		{
-			get { return _fonts; }
-			private set { _fonts = value; }
-		}
 		private static RenderImage image;
 		private static RenderImage backBuffer;
 		#endregion
@@ -662,25 +632,12 @@ namespace Beyond_Beyaan
 		public DrawingManagement()
 		{
 			sprites = new Dictionary<SpriteName, Sprite>();
-			Fonts = new Dictionary<string, Font>();
 		}
 		#endregion
 
 		#region Functions
 		public bool LoadGraphics(string directory, out string reason)
 		{
-			if (!AddFont("Arial", "Arial", 10.0f, false, out reason))
-			{
-				return false;
-			}
-			if (!AddFont("Computer", "Arial", 10.0f, false, out reason))
-			{
-				return false;
-			}
-			/*if (!AddFontFromFile("Computer", 11, false, Environment.CurrentDirectory + "\\Data\\Demo\\mainFont.ttf", out reason))
-			{
-				return false;
-			}*/
 			if (!File.Exists(Path.Combine(directory, "Main.png")))
 			{
 				reason = "File " + Path.Combine(directory, "Main.png") + " not found";
@@ -2058,47 +2015,6 @@ namespace Beyond_Beyaan
 				return false;
 			}
 		}
-
-		private static bool AddFont(string name, string fontFamily, float size, bool bold, out string reason)
-		{
-			if (Fonts.ContainsKey(name))
-			{
-				reason = "Key " + name + " already exists";
-				return false;
-			}
-			reason = null;
-			try
-			{
-				Font font = new Font(name, fontFamily, size, true, bold);
-				Fonts.Add(name, font);
-			}
-			catch (Exception e)
-			{
-				reason = e.Message;
-				return false;
-			}
-			return true;
-		}
-		private static bool AddFontFromFile(string name, float size, bool bold, string filePath, out string reason)
-		{
-			if (Fonts.ContainsKey(name))
-			{
-				reason = "Key " + name + " already exists";
-				return false;
-			}
-			reason = null;
-			try
-			{
-				Font font = Font.FromFile(filePath, size, false, bold, false, false);
-				Fonts.Add(name, font);
-			}
-			catch (Exception e)
-			{
-				reason = e.Message;
-				return false;
-			}
-			return true;
-		}
 		#endregion
 
 		#region Public Functions
@@ -2196,28 +2112,6 @@ namespace Beyond_Beyaan
 		{
 			Gorgon.Screen.Line(x1, y1, x2, y2, color);
 		}
-
-		#region Texts/Fonts
-		public bool DrawText(string name, string text, float x, float y, Drawing.Color color)
-		{
-			Font font;
-			if (Fonts.TryGetValue(name, out font))
-			{
-				TextSprite textSprite = new TextSprite(name, text, font, x, y);
-				textSprite.Color = color;
-				textSprite.Draw();
-				return true;
-			}
-			return false;
-		}
-
-		public static Font GetFont(string name)
-		{
-			Font font;
-			Fonts.TryGetValue(name, out font);
-			return font;
-		}
-		#endregion
 		#endregion
 	}
 }

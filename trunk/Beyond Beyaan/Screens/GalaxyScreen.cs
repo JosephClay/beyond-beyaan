@@ -55,15 +55,15 @@ namespace Beyond_Beyaan.Screens
 
 			//transferOKButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Create Transport", gameMain.ScreenWidth / 2 + 10, gameMain.ScreenHeight / 2 + 70, 150, 25);
 			//transferCancelButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Cancel", gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 70, 150, 25);
-			transferUpkeepCost = new Label(gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 50, System.Drawing.Color.White);
+			transferUpkeepCost = new Label(gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 50, System.Drawing.Color.White, gameMain.FontManager.GetDefaultFont());
 			popTransferSliders = new ScrollBar[4];
 			amountPopTransferLabel = new Label[4];
 			for (int i = 0; i < 4; i++)
 			{
-				popTransferSliders[i] = new ScrollBar(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40) + 22, 16, 268, 1, 100, true, true, DrawingManagement.HorizontalSliderBar);
-				amountPopTransferLabel[i] = new Label(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40));
+				popTransferSliders[i] = new ScrollBar(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40) + 22, 16, 268, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
+				amountPopTransferLabel[i] = new Label(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40), gameMain.FontManager.GetDefaultFont());
 			}
-			listOfPopTransferScrollBar = new ScrollBar(gameMain.ScreenWidth / 2 + 142, gameMain.ScreenHeight / 2 - 120, 16, 128, 4, 10, false, false, DrawingManagement.VerticalScrollBar);
+			listOfPopTransferScrollBar = new ScrollBar(gameMain.ScreenWidth / 2 + 142, gameMain.ScreenHeight / 2 - 120, 16, 128, 4, 10, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			systemWindow = new SystemWindow(gameMain.ScreenWidth / 2, gameMain.ScreenHeight / 2, gameMain);
 			squadronListWindow = new SquadronListWindow(gameMain.ScreenHeight / 2, gameMain);

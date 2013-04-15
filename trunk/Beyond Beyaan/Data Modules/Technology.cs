@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using Beyond_Beyaan.Scripts;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
+using GorgonLibrary.Graphics;
 
 namespace Beyond_Beyaan
 {
@@ -188,7 +189,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		protected void AddControls(List<BaseControl> controls, string item)
+		protected void AddControls(List<BaseControl> controls, string item, Font font)
 		{
 			string[] items = item.Split(new[] { '|' });
 
@@ -203,7 +204,7 @@ namespace Beyond_Beyaan
 							int max = int.Parse(parts[4]);
 							int incr = int.Parse(parts[5]);
 							int origVal = int.Parse(parts[6]);
-							NumUpDown control = new NumUpDown(min, max, incr, origVal, parts[1], parts[2]);
+							NumUpDown control = new NumUpDown(min, max, incr, origVal, parts[1], parts[2], font);
 							controls.Add(control);
 						} break;
 				}
@@ -221,7 +222,7 @@ namespace Beyond_Beyaan
 
 		public ShipItemScript Script { get; private set; }
 
-		public ShipMainItem(XElement itemToLoad) : base(itemToLoad)
+		public ShipMainItem(XElement itemToLoad, Font font) : base(itemToLoad)
 		{
 			Type = (string)Values["type"];
 			Modifiers = new List<string>();
@@ -239,7 +240,7 @@ namespace Beyond_Beyaan
 
 			if (Values.ContainsKey("controls"))
 			{
-				AddControls(Controls, (string)Values["controls"]);
+				AddControls(Controls, (string)Values["controls"], font);
 			}
 		}
 	}
@@ -319,14 +320,14 @@ namespace Beyond_Beyaan
 
 			Controls = new List<BaseControl>();
 		}
-		public Equipment(ShipMainItem mainItem, List<ShipModifierItem> modifierItems, List<ShipEnhancerItem> enhancerItems, IconManager iconManager)
+		public Equipment(ShipMainItem mainItem, List<ShipModifierItem> modifierItems, List<ShipEnhancerItem> enhancerItems, IconManager iconManager, Font font)
 		{
 			ShipMainItem = mainItem;
 			ShipModifierItems = new List<ShipModifierItem>(modifierItems);
 			ShipEnhancerItems = new List<ShipEnhancerItem>(enhancerItems);
 
 			Controls = new List<BaseControl>();
-			CopyControls(mainItem.Controls);
+			CopyControls(mainItem.Controls, font);
 		}
 
 		public Equipment(Equipment equipmentToCopy)
@@ -373,14 +374,14 @@ namespace Beyond_Beyaan
 			return true;
 		}
 
-		private void CopyControls(List<BaseControl> controls)
+		private void CopyControls(List<BaseControl> controls, Font font)
 		{
 			foreach (BaseControl control in controls)
 			{
 				if (control is NumUpDown)
 				{
 					var convertedControl = (NumUpDown)control;
-					NumUpDown newControl = new NumUpDown(convertedControl.MinValue, convertedControl.MaxValue, convertedControl.IncrAmount, convertedControl.Value, convertedControl.Name, convertedControl.Code);
+					NumUpDown newControl = new NumUpDown(convertedControl.MinValue, convertedControl.MaxValue, convertedControl.IncrAmount, convertedControl.Value, convertedControl.Name, convertedControl.Code, font);
 					Controls.Add(newControl);
 				}
 			}

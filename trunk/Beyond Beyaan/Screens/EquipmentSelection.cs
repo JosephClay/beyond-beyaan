@@ -72,22 +72,22 @@ namespace Beyond_Beyaan.Screens
 			OnOkClick = okClick;
 			OnCancelClick = cancelClick;
 
-			okButton = new Button(SpriteName.EquipmentOK, SpriteName.EquipmentOKHL, string.Empty, x + 465, y + 325, 80, 40);
-			cancelButton = new Button(SpriteName.EquipmentCancel, SpriteName.EquipmentCancelHL, string.Empty, x + 380, y + 325, 80, 40);
+			okButton = new Button(SpriteName.EquipmentOK, SpriteName.EquipmentOKHL, string.Empty, x + 465, y + 325, 80, 40, gameMain.FontManager.GetDefaultFont());
+			cancelButton = new Button(SpriteName.EquipmentCancel, SpriteName.EquipmentCancelHL, string.Empty, x + 380, y + 325, 80, 40, gameMain.FontManager.GetDefaultFont());
 
-			GorgonLibrary.Graphics.Font font = DrawingManagement.GetFont("Computer");
+			GorgonLibrary.Graphics.Font font = gameMain.FontManager.GetDefaultFont();
 
 			okButton.SetToolTip(DrawingManagement.BoxBorderBG, font, "Add this equipment", "addThisEquipmentToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 			cancelButton.SetToolTip(DrawingManagement.BoxBorderBG, font, "Cancel", "cancelAddThisEquipmentToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 
-			mainComboBox = new ComboBox(DrawingManagement.SmallComboBox, new List<string>(), xPos + 115, yPos + 27, 230, 35, 7, true, 10, 10);
-			mountComboBox = new ComboBox(DrawingManagement.SmallComboBox, new List<string>(), xPos + 115, yPos + 67, 230, 35, 7, true, 10, 10);
+			mainComboBox = new ComboBox(DrawingManagement.SmallComboBox, new List<string>(), xPos + 115, yPos + 27, 230, 35, 7, true, 10, 10, gameMain.FontManager.GetDefaultFont());
+			mountComboBox = new ComboBox(DrawingManagement.SmallComboBox, new List<string>(), xPos + 115, yPos + 67, 230, 35, 7, true, 10, 10, gameMain.FontManager.GetDefaultFont());
 
 			typeButtons = new StretchButton[13];
 
 			for (int i = 0; i < typeButtons.Length; i++)
 			{
-				typeButtons[i] = new StretchButton(DrawingManagement.IconButtonBG, DrawingManagement.IconButtonFG, string.Empty, x + 20 + (i % 2 * 40), y + 15 + (i / 2 * 40), 40, 40, 10, 10);
+				typeButtons[i] = new StretchButton(DrawingManagement.IconButtonBG, DrawingManagement.IconButtonFG, string.Empty, x + 20 + (i % 2 * 40), y + 15 + (i / 2 * 40), 40, 40, 10, 10, gameMain.FontManager.GetDefaultFont());
 			}
 			typeButtons[0].SetToolTip(DrawingManagement.BoxBorderBG, font, "Beam Weapons", "beamWeaponToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 			typeButtons[1].SetToolTip(DrawingManagement.BoxBorderBG, font, "Projectile Weapons", "projectileWeaponToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
@@ -107,12 +107,12 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < buttonList.Length; i++)
 			{
-				buttonList[i] = new CheckBox(DrawingManagement.RadioButton, string.Empty, xPos + 105, y + 125 + (i * 25), 205, 30, 19, true);
+				buttonList[i] = new CheckBox(DrawingManagement.RadioButton, string.Empty, xPos + 105, y + 125 + (i * 25), 205, 30, 19, true, gameMain.FontManager.GetDefaultFont());
 			}
 
-			scrollBar = new ScrollBar(x + 333, y + 132, 16, 148, 8, 8, false, false, DrawingManagement.VerticalScrollBar);
+			scrollBar = new ScrollBar(x + 333, y + 132, 16, 148, 8, 8, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
-			equipmentNameLabel = new Label(x + 20, y + 335);
+			equipmentNameLabel = new Label(x + 20, y + 335, gameMain.FontManager.GetDefaultFont());
 
 			mainBackground = new StretchableImage(x + 105, y + 15, 250, 100, 30, 13, DrawingManagement.BoxBorder);
 			modifierBackground = new StretchableImage(x + 105, y + 120, 250, 200, 30, 13, DrawingManagement.BoxBorder);

@@ -108,7 +108,7 @@ namespace Beyond_Beyaan.Screens
 			listBackground = new StretchableImage(xPos + 20, yPos + 20, 760, 350, 60, 60, DrawingManagement.BorderBorder);
 			newPlayerBackground = new StretchableImage(xPos + 20, yPos + 375, 760, 150, 60, 60, DrawingManagement.BorderBorder);
 
-			empireListScrollBar = new ScrollBar(xPos + 745, yPos + 35, 16, 285, 7, 20, false, false, DrawingManagement.VerticalScrollBar);
+			empireListScrollBar = new ScrollBar(xPos + 745, yPos + 35, 16, 285, 7, 20, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 			empireListScrollBar.SetEnabledState(false);
 
 			List<SpriteName> radioButtonImage = new List<SpriteName>
@@ -119,8 +119,8 @@ namespace Beyond_Beyaan.Screens
 				SpriteName.RBCFG,
 			};
 
-			humanPlayer = new CheckBox(radioButtonImage, "Human Player", xPos + 40, yPos + 395, 150, 30, 19, true);
-			computerPlayer = new CheckBox(radioButtonImage, "Computer Player", xPos + 40, yPos + 425, 150, 30, 19, true);
+			humanPlayer = new CheckBox(radioButtonImage, "Human Player", xPos + 40, yPos + 395, 150, 30, 19, true, gameMain.FontManager.GetDefaultFont());
+			computerPlayer = new CheckBox(radioButtonImage, "Computer Player", xPos + 40, yPos + 425, 150, 30, 19, true, gameMain.FontManager.GetDefaultFont());
 
 			List<string> items = new List<string>();
 			items.Add("Random");
@@ -129,27 +129,27 @@ namespace Beyond_Beyaan.Screens
 				items.Add(ai.AIName);
 			}
 
-			aiComboBox = new ComboBox(DrawingManagement.ComboBox, items, xPos + 50, yPos + 465, 150, 35, 4, true);
+			aiComboBox = new ComboBox(DrawingManagement.ComboBox, items, xPos + 50, yPos + 465, 150, 35, 4, true, gameMain.FontManager.GetDefaultFont());
 
 			humanPlayer.IsChecked = true;
 			aiComboBox.Active = false;
 
-			currentRaceLabel = new Label("Random", xPos + 265, yPos + 415, System.Drawing.Color.White);
-			selectRaceButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Select Race", xPos + 250, yPos + 465, 250, 35);
+			currentRaceLabel = new Label("Random", xPos + 265, yPos + 415, System.Drawing.Color.White, gameMain.FontManager.GetDefaultFont());
+			selectRaceButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Select Race", xPos + 250, yPos + 465, 250, 35, gameMain.FontManager.GetDefaultFont());
 			raceBackground = new StretchableImage(xPos + 250, yPos + 400, 250, 50, 30, 13, DrawingManagement.BoxBorder);
 
-			empireName = new Label("Empire Name:", xPos + 525, yPos + 390, System.Drawing.Color.White);
-			empireNameTextBox = new SingleLineTextBox(xPos + 525, yPos + 415, 230, 35, DrawingManagement.TextBox);
+			empireName = new Label("Empire Name:", xPos + 525, yPos + 390, System.Drawing.Color.White, gameMain.FontManager.GetDefaultFont());
+			empireNameTextBox = new SingleLineTextBox(xPos + 525, yPos + 415, 230, 35, DrawingManagement.TextBox, gameMain.FontManager.GetDefaultFont());
 
-			addButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Add Player", xPos + 525, yPos + 465, 230, 35);
+			addButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Add Player", xPos + 525, yPos + 465, 230, 35, gameMain.FontManager.GetDefaultFont());
 
-			galaxySetup = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Back to Galaxy Setup", xPos + 35, yPos + 545, 250, 35);
-			startGame = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Start Game", xPos + 520, yPos + 545, 250, 35);
+			galaxySetup = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Back to Galaxy Setup", xPos + 35, yPos + 545, 250, 35, gameMain.FontManager.GetDefaultFont());
+			startGame = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Start Game", xPos + 520, yPos + 545, 250, 35, gameMain.FontManager.GetDefaultFont());
 			startGame.Active = false;
 
 			players = new List<Player>();
 
-			listIsEmptyLabel = new Label("The player list is empty", 0, 0, System.Drawing.Color.DarkRed);
+			listIsEmptyLabel = new Label("The player list is empty", 0, 0, System.Drawing.Color.DarkRed, gameMain.FontManager.GetDefaultFont());
 			listIsEmptyLabel.MoveTo(xPos + 400 - (int)(listIsEmptyLabel.GetWidth() / 2), yPos + 175 - (int)(listIsEmptyLabel.GetHeight() / 2));
 
 			playerBorders = new StretchableImage[7];
@@ -164,12 +164,12 @@ namespace Beyond_Beyaan.Screens
 			colorButtons = new Button[playerBorders.Length];
 			for (int i = 0; i < playerBorders.Length; i++)
 			{
-				empireInfos[i] = new Label(xPos + 80, yPos + 48 + (45 * i));
-				removeButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 715, yPos + 52 + (i * 45), 16, 16);
-				teams[i] = new NumericUpDown(xPos + 570, yPos + 50 + (i * 45), 70, 1, 16, 1);
-				teamLabels[i] = new Label("Team: ", xPos + 565, yPos + 50 + (i * 45), System.Drawing.Color.White);
+				empireInfos[i] = new Label(xPos + 80, yPos + 48 + (45 * i), gameMain.FontManager.GetDefaultFont());
+				removeButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 715, yPos + 52 + (i * 45), 16, 16, gameMain.FontManager.GetDefaultFont());
+				teams[i] = new NumericUpDown(xPos + 570, yPos + 50 + (i * 45), 70, 1, 16, 1, gameMain.FontManager.GetDefaultFont());
+				teamLabels[i] = new Label("Team: ", xPos + 565, yPos + 50 + (i * 45), System.Drawing.Color.White, gameMain.FontManager.GetDefaultFont());
 				teamLabels[i].SetAlignment(true);
-				colorButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 646, yPos + 45 + (i * 45), 32, 30);
+				colorButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 646, yPos + 45 + (i * 45), 32, 30, gameMain.FontManager.GetDefaultFont());
 			}
 
 			GorgonLibrary.Graphics.Image block = new GorgonLibrary.Graphics.Image("playerColorBlock", 1, 1, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
@@ -500,7 +500,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					empireInfo += " - Random Name";
 				}
-				empireInfos[i].SetText(empireInfo);
+				empireInfos[i].SetText(empireInfo, gameMain.FontManager.GetDefaultFont());
 				teams[i].SetValue(players[i + empireListScrollBar.TopIndex].team);
 			}
 		}
@@ -510,11 +510,11 @@ namespace Beyond_Beyaan.Screens
 			this.selectedRace = selectedRace;
 			if (selectedRace == null)
 			{
-				currentRaceLabel.SetText("Random");
+				currentRaceLabel.SetText("Random", gameMain.FontManager.GetDefaultFont());
 			}
 			else
 			{
-				currentRaceLabel.SetText(selectedRace.RaceName);
+				currentRaceLabel.SetText(selectedRace.RaceName, gameMain.FontManager.GetDefaultFont());
 			}
 			showingRaceSelection = false;
 		}

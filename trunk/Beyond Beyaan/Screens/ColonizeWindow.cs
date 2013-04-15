@@ -38,17 +38,17 @@ namespace Beyond_Beyaan.Screens
 		public ColonizeWindow(int centerX, int centerY, GameMain gameMain, ColonizeFunction colonizeFunction, DoneFunction doneFunction)
 			: base(centerX, centerY, 10, 10, string.Empty, gameMain, false)
 		{
-			systemNameLabel = new Label(0, 0);
+			systemNameLabel = new Label(0, 0, gameMain.FontManager.GetDefaultFont());
 
 			windowHeight = 290;
 
-			shipScrollBar = new ScrollBar(0, 0, 16, 100, 10, 10, true, false, DrawingManagement.HorizontalScrollBar);
+			shipScrollBar = new ScrollBar(0, 0, 16, 100, 10, 10, true, false, DrawingManagement.HorizontalScrollBar, gameMain.FontManager.GetDefaultFont());
 
-			colonizeButton = new Button(SpriteName.ColonizeButtonBG, SpriteName.ColonizeButtonFG, string.Empty, centerX + 10, yPos + 235, 75, 35);
-			doneButton = new Button(SpriteName.PlanetDoneButtonBG, SpriteName.PlanetDoneButtonFG, string.Empty, centerX - 85, yPos + 235, 75, 35);
+			colonizeButton = new Button(SpriteName.ColonizeButtonBG, SpriteName.ColonizeButtonFG, string.Empty, centerX + 10, yPos + 235, 75, 35, gameMain.FontManager.GetDefaultFont());
+			doneButton = new Button(SpriteName.PlanetDoneButtonBG, SpriteName.PlanetDoneButtonFG, string.Empty, centerX - 85, yPos + 235, 75, 35, gameMain.FontManager.GetDefaultFont());
 
-			colonizeButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Colonize planet with selected ship", "colonizePlanetWithSelectedShipToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			doneButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Exit", "exitColonizePlanetWithSelectedShipToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			colonizeButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Colonize planet with selected ship", "colonizePlanetWithSelectedShipToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			doneButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Exit", "exitColonizePlanetWithSelectedShipToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 
 			backGroundImage = new StretchableImage(0, 0, 40, 40, 60, 60, DrawingManagement.BorderBorderBG);
 

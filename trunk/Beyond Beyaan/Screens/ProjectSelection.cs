@@ -68,27 +68,27 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < systemButtons.Length; i++)
 			{
-				systemButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 15, yPos + 15 + (i * 45), 280, 45, 30, 13);
-				systemAvailableProduction[i] = new Label(xPos + 255, yPos + 25 + (i * 45));
+				systemButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 15, yPos + 15 + (i * 45), 280, 45, 30, 13, gameMain.FontManager.GetDefaultFont());
+				systemAvailableProduction[i] = new Label(xPos + 255, yPos + 25 + (i * 45), gameMain.FontManager.GetDefaultFont());
 			}
 			for (int i = 0; i < projectButtons.Length; i++)
 			{
-				projectButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 315, yPos + 15 + (i * 45), 350, 45, 30, 13);
-				projectNames[i] = new Label(xPos + 325, yPos + 25 + (i * 45));
-				projectProductionRequired[i] = new Label(xPos + 625, yPos + 25 + (i * 45));
+				projectButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 315, yPos + 15 + (i * 45), 350, 45, 30, 13, gameMain.FontManager.GetDefaultFont());
+				projectNames[i] = new Label(xPos + 325, yPos + 25 + (i * 45), gameMain.FontManager.GetDefaultFont());
+				projectProductionRequired[i] = new Label(xPos + 625, yPos + 25 + (i * 45), gameMain.FontManager.GetDefaultFont());
 			}
-			systemScrollBar = new ScrollBar(xPos + 300, yPos + 15, 16, 238, 6, 6, false, false, DrawingManagement.VerticalScrollBar);
-			projectScrollBar = new ScrollBar(xPos + 667, yPos + 15, 16, 463, 12, 12, false, false, DrawingManagement.VerticalScrollBar);
+			systemScrollBar = new ScrollBar(xPos + 300, yPos + 15, 16, 238, 6, 6, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
+			projectScrollBar = new ScrollBar(xPos + 667, yPos + 15, 16, 463, 12, 12, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			systemScrollBar.SetEnabledState(false);
 			projectScrollBar.SetEnabledState(false);
 
-			addButton = new Button(SpriteName.AddProjectBG, SpriteName.AddProjectFG, string.Empty, xPos + 600, yPos + 540, 80, 40);
-			doneButton = new Button(SpriteName.DoneProjectBG, SpriteName.DoneProjectFG, string.Empty, xPos + 510, yPos + 540, 80, 40);
+			addButton = new Button(SpriteName.AddProjectBG, SpriteName.AddProjectFG, string.Empty, xPos + 600, yPos + 540, 80, 40, gameMain.FontManager.GetDefaultFont());
+			doneButton = new Button(SpriteName.DoneProjectBG, SpriteName.DoneProjectFG, string.Empty, xPos + 510, yPos + 540, 80, 40, gameMain.FontManager.GetDefaultFont());
 
-			addButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Add this project", "addThisProjectToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			doneButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Exit", "exitProjectsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			projectCost = new Label(xPos + 360, yPos + 550);
+			addButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Add this project", "addThisProjectToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			doneButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Exit", "exitProjectsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			projectCost = new Label(xPos + 360, yPos + 550, gameMain.FontManager.GetDefaultFont());
 
 			maxProjectsVisible = 0;
 			maxSystemsVisible = 0;
@@ -224,7 +224,7 @@ namespace Beyond_Beyaan.Screens
 						button.Selected = false;
 					}
 					projectButtons[i].Selected = true;
-					projectCost.SetText(availableProjects[i + projectScrollBar.TopIndex].Cost.ToString());
+					projectCost.SetText(availableProjects[i + projectScrollBar.TopIndex].Cost.ToString(), gameMain.FontManager.GetDefaultFont());
 				}
 			}
 			if (systemScrollBar.MouseUp(x, y))
@@ -243,7 +243,7 @@ namespace Beyond_Beyaan.Screens
 					availableProjects = availableSystems[selectedSystem].GetAvailableProjects(gameMain.empireManager.CurrentEmpire);
 					selectedProject = -1;
 					addButton.Active = false;
-					projectCost.SetText("-");
+					projectCost.SetText("-", gameMain.FontManager.GetDefaultFont());
 					LoadProjects();
 					RefreshSystems();
 				}
@@ -330,7 +330,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					systemButtons[i].Selected = true;
 				}
-				systemAvailableProduction[i].SetText(availableSystems[i + systemScrollBar.TopIndex].GetProductionCapacity(gameMain.empireManager.CurrentEmpire).ToString());
+				systemAvailableProduction[i].SetText(availableSystems[i + systemScrollBar.TopIndex].GetProductionCapacity(gameMain.empireManager.CurrentEmpire).ToString(), gameMain.FontManager.GetDefaultFont());
 			}
 		}
 

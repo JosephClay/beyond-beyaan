@@ -58,14 +58,14 @@ namespace Beyond_Beyaan.Screens
 				spyEffortScrollbars[i] = new ScrollBar(x + 145, y + 45 + (150 * i), 16, 174, 1, 101, true, true, DrawingManagement.HorizontalScrollBar);
 				spyDefenseScrollbars[i] = new ScrollBar(x + 145, y + 85 + (150 * i), 16, 174, 1, 101, true, true, DrawingManagement.HorizontalScrollBar);
 			}*/
-			empireScrollBar = new ScrollBar(x + 384, y, 16, 568, 4, 10, false, false, DrawingManagement.VerticalScrollBar);
+			empireScrollBar = new ScrollBar(x + 384, y, 16, 568, 4, 10, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			incomingMessages = new Button[4];
 			for (int i = 0; i < incomingMessages.Length; i++)
 			{
-				incomingMessages[i] = new Button(SpriteName.IncomingMessageBackground, SpriteName.IncomingMessageForeground, string.Empty, x + 98, y + 98 + (150 * i), 40, 40);
+				incomingMessages[i] = new Button(SpriteName.IncomingMessageBackground, SpriteName.IncomingMessageForeground, string.Empty, x + 98, y + 98 + (150 * i), 40, 40, gameMain.FontManager.GetDefaultFont());
 			}
-			IncomingMessageTextBox = new Label(x + 405, y + 320);
+			IncomingMessageTextBox = new Label(x + 405, y + 320, gameMain.FontManager.GetDefaultFont());
 
 			/*messageOptions = new Button[10];
 			messageOptions[TRADE] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Trade", x + 405, y + 320, 190, 25);
@@ -570,7 +570,7 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 
-			listOfEmpires = new ComboBox(DrawingManagement.ComboBox, empires, x + 505, y + 440, 200, 25, 6, true);
+			listOfEmpires = new ComboBox(DrawingManagement.ComboBox, empires, x + 505, y + 440, 200, 25, 6, true, gameMain.FontManager.GetDefaultFont());
 			if (empires.Count == 0)
 			{
 				listOfEmpires.Active = false;
@@ -646,64 +646,64 @@ namespace Beyond_Beyaan.Screens
 			switch (contact.IncomingMessage)
 			{
 				case MessageType.TRADE:
-					IncomingMessageTextBox.SetText("We want trade agreement, do you agree?");
+					IncomingMessageTextBox.SetText("We want trade agreement, do you agree?", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.BREAK_TRADE:
-					IncomingMessageTextBox.SetText("We don't want your cheap items anymore!");
+					IncomingMessageTextBox.SetText("We don't want your cheap items anymore!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.RESEARCH:
-					IncomingMessageTextBox.SetText("We would like us to share our research.");
+					IncomingMessageTextBox.SetText("We would like us to share our research.", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.BREAK_RESEARCH:
-					IncomingMessageTextBox.SetText("We don't want your lousy research!");
+					IncomingMessageTextBox.SetText("We don't want your lousy research!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We want non-aggression!");
+					IncomingMessageTextBox.SetText("We want non-aggression!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.ALLIANCE:
-					IncomingMessageTextBox.SetText("We want alliance!");
+					IncomingMessageTextBox.SetText("We want alliance!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.BREAK_NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We want aggression!");
+					IncomingMessageTextBox.SetText("We want aggression!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.BREAK_ALLIANCE:
-					IncomingMessageTextBox.SetText("We want to break our alliance!");
+					IncomingMessageTextBox.SetText("We want to break our alliance!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.HARASS_EMPIRE:
-					IncomingMessageTextBox.SetText("We want you to bully " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!");
+					IncomingMessageTextBox.SetText("We want you to bully " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.RECONCILE_EMPIRE:
-					IncomingMessageTextBox.SetText("We want you to make peace with " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!");
+					IncomingMessageTextBox.SetText("We want you to make peace with " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.WAR:
-					IncomingMessageTextBox.SetText("We're going to KILL you!");
+					IncomingMessageTextBox.SetText("We're going to KILL you!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.OFFER_PEACE:
-					IncomingMessageTextBox.SetText("Please have mercy on us!");
+					IncomingMessageTextBox.SetText("Please have mercy on us!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.ACCEPT_ALLIANCE:
-					IncomingMessageTextBox.SetText("We agree to ally with you!");
+					IncomingMessageTextBox.SetText("We agree to ally with you!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.ACCEPT_NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We agree to not be aggressive!");
+					IncomingMessageTextBox.SetText("We agree to not be aggressive!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.ACCEPT_PEACE:
-					IncomingMessageTextBox.SetText("We will spare you for now!");
+					IncomingMessageTextBox.SetText("We will spare you for now!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.ACCEPT_RECONCILE:
-					IncomingMessageTextBox.SetText("We will make peace with " + "!");
+					IncomingMessageTextBox.SetText("We will make peace with " + "!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.ACCEPT_HARASS:
-					IncomingMessageTextBox.SetText("We will bully " + "!");
+					IncomingMessageTextBox.SetText("We will bully " + "!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.ACCEPT_RESEARCH:
-					IncomingMessageTextBox.SetText("We accept the deal to share research!");
+					IncomingMessageTextBox.SetText("We accept the deal to share research!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.ACCEPT_TRADE:
-					IncomingMessageTextBox.SetText("We accept the trade offer!");
+					IncomingMessageTextBox.SetText("We accept the trade offer!", gameMain.FontManager.GetDefaultFont());
 					break;
 				case MessageType.DECLINE_REQUEST:
-					IncomingMessageTextBox.SetText("We decline your request.");
+					IncomingMessageTextBox.SetText("We decline your request.", gameMain.FontManager.GetDefaultFont());
 					break;
 			}
 			/*if (whichMessage == MessageType.BREAK_ALLIANCE || whichMessage == MessageType.BREAK_NONAGGRESSION || whichMessage == MessageType.BREAK_RESEARCH ||

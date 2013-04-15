@@ -26,10 +26,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				buttons[i] = new Button(SpriteName.NormalBackgroundButton, SpriteName.NormalForegroundButton, string.Empty, x + 5, y + 35 + (i * 40), 775, 40);
 			}*/
-			scrollBar = new ScrollBar(x + 780, y + 25, 16, 574, AMOUNT_VISIBLE, AMOUNT_VISIBLE, false, false, DrawingManagement.VerticalScrollBar);
+			scrollBar = new ScrollBar(x + 780, y + 25, 16, 574, AMOUNT_VISIBLE, AMOUNT_VISIBLE, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 			topIndex = 0;
 			isVisible = false;
-			title = new Label("Situation Report", x + 5, y + 5);
+			title = new Label("Situation Report", x + 5, y + 5, gameMain.FontManager.GetDefaultFont());
 		}
 
 		public void ResetIndex()

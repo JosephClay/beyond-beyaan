@@ -64,11 +64,11 @@ namespace Beyond_Beyaan.Screens
 			x = (gameMain.ScreenWidth / 2) - 400;
 			y = (gameMain.ScreenHeight / 2) - 300;
 
-			fleetLabel = new Label("Fleets", x + 2, y + 2);
-			shipLabel = new Label("Ships in this fleet", x + 202, y + 2);
+			fleetLabel = new Label("Fleets", x + 2, y + 2, gameMain.FontManager.GetDefaultFont());
+			shipLabel = new Label("Ships in this fleet", x + 202, y + 2, gameMain.FontManager.GetDefaultFont());
 			//specs = new Label("Specifications", x + 200, y + 400);
-			shipNameLabel = new Label("Name:", x + 200, y + 425);
-			sizeLabel = new Label("Size", x + 200, y + 460);
+			shipNameLabel = new Label("Name:", x + 200, y + 425, gameMain.FontManager.GetDefaultFont());
+			sizeLabel = new Label("Size", x + 200, y + 460, gameMain.FontManager.GetDefaultFont());
 			/*engineLabel = new Label("Engine:", x + 200, y + 475);
 			computerLabel = new Label("Computer:", x + 200, y + 500);
 			armorLabel = new Label("Armor:", x + 200, y + 525);
@@ -103,8 +103,8 @@ namespace Beyond_Beyaan.Screens
 				SpriteName.TextBC,
 				SpriteName.TextBR
 			};
-			nameText = new SingleLineTextBox(x + 275, y + 425, 150, 35, textBox);
-			sizeText = new SingleLineTextBox(x + 275, y + 460, 150, 35, textBox);
+			nameText = new SingleLineTextBox(x + 275, y + 425, 150, 35, textBox, gameMain.FontManager.GetDefaultFont());
+			sizeText = new SingleLineTextBox(x + 275, y + 460, 150, 35, textBox, gameMain.FontManager.GetDefaultFont());
 			/*engineText = new SingleLineTextBox(x + 275, y + 475, 150, 23, SpriteName.MiniBackgroundButton);
 			computerText = new SingleLineTextBox(x + 275, y + 500, 150, 23, SpriteName.MiniBackgroundButton);
 			armorText = new SingleLineTextBox(x + 275, y + 525, 150, 23, SpriteName.MiniBackgroundButton);

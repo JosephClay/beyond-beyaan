@@ -30,7 +30,7 @@ namespace Beyond_Beyaan.Screens
 			stillMoving = true;
 			tickCount = 0;
 			updateSection = -1;
-			updateText = new Label(string.Empty, (gameMain.ScreenWidth / 2) - 130, (gameMain.ScreenHeight / 2) - 17);
+			updateText = new Label(string.Empty, (gameMain.ScreenWidth / 2) - 130, (gameMain.ScreenHeight / 2) - 17, gameMain.FontManager.GetDefaultFont());
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
@@ -91,18 +91,18 @@ namespace Beyond_Beyaan.Screens
 				switch (updateSection)
 				{
 					case 0:
-						updateText.SetText("Processing Empires");
+						updateText.SetText("Processing Empires", gameMain.FontManager.GetDefaultFont());
 						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 1:
 						Random r = new Random();
 						gameMain.empireManager.UpdateEmpires(gameMain.Galaxy, gameMain.PlanetTypeManager, r);
-						updateText.SetText("Processing Influences");
+						updateText.SetText("Processing Influences", gameMain.FontManager.GetDefaultFont());
 						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 2:
 						//gameMain.empireManager.UpdateInfluenceMaps(gameMain.galaxy);
-						updateText.SetText("Processing Migration");
+						updateText.SetText("Processing Migration", gameMain.FontManager.GetDefaultFont());
 						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 3:

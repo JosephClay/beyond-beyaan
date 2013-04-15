@@ -75,15 +75,15 @@ namespace Beyond_Beyaan.Screens
 			transferButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Transfer Population", x + 255, y + 370, 240, 25);*/
 			backGroundImage = new StretchableImage(x, this.y, 300, 620, 30, 13, DrawingManagement.BoxBorderBG);
 			selectedPlanet = null;
-			planetName = new SingleLineTextBox(x + 10, this.y + 12, 281, 35, DrawingManagement.TextBox);
+			planetName = new SingleLineTextBox(x + 10, this.y + 12, 281, 35, DrawingManagement.TextBox, gameMain.FontManager.GetDefaultFont());
 			planetInformationBackground = new StretchableImage(x + 10, this.y + 48, 281, 75, 30, 13, DrawingManagement.BoxBorderBG);
 			planetSpecialsBackground = new StretchableImage(x + 10, this.y + 123, 281, 40, 30, 13, DrawingManagement.BoxBorderBG);
 			planetPopulationBackground = new StretchableImage(x + 10, this.y + 163, 281, 40, 30, 13, DrawingManagement.BoxBorderBG);
 			planetProductionBackground = new StretchableImage(x + 10, this.y + 203, 281, 150, 30, 13, DrawingManagement.BoxBorderBG);
 
-			planetDescription = new TextBox(x + 15, this.y + 53, 271, 63, "planetDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			planetDescription = new TextBox(x + 15, this.y + 53, 271, 63, "planetDescriptionTextBox", string.Empty, gameMain.FontManager.GetDefaultFont(), DrawingManagement.VerticalScrollBar);
 			//slidersBackground = new StretchableImage(x + 291, this.y + 355, 415, 250, 30, 13, DrawingManagement.BoxBorder);
-			planetOverviewButton = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 10, this.y + 558, 281, 52, 30, 13);
+			planetOverviewButton = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 10, this.y + 558, 281, 52, 30, 13, gameMain.FontManager.GetDefaultFont());
 
 			/*planetProjectButton = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 291, this.y + 340, 310, 60, 30, 13);
 
@@ -101,7 +101,7 @@ namespace Beyond_Beyaan.Screens
 
 			regionButtons = new List<StretchButton>();
 			outputs = new List<string>();
-			regionScrollBar = new ScrollBar(x + 276, y + 355, 16, 168, MAX_VISIBLE, MAX_VISIBLE, false, false, DrawingManagement.VerticalScrollBar); 
+			regionScrollBar = new ScrollBar(x + 276, y + 355, 16, 168, MAX_VISIBLE, MAX_VISIBLE, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont()); 
 			foreach (Region region in planet.Regions)
 			{
 				if (!outputs.Contains(region.RegionType.RegionTypeName))
@@ -123,7 +123,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			for (int i = 0; i < regionsVisible; i++)
 			{
-				regionButtons.Add(new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 10, y + 355 + (i * 40), 265, 40, 30, 13));
+				regionButtons.Add(new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, x + 10, y + 355 + (i * 40), 265, 40, 30, 13, gameMain.FontManager.GetDefaultFont()));
 			}
 			RefreshRegionButtons();
 			/*planetLabel.SetText(selectedPlanet.Name);
@@ -164,7 +164,7 @@ namespace Beyond_Beyaan.Screens
 				regionNames.Add(new Label("Region " + Utility.ConvertNumberToRomanNumberical(i + regionScrollBar.TopIndex + 1) + " - " + selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.RegionTypeName, x + 25, y + 365 + (i * 40),
 					System.Drawing.Color.FromArgb((int)(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.Color[0] * 255),
 												  (int)(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.Color[1] * 255),
-												  (int)(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.Color[2] * 255))));
+												  (int)(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.Color[2] * 255)), gameMain.FontManager.GetDefaultFont()));
 				//regionTypes.Add(new Label(selectedPlanet.Regions[i + regionScrollBar.TopIndex].RegionType.RegionTypeName, x + 25, y + 385 + (i * 60), System.Drawing.Color.White));
 			}
 		}

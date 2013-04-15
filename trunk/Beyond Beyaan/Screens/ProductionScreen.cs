@@ -59,21 +59,21 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < percentileSliders.Length; i++)
 			{
 				percentileBackground[i] = new StretchableImage(xPos + 25, yPos + 25 + (i * 60), 760, 60, 30, 13, DrawingManagement.BoxBorder);
-				percentileSliders[i] = new ScrollBar(xPos + 555, yPos + 60 + (i * 60), 16, 168, 1, 101, true, true, DrawingManagement.HorizontalSliderBar);
+				percentileSliders[i] = new ScrollBar(xPos + 555, yPos + 60 + (i * 60), 16, 168, 1, 101, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
 				progressBars[i] = new ProgressBar(xPos + 345, yPos + 60 + (i * 60), 200, 16, 100, 0, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar, System.Drawing.Color.LightGreen, System.Drawing.Color.Green);
-				lockButtons[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, xPos + 760, yPos + 60 + (i * 60), 16, 16);
-				cancelButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 760, yPos + 40 + (i * 60), 16, 16);
+				lockButtons[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, xPos + 760, yPos + 60 + (i * 60), 16, 16, gameMain.FontManager.GetDefaultFont());
+				cancelButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 760, yPos + 40 + (i * 60), 16, 16, gameMain.FontManager.GetDefaultFont());
 
-				productionPointsAllocated[i] = new Label(xPos + 555, yPos + 33 + (i * 60));
-				turnsRemaining[i] = new Label(xPos + 345, yPos + 33 + (i * 60));
-				projectName[i] = new Label(xPos + 30, yPos + 33 + (i * 60));
-				systemName[i] = new Label(xPos + 30, yPos + 57 + (i * 60));
+				productionPointsAllocated[i] = new Label(xPos + 555, yPos + 33 + (i * 60), gameMain.FontManager.GetDefaultFont());
+				turnsRemaining[i] = new Label(xPos + 345, yPos + 33 + (i * 60), gameMain.FontManager.GetDefaultFont());
+				projectName[i] = new Label(xPos + 30, yPos + 33 + (i * 60), gameMain.FontManager.GetDefaultFont());
+				systemName[i] = new Label(xPos + 30, yPos + 57 + (i * 60), gameMain.FontManager.GetDefaultFont());
 			}
-			projectScrollBar = new ScrollBar(xPos + 787, yPos + 25, 16, 508, 9, 1, false, false, DrawingManagement.VerticalScrollBar);
+			projectScrollBar = new ScrollBar(xPos + 787, yPos + 25, 16, 508, 9, 1, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 			projectScrollBar.SetEnabledState(false);
 
-			addProjectButton = new Button(SpriteName.AddProjectsBG, SpriteName.AddProjectsFG, string.Empty, xPos + 720, yPos + 573, 80, 40);
-			addProjectButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Add projects", "addProjectsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			addProjectButton = new Button(SpriteName.AddProjectsBG, SpriteName.AddProjectsFG, string.Empty, xPos + 720, yPos + 573, 80, 40, gameMain.FontManager.GetDefaultFont());
+			addProjectButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Add projects", "addProjectsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 			projectSelection = new ProjectSelection(xPos + 60, yPos + 10, gameMain, OkClick, CancelClick);
 			selectionVisible = false;
 		}

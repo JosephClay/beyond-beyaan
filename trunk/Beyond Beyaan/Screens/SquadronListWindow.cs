@@ -40,11 +40,11 @@ namespace Beyond_Beyaan.Screens
 
 			//backGroundImage = new StretchableImage(x, y, 275, 300, 30, 13, DrawingManagement.BoxBorderBG);
 
-			squadronScrollBar = new ScrollBar(xPos - 195, 10, 16, 80, 4, 4, false, false, DrawingManagement.VerticalScrollBar);
+			squadronScrollBar = new ScrollBar(xPos - 195, 10, 16, 80, 4, 4, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 			//shipScrollBar = new ScrollBar(xPos - 160, 165, 16, 528, 7, 10, true, false, DrawingManagement.HorizontalScrollBar);
 			//fleetBorder = new StretchableImage(xPos - 410, 0, 240, 140, 30, 13, DrawingManagement.BoxBorderBG);
-			transportButton = new Button(SpriteName.TransferButtonBG, SpriteName.TransferButtonFG, string.Empty, 10, centerY, 75, 35);
-			newSquadronButton = new Button(SpriteName.NewSquadronButtonBG, SpriteName.NewSquadronButtonFG, string.Empty, 95, centerY, 75, 35);
+			transportButton = new Button(SpriteName.TransferButtonBG, SpriteName.TransferButtonFG, string.Empty, 10, centerY, 75, 35, gameMain.FontManager.GetDefaultFont());
+			newSquadronButton = new Button(SpriteName.NewSquadronButtonBG, SpriteName.NewSquadronButtonFG, string.Empty, 95, centerY, 75, 35, gameMain.FontManager.GetDefaultFont());
 			//orbitButton = new Button(SpriteName.OrbitButtonBG, SpriteName.OrbitButtonFG, string.Empty, xPos - 325, 148, 75, 35);
 			//clearButton = new Button(SpriteName.CancelMovementBG, SpriteName.CancelMovementFG, string.Empty, xPos - 245, 148, 75, 35);
 			//transportButton.Active = false;
@@ -53,9 +53,9 @@ namespace Beyond_Beyaan.Screens
 
 			//transferToShipWindow = new TransferToShipWindow(centerX, centerY + 200, gameMain, DoneTransferToShip);
 
-			//transportButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.DrawingManagement.GetFont("Computer"), "Transport people", "transportPeopleToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			//orbitButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.DrawingManagement.GetFont("Computer"), "Scrap selected ships", "scrapSelectedShipsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			//clearButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.DrawingManagement.GetFont("Computer"), "Clear movement orders", "clearMovementOrdersToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			//transportButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.DrawingManagement.GetDefaultFont(), "Transport people", "transportPeopleToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			//orbitButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.DrawingManagement.GetDefaultFont(), "Scrap selected ships", "scrapSelectedShipsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			//clearButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.DrawingManagement.GetDefaultFont(), "Clear movement orders", "clearMovementOrdersToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 		}
 
 		public override void DrawWindow(DrawingManagement drawingManagement)
@@ -343,14 +343,14 @@ namespace Beyond_Beyaan.Screens
 			backGroundImage = new StretchableImage(-35, (int)(centerY - ((maxVisible / 2.0) * 35) - 25), squadronScrollBarVisible ? 300 : 275, maxVisible * 35 + 70, 30, 13, DrawingManagement.BoxBorderBG);
 			transportButton.MoveTo(squadronScrollBarVisible ? 95 : 70, (int)(centerY + ((maxVisible / 2.0) * 35)));
 			newSquadronButton.MoveTo(squadronScrollBarVisible ? 180 : 155, (int)(centerY + ((maxVisible / 2.0) * 35)));
-			squadronScrollBar = new ScrollBar(238, (int)(centerY - ((maxVisible / 2.0) * 35) - 15), 16, (maxVisible * 35) - 32, maxVisible, selectedSquadronGroup.Squadrons.Count, false, false, DrawingManagement.VerticalScrollBar);
+			squadronScrollBar = new ScrollBar(238, (int)(centerY - ((maxVisible / 2.0) * 35) - 15), 16, (maxVisible * 35) - 32, maxVisible, selectedSquadronGroup.Squadrons.Count, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			squadronNames = new Label[maxVisible];
 			squadronButtons = new InvisibleStretchButton[maxVisible];
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				squadronButtons[i] = new InvisibleStretchButton(DrawingManagement.TinyButtonBackground, DrawingManagement.TinyButtonForeground, string.Empty, 0, (int)(centerY - ((maxVisible / 2.0) * 35) - 15 + (i * 35)), 235, 35, 10, 10);
+				squadronButtons[i] = new InvisibleStretchButton(DrawingManagement.TinyButtonBackground, DrawingManagement.TinyButtonForeground, string.Empty, 0, (int)(centerY - ((maxVisible / 2.0) * 35) - 15 + (i * 35)), 235, 35, 10, 10, gameMain.FontManager.GetDefaultFont());
 			}
 
 			/*maxFleetVisible = selectedFleetGroup.Fleets.Count > 4 ? 4 : selectedFleetGroup.Fleets.Count;
@@ -382,7 +382,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			for (int i = 0; i < maxVisible; i++)
 			{
-				squadronNames[i] = new Label(selectedSquadronGroup.Squadrons[i + squadronScrollBar.TopIndex].Name, 40, (int)(centerY - ((maxVisible / 2.0) * 35) - 8 + (i * 35)));
+				squadronNames[i] = new Label(selectedSquadronGroup.Squadrons[i + squadronScrollBar.TopIndex].Name, 40, (int)(centerY - ((maxVisible / 2.0) * 35) - 8 + (i * 35)), gameMain.FontManager.GetDefaultFont());
 				if (selectedSquadronGroup.SelectedSquadron.Contains(selectedSquadronGroup.Squadrons[i + squadronScrollBar.TopIndex]))
 				{
 					squadronButtons[i].Selected = true;

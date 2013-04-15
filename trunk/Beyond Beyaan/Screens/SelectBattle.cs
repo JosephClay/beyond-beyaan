@@ -32,16 +32,16 @@ namespace Beyond_Beyaan.Screens
 			this.cancelFunction = cancelFunction;
 			this.commenceFunction = commenceFunction;
 
-			commenceButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Commence Battle", centerX + 25, centerY + 150, 150, 35);
-			cancelButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Cancel", centerX - 175, centerY + 150, 150, 35);
+			commenceButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Commence Battle", centerX + 25, centerY + 150, 150, 35, gameMain.FontManager.GetDefaultFont());
+			cancelButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Cancel", centerX - 175, centerY + 150, 150, 35, gameMain.FontManager.GetDefaultFont());
 
 			battleButtons = new InvisibleStretchButton[8];
 			for (int i = 0; i < battleButtons.Length; i++)
 			{
-				battleButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, centerX - 180, centerY - 190 + (i * 40), 350, 40, 30, 13, System.Drawing.Color.White);
+				battleButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, centerX - 180, centerY - 190 + (i * 40), 350, 40, 30, 13, System.Drawing.Color.White, gameMain.FontManager.GetDefaultFont());
 			}
 
-			scrollBar = new ScrollBar(centerX + 170, centerY - 190, 16, 288, 8, 8, false, false, DrawingManagement.VerticalScrollBar);
+			scrollBar = new ScrollBar(centerX + 170, centerY - 190, 16, 288, 8, 8, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 		}
 
 		public override void DrawWindow(DrawingManagement drawingManagement)

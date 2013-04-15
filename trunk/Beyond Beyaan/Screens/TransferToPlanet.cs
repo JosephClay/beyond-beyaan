@@ -42,17 +42,17 @@
 
 			for (int i = 0; i < popScrollBars.Length; i++)
 			{
-				popScrollBars[i] = new ScrollBar(centerX - 75, centerY + 160 + (45 * i), 16, 128, 1, 100, true, true, DrawingManagement.HorizontalSliderBar);
-				popLabels[i] = new Label(centerX - 75, centerY + 132 + (45 * i));
+				popScrollBars[i] = new ScrollBar(centerX - 75, centerY + 160 + (45 * i), 16, 128, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
+				popLabels[i] = new Label(centerX - 75, centerY + 132 + (45 * i), gameMain.FontManager.GetDefaultFont());
 			}
 
-			transferButton = new Button(SpriteName.LandTroopButtonBG, SpriteName.LandTroopButtonFG, string.Empty, centerX + 10, yPos + 350, 75, 35);
-			doneButton = new Button(SpriteName.PlanetDoneButtonBG, SpriteName.PlanetDoneButtonFG, string.Empty, centerX - 85, yPos + 350, 75, 35);
+			transferButton = new Button(SpriteName.LandTroopButtonBG, SpriteName.LandTroopButtonFG, string.Empty, centerX + 10, yPos + 350, 75, 35, gameMain.FontManager.GetDefaultFont());
+			doneButton = new Button(SpriteName.PlanetDoneButtonBG, SpriteName.PlanetDoneButtonFG, string.Empty, centerX - 85, yPos + 350, 75, 35, gameMain.FontManager.GetDefaultFont());
 
-			transferButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Confirm landing of population", "confirmLandingOfPopulationToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			doneButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Exit", "exitConfirmLandingOfPopulationToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			transferButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Confirm landing of population", "confirmLandingOfPopulationToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			doneButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Exit", "exitConfirmLandingOfPopulationToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 
-			raceScrollBar = new ScrollBar(centerX + 87, centerY + 132, 16, 158, 4, 4, false, false, DrawingManagement.VerticalScrollBar);
+			raceScrollBar = new ScrollBar(centerX + 87, centerY + 132, 16, 158, 4, 4, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			windowHeight = 400;
 			//showingCombat = false;

@@ -64,15 +64,15 @@ namespace Beyond_Beyaan.Screens
 				scriptNames.Add(scripts[i].Name.Substring(0, scripts[i].Name.Length - 3));
 			}
 
-			whichGalaxyScript = new ComboBox(DrawingManagement.ComboBox, scriptNames, xScreenPos + 145, yScreenPos + 25, 290, 35, 6, true);
+			whichGalaxyScript = new ComboBox(DrawingManagement.ComboBox, scriptNames, xScreenPos + 145, yScreenPos + 25, 290, 35, 6, true, gameMain.FontManager.GetDefaultFont());
 
-			galaxyScriptLabel = new Label("Galaxy Script: ", xScreenPos + 140, yScreenPos + 32);
+			galaxyScriptLabel = new Label("Galaxy Script: ", xScreenPos + 140, yScreenPos + 32, gameMain.FontManager.GetDefaultFont());
 			galaxyScriptLabel.SetAlignment(true);
 
-			prevScreen = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Main Menu", xScreenPos + 15, yScreenPos + 560, 200, 35);
-			nextScreen = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Players Setup", xScreenPos + 575, yScreenPos + 560, 200, 35);
-			battleSimulator = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Battle Simulator", xScreenPos + 300, yScreenPos + 560, 200, 35);
-			generateGalaxyButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Generate Galaxy", xScreenPos + 165, yScreenPos + 505, 175, 35);
+			prevScreen = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Main Menu", xScreenPos + 15, yScreenPos + 560, 200, 35, gameMain.FontManager.GetDefaultFont());
+			nextScreen = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Players Setup", xScreenPos + 575, yScreenPos + 560, 200, 35, gameMain.FontManager.GetDefaultFont());
+			battleSimulator = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Battle Simulator", xScreenPos + 300, yScreenPos + 560, 200, 35, gameMain.FontManager.GetDefaultFont());
+			generateGalaxyButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Generate Galaxy", xScreenPos + 165, yScreenPos + 505, 175, 35, gameMain.FontManager.GetDefaultFont());
 			generateGalaxyButton.Active = false;
 
 			background = new StretchableImage(xScreenPos - 30, yScreenPos - 30, 860, 660, 200, 200, DrawingManagement.ScreenBorder);
@@ -81,12 +81,12 @@ namespace Beyond_Beyaan.Screens
 			gameConfigurationBackground = new StretchableImage(xScreenPos + 475, yScreenPos + 370, 320, 185, 60, 60, DrawingManagement.BorderBorder);
 			galaxyScriptBackground = new StretchableImage(xScreenPos + 10, yScreenPos + 70, 450, 430, 30, 13, DrawingManagement.BoxBorder);
 
-			uiScrollBar = new ScrollBar(xScreenPos + 437, yScreenPos + 80, 16, 360, 14, 14, false, false, DrawingManagement.VerticalScrollBar);
+			uiScrollBar = new ScrollBar(xScreenPos + 437, yScreenPos + 80, 16, 360, 14, 14, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 			uiScrollBar.SetEnabledState(false);
 
-			numOfStars = new Label(0, 0);
+			numOfStars = new Label(0, 0, gameMain.FontManager.GetDefaultFont());
 
-			permanentAlliance = new CheckBox(DrawingManagement.CheckBox, "Permanent Alliances", xScreenPos + 490, yScreenPos + 385, 200, 35, 27, false);
+			permanentAlliance = new CheckBox(DrawingManagement.CheckBox, "Permanent Alliances", xScreenPos + 490, yScreenPos + 385, 200, 35, 27, false, gameMain.FontManager.GetDefaultFont());
 
 			LoadGalaxyScript();
 
@@ -234,12 +234,12 @@ namespace Beyond_Beyaan.Screens
 				{
 					vars[key] = ((NumericUpDown)uiElements[key]).Value.ToString();
 				}
-				gameMain.Galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.StarTypeManager, gameMain.SectorTypeManager, gameMain.SpriteManager);
+				gameMain.Galaxy.GenerateGalaxy(genGalaxyFunc, scriptInstance, vars, gameMain.StarTypeManager, gameMain.SectorTypeManager, gameMain.SpriteManager, gameMain);
 				if (gameMain.Galaxy.GetAllStars().Count > 0)
 				{
 					nextScreen.Active = true;
 				}
-				numOfStars.SetText(gameMain.Galaxy.GetAllStars().Count.ToString() + " Stars");
+				numOfStars.SetText(gameMain.Galaxy.GetAllStars().Count.ToString() + " Stars", gameMain.FontManager.GetDefaultFont());
 				numOfStars.MoveTo(xScreenPos + 650 - (int)(numOfStars.GetWidth() / 2), yScreenPos + 350 - (int)(numOfStars.GetHeight() / 2));
 			}
 
@@ -309,7 +309,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				foreach (string key in vars.Keys)
 				{
-					Label label = new Label(key, 0, 0);
+					Label label = new Label(key, 0, 0, gameMain.FontManager.GetDefaultFont());
 					uiLabels.Add(label);
 
 					string[] parts = vars[key].Split(new[] { '|' });
@@ -322,7 +322,7 @@ namespace Beyond_Beyaan.Screens
 								int max = int.Parse(parts[2]);
 								int increment = int.Parse(parts[3]);
 								int initialAmount = int.Parse(parts[4]);
-								NumericUpDown upDown = new NumericUpDown(0, 0, 100, min, max, initialAmount, increment);
+								NumericUpDown upDown = new NumericUpDown(0, 0, 100, min, max, initialAmount, increment, gameMain.FontManager.GetDefaultFont());
 								uiElements[key] = upDown;
 								uiKeys.Add(key);
 							} break;
@@ -351,7 +351,7 @@ namespace Beyond_Beyaan.Screens
 			catch (Exception e)
 			{
 				uiElements = new Dictionary<string, UIElement>();
-				uiLabels = new List<Label>(new[] { new Label("There was an error parsing the variables returned from this script: " + e.Message, xScreenPos + 5, yScreenPos + 150) });
+				uiLabels = new List<Label>(new[] { new Label("There was an error parsing the variables returned from this script: " + e.Message, xScreenPos + 5, yScreenPos + 150, gameMain.FontManager.GetDefaultFont()) });
 				generateGalaxyButton.Active = false;
 			}
 		}

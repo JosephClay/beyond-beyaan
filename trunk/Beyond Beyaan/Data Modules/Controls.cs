@@ -1,4 +1,6 @@
-﻿namespace Beyond_Beyaan.Data_Modules
+﻿using GorgonLibrary.Graphics;
+
+namespace Beyond_Beyaan.Data_Modules
 {
 	public abstract class BaseControl
 	{
@@ -7,12 +9,12 @@
 		public Label NameLabel { get; protected set; }
 		public Label ValueLabel { get; protected set; }
 
-		protected BaseControl(string name, string code)
+		protected BaseControl(string name, string code, Font font)
 		{
 			Name = name;
 			Code = code;
-			NameLabel = new Label(Name + ": ", 0, 0);
-			ValueLabel = new Label(0, 0);
+			NameLabel = new Label(Name + ": ", 0, 0, font);
+			ValueLabel = new Label(0, 0, font);
 			ValueLabel.SetAlignment(true);
 		}
 
@@ -47,15 +49,15 @@
 		//private Button upButton;
 		//private Button downButton;
 
-		public NumUpDown(int minValue, int maxValue, int incrAmount, int startValue, string name, string code) 
-			: base (name, code)
+		public NumUpDown(int minValue, int maxValue, int incrAmount, int startValue, string name, string code, Font font) 
+			: base (name, code, font)
 		{
 			Value = startValue;
 			MinValue = minValue;
 			MaxValue = maxValue;
 			IncrAmount = incrAmount;
 
-			ValueLabel.SetText(Value.ToString());
+			ValueLabel.SetText(Value.ToString(), font);
 		}
 
 		public override object GetValue()

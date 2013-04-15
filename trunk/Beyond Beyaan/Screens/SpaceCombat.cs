@@ -91,8 +91,8 @@ namespace Beyond_Beyaan.Screens
 				{
 					return;
 				}
-				shipNameLabel.SetText(selectedShip.BaseShipDesign.Name);
-				empireNameLabel.SetText(selectedShip.Owner.EmpireName);
+				shipNameLabel.SetText(selectedShip.BaseShipDesign.Name, gameMain.FontManager.GetDefaultFont());
+				empireNameLabel.SetText(selectedShip.Owner.EmpireName, gameMain.FontManager.GetDefaultFont());
 				empireNameLabel.SetColor(selectedShip.Owner.EmpireColor);
 
 				passiveEquipments = new List<EquipmentInstance>();
@@ -148,14 +148,14 @@ namespace Beyond_Beyaan.Screens
 				}
 				for (int i = 0; i < maxPassiveVisible; i++)
 				{
-					passiveLabels[i].SetText(passiveEquipments[i].GetName());
+					passiveLabels[i].SetText(passiveEquipments[i].GetName(), gameMain.FontManager.GetDefaultFont());
 					passiveButtons[i].Active = controlsEnabled;
 					//long power = passiveEquipments[i].GetPower(selectedShip.BaseShipDesign.ShipClass.Size);
 					//passivePowerLabels[i].SetText(power != 0 ? passiveEquipments[i].GetPower(selectedShip.Size) + " MW" : string.Empty);
 				}
 				for (int i = 0; i < maxActiveVisible; i++)
 				{
-					activeLabels[i].SetText(activeEquipments[i].GetName());
+					activeLabels[i].SetText(activeEquipments[i].GetName(), gameMain.FontManager.GetDefaultFont());
 					activeButtons[i].Active = controlsEnabled;
 					activeButtons[i].SetInfoTip(activeEquipments[i].GetName(), activeEquipments[i].CombatIcons, activeEquipments[i].GetEquipmentInfo(selectedShip.Values), DrawingManagement.BoxBorder, 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 					//activePowerLabels[i].SetText(activeEquipments[i].GetPower(selectedShip.Size) + " MW");
@@ -193,13 +193,13 @@ namespace Beyond_Beyaan.Screens
 			int x = (gameMain.ScreenWidth / 2) - 140;
 			int y = gameMain.ScreenHeight - 40;
 			actionButtons = new Button[7];
-			actionButtons[0] = new Button(SpriteName.BattleAutoBG, SpriteName.BattleAutoFG, string.Empty, x, y, 40, 40);
-			actionButtons[1] = new Button(SpriteName.BattleRetreatBG, SpriteName.BattleRetreatFG, string.Empty, x + 40, y, 40, 40);
-			actionButtons[2] = new Button(SpriteName.BattlePrevShipBG, SpriteName.BattlePrevShipFG, string.Empty, x + 80, y, 40, 40);
-			actionButtons[3] = new Button(SpriteName.BattlePrevShipDoneBG, SpriteName.BattlePrevShipDoneFG, string.Empty, x + 120, y, 40, 40);
-			actionButtons[4] = new Button(SpriteName.BattleNextShipDoneBG, SpriteName.BattleNextShipDoneFG, string.Empty, x + 160, y, 40, 40);
-			actionButtons[5] = new Button(SpriteName.BattleNextShipBG, SpriteName.BattleNextShipFG, string.Empty, x + 200, y, 40, 40);
-			actionButtons[6] = new Button(SpriteName.BattleNextTurnBG, SpriteName.BattleNextTurnFG, string.Empty, x + 240, y, 40, 40);
+			actionButtons[0] = new Button(SpriteName.BattleAutoBG, SpriteName.BattleAutoFG, string.Empty, x, y, 40, 40, gameMain.FontManager.GetDefaultFont());
+			actionButtons[1] = new Button(SpriteName.BattleRetreatBG, SpriteName.BattleRetreatFG, string.Empty, x + 40, y, 40, 40, gameMain.FontManager.GetDefaultFont());
+			actionButtons[2] = new Button(SpriteName.BattlePrevShipBG, SpriteName.BattlePrevShipFG, string.Empty, x + 80, y, 40, 40, gameMain.FontManager.GetDefaultFont());
+			actionButtons[3] = new Button(SpriteName.BattlePrevShipDoneBG, SpriteName.BattlePrevShipDoneFG, string.Empty, x + 120, y, 40, 40, gameMain.FontManager.GetDefaultFont());
+			actionButtons[4] = new Button(SpriteName.BattleNextShipDoneBG, SpriteName.BattleNextShipDoneFG, string.Empty, x + 160, y, 40, 40, gameMain.FontManager.GetDefaultFont());
+			actionButtons[5] = new Button(SpriteName.BattleNextShipBG, SpriteName.BattleNextShipFG, string.Empty, x + 200, y, 40, 40, gameMain.FontManager.GetDefaultFont());
+			actionButtons[6] = new Button(SpriteName.BattleNextTurnBG, SpriteName.BattleNextTurnFG, string.Empty, x + 240, y, 40, 40, gameMain.FontManager.GetDefaultFont());
 
 			taskBarArea = new Point(x, x + 280);
 
@@ -207,8 +207,8 @@ namespace Beyond_Beyaan.Screens
 			activeSystemsBackground = new StretchableImage(x + 280, gameMain.ScreenHeight - 150, 300, 170, 30, 13, DrawingManagement.BoxBorderBG);
 			statusBackground = new StretchableImage(x, y - 100, 280, 100, 30, 13, DrawingManagement.BoxBorderBG);*/
 
-			passiveScrollBar = new ScrollBar(x - 33, gameMain.ScreenHeight - 160, 16, 128, 6, 6, false, false, DrawingManagement.VerticalScrollBar);
-			activeScrollBar = new ScrollBar(x + 557, gameMain.ScreenHeight - 160, 16, 128, 6, 6, false, false, DrawingManagement.VerticalScrollBar);
+			passiveScrollBar = new ScrollBar(x - 33, gameMain.ScreenHeight - 160, 16, 128, 6, 6, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
+			activeScrollBar = new ScrollBar(x + 557, gameMain.ScreenHeight - 160, 16, 128, 6, 6, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 			passiveScrollBar.SetEnabledState(false);
 			activeScrollBar.SetEnabledState(false);
 
@@ -224,11 +224,11 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < passiveButtons.Length; i++)
 			{
 				int tempY = gameMain.ScreenHeight - 165 + (i * 25);
-				passiveButtons[i] = new InvisibleStretchButton(DrawingManagement.TinyButtonBackground, DrawingManagement.TinyButtonForeground, string.Empty, x - 440, tempY, 265, 25, 10, 10);
-				activeButtons[i] = new InvisibleStretchButton(DrawingManagement.TinyButtonBackground, DrawingManagement.TinyButtonForeground, string.Empty, x + 152, tempY, 265, 25, 10, 10);
+				passiveButtons[i] = new InvisibleStretchButton(DrawingManagement.TinyButtonBackground, DrawingManagement.TinyButtonForeground, string.Empty, x - 440, tempY, 265, 25, 10, 10, gameMain.FontManager.GetDefaultFont());
+				activeButtons[i] = new InvisibleStretchButton(DrawingManagement.TinyButtonBackground, DrawingManagement.TinyButtonForeground, string.Empty, x + 152, tempY, 265, 25, 10, 10, gameMain.FontManager.GetDefaultFont());
 
-				passiveLabels[i] = new Label(x - 435, tempY + 2);
-				activeLabels[i] = new Label(x + 157, tempY + 2);
+				passiveLabels[i] = new Label(x - 435, tempY + 2, gameMain.FontManager.GetDefaultFont());
+				activeLabels[i] = new Label(x + 157, tempY + 2, gameMain.FontManager.GetDefaultFont());
 				//passivePowerLabels[i] = new Label(x - 280, tempY + 25);
 				//activePowerLabels[i] = new Label(x + 300, tempY + 25);
 				//activeTimeLabels[i] = new Label(x + 445, tempY + 25);
@@ -236,8 +236,8 @@ namespace Beyond_Beyaan.Screens
 
 			nameBackground = new StretchableImage(gameMain.ScreenWidth / 2 - 175, gameMain.ScreenHeight - 215, 350, 45, 30, 13, DrawingManagement.BoxBorderBG);
 
-			shipNameLabel = new Label(gameMain.ScreenWidth / 2 - 168, gameMain.ScreenHeight - 205);
-			empireNameLabel = new Label(gameMain.ScreenWidth / 2 + 168, gameMain.ScreenHeight - 205);
+			shipNameLabel = new Label(gameMain.ScreenWidth / 2 - 168, gameMain.ScreenHeight - 205, gameMain.FontManager.GetDefaultFont());
+			empireNameLabel = new Label(gameMain.ScreenWidth / 2 + 168, gameMain.ScreenHeight - 205, gameMain.FontManager.GetDefaultFont());
 			empireNameLabel.SetAlignment(true);
 
 			selectionSize = 0;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
+using GorgonLibrary.Graphics;
 
 namespace Beyond_Beyaan
 {
@@ -54,7 +55,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int x, int y, StarType starType, SectorTypeManager sectorTypeManager, SpriteManager spriteManager, Random r)
+		public StarSystem(string name, int x, int y, StarType starType, SectorTypeManager sectorTypeManager, SpriteManager spriteManager, Random r, Font font)
 		{
 			this.Name = name;
 			this.x = x;
@@ -87,8 +88,8 @@ namespace Beyond_Beyaan
 			}
 
 			Sprite = spriteManager.GetSprite(Type.SpriteName, r);
-			
-			StarName = new Label(name, 0, 0);
+
+			StarName = new Label(name, 0, 0, font);
 			EmpiresWithFleetAdjacentLastTurn = new List<Empire>();
 			EmpiresWithFleetAdjacentThisTurn = new List<Empire>();
 			EmpiresWithSectorsInThisSystem = new List<Empire>();

@@ -101,6 +101,7 @@
     <Compile Include="Data Managers\AIManager.cs" />
     <Compile Include="Data Managers\ContactManager.cs" />
     <Compile Include="Data Managers\EffectManager.cs" />
+    <Compile Include="Data Managers\FontManager.cs" />
     <Compile Include="Data Managers\GameConfiguration.cs" />
     <Compile Include="Data Managers\IconManager.cs" />
     <Compile Include="Data Managers\ItemManager.cs" />

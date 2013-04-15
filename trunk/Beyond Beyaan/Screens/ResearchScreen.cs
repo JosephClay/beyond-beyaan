@@ -47,12 +47,12 @@ namespace Beyond_Beyaan.Screens
 			fieldButtons = new StretchButton[6];
 			for (int i = 0; i < fieldButtons.Length; i++)
 			{
-				fieldButtons[i] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 25, yPos + 28 + (i * 96), 395, 95, 30, 13);
+				fieldButtons[i] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 25, yPos + 28 + (i * 96), 395, 95, 30, 13, gameMain.FontManager.GetDefaultFont());
 			}
 
-			planetResearchPointsLabel = new Label(xPos + 445, yPos + 574);
-			tradeResearchPointsLabel = new Label(xPos + 575, yPos + 574);
-			totalResearchPointsLabel = new Label(xPos + 705, yPos + 574);
+			planetResearchPointsLabel = new Label(xPos + 445, yPos + 574, gameMain.FontManager.GetDefaultFont());
+			tradeResearchPointsLabel = new Label(xPos + 575, yPos + 574, gameMain.FontManager.GetDefaultFont());
+			totalResearchPointsLabel = new Label(xPos + 705, yPos + 574, gameMain.FontManager.GetDefaultFont());
 
 			techScrollBars = new ScrollBar[6];
 			lockedButtons = new Button[6];
@@ -62,14 +62,14 @@ namespace Beyond_Beyaan.Screens
 			etaLabels = new Label[6];
 			for (int i = 0; i < techScrollBars.Length; i++)
 			{
-				techScrollBars[i] = new ScrollBar(xPos + 35, yPos + 98 + (i * 96), 16, 168, 1, 100, true, true, DrawingManagement.HorizontalSliderBar);
-				lockedButtons[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, xPos + 240, yPos + 98 + (i * 96), 16, 16);
+				techScrollBars[i] = new ScrollBar(xPos + 35, yPos + 98 + (i * 96), 16, 168, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
+				lockedButtons[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, xPos + 240, yPos + 98 + (i * 96), 16, 16, gameMain.FontManager.GetDefaultFont());
 				techFieldProgresses[i] = new ProgressBar(xPos + 260, yPos + 100 + (i * 96), 150, 16, 100, 0, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
-				fieldLabels[i] = new Label(xPos + 35, yPos + 38 + (i * 96));
-				progressLabels[i] = new Label(xPos + 35, yPos + 58 + (i * 96));
-				etaLabels[i] = new Label(xPos + 235, yPos + 58 + (i * 96));
+				fieldLabels[i] = new Label(xPos + 35, yPos + 38 + (i * 96), gameMain.FontManager.GetDefaultFont());
+				progressLabels[i] = new Label(xPos + 35, yPos + 58 + (i * 96), gameMain.FontManager.GetDefaultFont());
+				etaLabels[i] = new Label(xPos + 235, yPos + 58 + (i * 96), gameMain.FontManager.GetDefaultFont());
 			}
-			availableScrollBar = new ScrollBar(xPos + 780, yPos + 43, 16, 283, 9, 9, false, false, DrawingManagement.VerticalScrollBar);
+			availableScrollBar = new ScrollBar(xPos + 780, yPos + 43, 16, 283, 9, 9, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)

@@ -54,7 +54,7 @@ namespace Beyond_Beyaan.Screens
 			resourcesBackground = new StretchableImage(xPos + 15, yPos + 215, 300, 100, 30, 13, DrawingManagement.BoxBorder);
 			projectsBackground = new StretchableImage(xPos + 15, yPos + 315, 300, 100, 30, 13, DrawingManagement.BoxBorder);
 			regionsBackground = new StretchableImage(xPos + 317, yPos + 15, 320, 400, 30, 13, DrawingManagement.BoxBorder);
-			sectorScrollBar = new ScrollBar(xPos + 615, yPos + 22, 16, 348, 380, 380, false, false, DrawingManagement.VerticalScrollBar);
+			sectorScrollBar = new ScrollBar(xPos + 615, yPos + 22, 16, 348, 380, 380, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			target = new GorgonLibrary.Graphics.RenderImage("systemWindowRender", 290, 380, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
 			target.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
@@ -62,9 +62,9 @@ namespace Beyond_Beyaan.Screens
 			//planetOwner = new Label(x + 10, y + 300);
 
 			selectedSystem = null;
-			systemName = new SingleLineTextBox(xPos + 98, yPos + 28, 210, 35, DrawingManagement.TextBox);
-			systemDescription = new TextBox(xPos + 28, yPos + 95, 280, 100, "systemDescriptionTextBox", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
-			resourcesDisplay = new TextBox(xPos + 20, yPos + 225, 290, 80, "systemResourcesDisplay", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			systemName = new SingleLineTextBox(xPos + 98, yPos + 28, 210, 35, DrawingManagement.TextBox, gameMain.FontManager.GetDefaultFont());
+			systemDescription = new TextBox(xPos + 28, yPos + 95, 280, 100, "systemDescriptionTextBox", string.Empty, gameMain.FontManager.GetDefaultFont(), DrawingManagement.VerticalScrollBar);
+			resourcesDisplay = new TextBox(xPos + 20, yPos + 225, 290, 80, "systemResourcesDisplay", string.Empty, gameMain.FontManager.GetDefaultFont(), DrawingManagement.VerticalScrollBar);
 
 			sectorControls = new List<SectorControl>();
 			//selectedPlanet = null;
@@ -74,7 +74,7 @@ namespace Beyond_Beyaan.Screens
 			//maxVisible = 0;
 			//systemNameLabel = new Label(0, 0);
 
-			//systemDescription = new TextBox(xPos - 135, 30, 270, 90, "systemDescription", string.Empty, gameMain.DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			//systemDescription = new TextBox(xPos - 135, 30, 270, 90, "systemDescription", string.Empty, gameMain.DrawingManagement.GetDefaultFont(), DrawingManagement.VerticalScrollBar);
 
 			//planetWindow = new PlanetWindow(centerX, centerY, gameMain);
 
