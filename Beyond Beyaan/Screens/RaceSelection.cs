@@ -43,10 +43,10 @@ namespace Beyond_Beyaan.Screens
 			OnOkClick = okClick;
 			OnCancelClick = cancelClick;
 
-			okButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Select Race", x + 380, y + 445, 200, 35);
-			cancelButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Cancel", x + 20, y + 445, 200, 35);
+			okButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Select Race", x + 380, y + 445, 200, 35, gameMain.FontManager.GetDefaultFont());
+			cancelButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Cancel", x + 20, y + 445, 200, 35, gameMain.FontManager.GetDefaultFont());
 
-			raceListScrollbar = new ScrollBar(x + 247, y + 40, 16, 343, 15, 15, false, false, DrawingManagement.VerticalScrollBar);
+			raceListScrollbar = new ScrollBar(x + 247, y + 40, 16, 343, 15, 15, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			raceListBackground = new StretchableImage(x + 20, y + 30, 250, 400, 30, 13, DrawingManagement.BoxBorder);
 			racePortraitBackground = new StretchableImage(x + 270, y + 30, 310, 140, 30, 13, DrawingManagement.BoxBorder);
@@ -71,10 +71,10 @@ namespace Beyond_Beyaan.Screens
 			raceRadioButtons = new CheckBox[15];
 			for (int i = 0; i < raceRadioButtons.Length; i++)
 			{
-				raceRadioButtons[i] = new CheckBox(DrawingManagement.RadioButton, string.Empty, x + 25, y + 40 + (i * 25), 220, 25, 19, true);
+				raceRadioButtons[i] = new CheckBox(DrawingManagement.RadioButton, string.Empty, x + 25, y + 40 + (i * 25), 220, 25, 19, true, gameMain.FontManager.GetDefaultFont());
 			}
 
-			raceDescription = new TextBox(x + 280, y + 180, 290, 240, "raceSelection", string.Empty, DrawingManagement.GetFont("Computer"), DrawingManagement.VerticalScrollBar);
+			raceDescription = new TextBox(x + 280, y + 180, 290, 240, "raceSelection", string.Empty, gameMain.FontManager.GetDefaultFont(), DrawingManagement.VerticalScrollBar);
 
 			RefreshList();
 			RefreshLabels();

@@ -26,18 +26,18 @@ namespace Beyond_Beyaan.Screens
 			backGroundImage = new StretchableImage(0, 0, 250, 300, 30, 13, DrawingManagement.BoxBorder);
 			displayingPage = new TextBox(5, 5, 240, 260, "tutorialTextBox", string.Empty, font, DrawingManagement.VerticalScrollBar);
 
-			prevButton = new Button(SpriteName.PrevPageBG, SpriteName.PrevPageFG, string.Empty, 10, 262, 30, 30);
-			firstButton = new Button(SpriteName.FirstPageBG, SpriteName.FirstPageFG, string.Empty, 45, 262, 30, 30);
-			lastButton = new Button(SpriteName.LastPageBG, SpriteName.LastPageFG, string.Empty, 155, 262, 30, 30);
-			nextButton = new Button(SpriteName.NextPageBG, SpriteName.NextPageFG, string.Empty, 190, 262, 30, 30);
-			closeButton = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, 224, 272, 16, 16);
+			prevButton = new Button(SpriteName.PrevPageBG, SpriteName.PrevPageFG, string.Empty, 10, 262, 30, 30, gameMain.FontManager.GetDefaultFont());
+			firstButton = new Button(SpriteName.FirstPageBG, SpriteName.FirstPageFG, string.Empty, 45, 262, 30, 30, gameMain.FontManager.GetDefaultFont());
+			lastButton = new Button(SpriteName.LastPageBG, SpriteName.LastPageFG, string.Empty, 155, 262, 30, 30, gameMain.FontManager.GetDefaultFont());
+			nextButton = new Button(SpriteName.NextPageBG, SpriteName.NextPageFG, string.Empty, 190, 262, 30, 30, gameMain.FontManager.GetDefaultFont());
+			closeButton = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, 224, 272, 16, 16, gameMain.FontManager.GetDefaultFont());
 
-			prevButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Previous Page", "previousPageToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			firstButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "First Page", "firstPageToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			lastButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Last Page", "lastPageToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			nextButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Next Page", "nextPageToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			prevButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Previous Page", "previousPageToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			firstButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "First Page", "firstPageToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			lastButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Last Page", "lastPageToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			nextButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Next Page", "nextPageToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 
-			pageNumber = new Label(80, 267);
+			pageNumber = new Label(80, 267, gameMain.FontManager.GetDefaultFont());
 		}
 
 		public bool LoadTutorial(string filePath, out string reason)
@@ -204,7 +204,7 @@ namespace Beyond_Beyaan.Screens
 					nextButton.Active = false;
 					lastButton.Active = false;
 				}
-				pageNumber.SetText((pageIndex + 1) + " / " + pages.Count);
+				pageNumber.SetText((pageIndex + 1) + " / " + pages.Count, gameMain.FontManager.GetDefaultFont());
 			}
 			else
 			{

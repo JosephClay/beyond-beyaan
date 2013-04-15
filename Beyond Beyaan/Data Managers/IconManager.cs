@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
+using GorgonLibrary.Graphics;
 
 namespace Beyond_Beyaan.Data_Managers
 {
@@ -15,7 +16,7 @@ namespace Beyond_Beyaan.Data_Managers
 			icons = new Dictionary<string, Icon>();
 		}
 
-		public bool Initialize(string dataDirectory, string graphicDirectory, out string reason)
+		public bool Initialize(string dataDirectory, string graphicDirectory, Font font, out string reason)
 		{
 			try
 			{
@@ -32,7 +33,7 @@ namespace Beyond_Beyaan.Data_Managers
 						reason = "Duplicate icon name: " + name;
 						return false;
 					}
-					Icon icon = new Icon(name, element, iconGraphic);
+					Icon icon = new Icon(name, element, iconGraphic, font);
 					icons.Add(name, icon);
 				}
 				reason = null;

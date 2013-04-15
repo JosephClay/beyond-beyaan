@@ -476,6 +476,16 @@ namespace Beyond_Beyaan
 		{
 			return p1.X != p2.X || p1.Y != p2.Y;
 		}
+
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 	}
 	public struct PointF
 	{
@@ -496,6 +506,16 @@ namespace Beyond_Beyaan
 		public static bool operator !=(PointF p1, PointF p2)
 		{
 			return p1.X != p2.X || p1.Y != p2.Y;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
 		}
 	}
 }

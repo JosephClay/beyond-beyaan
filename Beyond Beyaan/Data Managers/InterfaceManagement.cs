@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GorgonLibrary.Graphics;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
 
@@ -53,6 +54,7 @@ namespace Beyond_Beyaan
 		private SpriteName foregroundSprite;
 		private Label label;
 		private ToolTip toolTip;
+		private Font font;
 
 		//Button state information
 		private bool pressed;
@@ -67,12 +69,12 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public Button(SpriteName backgroundSprite, SpriteName foregroundSprite, string buttonText, int xPos, int yPos, int width, int height) : base(xPos, yPos, width, height)
+		public Button(SpriteName backgroundSprite, SpriteName foregroundSprite, string buttonText, int xPos, int yPos, int width, int height, Font font) : base(xPos, yPos, width, height)
 		{
 			this.backgroundSprite = backgroundSprite;
 			this.foregroundSprite = foregroundSprite;
 
-			label = new Label(buttonText, xPos + 15, yPos + 5, System.Drawing.Color.DarkGreen);
+			label = new Label(buttonText, xPos + 15, yPos + 5, System.Drawing.Color.DarkGreen, font);
 
 			Reset();
 		}
@@ -100,7 +102,7 @@ namespace Beyond_Beyaan
 
 		public void SetButtonText(string text)
 		{
-			label.SetText(text);
+			label.SetText(text, font);
 		}
 
 		public override void MoveTo(int x, int y)
@@ -251,6 +253,7 @@ namespace Beyond_Beyaan
 		private UniStretchableImage backgroundImage;
 		private UniStretchableImage foregroundImage;
 		private Label label;
+		private Font font;
 
 		//Button state information
 		private bool pressed;
@@ -264,13 +267,14 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public UniStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, bool isHorizontal, string buttonText, int xPos, int yPos, int width, int height)
+		public UniStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, bool isHorizontal, string buttonText, int xPos, int yPos, int width, int height, Font font)
 			: base(xPos, yPos, width, height)
 		{
+			this.font = font;
 			backgroundImage = new UniStretchableImage(xPos, yPos, width, height, 7, 2, isHorizontal, backgroundSections);
 			foregroundImage = new UniStretchableImage(xPos, yPos, width, height, 7, 2, isHorizontal, foregroundSections);
 
-			label = new Label(buttonText, 0, 0);
+			label = new Label(buttonText, 0, 0, font);
 			SetButtonText(buttonText);
 			label.SetColor(System.Drawing.Color.DarkBlue);
 
@@ -290,7 +294,7 @@ namespace Beyond_Beyaan
 
 		public void SetButtonText(string text)
 		{
-			label.SetText(text);
+			label.SetText(text, font);
 			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
 		}
 
@@ -424,6 +428,7 @@ namespace Beyond_Beyaan
 		private Label label;
 		private ToolTip toolTip;
 		private InfoTip infoTip;
+		private Font font;
 
 		//Button state information
 		private bool pressed;
@@ -439,20 +444,21 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public StretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height)
-			: this(backgroundSections, foregroundSections, buttonText, xPos, yPos, width, height, 60, 13)
+		public StretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, Font font)
+			: this(backgroundSections, foregroundSections, buttonText, xPos, yPos, width, height, 60, 13, font)
 		{
 		}
-		public StretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight)
+		public StretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight, Font font)
 			: base(xPos, yPos, width, height)
 		{
+			this.font = font;
 			toolTipEnabled = false;
 			infoTipEnabled = false;
 
 			backgroundImage = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, backgroundSections);
 			foregroundImage = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, foregroundSections);
 
-			label = new Label(buttonText, 0, 0);
+			label = new Label(buttonText, 0, 0, font);
 			SetButtonText(buttonText);
 
 			Reset();
@@ -478,12 +484,12 @@ namespace Beyond_Beyaan
 		public void SetInfoTip(string title, List<Icon> icons, Dictionary<string, object> values, List<SpriteName> backgroundImage, int sectionWidth, int sectionHeight, int screenWidth, int screenHeight)
 		{
 			infoTipEnabled = true;
-			this.infoTip = new InfoTip(title, icons, values, backgroundImage, sectionWidth, sectionHeight, screenWidth, screenHeight);
+			this.infoTip = new InfoTip(title, icons, values, backgroundImage, sectionWidth, sectionHeight, screenWidth, screenHeight, font);
 		}
 
 		public void SetButtonText(string text)
 		{
-			label.SetText(text);
+			label.SetText(text, font);
 			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
 		}
 
@@ -666,6 +672,7 @@ namespace Beyond_Beyaan
 		private Label label;
 		private ToolTip toolTip;
 		private InfoTip infoTip;
+		private Font font;
 
 		//Button state information
 		private bool pressed;
@@ -683,18 +690,19 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public InvisibleStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight)
-			: this(backgroundSections, foregroundSections, buttonText, xPos, yPos, width, height, sectionWidth, sectionHeight, System.Drawing.Color.Blue)
+		public InvisibleStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight, Font font)
+			: this(backgroundSections, foregroundSections, buttonText, xPos, yPos, width, height, sectionWidth, sectionHeight, System.Drawing.Color.Blue, font)
 		{
 		}
 
-		public InvisibleStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight, System.Drawing.Color color)
+		public InvisibleStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight, System.Drawing.Color color, Font font)
 			: base(xPos, yPos, width, height)
 		{
+			this.font = font;
 			backgroundImage = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, backgroundSections);
 			foregroundImage = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, foregroundSections);
 
-			label = new Label(buttonText, 0, 0);
+			label = new Label(buttonText, 0, 0, font);
 			SetButtonText(buttonText);
 			label.SetColor(color);
 			visible = false;
@@ -715,7 +723,7 @@ namespace Beyond_Beyaan
 
 		public void SetButtonText(string text)
 		{
-			label.SetText(text);
+			label.SetText(text, font);
 			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
 		}
 
@@ -728,7 +736,7 @@ namespace Beyond_Beyaan
 		public void SetInfoTip(string title, List<Icon> icons, Dictionary<string, object> values, List<SpriteName> backgroundImage, int sectionWidth, int sectionHeight, int screenWidth, int screenHeight)
 		{
 			infoTipEnabled = true;
-			this.infoTip = new InfoTip(title, icons, values, backgroundImage, sectionWidth, sectionHeight, screenWidth, screenHeight);
+			this.infoTip = new InfoTip(title, icons, values, backgroundImage, sectionWidth, sectionHeight, screenWidth, screenHeight, font);
 		}
 
 		public override void MoveTo(int x, int y)
@@ -899,6 +907,7 @@ namespace Beyond_Beyaan
 		private SpriteName backgroundChecked;
 		private SpriteName foregroundChecked;
 		private Label text;
+		private Font font;
 
 		private bool isChecked;
 		//Button state information
@@ -918,9 +927,10 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public CheckBox(List<SpriteName> sprites, string text, int xPos, int yPos, int width, int height, int buttonSize, bool isRadioButton)
+		public CheckBox(List<SpriteName> sprites, string text, int xPos, int yPos, int width, int height, int buttonSize, bool isRadioButton, Font font)
 			: base(xPos, yPos, width, height)
 		{
+			this.font = font;
 			this.xPos = xPos;
 			this.yPos = yPos;
 
@@ -929,7 +939,7 @@ namespace Beyond_Beyaan
 			backgroundChecked = sprites[2];
 			foregroundChecked = sprites[3];
 
-			this.text = new Label(text, 0, 0);
+			this.text = new Label(text, 0, 0, font);
 
 			MoveTo(xPos, yPos);
 
@@ -951,7 +961,7 @@ namespace Beyond_Beyaan
 
 		public void SetButtonText(string text)
 		{
-			this.text.SetText(text);
+			this.text.SetText(text, font);
 			this.text.MoveTo(xPos + 35, (int)(yPos + (height / 2) - (this.text.GetHeight() / 2)));
 		}
 
@@ -1073,6 +1083,7 @@ namespace Beyond_Beyaan
 		private int maximum;
 		private Label valueLabel;
 		private int incrementAmount;
+		private Font font;
 		#endregion
 
 		#region Properties
@@ -1082,21 +1093,22 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public NumericUpDown(int xPos, int yPos, int width, int min, int max, int initialAmount) : base (xPos, yPos, width, 23)
+		public NumericUpDown(int xPos, int yPos, int width, int min, int max, int initialAmount, Font font) : base (xPos, yPos, width, 23)
 		{
+			this.font = font;
 			minimum = min;
 			maximum = max;
 			Value = initialAmount;
-			valueLabel = new Label(xPos + 20, yPos, System.Drawing.Color.White);
+			valueLabel = new Label(xPos + 20, yPos, System.Drawing.Color.White, font);
 			CheckAmount();
 
-			upButton = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, string.Empty, xPos + width - 18, yPos + 2, 16, 16);
-			downButton = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, string.Empty, xPos + 2, yPos + 2, 16, 16);
+			upButton = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, string.Empty, xPos + width - 18, yPos + 2, 16, 16, font);
+			downButton = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, string.Empty, xPos + 2, yPos + 2, 16, 16, font);
 			incrementAmount = 1;
 		}
 
-		public NumericUpDown(int xPos, int yPos, int width, int min, int max, int initialAmount, int incrementAmount)
-			: this(xPos, yPos, width, min, max, initialAmount)
+		public NumericUpDown(int xPos, int yPos, int width, int min, int max, int initialAmount, int incrementAmount, Font font)
+			: this(xPos, yPos, width, min, max, initialAmount, font)
 		{
 			this.incrementAmount = incrementAmount;
 		}
@@ -1189,7 +1201,7 @@ namespace Beyond_Beyaan
 			{
 				Value = maximum;
 			}
-			valueLabel.SetText(Value.ToString());
+			valueLabel.SetText(Value.ToString(), font);
 		}
 		#endregion
 	}
@@ -1202,6 +1214,7 @@ namespace Beyond_Beyaan
 		private List<string> items;
 		private List<Button> buttons;
 		private ScrollBar RealScrollBar;
+		private Font font;
 
 		//ComboBox state information
 		private bool haveScroll;
@@ -1240,10 +1253,11 @@ namespace Beyond_Beyaan
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <param name="maxVisible"></param>
-		public ComboBoxNoStretch(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible)
+		public ComboBoxNoStretch(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, Font font)
 			: base(xPos, yPos, width, height)
 		{
 			this.items = items;
+			this.font = font;
 
 			IsDroppedDown = false;
 			downArrowSprite = sprites[2];
@@ -1262,7 +1276,7 @@ namespace Beyond_Beyaan
 			buttons = new List<Button>();
 			for (int i = 0; i <= maxVisible; i++)
 			{
-				Button button = new Button(sprites[0], sprites[1], string.Empty, xPos, yPos + (i * height), width, height);
+				Button button = new Button(sprites[0], sprites[1], string.Empty, xPos, yPos + (i * height), width, height, font);
 				buttons.Add(button);
 			}
 			List<SpriteName> scrollbarSections = new List<SpriteName>()
@@ -1280,7 +1294,7 @@ namespace Beyond_Beyaan
 				sprites[13],
 				sprites[13]
 			};
-			RealScrollBar = new ScrollBar(xPos + width, yPos + height, 16, (height * maxVisible) - 32, maxVisible, items.Count, false, false, scrollbarSections);
+			RealScrollBar = new ScrollBar(xPos + width, yPos + height, 16, (height * maxVisible) - 32, maxVisible, items.Count, false, false, scrollbarSections, font);
 		}
 		#endregion
 
@@ -1425,6 +1439,7 @@ namespace Beyond_Beyaan
 		private List<string> items;
 		private List<StretchButton> buttons;
 		private ScrollBar RealScrollBar;
+		private Font font;
 
 		//ComboBox state information
 		private bool haveScroll;
@@ -1471,14 +1486,16 @@ namespace Beyond_Beyaan
 		/// <param name="height"></param>
 		/// <param name="maxVisible"></param>
 		/// <param name="dropDirection"></param>
-		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, bool dropDirection) 
-			: this(sprites, items, xPos, yPos, width, height, maxVisible, dropDirection, 60, 13)
+		/// <param name="font"></param>
+		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, bool dropDirection, Font font) 
+			: this(sprites, items, xPos, yPos, width, height, maxVisible, dropDirection, 60, 13, font)
 		{
 		}
 
-		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, bool dropDirection, int sectionWidth, int sectionHeight)
+		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, bool dropDirection, int sectionWidth, int sectionHeight, Font font)
 			: base(xPos, yPos, width, height)
 		{
+			this.font = font;
 			IsDroppedDown = false;
 			this.dropDirection = dropDirection;
 			downArrowSprite = sprites[20];
@@ -1502,7 +1519,7 @@ namespace Beyond_Beyaan
 			buttons = new List<StretchButton>();
 			for (int i = 0; i <= actualVisible; i++)
 			{
-				StretchButton button = new StretchButton(backgroundSections, foregroundSections, string.Empty, xPos, yPos + (dropDirection ? (i * height) : (i * height * -1)), width, height, sectionWidth, sectionHeight);
+				StretchButton button = new StretchButton(backgroundSections, foregroundSections, string.Empty, xPos, yPos + (dropDirection ? (i * height) : (i * height * -1)), width, height, sectionWidth, sectionHeight, font);
 				buttons.Add(button);
 			}
 			List<SpriteName> scrollbarSections = new List<SpriteName>
@@ -1520,7 +1537,7 @@ namespace Beyond_Beyaan
 				sprites[28],
 				sprites[28]
 			};
-			RealScrollBar = new ScrollBar(xPos + width, yPos + height, 16, (height * maxVisible) - 32, maxVisible, items.Count, false, false, scrollbarSections);
+			RealScrollBar = new ScrollBar(xPos + width, yPos + height, 16, (height * maxVisible) - 32, maxVisible, items.Count, false, false, scrollbarSections, font);
 
 			SetItems(items);
 		}
@@ -1655,7 +1672,7 @@ namespace Beyond_Beyaan
 			buttons = new List<StretchButton>();
 			for (int i = 0; i <= actualVisible; i++)
 			{
-				StretchButton button = new StretchButton(backgroundSections, foregroundSections, string.Empty, xPos, yPos + (dropDirection ? (i * height) : (i * height * -1)), width, height, sectionWidth, sectionHeight);
+				StretchButton button = new StretchButton(backgroundSections, foregroundSections, string.Empty, xPos, yPos + (dropDirection ? (i * height) : (i * height * -1)), width, height, sectionWidth, sectionHeight, font);
 				buttons.Add(button);
 			}
 			RealScrollBar.SetAmountOfItems(items.Count);
@@ -1688,6 +1705,7 @@ namespace Beyond_Beyaan
 		private int amountOfItems;
 		private int amountVisible;
 		private int scrollBarLength;
+		private Font font;
 
 		private int topIndex; //Which topmost item is visible
 		private int scrollPos;
@@ -1716,6 +1734,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
+
 		/// <summary>
 		/// Fills out the scrollbar data
 		/// </summary>
@@ -1728,9 +1747,11 @@ namespace Beyond_Beyaan
 		/// <param name="isHorizontal"></param>
 		/// <param name="isSlider"></param>
 		/// <param name="components">UpBackground, UpForeground, DownBackground, DownForeground, ScrollBackground, ScrollForeground, ScrollBarBackground, ScrollBarForeground</param>
-		public ScrollBar(int xPos, int yPos, int scrollSize, int scrollBarLength, int amountOfVisibleItems, int amountOfItems, bool isHorizontal, bool isSlider, List<SpriteName> components) 
+		/// <param name="font"></param>
+		public ScrollBar(int xPos, int yPos, int scrollSize, int scrollBarLength, int amountOfVisibleItems, int amountOfItems, bool isHorizontal, bool isSlider, List<SpriteName> components, Font font) 
 			: base(xPos, yPos, 0, 0)
 		{
+			this.font = font;
 			this.scrollSize = scrollSize;
 			this.scrollBarLength = scrollBarLength;
 			this.amountOfItems = amountOfItems;
@@ -1738,7 +1759,7 @@ namespace Beyond_Beyaan
 			this.isSlider = isSlider;
 			this.isHorizontal = isHorizontal;
 
-			Up = new Button(components[0], components[1], "", xPos, yPos, scrollSize, scrollSize);
+			Up = new Button(components[0], components[1], "", xPos, yPos, scrollSize, scrollSize, font);
 
 			if (isSlider)
 			{
@@ -1757,13 +1778,13 @@ namespace Beyond_Beyaan
 
 			if (isHorizontal)
 			{
-				Scroll = new UniStretchButton(new List<SpriteName>() { components[4], components[5], components[6] }, new List<SpriteName>() { components[7], components[8], components[9] }, isHorizontal, "", xPos + scrollSize, yPos, scrollButtonLength, scrollSize);
-				Down = new Button(components[2], components[3], "", xPos + scrollBarLength + scrollSize, yPos, scrollSize, scrollSize);
+				Scroll = new UniStretchButton(new List<SpriteName>() { components[4], components[5], components[6] }, new List<SpriteName>() { components[7], components[8], components[9] }, isHorizontal, "", xPos + scrollSize, yPos, scrollButtonLength, scrollSize, font);
+				Down = new Button(components[2], components[3], "", xPos + scrollBarLength + scrollSize, yPos, scrollSize, scrollSize, font);
 			}
 			else
 			{
-				Scroll = new UniStretchButton(new List<SpriteName>() { components[4], components[5], components[6] }, new List<SpriteName>() { components[7], components[8], components[9] }, isHorizontal, "", xPos, yPos + scrollSize, scrollSize, scrollButtonLength);
-				Down = new Button(components[2], components[3], "", xPos, yPos + scrollBarLength + scrollSize, scrollSize, scrollSize);
+				Scroll = new UniStretchButton(new List<SpriteName>() { components[4], components[5], components[6] }, new List<SpriteName>() { components[7], components[8], components[9] }, isHorizontal, "", xPos, yPos + scrollSize, scrollSize, scrollButtonLength, font);
+				Down = new Button(components[2], components[3], "", xPos, yPos + scrollBarLength + scrollSize, scrollSize, scrollSize, font);
 			}
 
 			topIndex = 0;
@@ -2404,7 +2425,7 @@ namespace Beyond_Beyaan
 		#region Member Variables
 
 		private bool isRightAligned;
-		private GorgonLibrary.Graphics.TextSprite textSprite;
+		private TextSprite textSprite;
 		private System.Drawing.Color color;
 		#endregion
 
@@ -2413,41 +2434,37 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public Label(int x, int y) : base(x, y, 0, 0)
+		public Label(int x, int y, Font font) : base(x, y, 0, 0)
 		{
 			color = System.Drawing.Color.White;
-			SetText(string.Empty);
+			SetText(string.Empty, font);
 		}
-		public Label(string label, int x, int y)
+		public Label(string label, int x, int y, Font font)
 			: base(x, y, 0, 0)
 		{
 			color = System.Drawing.Color.White;
-			SetText(label);
+			SetText(label, font);
 		}
-		public Label(int x, int y, System.Drawing.Color color)
+		public Label(int x, int y, System.Drawing.Color color, Font font)
 			: base(x, y, 0, 0)
 		{
-			SetText(string.Empty);
+			SetText(string.Empty, font);
 			this.color = color;
 		}
-		public Label(string label, int x, int y, System.Drawing.Color color)
+		public Label(string label, int x, int y, System.Drawing.Color color, Font font)
 			: base(x, y, 0, 0)
 		{
 			this.color = color;
-			SetText(label);
+			SetText(label, font);
 		}
 		#endregion
 
 		#region Functions
-		public void SetText(string label)
+		public void SetText(string label, Font font)
 		{
-			GorgonLibrary.Graphics.Font font;
-			if (DrawingManagement.Fonts.TryGetValue("Arial", out font))
-			{
-				textSprite = new GorgonLibrary.Graphics.TextSprite("Arial", label, font);
-				SetAlignment(isRightAligned);
-				Text = label;
-			}
+			textSprite = new GorgonLibrary.Graphics.TextSprite("Arial", label, font);
+			SetAlignment(isRightAligned);
+			Text = label;
 		}
 		public void SetAlignment(bool isRightAligned)
 		{
@@ -2498,28 +2515,29 @@ namespace Beyond_Beyaan
 	public class TextBox : UIElement
 	{
 		#region Member Variables
-		private GorgonLibrary.Graphics.Viewport wrapView;
-		private GorgonLibrary.Graphics.TextSprite textSprite;
+		private Viewport wrapView;
+		private TextSprite textSprite;
 		//private StretchableImage background;
 		private ScrollBar textScrollBar;
 		//private int borderWidth;
 		//private int borderHeight;
-		private GorgonLibrary.Graphics.RenderImage target;
+		private RenderImage target;
 		private bool scrollbarVisible;
 		private bool usingScrollBar;
+		private Font font;
 		#endregion
 
 		#region Properties
 		#endregion
 
 		#region Constructor
-		public TextBox(int xPos, int yPos, int width, int height, /*int sectionWidth, int sectionHeight, int borderWidth, int borderHeight,*/ string name, string message, GorgonLibrary.Graphics.Font font, /*List<SpriteName> sections,*/ List<SpriteName> scrollBarSprites)
+		public TextBox(int xPos, int yPos, int width, int height, /*int sectionWidth, int sectionHeight, int borderWidth, int borderHeight,*/ string name, string message, Font font, /*List<SpriteName> sections,*/ List<SpriteName> scrollBarSprites)
 			: base(xPos, yPos, width, height)
 		{
 			//this.borderWidth = borderWidth;
 			//this.borderHeight = borderHeight;
 			//background = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, sections);
-			textScrollBar = new ScrollBar(xPos + width - 16, yPos, 16, height - 32, height, 1, false, false, scrollBarSprites);
+			textScrollBar = new ScrollBar(xPos + width - 16, yPos, 16, height - 32, height, 1, false, false, scrollBarSprites, font);
 
 			//Set the text stuff
 			wrapView = new GorgonLibrary.Graphics.Viewport(0, 0, width - 16, height);
@@ -2651,6 +2669,7 @@ namespace Beyond_Beyaan
 		private Label text;
 		private string actualText;
 		private StretchableImage background;
+		private Font font;
 
 		private bool isSelected;
 		private bool pressed;
@@ -2659,23 +2678,25 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public SingleLineTextBox(int x, int y, int width, int height, List<SpriteName> components)
+		public SingleLineTextBox(int x, int y, int width, int height, List<SpriteName> components, Font font)
 			: base(x, y, width, height)
 		{
+			this.font = font;
 			this.background = new StretchableImage(x, y, width, height, 30, 13, components);
 			actualText = string.Empty;
-			text = new Label(string.Empty, x + 6, y + 7);
+			text = new Label(string.Empty, x + 6, y + 7, font);
 			pressed = false;
 			isSelected = false;
 			blink = true;
 		}
 
-		public SingleLineTextBox(string text, int x, int y, int width, int height, List<SpriteName> components)
+		public SingleLineTextBox(string text, int x, int y, int width, int height, List<SpriteName> components, Font font)
 			: base(x, y, width, height)
 		{
+			this.font = font;
 			this.background = new StretchableImage(x, y, width, height, 30, 13, components);
 			actualText = text;
-			this.text = new Label(text, x + 6, y + 7);
+			this.text = new Label(text, x + 6, y + 7, font);
 			pressed = false;
 			isSelected = false;
 			blink = false;
@@ -2715,7 +2736,7 @@ namespace Beyond_Beyaan
 			if (!isSelected)
 			{
 				blink = false;
-				text.SetText(actualText);
+				text.SetText(actualText, font);
 			}
 			return isSelected;
 		}
@@ -2728,7 +2749,7 @@ namespace Beyond_Beyaan
 				if (timer >= 0.25f)
 				{
 					blink = !blink;
-					text.SetText(actualText + (blink ? "|" : ""));
+					text.SetText(actualText + (blink ? "|" : ""), font);
 					timer -= 0.25f;
 				}
 			}
@@ -2755,7 +2776,7 @@ namespace Beyond_Beyaan
 		public void SetString(string text)
 		{
 			actualText = text;
-			this.text.SetText(text);
+			this.text.SetText(text, font);
 		}
 
 		#region Keys
@@ -2947,10 +2968,10 @@ namespace Beyond_Beyaan
 						}
 						break;
 				}
-				text.SetText(actualText);
+				text.SetText(actualText, font);
 				if (text.GetWidth() > width - 8)
 				{
-					text.SetText(prevText);
+					text.SetText(prevText, font);
 					actualText = prevText;
 				}
 				return true;
@@ -3081,10 +3102,10 @@ namespace Beyond_Beyaan
 		private int sectionHeight;
 		#endregion
 
-		public InfoTip(string title, List<Icon> icons, Dictionary<string, object> values, List<SpriteName> backgroundImage, int sectionWidth, int sectionHeight, int screenWidth, int screenHeight)
+		public InfoTip(string title, List<Icon> icons, Dictionary<string, object> values, List<SpriteName> backgroundImage, int sectionWidth, int sectionHeight, int screenWidth, int screenHeight, Font font)
 			: base(0, 0, WIDTH, 45)
 		{
-			this.title = new Label(title, 0, 0);
+			this.title = new Label(title, 0, 0, font);
 			this.icons = new List<Icon>();
 
 			foreach (Icon icon in icons)

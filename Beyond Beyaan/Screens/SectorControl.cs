@@ -16,8 +16,8 @@ namespace Beyond_Beyaan.Screens
 		{
 			this.sector = sector;
 			background = new StretchableImage(0, 0, 290, 200, 30, 13, DrawingManagement.BoxBorder);
-			sectorName = new SingleLineTextBox(0, 0, 220, 35, DrawingManagement.TextBox);
-			actionButton = new StretchButton(DrawingManagement.IconButtonBG, DrawingManagement.IconButtonFG, "No Current Project", 0, 0, 270, 35, 10, 10);
+			sectorName = new SingleLineTextBox(0, 0, 220, 35, DrawingManagement.TextBox, gameMain.FontManager.GetDefaultFont());
+			actionButton = new StretchButton(DrawingManagement.IconButtonBG, DrawingManagement.IconButtonFG, "No Current Project", 0, 0, 270, 35, 10, 10, gameMain.FontManager.GetDefaultFont());
 
 			/*switch (sector.Type)
 			{

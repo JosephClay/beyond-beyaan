@@ -39,20 +39,20 @@
 
 			for (int i = 0; i < popScrollBars.Length; i++)
 			{
-				popScrollBars[i] = new ScrollBar(centerX - 75, centerY + 160 + (45 * i), 16, 128, 1, 100, true, true, DrawingManagement.HorizontalSliderBar);
-				popLabels[i] = new Label(centerX - 75, centerY + 132 + (45 * i));
+				popScrollBars[i] = new ScrollBar(centerX - 75, centerY + 160 + (45 * i), 16, 128, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
+				popLabels[i] = new Label(centerX - 75, centerY + 132 + (45 * i), gameMain.FontManager.GetDefaultFont());
 			}
 
-			transferButton = new Button(SpriteName.TransferButtonBG, SpriteName.TransferButtonFG, string.Empty, centerX + 10, yPos + 400, 75, 35);
-			doneButton = new Button(SpriteName.PlanetDoneButtonBG, SpriteName.PlanetDoneButtonFG, string.Empty, centerX - 85, yPos + 400, 75, 35);
+			transferButton = new Button(SpriteName.TransferButtonBG, SpriteName.TransferButtonFG, string.Empty, centerX + 10, yPos + 400, 75, 35, gameMain.FontManager.GetDefaultFont());
+			doneButton = new Button(SpriteName.PlanetDoneButtonBG, SpriteName.PlanetDoneButtonFG, string.Empty, centerX - 85, yPos + 400, 75, 35, gameMain.FontManager.GetDefaultFont());
 
-			transferButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Confirm population transfer", "confirmPopulationTransferToShipToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			doneButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Exit", "exitConfirmPopulationTransferToShipToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			transferButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Confirm population transfer", "confirmPopulationTransferToShipToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			doneButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Exit", "exitConfirmPopulationTransferToShipToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 
-			raceScrollBar = new ScrollBar(centerX + 87, centerY + 132, 16, 158, 4, 4, false, false, DrawingManagement.VerticalScrollBar);
+			raceScrollBar = new ScrollBar(centerX + 87, centerY + 132, 16, 158, 4, 4, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			capacityBar = new ProgressBar(centerX - 75, centerY + 380, 150, 16, 0, 0, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar, System.Drawing.Color.LightGreen, System.Drawing.Color.Green);
-			capacityLabel = new Label(centerX - 75, centerY + 350);
+			capacityLabel = new Label(centerX - 75, centerY + 350, gameMain.FontManager.GetDefaultFont());
 
 			windowHeight = 450;
 		}

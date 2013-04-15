@@ -58,30 +58,30 @@ namespace Beyond_Beyaan.Screens
 			descriptionBackground = new StretchableImage(xPos + 25, yPos + 475, 565, 140, 30, 13, DrawingManagement.BoxBorder);
 			titleBackground = new StretchableImage(xPos + 35, yPos + 35, 545, 60, 30, 13, DrawingManagement.BoxBorder);
 
-			prevShip = new Button(SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton, string.Empty, xPos + 600, yPos + 112, 16, 16);
-			nextShip = new Button(SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, string.Empty, xPos + 790, yPos + 112, 16, 16);
+			prevShip = new Button(SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton, string.Empty, xPos + 600, yPos + 112, 16, 16, gameMain.FontManager.GetDefaultFont());
+			nextShip = new Button(SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, string.Empty, xPos + 790, yPos + 112, 16, 16, gameMain.FontManager.GetDefaultFont());
 
-			clearButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Clear All", xPos + 600, yPos + 533, 205, 35);
-			confirmButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Confirm Design", xPos + 600, yPos + 572, 205, 35);
+			clearButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Clear All", xPos + 600, yPos + 533, 205, 35, gameMain.FontManager.GetDefaultFont());
+			confirmButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Confirm Design", xPos + 600, yPos + 572, 205, 35, gameMain.FontManager.GetDefaultFont());
 
-			addButton = new Button(SpriteName.AddEquipment, SpriteName.AddEquipmentHL, string.Empty, xPos + 494, yPos + 46, 80, 40);
-			addButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Add equipment", "addEquipmentToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			designNameLabel = new Label("Name:", xPos + 45, yPos + 55);
-			nameTextBox = new SingleLineTextBox(xPos + 105, yPos + 49, 200, 35, DrawingManagement.TextBox);
+			addButton = new Button(SpriteName.AddEquipment, SpriteName.AddEquipmentHL, string.Empty, xPos + 494, yPos + 46, 80, 40, gameMain.FontManager.GetDefaultFont());
+			addButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Add equipment", "addEquipmentToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			designNameLabel = new Label("Name:", xPos + 45, yPos + 55, gameMain.FontManager.GetDefaultFont());
+			nameTextBox = new SingleLineTextBox(xPos + 105, yPos + 49, 200, 35, DrawingManagement.TextBox, gameMain.FontManager.GetDefaultFont());
 
 			List<string> shipSizes = new List<string>();
 
-			shipClassComboBox = new ComboBox(DrawingManagement.ComboBox, shipSizes, xPos + 600, yPos + 200, 205, 35, 10, true);
+			shipClassComboBox = new ComboBox(DrawingManagement.ComboBox, shipSizes, xPos + 600, yPos + 200, 205, 35, 10, true, gameMain.FontManager.GetDefaultFont());
 
-			equipmentScrollbar = new ScrollBar(xPos + 560, yPos + 107, 16, 318, 10, 10, false, false, DrawingManagement.VerticalScrollBar);
+			equipmentScrollbar = new ScrollBar(xPos + 560, yPos + 107, 16, 318, 10, 10, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 			equipmentButtons = new InvisibleStretchButton[10];
 			removeButtons = new Button[equipmentButtons.Length];
 			equipmentLabels = new Label[equipmentButtons.Length];
 			for (int i = 0; i < equipmentButtons.Length; i++)
 			{
-				equipmentButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 40, yPos + 107 + (35 * i), 520, 35, 30, 13);
-				removeButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 536, yPos + 118 + (35 * i), 16, 16);
-				equipmentLabels[i] = new Label(xPos + 64, yPos + 117 + (35 * i));
+				equipmentButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 40, yPos + 107 + (35 * i), 520, 35, 30, 13, gameMain.FontManager.GetDefaultFont());
+				removeButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 536, yPos + 118 + (35 * i), 16, 16, gameMain.FontManager.GetDefaultFont());
+				equipmentLabels[i] = new Label(xPos + 64, yPos + 117 + (35 * i), gameMain.FontManager.GetDefaultFont());
 			}
 			maxEquipmentVisible = 10;
 

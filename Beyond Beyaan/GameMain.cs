@@ -13,10 +13,39 @@ namespace Beyond_Beyaan
 	public class GameMain
 	{
 		Form parentForm;
-		internal DrawingManagement DrawingManagement;
+
+		#region Properties
+		internal DirectoryInfo GameDataSet;
+		internal Random Random;
+		internal Input Input;
+		internal Point MousePos;
+
+		private BBSprite Cursor;
+		internal Galaxy Galaxy;
+
+		internal int ScreenWidth;
+		internal int ScreenHeight;
+		#endregion
+
+		#region Data Managers
+		internal FontManager FontManager;
 		internal SpriteManager SpriteManager;
 		internal UITypeManager UITypeManager;
 		private ScreenManager ScreenManager;
+		internal EmpireManager empireManager;
+		internal RaceManager RaceManager;
+		internal ParticleManager ParticleManager;
+		internal EffectManager EffectManager;
+		internal SectorTypeManager SectorTypeManager;
+		internal StarTypeManager StarTypeManager;
+		internal AIManager AIManager;
+		internal ShipScriptManager ShipScriptManager;
+		internal MasterItemManager MasterItemManager;
+		internal MasterTechnologyList MasterTechnologyList;
+		#endregion
+
+		#region Old Data Managers that need to be converted
+		internal DrawingManagement DrawingManagement;
 		private ScreenInterface screenInterface;
 		private PlayerSetup playerSetup;
 		private GalaxySetup galaxySetup;
@@ -36,30 +65,16 @@ namespace Beyond_Beyaan
 		private TutorialWindow tutorialWindow;
 		private ScreenEnum currentScreen;
 		internal TaskBar taskBar;
-		internal Galaxy Galaxy;
-		internal EmpireManager empireManager;
-		internal RaceManager RaceManager;
-		internal ParticleManager ParticleManager;
-		internal EffectManager EffectManager;
-		internal SectorTypeManager SectorTypeManager;
+		
 		internal PlanetTypeManager PlanetTypeManager;
 		internal RegionTypeManager RegionTypeManager;
-		internal StarTypeManager StarTypeManager;
+		
 		internal IconManager IconManager;
 		internal ResourceManager ResourceManager;
-		internal AIManager AIManager;
-		internal ShipScriptManager ShipScriptManager;
-		internal MasterItemManager MasterItemManager;
-		internal MasterTechnologyList MasterTechnologyList;
-		internal int ScreenWidth;
-		internal int ScreenHeight;
+		
 		internal GorgonLibrary.Graphics.FXShader ShipShader;
-		internal DirectoryInfo GameDataSet;
-		internal Random Random;
-		internal Input Input;
-		internal Point MousePos;
-
-		private BBSprite Cursor;
+		#endregion
+		
 
 		private bool useOldScreenSystem;
 		private string logFilePath;
@@ -75,7 +90,6 @@ namespace Beyond_Beyaan
 			Random = new Random();
 			this.parentForm = parentForm;
 
-			reason = string.Empty;
 			ScreenWidth = screenWidth;
 			ScreenHeight = screenHeight;
 			GameDataSet = dataSet;
@@ -106,7 +120,12 @@ namespace Beyond_Beyaan
 			AIManager = new AIManager();
 			Galaxy = new Galaxy();
 			empireManager = new EmpireManager();
+			FontManager = new FontManager();
 
+			if (!FontManager.Initialize(GameDataSet, out reason))
+			{
+				return false;
+			}
 			if (!AIManager.Initialize(GameDataSet, out reason))
 			{
 				return false;
@@ -123,7 +142,7 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			if (!IconManager.Initialize(GameDataSet.FullName, graphicDirectory.FullName, out reason))
+			if (!IconManager.Initialize(GameDataSet.FullName, graphicDirectory.FullName, FontManager.GetDefaultFont(), out reason))
 			{
 				return false;
 			}
@@ -131,7 +150,7 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			if (!MasterItemManager.Initialize(GameDataSet, out reason))
+			if (!MasterItemManager.Initialize(GameDataSet, FontManager.GetDefaultFont(), out reason))
 			{
 				return false;
 			}
@@ -577,7 +596,7 @@ namespace Beyond_Beyaan
 		{
 			if (tutorialWindow == null)
 			{
-				tutorialWindow = new TutorialWindow(this, DrawingManagement.GetFont("Computer"));
+				tutorialWindow = new TutorialWindow(this, FontManager.GetDefaultFont());
 			}
 			return tutorialWindow.LoadTutorial(filePath, out reason);
 		}
@@ -639,6 +658,10 @@ namespace Beyond_Beyaan
 		#region UI Events
 		public void OnClick(string command)
 		{
+			if (string.IsNullOrEmpty(command))
+			{
+				return;
+			}
 			//Handles the OnClick commands here, such as changing screen, etc
 			string[] parts = command.Split(new[] { '|' });
 			for (int i = 0; i < parts.Length; i++)

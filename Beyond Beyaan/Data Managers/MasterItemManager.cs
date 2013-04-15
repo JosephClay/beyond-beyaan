@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.IO;
+using GorgonLibrary.Graphics;
 
 namespace Beyond_Beyaan.Data_Managers
 {
@@ -15,12 +16,12 @@ namespace Beyond_Beyaan.Data_Managers
 			Items = new Dictionary<string, BaseItem>();
 		}
 
-		public bool Initialize(DirectoryInfo directoryToLoad, out string reason)
+		public bool Initialize(DirectoryInfo directoryToLoad, Font font, out string reason)
 		{
 			try
 			{
 				XDocument doc = XDocument.Load(Path.Combine(directoryToLoad.FullName, "shipItems.xml"));
-				LoadShipItems(doc.Root);
+				LoadShipItems(doc.Root, font);
 			}
 			catch (Exception e)
 			{
@@ -31,11 +32,11 @@ namespace Beyond_Beyaan.Data_Managers
 			return true;
 		}
 
-		private void LoadShipItems(XElement root)
+		private void LoadShipItems(XElement root, Font font)
 		{
 			foreach (XElement element in root.Element("ShipMainItems").Elements())
 			{
-				ShipMainItem mainItem = new ShipMainItem(element);
+				ShipMainItem mainItem = new ShipMainItem(element, font);
 				Items.Add(mainItem.Code, mainItem);
 			}
 			foreach (XElement element in root.Element("ShipModifierItems").Elements())

@@ -68,17 +68,17 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < planetButtons.Length; i++)
 			{
-				planetButtons[i] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 325, yPos + 25 + (i * 50), 465, 50, 30, 13);
-				planetName[i] = new Label(xPos + 375, yPos + 29 + (i * 50));
-				population[i] = new Label(xPos + 375, yPos + 51 + (i * 50));
-				agriculture[i] = new Label(xPos + 508, yPos + 31 + (i * 50));
-				waste[i] = new Label(xPos + 583, yPos + 51 + (i * 50));
-				commerce[i] = new Label(xPos + 583, yPos + 31 + (i * 50));
-				research[i] = new Label(xPos + 658, yPos + 31 + (i * 50));
-				construction[i] = new Label(xPos + 733, yPos + 31 + (i * 50));
+				planetButtons[i] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 325, yPos + 25 + (i * 50), 465, 50, 30, 13, gameMain.FontManager.GetDefaultFont());
+				planetName[i] = new Label(xPos + 375, yPos + 29 + (i * 50), gameMain.FontManager.GetDefaultFont());
+				population[i] = new Label(xPos + 375, yPos + 51 + (i * 50), gameMain.FontManager.GetDefaultFont());
+				agriculture[i] = new Label(xPos + 508, yPos + 31 + (i * 50), gameMain.FontManager.GetDefaultFont());
+				waste[i] = new Label(xPos + 583, yPos + 51 + (i * 50), gameMain.FontManager.GetDefaultFont());
+				commerce[i] = new Label(xPos + 583, yPos + 31 + (i * 50), gameMain.FontManager.GetDefaultFont());
+				research[i] = new Label(xPos + 658, yPos + 31 + (i * 50), gameMain.FontManager.GetDefaultFont());
+				construction[i] = new Label(xPos + 733, yPos + 31 + (i * 50), gameMain.FontManager.GetDefaultFont());
 			}
 
-			scrollBar = new ScrollBar(xPos + 792, yPos + 25, 16, 368, 8, 8, false, false, DrawingManagement.VerticalScrollBar);
+			scrollBar = new ScrollBar(xPos + 792, yPos + 25, 16, 368, 8, 8, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			background = new StretchableImage(xPos, yPos, 840, 640, 200, 200, DrawingManagement.ScreenBorder);
 			galaxyBackground = new StretchableImage(xPos + 25, yPos + 25, 300, 300, 60, 60, DrawingManagement.BorderBorder);
@@ -88,18 +88,18 @@ namespace Beyond_Beyaan.Screens
 
 			filterButtons = new CheckBox[12];
 
-			filterButtons[0] = new CheckBox(DrawingManagement.RadioButton, "Owned Planets", xPos + 40, yPos + 340, 280, 20, 19, false);
-			filterButtons[1] = new CheckBox(DrawingManagement.RadioButton, "Foreign Planets", xPos + 40, yPos + 361, 280, 20, 19, false);
-			filterButtons[2] = new CheckBox(DrawingManagement.RadioButton, "Unowned Planets", xPos + 40, yPos + 382, 280, 20, 19, false);
-			filterButtons[3] = new CheckBox(DrawingManagement.RadioButton, "Rich Planets", xPos + 40, yPos + 403, 280, 20, 19, false);
-			filterButtons[4] = new CheckBox(DrawingManagement.RadioButton, "Normal Planets", xPos + 40, yPos + 424, 280, 20, 19, false);
-			filterButtons[5] = new CheckBox(DrawingManagement.RadioButton, "Poor Planets", xPos + 40, yPos + 445, 280, 20, 19, false);
-			filterButtons[6] = new CheckBox(DrawingManagement.RadioButton, "Exotic Planets", xPos + 40, yPos + 466, 280, 20, 19, false);
-			filterButtons[7] = new CheckBox(DrawingManagement.RadioButton, "Mediocre Planets", xPos + 40, yPos + 487, 280, 20, 19, false);
-			filterButtons[8] = new CheckBox(DrawingManagement.RadioButton, "Dull Planets", xPos + 40, yPos + 508, 280, 20, 19, false);
-			filterButtons[9] = new CheckBox(DrawingManagement.RadioButton, "Fertile Planets", xPos + 40, yPos + 529, 280, 20, 19, false);
-			filterButtons[10] = new CheckBox(DrawingManagement.RadioButton, "Regular Planets", xPos + 40, yPos + 550, 280, 20, 19, false);
-			filterButtons[11] = new CheckBox(DrawingManagement.RadioButton, "Infertile Planets", xPos + 40, yPos + 571, 280, 20, 19, false);
+			filterButtons[0] = new CheckBox(DrawingManagement.RadioButton, "Owned Planets", xPos + 40, yPos + 340, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[1] = new CheckBox(DrawingManagement.RadioButton, "Foreign Planets", xPos + 40, yPos + 361, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[2] = new CheckBox(DrawingManagement.RadioButton, "Unowned Planets", xPos + 40, yPos + 382, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[3] = new CheckBox(DrawingManagement.RadioButton, "Rich Planets", xPos + 40, yPos + 403, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[4] = new CheckBox(DrawingManagement.RadioButton, "Normal Planets", xPos + 40, yPos + 424, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[5] = new CheckBox(DrawingManagement.RadioButton, "Poor Planets", xPos + 40, yPos + 445, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[6] = new CheckBox(DrawingManagement.RadioButton, "Exotic Planets", xPos + 40, yPos + 466, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[7] = new CheckBox(DrawingManagement.RadioButton, "Mediocre Planets", xPos + 40, yPos + 487, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[8] = new CheckBox(DrawingManagement.RadioButton, "Dull Planets", xPos + 40, yPos + 508, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[9] = new CheckBox(DrawingManagement.RadioButton, "Fertile Planets", xPos + 40, yPos + 529, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[10] = new CheckBox(DrawingManagement.RadioButton, "Regular Planets", xPos + 40, yPos + 550, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
+			filterButtons[11] = new CheckBox(DrawingManagement.RadioButton, "Infertile Planets", xPos + 40, yPos + 571, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
 
 			for (int i = 0; i < filterButtons.Length; i++)
 			{
@@ -112,9 +112,9 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < 5; i++)
 			{
-				outputScrollbars[i] = new ScrollBar(xPos + 360, yPos + 440 + (i * 22), 16, 268, 1, 100, true, true, DrawingManagement.HorizontalSliderBar);
-				lockButtons[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, xPos + 665, yPos + 440 + (i * 22), 16, 16);
-				outputLabels[i] = new Label(xPos + 685, yPos + 440 + (i * 22));
+				outputScrollbars[i] = new ScrollBar(xPos + 360, yPos + 440 + (i * 22), 16, 268, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
+				lockButtons[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, xPos + 665, yPos + 440 + (i * 22), 16, 16, gameMain.FontManager.GetDefaultFont());
+				outputLabels[i] = new Label(xPos + 685, yPos + 440 + (i * 22), gameMain.FontManager.GetDefaultFont());
 				if (i < 2)
 				{
 					//lock the agriculture and environment by default
@@ -123,12 +123,12 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 
-			totalPP = new Label(xPos + 368, yPos + 566);
-			totalBC = new Label(xPos + 478, yPos + 566);
-			totalRP = new Label(xPos + 588, yPos + 566);
+			totalPP = new Label(xPos + 368, yPos + 566, gameMain.FontManager.GetDefaultFont());
+			totalBC = new Label(xPos + 478, yPos + 566, gameMain.FontManager.GetDefaultFont());
+			totalRP = new Label(xPos + 588, yPos + 566, gameMain.FontManager.GetDefaultFont());
 
-			applyButton = new Button(SpriteName.ApplyButtonBG, SpriteName.ApplyButtonFG, string.Empty, xPos + 695, yPos + 555, 85, 40);
-			applyButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Apply percentages to selected planets", "applyPercentagesToSelectedPlanetsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			applyButton = new Button(SpriteName.ApplyButtonBG, SpriteName.ApplyButtonFG, string.Empty, xPos + 695, yPos + 555, 85, 40, gameMain.FontManager.GetDefaultFont());
+			applyButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Apply percentages to selected planets", "applyPercentagesToSelectedPlanetsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 
 			rotation = 0;
 			modifyOutput = false;
@@ -537,7 +537,7 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				planetName[i].SetText(planetsShowing[i + planetIndex].Name);
+				planetName[i].SetText(planetsShowing[i + planetIndex].Name, gameMain.FontManager.GetDefaultFont());
 				/*if (planetsShowing[i + planetIndex].Owner != null)
 				{
 					population[i].SetText(string.Format("{0:0}%", (planetsShowing[i].SpaceUsage / (planetsShowing[i].Regions.Count * 10)) * 100.0f) + " (" + planetsShowing[i].Regions.Count + ")");
@@ -583,7 +583,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				foreach (Label label in outputLabels)
 				{
-					label.SetText(string.Empty);
+					label.SetText(string.Empty, gameMain.FontManager.GetDefaultFont());
 				}
 				return;
 			}
@@ -600,26 +600,26 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (lockButtons[i].Selected)
 				{
-					outputLabels[i].SetText("Locked");
+					outputLabels[i].SetText("Locked", gameMain.FontManager.GetDefaultFont());
 				}
 				else
 				{
 					if (total == 0)
 					{
-						outputLabels[i].SetText("0%");
+						outputLabels[i].SetText("0%", gameMain.FontManager.GetDefaultFont());
 						continue;
 					}
 					float percentage = outputScrollbars[i].TopIndex / total;
-					outputLabels[i].SetText(string.Format("{0:0}%", percentage * 100));
+					outputLabels[i].SetText(string.Format("{0:0}%", percentage * 100), gameMain.FontManager.GetDefaultFont());
 				}
 			}
 		}
 
 		private void RefreshEmpireLabels()
 		{
-			totalBC.SetText(string.Format("{0} BC", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpirePlanetIncome)));
-			totalPP.SetText(string.Format("{0} PP", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpireProduction)));
-			totalRP.SetText(string.Format("{0} RP", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpirePlanetResearch)));
+			totalBC.SetText(string.Format("{0} BC", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpirePlanetIncome)), gameMain.FontManager.GetDefaultFont());
+			totalPP.SetText(string.Format("{0} PP", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpireProduction)), gameMain.FontManager.GetDefaultFont());
+			totalRP.SetText(string.Format("{0} RP", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpirePlanetResearch)), gameMain.FontManager.GetDefaultFont());
 		}
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)

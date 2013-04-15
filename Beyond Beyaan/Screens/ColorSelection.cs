@@ -57,17 +57,17 @@ namespace Beyond_Beyaan.Screens
 				Color.LightGray,
 			};
 
-			redSlider = new ScrollBar(xPos + 20, yPos + 280, 16, 255, 1, 256, true, true, DrawingManagement.HorizontalSliderBar);
-			greenSlider = new ScrollBar(xPos + 20, yPos + 330, 16, 255, 1, 256, true, true, DrawingManagement.HorizontalSliderBar);
-			blueSlider = new ScrollBar(xPos + 20, yPos + 380, 16, 255, 1, 256, true, true, DrawingManagement.HorizontalSliderBar);
+			redSlider = new ScrollBar(xPos + 20, yPos + 280, 16, 255, 1, 256, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
+			greenSlider = new ScrollBar(xPos + 20, yPos + 330, 16, 255, 1, 256, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
+			blueSlider = new ScrollBar(xPos + 20, yPos + 380, 16, 255, 1, 256, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
 
 			colorLabels = new Label[3];
-			colorLabels[0] = new Label("Red: ", xPos + 20, yPos + 260, Color.Red);
-			colorLabels[1] = new Label("Green: ", xPos + 20, yPos + 310, Color.Green);
-			colorLabels[2] = new Label("Blue: ", xPos + 20, yPos + 360, Color.Blue);
+			colorLabels[0] = new Label("Red: ", xPos + 20, yPos + 260, Color.Red, gameMain.FontManager.GetDefaultFont());
+			colorLabels[1] = new Label("Green: ", xPos + 20, yPos + 310, Color.Green, gameMain.FontManager.GetDefaultFont());
+			colorLabels[2] = new Label("Blue: ", xPos + 20, yPos + 360, Color.Blue, gameMain.FontManager.GetDefaultFont());
 
-			cancelButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Cancel", xPos + 20, yPos + 440, 150, 35);
-			okButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Confirm", xPos + 220, yPos + 440, 150, 35);
+			cancelButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Cancel", xPos + 20, yPos + 440, 150, 35, gameMain.FontManager.GetDefaultFont());
+			okButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Confirm", xPos + 220, yPos + 440, 150, 35, gameMain.FontManager.GetDefaultFont());
 
 			GorgonLibrary.Graphics.Image block = new GorgonLibrary.Graphics.Image("colorBlock", 40, 40, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
 			block.Clear(Color.White);
@@ -84,9 +84,9 @@ namespace Beyond_Beyaan.Screens
 			greenSlider.TopIndex = selectedColor.G;
 			blueSlider.TopIndex = selectedColor.B;
 
-			colorLabels[0].SetText("Red: " + redSlider.TopIndex);
-			colorLabels[1].SetText("Green: " + greenSlider.TopIndex);
-			colorLabels[2].SetText("Blue: " + blueSlider.TopIndex);
+			colorLabels[0].SetText("Red: " + redSlider.TopIndex, gameMain.FontManager.GetDefaultFont());
+			colorLabels[1].SetText("Green: " + greenSlider.TopIndex, gameMain.FontManager.GetDefaultFont());
+			colorLabels[2].SetText("Blue: " + blueSlider.TopIndex, gameMain.FontManager.GetDefaultFont());
 		}
 
 		public Color GetPresetColor(int index)
@@ -227,9 +227,9 @@ namespace Beyond_Beyaan.Screens
 		{
 			selectedColor = Color.FromArgb(redSlider.TopIndex, greenSlider.TopIndex, blueSlider.TopIndex);
 
-			colorLabels[0].SetText("Red: " + redSlider.TopIndex);
-			colorLabels[1].SetText("Green: " + greenSlider.TopIndex);
-			colorLabels[2].SetText("Blue: " + blueSlider.TopIndex);
+			colorLabels[0].SetText("Red: " + redSlider.TopIndex, gameMain.FontManager.GetDefaultFont());
+			colorLabels[1].SetText("Green: " + greenSlider.TopIndex, gameMain.FontManager.GetDefaultFont());
+			colorLabels[2].SetText("Blue: " + blueSlider.TopIndex, gameMain.FontManager.GetDefaultFont());
 		}
 	}
 }

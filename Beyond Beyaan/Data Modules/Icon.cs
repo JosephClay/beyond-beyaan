@@ -14,6 +14,7 @@ namespace Beyond_Beyaan.Data_Modules
 		private Label text;
 		private bool hasSlider;
 		private bool hasNumericUpDown;
+		private Font font;
 
 		private NumericUpDown numericUpDown;
 		private ScrollBar slider;
@@ -26,7 +27,7 @@ namespace Beyond_Beyaan.Data_Modules
 				{
 					return numericUpDown.Value;
 				}
-				else if (hasSlider)
+				if (hasSlider)
 				{
 					return slider.TopIndex;
 				}
@@ -37,8 +38,9 @@ namespace Beyond_Beyaan.Data_Modules
 		public string Format;
 		public string[] ValueNames;
 
-		public Icon(string iconName, XElement element, Sprite sprite)
+		public Icon(string iconName, XElement element, Sprite sprite, Font font)
 		{
+			this.font = font;
 			Format = element.Attribute("format").Value;
 			string preParseValues = element.Attribute("valueNames").Value;
 			if (!string.IsNullOrEmpty(preParseValues))
@@ -54,7 +56,7 @@ namespace Beyond_Beyaan.Data_Modules
 			Size = int.Parse(element.Attribute("size").Value);
 			iconSprite = new Sprite(iconName + "_Icon", sprite.Image, x, y, Size, Size);
 
-			text = new Label(0, 0);
+			text = new Label(0, 0, font);
 
 			if (element.Attribute("control") != null)
 			{
@@ -65,12 +67,12 @@ namespace Beyond_Beyaan.Data_Modules
 				}
 				if (values[0].ToLower() == "updown")
 				{
-					numericUpDown = new NumericUpDown(0, 0, 150, 0, int.Parse(values[1]), int.Parse(values[2]));
+					numericUpDown = new NumericUpDown(0, 0, 150, 0, int.Parse(values[1]), int.Parse(values[2]), font);
 					hasNumericUpDown = true;
 				}
 				else if (values[0].ToLower() == "slider")
 				{
-					slider = new ScrollBar(0, 0, 16, 118, 1, int.Parse(values[1]), true, true, DrawingManagement.HorizontalSliderBar);
+					slider = new ScrollBar(0, 0, 16, 118, 1, int.Parse(values[1]), true, true, DrawingManagement.HorizontalSliderBar, font);
 					hasSlider = true;
 				}
 				else
@@ -80,8 +82,9 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
-		public Icon(Image iconImage, int imageX, int imageY, string iconName, int size, string format, string[] valueNames)
+		public Icon(Image iconImage, int imageX, int imageY, string iconName, int size, string format, string[] valueNames, Font font)
 		{
+			this.font = font;
 			iconSprite = new Sprite(iconName + "_Icon", iconImage, imageX, imageY, size, size);
 			Size = (int) iconSprite.Width;
 			Format = format;
@@ -90,24 +93,25 @@ namespace Beyond_Beyaan.Data_Modules
 			//text.SetAlignment(true);
 		}
 
-		public Icon(Image iconImage, int imageX, int imageY, string iconName, int size, string format, string[] valueNames, bool hasSlider, bool hasNumericUpDown, List<SpriteName> sprites)
+		public Icon(Image iconImage, int imageX, int imageY, string iconName, int size, string format, string[] valueNames, bool hasSlider, bool hasNumericUpDown, List<SpriteName> sprites, Font font)
 		{
+			this.font = font;
 			iconSprite = new Sprite(iconName + "_Icon", iconImage, imageX, imageY, size, size);
 			Size = (int)iconSprite.Width;
 			Format = format;
 			ValueNames = valueNames;
-			text = new Label(0, 0);
+			text = new Label(0, 0, font);
 			//text.SetAlignment(true);
 			this.hasSlider = hasSlider;
 			this.hasNumericUpDown = hasNumericUpDown;
 
 			if (hasSlider)
 			{
-				slider = new ScrollBar(0, 0, 16, 75, 1, 100, true, true, sprites);
+				slider = new ScrollBar(0, 0, 16, 75, 1, 100, true, true, sprites, font);
 			}
 			else if (hasNumericUpDown)
 			{
-				numericUpDown = new NumericUpDown(0, 0, 75, 0, 100, 0);
+				numericUpDown = new NumericUpDown(0, 0, 75, 0, 100, 0, font);
 			}
 		}
 
@@ -117,7 +121,7 @@ namespace Beyond_Beyaan.Data_Modules
 			Size = iconToCopy.Size;
 			Format = iconToCopy.Format;
 			ValueNames = iconToCopy.ValueNames;
-			text = new Label(0, 0);
+			text = new Label(0, 0, font);
 		}
 
 		public void UpdateText(Dictionary<string, object> values)
@@ -129,7 +133,7 @@ namespace Beyond_Beyaan.Data_Modules
 				{
 					newValues[i] = (string)values[ValueNames[i]];
 				}
-				text.SetText(string.Format(Format, newValues));
+				text.SetText(string.Format(Format, newValues), font);
 			}
 		}
 

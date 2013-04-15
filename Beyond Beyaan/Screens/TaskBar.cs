@@ -27,18 +27,18 @@
 
 			left = (gameMain.ScreenWidth / 2) - 180;
 			top = gameMain.ScreenHeight - 40;
-			//prevScreen = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, DrawingManagement.BoxBorder, "Main Menu", "Go back to Main Menu and an extra goodness", "BackToMainMenu", gameMain.drawingManagement.GetFont("Computer"), xScreenPos + 15, yScreenPos + 560, 200, 35, 60, 13, 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			TaskButtons[0] = new Button(SpriteName.GameMenu, SpriteName.HighlightedGameMenu, "", left, top, 40, 40);
-			TaskButtons[1] = new Button(SpriteName.Galaxy, SpriteName.HighlightedGalaxy, "", left + 40, top, 40, 40);
-			TaskButtons[2] = new Button(SpriteName.Diplomacy, SpriteName.HighlightedDiplomacy, "", left + 80, top, 40, 40);
-			TaskButtons[3] = new Button(SpriteName.FleetList, SpriteName.HighlightedFleetList, "", left + 120, top, 40, 40);
-			TaskButtons[4] = new Button(SpriteName.Design, SpriteName.HighlightedDesign, "", left + 160, top, 40, 40);
-			TaskButtons[5] = new Button(SpriteName.ProductionList, SpriteName.HighlightedDesignList, "", left + 200, top, 40, 40);
-			TaskButtons[6] = new Button(SpriteName.PlanetsList, SpriteName.HighlightedPlanetsList, "", left + 240, top, 40, 40);
-			TaskButtons[7] = new Button(SpriteName.Research, SpriteName.HighlightedResearch, "", left + 280, top, 40, 40);
-			TaskButtons[8] = new Button(SpriteName.EOT, SpriteName.HighlightedEOT, "", left + 320, top, 40, 40);
+			//prevScreen = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, DrawingManagement.BoxBorder, "Main Menu", "Go back to Main Menu and an extra goodness", "BackToMainMenu", gameMain.drawingManagement.GetDefaultFont(), xScreenPos + 15, yScreenPos + 560, 200, 35, 60, 13, 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			TaskButtons[0] = new Button(SpriteName.GameMenu, SpriteName.HighlightedGameMenu, "", left, top, 40, 40, gameMain.FontManager.GetDefaultFont());
+			TaskButtons[1] = new Button(SpriteName.Galaxy, SpriteName.HighlightedGalaxy, "", left + 40, top, 40, 40, gameMain.FontManager.GetDefaultFont());
+			TaskButtons[2] = new Button(SpriteName.Diplomacy, SpriteName.HighlightedDiplomacy, "", left + 80, top, 40, 40, gameMain.FontManager.GetDefaultFont());
+			TaskButtons[3] = new Button(SpriteName.FleetList, SpriteName.HighlightedFleetList, "", left + 120, top, 40, 40, gameMain.FontManager.GetDefaultFont());
+			TaskButtons[4] = new Button(SpriteName.Design, SpriteName.HighlightedDesign, "", left + 160, top, 40, 40, gameMain.FontManager.GetDefaultFont());
+			TaskButtons[5] = new Button(SpriteName.ProductionList, SpriteName.HighlightedDesignList, "", left + 200, top, 40, 40, gameMain.FontManager.GetDefaultFont());
+			TaskButtons[6] = new Button(SpriteName.PlanetsList, SpriteName.HighlightedPlanetsList, "", left + 240, top, 40, 40, gameMain.FontManager.GetDefaultFont());
+			TaskButtons[7] = new Button(SpriteName.Research, SpriteName.HighlightedResearch, "", left + 280, top, 40, 40, gameMain.FontManager.GetDefaultFont());
+			TaskButtons[8] = new Button(SpriteName.EOT, SpriteName.HighlightedEOT, "", left + 320, top, 40, 40, gameMain.FontManager.GetDefaultFont());
 
-			GorgonLibrary.Graphics.Font font = DrawingManagement.GetFont("Computer");
+			GorgonLibrary.Graphics.Font font = gameMain.FontManager.GetDefaultFont();
 
 			TaskButtons[0].SetToolTip(DrawingManagement.BoxBorderBG, font, "Game Menu", "gameMenuToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
 			TaskButtons[1].SetToolTip(DrawingManagement.BoxBorderBG, font, "Galaxy Screen", "galaxyScreenToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
@@ -55,8 +55,8 @@
 
 			incomeSummaryBackground = new StretchableImage(0, gameMain.ScreenHeight - 40, 200, 40, 30, 13, DrawingManagement.BoxBorderBG);
 			turnSummaryBackground = new StretchableImage(gameMain.ScreenWidth - 200, gameMain.ScreenHeight - 40, 200, 40, 30, 13, DrawingManagement.BoxBorderBG);
-			incomeSummary = new Label(35, gameMain.ScreenHeight - 30);
-			turnSummary = new Label(gameMain.ScreenWidth - 190, gameMain.ScreenHeight - 30);
+			incomeSummary = new Label(35, gameMain.ScreenHeight - 30, gameMain.FontManager.GetDefaultFont());
+			turnSummary = new Label(gameMain.ScreenWidth - 190, gameMain.ScreenHeight - 30, gameMain.FontManager.GetDefaultFont());
 		}
 
 		public void Draw(DrawingManagement drawingManagement)
@@ -227,7 +227,7 @@
 			gameMain.empireManager.CurrentEmpire.UpdateAll();
 			float reserves = gameMain.empireManager.CurrentEmpire.Reserves;
 			float income = gameMain.empireManager.CurrentEmpire.NetIncome;
-			incomeSummary.SetText(Utility.ConvertNumberToFourDigits(reserves) + " (" + Utility.ConvertNumberToFourDigits(income) + ")");
+			incomeSummary.SetText(Utility.ConvertNumberToFourDigits(reserves) + " (" + Utility.ConvertNumberToFourDigits(income) + ")", gameMain.FontManager.GetDefaultFont());
 			if (reserves + income < 0)
 			{
 				incomeSummary.SetColor(System.Drawing.Color.Red);
@@ -240,7 +240,7 @@
 			{
 				incomeSummary.SetColor(System.Drawing.Color.Green);
 			}
-			turnSummary.SetText("Turn " + gameMain.Turn);
+			turnSummary.SetText("Turn " + gameMain.Turn, gameMain.FontManager.GetDefaultFont());
 			CheckValidTurn();
 		}
 	}

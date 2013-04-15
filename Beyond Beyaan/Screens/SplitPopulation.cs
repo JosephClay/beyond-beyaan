@@ -41,11 +41,11 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < popScrollBarsLeft.Length; i++)
 			{
-				popScrollBarsLeft[i] = new ScrollBar(centerX - 175, centerY + 40 + (45 * i), 16, 128, 1, 100, true, true, DrawingManagement.HorizontalSliderBar);
-				popScrollBarsRight[i] = new ScrollBar(centerX + 25, centerY + 40 + (45 * i), 16, 128, 1, 100, true, true, DrawingManagement.HorizontalSliderBar);
+				popScrollBarsLeft[i] = new ScrollBar(centerX - 175, centerY + 40 + (45 * i), 16, 128, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
+				popScrollBarsRight[i] = new ScrollBar(centerX + 25, centerY + 40 + (45 * i), 16, 128, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
 
-				popLabelsLeft[i] = new Label(centerX - 175, centerY + 15 + (45 * i));
-				popLabelsRight[i] = new Label(centerX + 25, centerY + 15 + (45 * i));
+				popLabelsLeft[i] = new Label(centerX - 175, centerY + 15 + (45 * i), gameMain.FontManager.GetDefaultFont());
+				popLabelsRight[i] = new Label(centerX + 25, centerY + 15 + (45 * i), gameMain.FontManager.GetDefaultFont());
 			}
 
 			windowHeight = 400;
@@ -54,14 +54,14 @@ namespace Beyond_Beyaan.Screens
 			backGroundImage.MoveTo(xPos - windowWidth / 2, yPos);
 			backGroundImage.SetDimensions(windowWidth, windowHeight);
 
-			splitButton = new Button(SpriteName.TransferButtonBG, SpriteName.TransferButtonFG, string.Empty, centerX - 38, centerY + 350, 75, 35);
-			splitButton.SetToolTip(DrawingManagement.BoxBorderBG, DrawingManagement.GetFont("Computer"), "Confirm population split", "confirmPopulationSplitToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			raceScrollBar = new ScrollBar(centerX + 183, yPos + 15, 16, 253, 5, 5, false, false, DrawingManagement.VerticalScrollBar);
+			splitButton = new Button(SpriteName.TransferButtonBG, SpriteName.TransferButtonFG, string.Empty, centerX - 38, centerY + 350, 75, 35, gameMain.FontManager.GetDefaultFont());
+			splitButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Confirm population split", "confirmPopulationSplitToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			raceScrollBar = new ScrollBar(centerX + 183, yPos + 15, 16, 253, 5, 5, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
 
 			leftTotalBar = new ProgressBar(xPos - 175, centerY + 330, 150, 16, 100, 100, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
 			rightTotalBar = new ProgressBar(xPos + 25, centerY + 330, 150, 16, 100, 100, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
-			leftCapacityLabel = new Label(xPos - 175, centerY + 301);
-			rightCapacityLabel = new Label(xPos + 25, centerY + 301);
+			leftCapacityLabel = new Label(xPos - 175, centerY + 301, gameMain.FontManager.GetDefaultFont());
+			rightCapacityLabel = new Label(xPos + 25, centerY + 301, gameMain.FontManager.GetDefaultFont());
 		}
 
 		public override void DrawWindow(DrawingManagement drawingManagement)
@@ -245,8 +245,8 @@ namespace Beyond_Beyaan.Screens
 			{
 				popScrollBarsLeft[i].TopIndex = totalEach[i + raceScrollBar.TopIndex] - populationToSplit[races[i + raceScrollBar.TopIndex]];
 				popScrollBarsRight[i].TopIndex = populationToSplit[races[i + raceScrollBar.TopIndex]];
-				popLabelsLeft[i].SetText(popScrollBarsLeft[i].TopIndex + " " + races[raceScrollBar.TopIndex + i].RaceName);
-				popLabelsRight[i].SetText(popScrollBarsRight[i].TopIndex + " " + races[raceScrollBar.TopIndex + i].RaceName);
+				popLabelsLeft[i].SetText(popScrollBarsLeft[i].TopIndex + " " + races[raceScrollBar.TopIndex + i].RaceName, gameMain.FontManager.GetDefaultFont());
+				popLabelsRight[i].SetText(popScrollBarsRight[i].TopIndex + " " + races[raceScrollBar.TopIndex + i].RaceName, gameMain.FontManager.GetDefaultFont());
 			}
 
 			int leftTotal = 0;
@@ -258,11 +258,11 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			leftTotalBar.SetProgress(leftTotal);
-			leftCapacityLabel.SetText(leftTotal + " / " + leftCapacity);
+			leftCapacityLabel.SetText(leftTotal + " / " + leftCapacity, gameMain.FontManager.GetDefaultFont());
 			leftTotalBar.SetColor(leftTotal > leftCapacity ? System.Drawing.Color.Red : System.Drawing.Color.Green);
 
 			rightTotalBar.SetProgress(rightTotal);
-			rightCapacityLabel.SetText(rightTotal + " / " + rightCapacity);
+			rightCapacityLabel.SetText(rightTotal + " / " + rightCapacity, gameMain.FontManager.GetDefaultFont());
 			rightTotalBar.SetColor(rightTotal > rightCapacity ? System.Drawing.Color.Red : System.Drawing.Color.Green);
 
 			if (leftTotal > leftCapacity || rightTotal > rightCapacity)
