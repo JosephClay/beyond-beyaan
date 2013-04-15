@@ -38,11 +38,33 @@ namespace Beyond_Beyaan.Data_Modules
 					int y = 0;
 					int width = 0;
 					int height = 0;
+					string font = null;
+					string content = null;
 
 					foreach (var attribute in element.Attributes())
 					{
 						switch (attribute.Name.LocalName.ToLower())
 						{
+							case "color":
+								{
+									string[] values = attribute.Value.Split(new[] {','});
+									if (values.Length == 3)
+									{
+										newUI.SetColor(255, byte.Parse(values[0]), byte.Parse(values[1]), byte.Parse(values[2]));
+									}
+									else
+									{
+										newUI.SetColor(byte.Parse(values[0]), byte.Parse(values[1]), byte.Parse(values[2]), byte.Parse(values[3]));
+									}
+								} break;
+							case "font":
+								{
+									font = attribute.Value;
+								} break;
+							case "content":
+								{
+									content = attribute.Value;
+								} break;
 							case "xpos":
 								{
 									x = GetValue(attribute.Value);
@@ -63,6 +85,17 @@ namespace Beyond_Beyaan.Data_Modules
 								{
 									newUI.OnClick = attribute.Value;
 								} break;
+						}
+					}
+					if (!string.IsNullOrEmpty(content))
+					{
+						if (!string.IsNullOrEmpty(font))
+						{
+							newUI.SetText(content, _gameMain.FontManager.GetFont(font));
+						}
+						else
+						{
+							newUI.SetText(content, _gameMain.FontManager.GetDefaultFont());
 						}
 					}
 					newUI.SetRect(x, y, width, height);

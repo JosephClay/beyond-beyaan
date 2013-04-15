@@ -7,4 +7,5 @@
   <UIType name="MainBackground" type="Image" background="MainBackground" />
   <UIType name="MainPlanetBackground" type="Image" background="MainPlanetBackground" />
   <UIType name="Title" type="Image" background="Title" />
+  <UIType name="Label" type="Label" />
 </UITypes>

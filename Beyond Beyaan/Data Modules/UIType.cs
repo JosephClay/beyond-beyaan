@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Managers;
+using GorgonLibrary.Graphics;
+using Font = GorgonLibrary.Graphics.Font;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	enum UITypeEnum { IMAGE, BUTTON }
+	enum UITypeEnum { IMAGE, LABEL, BUTTON }
 	enum BaseUISprites
 		{
 			BACKGROUND,
@@ -57,6 +60,9 @@ namespace Beyond_Beyaan.Data_Modules
 									case "button": //Generic button that only uses two sprites, button background/foreground
 										Type = UITypeEnum.BUTTON;
 										break;
+									case "label": //A simple text label with no sprites associated
+										Type = UITypeEnum.LABEL;
+										break;
 									case "image": //Generic image that just displays something, usually used in backgrounds
 										Type = UITypeEnum.IMAGE;
 										break;
@@ -86,7 +92,10 @@ namespace Beyond_Beyaan.Data_Modules
 	public class UIType
 	{
 		private Dictionary<BaseUISprites, BBSprite> _sprites;
+		private TextSprite _textSprite;
 		private UITypeEnum _type;
+		private Color _color;
+		private Color _disabledColor;
 
 		private int _xPos;
 		private int _yPos;
@@ -107,6 +116,7 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public UIType(BaseUIType baseUIType, Random r)
 		{
+			_color = Color.White;
 			_sprites = new Dictionary<BaseUISprites, BBSprite>();
 			foreach (var sprite in baseUIType.Sprites)
 			{
@@ -122,6 +132,17 @@ namespace Beyond_Beyaan.Data_Modules
 			_yPos = y;
 			_width = width;
 			_height = height;
+		}
+
+		public void SetColor(byte a, byte r, byte g, byte b)
+		{
+			_color = Color.FromArgb(a, r, g, b);
+			_disabledColor = Color.FromArgb(a, (byte) (r*0.7), (byte) (g*0.7), (byte) (b*0.7));
+		}
+
+		public void SetText(string content, Font font)
+		{
+			_textSprite = new TextSprite("Label", content, font);
 		}
 
 		public bool MouseHover(int mouseX, int mouseY, float frameDeltaTime)
@@ -169,7 +190,11 @@ namespace Beyond_Beyaan.Data_Modules
 					} break;
 				case UITypeEnum.IMAGE:
 					{
-						DrawImage();
+						Image_Draw();
+					} break;
+				case UITypeEnum.LABEL:
+					{
+						Label_Draw();
 					} break;
 			}
 		}
@@ -183,18 +208,27 @@ namespace Beyond_Beyaan.Data_Modules
 		}
 		#region Individual UI functions
 
+		#region Label functions
+		private void Label_Draw()
+		{
+			_textSprite.SetPosition(_xPos, _yPos);
+			_textSprite.Color = _color;
+			_textSprite.Draw();
+		}
+		#endregion
+
 		#region Image functions
-		private void DrawImage()
+		private void Image_Draw()
 		{
 			var sprite = _sprites[BaseUISprites.BACKGROUND];
 			if (_width == 0 || _height == 0)
 			{
 				//Possibly just want the normal scale
-				sprite.Draw(_xPos, _yPos);
+				sprite.Draw(_xPos, _yPos, 1, 1, _color);
 			}
 			else
 			{
-				sprite.Draw(_xPos, _yPos, _width / sprite.Width, _height / sprite.Height);
+				sprite.Draw(_xPos, _yPos, _width / sprite.Width, _height / sprite.Height, _color);
 			}
 		}
 		#endregion
@@ -208,23 +242,23 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				if (_pressed1 || Selected)
 				{
-					foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height);
+					foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _color);
 				}
 				else
 				{
-					backgroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height);
+					backgroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _color);
 					if (_pulse1 > 0)
 					{
-						foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, (byte)(255 * _pulse1));
+						foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, Color.FromArgb((byte)(255 * _pulse1), _color));
 					}
 				}
 			}
 			else
 			{
-				backgroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, System.Drawing.Color.Tan);
+				backgroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _disabledColor);
 				if (Selected)
 				{
-					foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height);
+					foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _disabledColor);
 				}
 			}
 			/*if (label.Text.Length > 0)
