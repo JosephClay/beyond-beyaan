@@ -8,4 +8,43 @@
   <UIType name="MainPlanetBackground" type="Image" background="MainPlanetBackground" />
   <UIType name="Title" type="Image" background="Title" />
   <UIType name="Label" type="Label" />
+  <UIType name="StretchableButton" type="StretchableButton" 
+          top_left_background="ButtonBGTL" 
+          top_middle_background="ButtonBGTC" 
+          top_right_background="ButtonBGTR" 
+          left_middle_background="ButtonBGCL" 
+          middle_background="ButtonBGCC" 
+          right_middle_background="ButtonBGCR" 
+          bottom_left_background="ButtonBGBL" 
+          bottom_middle_background="ButtonBGBC" 
+          bottom_right_background="ButtonBGBR" 
+          top_left_foreground="ButtonFGTL" 
+          top_middle_foreground="ButtonFGTC" 
+          top_right_foreground="ButtonFGTR" 
+          left_middle_foreground="ButtonFGCL" 
+          middle_foreground="ButtonFGCC" 
+          right_middle_foreground="ButtonFGCR" 
+          bottom_left_foreground="ButtonFGBL" 
+          bottom_middle_foreground="ButtonFGBC" 
+          bottom_right_foreground="ButtonFGBR" />
+  <UIType name="ThickBorder" type="StretchableImage"
+          top_left_background="ThickBorderBGTL"
+          top_middle_background="ThickBorderBGTC"
+          top_right_background="ThickBorderBGTR"
+          left_middle_background="ThickBorderBGCL"
+          middle_background="ThickBorderBGCC"
+          right_middle_background="ThickBorderBGCR"
+          bottom_left_background="ThickBorderBGBL"
+          bottom_middle_background="ThickBorderBGBC"
+          bottom_right_background="ThickBorderBGBR" />
+  <UIType name="ThinBorder" type="StretchableImage"
+          top_left_background="ThinBorderBGTL"
+          top_middle_background="ThinBorderBGTC"
+          top_right_background="ThinBorderBGTR"
+          left_middle_background="ThinBorderBGCL"
+          middle_background="ThinBorderBGCC"
+          right_middle_background="ThinBorderBGCR"
+          bottom_left_background="ThinBorderBGBL"
+          bottom_middle_background="ThinBorderBGBC"
+          bottom_right_background="ThinBorderBGBR" />
 </UITypes>
