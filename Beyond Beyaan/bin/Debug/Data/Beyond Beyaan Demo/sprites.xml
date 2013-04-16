@@ -98,4 +98,116 @@
   <Sprite name="Title" file="Title name.png">
     <Frame x="0" y="0" width="1024" height="600" />
   </Sprite>
+  
+  <!--UI Graphics-->
+  <Sprite name="ButtonBGTL" file="main.png">
+    <Frame x="828" y="79" width="60" height="13" />
+  </Sprite>
+  <Sprite name="ButtonBGTC" file="main.png">
+    <Frame x="889" y="79" width="1" height="13" />
+  </Sprite>
+  <Sprite name="ButtonBGTR" file="main.png">
+    <Frame x="891" y="79" width="60" height="13" />
+  </Sprite>
+  <Sprite name="ButtonBGCL" file="main.png">
+    <Frame x="828" y="93" width="60" height="1" />
+  </Sprite>
+  <Sprite name="ButtonBGCC" file="main.png">
+    <Frame x="889" y="93" width="1" height="1" />
+  </Sprite>
+  <Sprite name="ButtonBGCR" file="main.png">
+    <Frame x="891" y="93" width="60" height="1" />
+  </Sprite>
+  <Sprite name="ButtonBGBL" file="main.png">
+    <Frame x="828" y="95" width="60" height="13" />
+  </Sprite>
+  <Sprite name="ButtonBGBC" file="main.png">
+    <Frame x="889" y="95" width="1" height="13" />
+  </Sprite>
+  <Sprite name="ButtonBGBR" file="main.png">
+    <Frame x="891" y="95" width="60" height="13" />
+  </Sprite>
+  <Sprite name="ButtonFGTL" file="main.png">
+    <Frame x="828" y="49" width="60" height="13" />
+  </Sprite>
+  <Sprite name="ButtonFGTC" file="main.png">
+    <Frame x="889" y="49" width="1" height="13" />
+  </Sprite>
+  <Sprite name="ButtonFGTR" file="main.png">
+    <Frame x="891" y="49" width="60" height="13" />
+  </Sprite>
+  <Sprite name="ButtonFGCL" file="main.png">
+    <Frame x="828" y="63" width="60" height="1" />
+  </Sprite>
+  <Sprite name="ButtonFGCC" file="main.png">
+    <Frame x="889" y="63" width="1" height="1" />
+  </Sprite>
+  <Sprite name="ButtonFGCR" file="main.png">
+    <Frame x="891" y="63" width="60" height="1" />
+  </Sprite>
+  <Sprite name="ButtonFGBL" file="main.png">
+    <Frame x="828" y="65" width="60" height="13" />
+  </Sprite>
+  <Sprite name="ButtonFGBC" file="main.png">
+    <Frame x="889" y="65" width="1" height="13" />
+  </Sprite>
+  <Sprite name="ButtonFGBR" file="main.png">
+    <Frame x="891" y="65" width="60" height="13" />
+  </Sprite>
+  
+  <!--Background Images-->
+  <Sprite name="ThickBorderBGTL" file="main.png">
+    <Frame x="621" y="176" width="200" height="200" />
+  </Sprite>
+  <Sprite name="ThickBorderBGTC" file="main.png">
+    <Frame x="822" y="176" width="1" height="200" />
+  </Sprite>
+  <Sprite name="ThickBorderBGTR" file="main.png">
+    <Frame x="824" y="176" width="200" height="200" />
+  </Sprite>
+  <Sprite name="ThickBorderBGCL" file="main.png">
+    <Frame x="621" y="377" width="200" height="1" />
+  </Sprite>
+  <Sprite name="ThickBorderBGCC" file="main.png">
+    <Frame x="822" y="377" width="1" height="1" />
+  </Sprite>
+  <Sprite name="ThickBorderBGCR" file="main.png">
+    <Frame x="824" y="377" width="200" height="1" />
+  </Sprite>
+  <Sprite name="ThickBorderBGBL" file="main.png">
+    <Frame x="621" y="379" width="200" height="200" />
+  </Sprite>
+  <Sprite name="ThickBorderBGBC" file="main.png">
+    <Frame x="822" y="379" width="1" height="200" />
+  </Sprite>
+  <Sprite name="ThickBorderBGBR" file="main.png">
+    <Frame x="824" y="379" width="200" height="200" />
+  </Sprite>
+  <Sprite name="ThinBorderBGTL" file="main.png">
+    <Frame x="640" y="49" width="30" height="13" />
+  </Sprite>
+  <Sprite name="ThinBorderBGTC" file="main.png">
+    <Frame x="671" y="49" width="1" height="13" />
+  </Sprite>
+  <Sprite name="ThinBorderBGTR" file="main.png">
+    <Frame x="673" y="49" width="30" height="13" />
+  </Sprite>
+  <Sprite name="ThinBorderBGCL" file="main.png">
+    <Frame x="640" y="63" width="30" height="1" />
+  </Sprite>
+  <Sprite name="ThinBorderBGCC" file="main.png">
+    <Frame x="671" y="63" width="1" height="1" />
+  </Sprite>
+  <Sprite name="ThinBorderBGCR" file="main.png">
+    <Frame x="673" y="63" width="30" height="1" />
+  </Sprite>
+  <Sprite name="ThinBorderBGBL" file="main.png">
+    <Frame x="640" y="65" width="30" height="13" />
+  </Sprite>
+  <Sprite name="ThinBorderBGBC" file="main.png">
+    <Frame x="671" y="65" width="1" height="13" />
+  </Sprite>
+  <Sprite name="ThinBorderBGBR" file="main.png">
+    <Frame x="673" y="65" width="30" height="13" />
+  </Sprite>
 </Sprites>
