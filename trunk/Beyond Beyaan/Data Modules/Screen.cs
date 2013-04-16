@@ -57,6 +57,18 @@ namespace Beyond_Beyaan.Data_Modules
 										newUI.SetColor(byte.Parse(values[0]), byte.Parse(values[1]), byte.Parse(values[2]), byte.Parse(values[3]));
 									}
 								} break;
+							case "textcolor":
+							{
+								string[] values = attribute.Value.Split(new[] { ',' });
+								if (values.Length == 3)
+								{
+									newUI.SetTextColor(255, byte.Parse(values[0]), byte.Parse(values[1]), byte.Parse(values[2]));
+								}
+								else
+								{
+									newUI.SetTextColor(byte.Parse(values[0]), byte.Parse(values[1]), byte.Parse(values[2]), byte.Parse(values[3]));
+								}
+							} break;
 							case "font":
 								{
 									font = attribute.Value;
