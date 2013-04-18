@@ -40,6 +40,8 @@ namespace Beyond_Beyaan.Data_Modules
 					int height = 0;
 					string font = null;
 					string content = null;
+					int arrowXOffset = 0;
+					int arrowYOffset = 0;
 
 					foreach (var attribute in element.Attributes())
 					{
@@ -97,6 +99,18 @@ namespace Beyond_Beyaan.Data_Modules
 								{
 									newUI.OnClick = attribute.Value;
 								} break;
+							case "arrowxoffset":
+								{
+									arrowXOffset = int.Parse(attribute.Value);
+								} break;
+							case "arrowyoffset":
+								{
+									arrowYOffset = int.Parse(attribute.Value);
+								} break;
+							case "datasource":
+								{
+									newUI.DataSource = attribute.Value;
+								} break;
 						}
 					}
 					if (!string.IsNullOrEmpty(content))
@@ -111,6 +125,7 @@ namespace Beyond_Beyaan.Data_Modules
 						}
 					}
 					newUI.SetRect(x, y, width, height);
+					newUI.SetArrowOffset(arrowXOffset, arrowYOffset);
 					UITypes.Add(newUI);
 				}
 			}
@@ -216,6 +231,17 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				uiType.MouseHover(x, y, frameDeltaTime);
 				uiType.Update(frameDeltaTime, _gameMain.Random);
+			}
+		}
+
+		public void RefreshData()
+		{
+			foreach (var uiType in UITypes)
+			{
+				if (!string.IsNullOrEmpty(uiType.DataSource))
+				{
+					uiType.FillData(_gameMain.GetData(uiType.DataSource), _gameMain);
+				}
 			}
 		}
 	}

@@ -52,6 +52,7 @@ namespace Beyond_Beyaan.Data_Managers
 			if (_screens.ContainsKey(whichScreen))
 			{
 				_currentScreen = _screens[whichScreen];
+				_currentScreen.RefreshData();
 			}
 			else
 			{

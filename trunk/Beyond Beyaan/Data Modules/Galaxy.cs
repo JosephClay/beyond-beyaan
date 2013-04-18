@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
 
@@ -32,6 +33,11 @@ namespace Beyond_Beyaan
 		}
 	}
 
+	public class GalaxyScript
+	{
+		public string GalaxyScriptName { get; set; }
+	}
+
 	public class Galaxy
 	{
 		private List<StarSystem> starSystems = new List<StarSystem>();
@@ -46,6 +52,22 @@ namespace Beyond_Beyaan
 		{
 			get { return nebula; }
 		}*/
+
+		public static List<object> GetGalaxyScripts(GameMain gameMain)
+		{
+			string path = Path.Combine(gameMain.GameDataSet.FullName, "Scripts");
+			path = Path.Combine(path, "Galaxy");
+			DirectoryInfo di = new DirectoryInfo(path);
+
+			List<object> scripts = new List<object>();
+			foreach (var file in di.GetFiles("*.cs"))
+			{
+				var script = new GalaxyScript();
+				script.GalaxyScriptName = file.Name.Substring(0, file.Name.IndexOf(file.Extension));
+				scripts.Add(script);
+			}
+			return scripts;
+		}
 
 		/// <summary>
 		/// Set up the galaxy
