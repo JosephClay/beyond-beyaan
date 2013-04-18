@@ -8,7 +8,7 @@ using Font = GorgonLibrary.Graphics.Font;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	enum UITypeEnum { IMAGE, STRETCHABLE_IMAGE, LABEL, BUTTON, STRETCHABLE_BUTTON }
+	enum UITypeEnum { IMAGE, STRETCHABLE_IMAGE, LABEL, BUTTON, STRETCHABLE_BUTTON, DROPDOWN }
 	enum BaseUISprites
 		{
 			BACKGROUND,
@@ -31,6 +31,10 @@ namespace Beyond_Beyaan.Data_Modules
 			BOTTOM_LEFT_FOREGROUND,
 			BOTTOM_MIDDLE_FOREGROUND,
 			BOTTOM_RIGHT_FOREGROUND,
+			UP_BACKGROUND,
+			UP_FOREGROUND,
+			DOWN_BACKGROUND,
+			DOWN_FOREGROUND,
 		}
 
 	public class BaseUIType
@@ -71,6 +75,9 @@ namespace Beyond_Beyaan.Data_Modules
 										break;
 									case "stretchableimage":
 										Type = UITypeEnum.STRETCHABLE_IMAGE;
+										break;
+									case "dropdown":
+										Type = UITypeEnum.DROPDOWN;
 										break;
 								}
 							} break;
@@ -154,6 +161,22 @@ namespace Beyond_Beyaan.Data_Modules
 							{
 								Sprites.Add(BaseUISprites.BOTTOM_RIGHT_FOREGROUND, spriteManager.Sprites[attribute.Value]);
 							} break;
+						case "up_background":
+							{
+								Sprites.Add(BaseUISprites.UP_BACKGROUND, spriteManager.Sprites[attribute.Value]);
+							} break;
+						case "up_foreground":
+							{
+								Sprites.Add(BaseUISprites.UP_FOREGROUND, spriteManager.Sprites[attribute.Value]);
+							} break;
+						case "down_background":
+							{
+								Sprites.Add(BaseUISprites.DOWN_BACKGROUND, spriteManager.Sprites[attribute.Value]);
+							} break;
+						case "down_foreground":
+							{
+								Sprites.Add(BaseUISprites.DOWN_FOREGROUND, spriteManager.Sprites[attribute.Value]);
+							} break;
 					}
 				}
 			}
@@ -169,8 +192,16 @@ namespace Beyond_Beyaan.Data_Modules
 
 	public class UIType
 	{
+		#region Constants
+		private const int BUTTON = 0;
+		private const int UP_OR_LEFT = 1;
+		private const int DOWN_OR_RIGHT = 2;
+		private const int SCROLL_BUTTON = 3;
+		private const int FIRST_DROPDOWN_BUTTON = 4;
+		#endregion
+
 		private Dictionary<BaseUISprites, BBSprite> _sprites;
-		private TextSprite _textSprite;
+		private List<TextSprite> _textSprites; 
 		private UITypeEnum _type;
 		private Color _color;
 		private Color _disabledColor;
@@ -182,12 +213,20 @@ namespace Beyond_Beyaan.Data_Modules
 		private int _width;
 		private int _height;
 
-		private float _pulse1;
-		private bool _direction1;
-		private bool _pressed1;
+		#region Drop-down properties
+		private bool _dropped;
+		private int _maxVisible;
+		private int _arrowXOffset;
+		private int _arrowYOffset;
+		#endregion
+
+		private List<float> _pulses;
+		private List<bool> _directions;
+		private List<bool> _presseds;
+		private List<bool> _selecteds; 
 
 		public bool Enabled { get; set; }
-		public bool Selected { get; set; }
+		public string DataSource { get; set; }
 
 		#region Events
 		public string OnClick { get; set; }
@@ -198,12 +237,47 @@ namespace Beyond_Beyaan.Data_Modules
 			_color = Color.White;
 			_textColor = Color.White;
 			_sprites = new Dictionary<BaseUISprites, BBSprite>();
+			_arrowXOffset = 0;
+			_arrowYOffset = 0;
 			foreach (var sprite in baseUIType.Sprites)
 			{
 				_sprites.Add(sprite.Key, new BBSprite(sprite.Value, r));
 			}
 			_type = baseUIType.Type;
 			Enabled = true;
+
+			_pulses = new List<float>();
+			_directions = new List<bool>();
+			_presseds = new List<bool>();
+			_selecteds = new List<bool>();
+			_textSprites = new List<TextSprite>();
+
+			switch (_type)
+			{
+				//TODO: Add scrollbars and sliders
+				case UITypeEnum.DROPDOWN:
+				case UITypeEnum.BUTTON:
+				case UITypeEnum.STRETCHABLE_BUTTON:
+					{
+						//Main button
+						_pulses.Add(0);
+						_directions.Add(false);
+						_presseds.Add(false);
+						_selecteds.Add(false);
+						if (_type == UITypeEnum.BUTTON || _type == UITypeEnum.STRETCHABLE_BUTTON)
+						{
+							break;
+						}
+						//Up/left, down/right, and scroll buttons
+						for (int i = 0; i < 3; i++)
+						{
+							_pulses.Add(0);
+							_directions.Add(false);
+							_presseds.Add(false);
+							_selecteds.Add(false);
+						}
+					} break;
+			}
 		}
 
 		public void SetRect(int x, int y, int width, int height)
@@ -225,15 +299,32 @@ namespace Beyond_Beyaan.Data_Modules
 			_textColor = Color.FromArgb(a, r, g, b);
 		}
 
+		public void SetArrowOffset(int x, int y)
+		{
+			_arrowXOffset = x;
+			_arrowYOffset = y;
+		}
+
 		public void SetText(string content, Font font)
 		{
-			_textSprite = new TextSprite("Label", content, font);
+			if (_textSprites.Count == 0)
+			{
+				_textSprites.Add(new TextSprite("Label", content, font));
+			}
+			else
+			{
+				_textSprites[0] = new TextSprite("Label", content, font);
+			}
 		}
 
 		public bool MouseHover(int mouseX, int mouseY, float frameDeltaTime)
 		{
 			switch (_type)
 			{
+				case UITypeEnum.DROPDOWN:
+					{
+						return DropDown_MouseHover(mouseX, mouseY, frameDeltaTime);
+					}
 				case UITypeEnum.STRETCHABLE_BUTTON:
 				case UITypeEnum.BUTTON:
 					{
@@ -247,6 +338,10 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			switch (_type)
 			{
+				case UITypeEnum.DROPDOWN:
+					{
+						DropDown_MouseDown(mouseX, mouseY);
+					} break;
 				case UITypeEnum.STRETCHABLE_BUTTON:
 				case UITypeEnum.BUTTON:
 					{
@@ -259,6 +354,10 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			switch (_type)
 			{
+				case UITypeEnum.DROPDOWN:
+					{
+						return DropDown_MouseUp(mouseX, mouseY);
+					}
 				case UITypeEnum.STRETCHABLE_BUTTON:
 				case UITypeEnum.BUTTON:
 					{
@@ -288,6 +387,10 @@ namespace Beyond_Beyaan.Data_Modules
 					{
 						Image_Draw();
 					} break;
+				case UITypeEnum.DROPDOWN:
+					{
+						DropDown_Draw();
+					} break;
 				case UITypeEnum.LABEL:
 					{
 						Label_Draw();
@@ -315,6 +418,13 @@ namespace Beyond_Beyaan.Data_Modules
 			sprites[7].Draw(_xPos + (sprites[6].Width), _yPos + (_height - sprites[7].Height), (_width - (sprites[6].Width + sprites[8].Width)) / sprites[7].Width, 1, color);
 			sprites[8].Draw(_xPos + (_width - sprites[8].Width), _yPos + (_height - sprites[8].Height), 1, 1, color);
 		}
+		public void FillData<T>(List<T> values, GameMain gameMain) where T : class
+		{
+			foreach (T t in values)
+			{
+				string value = t.GetType().GetProperty("GalaxyScriptName", typeof (string)).GetValue(t, null).ToString();
+			}
+		}
 		#endregion
 
 		#region Individual UI functions
@@ -322,9 +432,107 @@ namespace Beyond_Beyaan.Data_Modules
 		#region Label functions
 		private void Label_Draw()
 		{
-			_textSprite.SetPosition(_xPos, _yPos);
-			_textSprite.Color = _textColor;
-			_textSprite.Draw();
+			_textSprites[0].SetPosition(_xPos, _yPos);
+			_textSprites[0].Color = _textColor;
+			_textSprites[0].Draw();
+		}
+		#endregion
+
+		#region DropDown Functions
+		private void DropDown_Draw()
+		{
+			var bgSprites = new List<BBSprite>(new[] {_sprites[BaseUISprites.TOP_LEFT_BACKGROUND],
+													_sprites[BaseUISprites.TOP_MIDDLE_BACKGROUND],
+													_sprites[BaseUISprites.TOP_RIGHT_BACKGROUND],
+													_sprites[BaseUISprites.LEFT_MIDDLE_BACKGROUND],
+													_sprites[BaseUISprites.MIDDLE_BACKGROUND],
+													_sprites[BaseUISprites.RIGHT_MIDDLE_BACKGROUND],
+													_sprites[BaseUISprites.BOTTOM_LEFT_BACKGROUND],
+													_sprites[BaseUISprites.BOTTOM_MIDDLE_BACKGROUND],
+													_sprites[BaseUISprites.BOTTOM_RIGHT_BACKGROUND]});
+
+			var fgSprites = new List<BBSprite>(new[] {_sprites[BaseUISprites.TOP_LEFT_FOREGROUND],
+													_sprites[BaseUISprites.TOP_MIDDLE_FOREGROUND],
+													_sprites[BaseUISprites.TOP_RIGHT_FOREGROUND],
+													_sprites[BaseUISprites.LEFT_MIDDLE_FOREGROUND],
+													_sprites[BaseUISprites.MIDDLE_FOREGROUND],
+													_sprites[BaseUISprites.RIGHT_MIDDLE_FOREGROUND],
+													_sprites[BaseUISprites.BOTTOM_LEFT_FOREGROUND],
+													_sprites[BaseUISprites.BOTTOM_MIDDLE_FOREGROUND],
+													_sprites[BaseUISprites.BOTTOM_RIGHT_FOREGROUND]});
+			var bgArrow = _sprites[BaseUISprites.DOWN_BACKGROUND];
+			var fgArrow = _sprites[BaseUISprites.DOWN_FOREGROUND];
+			//If it's not dropped down, we can just imitate the StretchButton
+			if (!_dropped)
+			{
+				if (Enabled)
+				{
+					if (_presseds[BUTTON] || _selecteds[BUTTON])
+					{
+						DrawStretchableWith9(fgSprites, _color);
+						fgArrow.Draw(_xPos + _width - (fgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, _color);
+					}
+					else
+					{
+						DrawStretchableWith9(bgSprites, _color);
+						bgArrow.Draw(_xPos + _width - (bgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, _color);
+						if (_pulses[BUTTON] > 0)
+						{
+							DrawStretchableWith9(fgSprites, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
+							fgArrow.Draw(_xPos + _width - (fgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
+						}
+					}
+				}
+				else
+				{
+					if (_selecteds[BUTTON])
+					{
+						DrawStretchableWith9(fgSprites, _disabledColor);
+						fgArrow.Draw(_xPos + _width - (fgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, _disabledColor);
+					}
+					else
+					{
+						DrawStretchableWith9(bgSprites, _disabledColor);
+						bgArrow.Draw(_xPos + _width - (bgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, _disabledColor);
+					}
+				}
+				if (_textSprites.Count > 0)
+				{
+					_textSprites[0].SetPosition(_xPos + _width / 2 - _textSprites[0].Width / 2, _yPos + _height / 2 - _textSprites[0].Height / 2);
+					_textSprites[0].Color = _textColor;
+					_textSprites[0].Draw();
+				}
+			}
+		}
+
+		private void DropDown_MouseDown(int mouseX, int mouseY)
+		{
+			if (!_dropped)
+			{
+				Button_MouseDown(mouseX, mouseY);
+			}
+		}
+
+		private bool DropDown_MouseUp(int mouseX, int mouseY)
+		{
+			if (!_dropped)
+			{
+				if (Button_MouseUp(mouseX, mouseY))
+				{
+					//_dropped = true;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private bool DropDown_MouseHover(int mouseX, int mouseY, float frameDeltaTime)
+		{
+			if (!_dropped)
+			{
+				return Button_MouseHover(mouseX, mouseY, frameDeltaTime);
+			}
+			return false;
 		}
 		#endregion
 
@@ -386,22 +594,22 @@ namespace Beyond_Beyaan.Data_Modules
 
 			if (Enabled)
 			{
-				if (_pressed1 || Selected)
+				if (_presseds[BUTTON] || _selecteds[BUTTON])
 				{
 					DrawStretchableWith9(fgSprites, _color);
 				}
 				else
 				{
 					DrawStretchableWith9(bgSprites, _color);
-					if (_pulse1 > 0)
+					if (_pulses[BUTTON] > 0)
 					{
-						DrawStretchableWith9(fgSprites, Color.FromArgb((byte)(255 * _pulse1), _color));
+						DrawStretchableWith9(fgSprites, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
 					}
 				}
 			}
 			else
 			{
-				if (Selected)
+				if (_selecteds[BUTTON])
 				{
 					DrawStretchableWith9(fgSprites, _disabledColor);
 				}
@@ -410,11 +618,11 @@ namespace Beyond_Beyaan.Data_Modules
 					DrawStretchableWith9(bgSprites, _disabledColor);
 				}
 			}
-			if (_textSprite != null)
+			if (_textSprites.Count > 0)
 			{
-				_textSprite.SetPosition(_xPos + _width / 2 - _textSprite.Width / 2, _yPos + _height / 2 - _textSprite.Height / 2);
-				_textSprite.Color = _textColor;
-				_textSprite.Draw();
+				_textSprites[0].SetPosition(_xPos + _width / 2 - _textSprites[0].Width / 2, _yPos + _height / 2 - _textSprites[0].Height / 2);
+				_textSprites[0].Color = _textColor;
+				_textSprites[0].Draw();
 			}
 		}
 		#endregion
@@ -426,22 +634,22 @@ namespace Beyond_Beyaan.Data_Modules
 			var foregroundSprite = _sprites[BaseUISprites.FOREGROUND];
 			if (Enabled)
 			{
-				if (_pressed1 || Selected)
+				if (_presseds[BUTTON] || _selecteds[BUTTON])
 				{
 					foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _color);
 				}
 				else
 				{
 					backgroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _color);
-					if (_pulse1 > 0)
+					if (_pulses[BUTTON] > 0)
 					{
-						foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, Color.FromArgb((byte)(255 * _pulse1), _color));
+						foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
 					}
 				}
 			}
 			else
 			{
-				if (Selected)
+				if (_selecteds[BUTTON])
 				{
 					foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _disabledColor);
 				}
@@ -450,11 +658,11 @@ namespace Beyond_Beyaan.Data_Modules
 					backgroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _disabledColor);
 				}
 			}
-			if (_textSprite != null)
+			if (_textSprites.Count > 0)
 			{
-				_textSprite.SetPosition(_xPos + _width / 2 - _textSprite.Width / 2, _yPos + _height / 2 - _textSprite.Height / 2);
-				_textSprite.Color = _textColor;
-				_textSprite.Draw();
+				_textSprites[0].SetPosition(_xPos + _width / 2 - _textSprites[0].Width / 2, _yPos + _height / 2 - _textSprites[0].Height / 2);
+				_textSprites[0].Color = _textColor;
+				_textSprites[0].Draw();
 			}
 		}
 		private void Button_MouseDown(int mouseX, int mouseY)
@@ -467,19 +675,19 @@ namespace Beyond_Beyaan.Data_Modules
 				}*/
 				if (Enabled)
 				{
-					_pressed1 = true;
+					_presseds[BUTTON] = true;
 				}
 			}
 		}
 		private bool Button_MouseUp(int mouseX, int mouseY)
 		{
-			if (Enabled && _pressed1)
+			if (Enabled && _presseds[BUTTON])
 			{
 				/*if (toolTipEnabled)
 				{
 					toolTip.SetShowing(false);
 				}*/
-				_pressed1 = false;
+				_presseds[BUTTON] = false;
 				if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos && mouseY < _yPos + _height)
 				{
 					return true;
@@ -491,28 +699,28 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos && mouseY < _yPos + _height)
 			{
-				if (_pulse1 < 0.6f)
+				if (_pulses[BUTTON] < 0.6f)
 				{
-					_pulse1 = 0.9f;
+					_pulses[BUTTON] = 0.9f;
 				}
 				if (Enabled)
 				{
-					if (_direction1)
+					if (_directions[BUTTON])
 					{
-						_pulse1 += frameDeltaTime / 2;
-						if (_pulse1 > 0.9f)
+						_pulses[BUTTON] += frameDeltaTime / 2;
+						if (_pulses[BUTTON] > 0.9f)
 						{
-							_direction1 = !_direction1;
-							_pulse1 = 0.9f;
+							_directions[BUTTON] = !_directions[BUTTON];
+							_pulses[BUTTON] = 0.9f;
 						}
 					}
 					else
 					{
-						_pulse1 -= frameDeltaTime / 2;
-						if (_pulse1 < 0.6f)
+						_pulses[BUTTON] -= frameDeltaTime / 2;
+						if (_pulses[BUTTON] < 0.6f)
 						{
-							_direction1 = !_direction1;
-							_pulse1 = 0.6f;
+							_directions[BUTTON] = !_directions[BUTTON];
+							_pulses[BUTTON] = 0.6f;
 						}
 					}
 				}
@@ -523,12 +731,12 @@ namespace Beyond_Beyaan.Data_Modules
 				}*/
 				return true;
 			}
-			if (_pulse1 > 0)
+			if (_pulses[BUTTON] > 0)
 			{
-				_pulse1 -= frameDeltaTime * 2;
-				if (_pulse1 < 0)
+				_pulses[BUTTON] -= frameDeltaTime * 2;
+				if (_pulses[BUTTON] < 0)
 				{
-					_pulse1 = 0;
+					_pulses[BUTTON] = 0;
 				}
 			}
 			/*if (toolTipEnabled)

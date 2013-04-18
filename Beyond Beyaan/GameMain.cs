@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 using GorgonLibrary.InputDevices;
@@ -666,24 +667,37 @@ namespace Beyond_Beyaan
 			string[] parts = command.Split(new[] { '|' });
 			for (int i = 0; i < parts.Length; i++)
 			{
-				switch (parts[i].ToLower())
+				string[] variables = parts[i].Split(new[] {','});
+				switch (variables[0])
 				{
-					case "changeto":
+					case "ChangeTo":
 						{
-							ScreenManager.ChangeScreen(parts[i + 1]);
+							ScreenManager.ChangeScreen(variables[1]);
 							i++;
 						} break;
-					case "useoldscreensystem":
+					case "UseOldScreenSystem":
 						{
 							useOldScreenSystem = true;
 							ChangeToScreen(ScreenEnum.GalaxySetup);
 						} break;
-					case "quitgame":
+					case "QuitGame":
 						{
 							ExitGame();
 						} break;
 				}
 			}
+		}
+
+		public List<object> GetData(string dataSource)
+		{
+			switch (dataSource)
+			{
+				case "GalaxyScriptList":
+					{
+						return Galaxy.GetGalaxyScripts(this);
+					}
+			}
+			return null;
 		}
 		#endregion
 	}
