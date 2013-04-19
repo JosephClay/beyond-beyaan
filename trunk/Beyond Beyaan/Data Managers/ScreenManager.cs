@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Data_Managers
@@ -19,9 +20,12 @@ namespace Beyond_Beyaan.Data_Managers
 			{
 				foreach (var file in screenPath.GetFiles("*.xml"))
 				{
+					XDocument doc = XDocument.Load(file.FullName);
+					XElement root = doc.Element("Screen");
 					Screen newScreen = new Screen();
-					if (!newScreen.LoadScreen(file.FullName, gameMain, out reason))
+					if (!newScreen.LoadScreen(root, gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain, out reason))
 					{
+						reason = string.Format(reason, file.Name);
 						return false;
 					}
 					_screens.Add(file.Name.Substring(0, file.Name.IndexOf(file.Extension)), newScreen);
