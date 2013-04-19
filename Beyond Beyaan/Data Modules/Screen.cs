@@ -1,43 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan.Data_Modules
 {
 	public class Screen
 	{
+		private int _width;
+		private int _height;
 		private GameMain _gameMain;
 		private List<UIType> UITypes;
 
-		public bool LoadScreen(string filePath, GameMain gameMain, out string reason)
+		public bool LoadScreen(XElement rootElement, int width, int height, GameMain gameMain, out string reason)
 		{
+			_width = width;
+			_height = height;
 			_gameMain = gameMain;
 			UITypes = new List<UIType>();
 
 			try
 			{
-				XDocument file = XDocument.Load(filePath);
-				XElement root = file.Element("Screen");
-
-				foreach (var element in root.Elements())
+				foreach (var element in rootElement.Elements())
 				{
 					if (element.Attribute("UIType") == null)
 					{
-						reason = "UIType not specified in " + filePath;
+						reason = "UIType not specified in {0}";
 						return false;
 					}
 					string type = element.Attribute("UIType").Value;
 					UIType newUI = gameMain.UITypeManager.GetUI(type, _gameMain.Random);
 					if (newUI == null)
 					{
-						reason = type + " UI Type in " + filePath + " is not defined in UITypes.xml.";
+						reason = type + " UI Type in {0} is not defined in UITypes.xml.";
 						return false;
 					}
 					int x = 0;
 					int y = 0;
-					int width = 0;
-					int height = 0;
+					int uiWidth = 0;
+					int uiHeight = 0;
 					string font = null;
 					string content = null;
 					int arrowXOffset = 0;
@@ -89,11 +89,11 @@ namespace Beyond_Beyaan.Data_Modules
 								} break;
 							case "width":
 								{
-									width = GetValue(attribute.Value);
+									uiWidth = GetValue(attribute.Value);
 								} break;
 							case "height":
 								{
-									height = GetValue(attribute.Value);
+									uiHeight = GetValue(attribute.Value);
 								} break;
 							case "onclick":
 								{
@@ -124,8 +124,12 @@ namespace Beyond_Beyaan.Data_Modules
 							newUI.SetText(content, _gameMain.FontManager.GetDefaultFont());
 						}
 					}
-					newUI.SetRect(x, y, width, height);
+					newUI.SetRect(x, y, uiWidth, uiHeight);
 					newUI.SetArrowOffset(arrowXOffset, arrowYOffset);
+					if (element.HasElements)
+					{
+						newUI.SetTemplate(element.Element("Template"));
+					}
 					UITypes.Add(newUI);
 				}
 			}
@@ -157,22 +161,22 @@ namespace Beyond_Beyaan.Data_Modules
 				}
 				if (value.StartsWith("WIDTH", StringComparison.CurrentCultureIgnoreCase))
 				{
-					tempValue = _gameMain.ScreenWidth;
+					tempValue = _width;
 					value = value.Substring(5);
 				}
 				else if (value.StartsWith("HEIGHT", StringComparison.CurrentCultureIgnoreCase))
 				{
-					tempValue = _gameMain.ScreenHeight;
+					tempValue = _height;
 					value = value.Substring(6);
 				}
 				else if (value.StartsWith("XMIDDLE", StringComparison.CurrentCultureIgnoreCase))
 				{
-					tempValue = _gameMain.ScreenWidth / 2;
+					tempValue = _width / 2;
 					value = value.Substring(7);
 				}
 				else if (value.StartsWith("YMIDDLE", StringComparison.CurrentCultureIgnoreCase))
 				{
-					tempValue = _gameMain.ScreenHeight / 2;
+					tempValue = _height / 2;
 					value = value.Substring(7);
 				}
 				else
@@ -203,6 +207,13 @@ namespace Beyond_Beyaan.Data_Modules
 			foreach (var uiType in UITypes)
 			{
 				uiType.Draw();
+			}
+		}
+		public void Draw(int x, int y)
+		{
+			foreach (var uiType in UITypes)
+			{
+				uiType.Draw(x, y);
 			}
 		}
 
@@ -242,6 +253,14 @@ namespace Beyond_Beyaan.Data_Modules
 				{
 					uiType.FillData(_gameMain.GetData(uiType.DataSource), _gameMain);
 				}
+			}
+		}
+
+		public void LoadValues(object value, GameMain gameMain)
+		{
+			foreach (var uiType in UITypes)
+			{
+				uiType.LoadValues(value, gameMain);
 			}
 		}
 	}

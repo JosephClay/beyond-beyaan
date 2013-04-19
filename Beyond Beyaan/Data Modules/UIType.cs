@@ -201,7 +201,8 @@ namespace Beyond_Beyaan.Data_Modules
 		#endregion
 
 		private Dictionary<BaseUISprites, BBSprite> _sprites;
-		private List<TextSprite> _textSprites; 
+		private List<TextSprite> _textSprites;
+		private List<string> _texts; 
 		private UITypeEnum _type;
 		private Color _color;
 		private Color _disabledColor;
@@ -232,6 +233,13 @@ namespace Beyond_Beyaan.Data_Modules
 		public string OnClick { get; set; }
 		#endregion
 
+		#region Template
+		private List<Screen> _screens;
+		private XElement _template;
+		private int _templateWidth;
+		private int _templateHeight;
+		#endregion
+
 		public UIType(BaseUIType baseUIType, Random r)
 		{
 			_color = Color.White;
@@ -251,6 +259,7 @@ namespace Beyond_Beyaan.Data_Modules
 			_presseds = new List<bool>();
 			_selecteds = new List<bool>();
 			_textSprites = new List<TextSprite>();
+			_texts = new List<string>();
 
 			switch (_type)
 			{
@@ -310,10 +319,34 @@ namespace Beyond_Beyaan.Data_Modules
 			if (_textSprites.Count == 0)
 			{
 				_textSprites.Add(new TextSprite("Label", content, font));
+				_texts.Add(content);
 			}
 			else
 			{
 				_textSprites[0] = new TextSprite("Label", content, font);
+				_texts[0] = content;
+			}
+		}
+
+		public void SetTemplate(XElement template)
+		{
+			_screens = new List<Screen>();
+			_template = template;
+			if (_template.Attribute("width") != null)
+			{
+				_templateWidth = int.Parse(_template.Attribute("width").Value);
+			}
+			else
+			{
+				_templateWidth = _width;
+			}
+			if (_template.Attribute("height") != null)
+			{
+				_templateHeight = int.Parse(_template.Attribute("height").Value);
+			}
+			else
+			{
+				_templateHeight = _height;
 			}
 		}
 
@@ -369,31 +402,35 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public void Draw()
 		{
+			Draw(0, 0);
+		}
+		public void Draw(int xOffset, int yOffset)
+		{
 			switch (_type)
 			{
 				case UITypeEnum.STRETCHABLE_BUTTON:
 					{
-						StretchableButton_Draw();
+						StretchableButton_Draw(xOffset, yOffset);
 					} break;
 				case UITypeEnum.BUTTON:
 					{
-						Button_Draw();
+						Button_Draw(xOffset, yOffset);
 					} break;
 				case UITypeEnum.STRETCHABLE_IMAGE:
 					{
-						StretchableImage_Draw();
+						StretchableImage_Draw(xOffset, yOffset);
 					} break;
 				case UITypeEnum.IMAGE:
 					{
-						Image_Draw();
+						Image_Draw(xOffset, yOffset);
 					} break;
 				case UITypeEnum.DROPDOWN:
 					{
-						DropDown_Draw();
+						DropDown_Draw(xOffset, yOffset);
 					} break;
 				case UITypeEnum.LABEL:
 					{
-						Label_Draw();
+						Label_Draw(xOffset, yOffset);
 					} break;
 			}
 		}
@@ -406,23 +443,43 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 		#region Handy Dandy Functions
-		private void DrawStretchableWith9(List<BBSprite> sprites, Color color)
+		private void DrawStretchableWith9(List<BBSprite> sprites, Color color, int xOffset, int yOffset)
 		{
-			sprites[0].Draw(_xPos, _yPos, 1, 1, color);
-			sprites[1].Draw(_xPos + sprites[0].Width, _yPos, (_width - (sprites[0].Width + sprites[2].Width)) / sprites[1].Width, 1, color);
-			sprites[2].Draw(_xPos + (_width - sprites[2].Width), _yPos, 1, 1, color);
-			sprites[3].Draw(_xPos, _yPos + sprites[0].Height, 1, (_height - (sprites[0].Height + sprites[6].Height)) / sprites[3].Height, color);
-			sprites[4].Draw(_xPos + sprites[3].Width, _yPos + sprites[1].Height, (_width - (sprites[3].Width + sprites[5].Width)) / sprites[4].Width, (_height - (sprites[1].Height + sprites[7].Height)) / sprites[4].Height, color);
-			sprites[5].Draw(_xPos + (_width - sprites[5].Width), _yPos + sprites[2].Height, 1, (_height - (sprites[2].Height + sprites[8].Height)) / sprites[5].Height, color);
-			sprites[6].Draw(_xPos, _yPos + (_height - sprites[6].Height), 1, 1, color);
-			sprites[7].Draw(_xPos + (sprites[6].Width), _yPos + (_height - sprites[7].Height), (_width - (sprites[6].Width + sprites[8].Width)) / sprites[7].Width, 1, color);
-			sprites[8].Draw(_xPos + (_width - sprites[8].Width), _yPos + (_height - sprites[8].Height), 1, 1, color);
+			int xPos = _xPos + xOffset;
+			int yPos = _yPos + yOffset;
+			sprites[0].Draw(xPos, yPos, 1, 1, color);
+			sprites[1].Draw(xPos + sprites[0].Width, yPos, (_width - (sprites[0].Width + sprites[2].Width)) / sprites[1].Width, 1, color);
+			sprites[2].Draw(xPos + (_width - sprites[2].Width), yPos, 1, 1, color);
+			sprites[3].Draw(xPos, yPos + sprites[0].Height, 1, (_height - (sprites[0].Height + sprites[6].Height)) / sprites[3].Height, color);
+			sprites[4].Draw(xPos + sprites[3].Width, yPos + sprites[1].Height, (_width - (sprites[3].Width + sprites[5].Width)) / sprites[4].Width, (_height - (sprites[1].Height + sprites[7].Height)) / sprites[4].Height, color);
+			sprites[5].Draw(xPos + (_width - sprites[5].Width), yPos + sprites[2].Height, 1, (_height - (sprites[2].Height + sprites[8].Height)) / sprites[5].Height, color);
+			sprites[6].Draw(xPos, yPos + (_height - sprites[6].Height), 1, 1, color);
+			sprites[7].Draw(xPos + (sprites[6].Width), yPos + (_height - sprites[7].Height), (_width - (sprites[6].Width + sprites[8].Width)) / sprites[7].Width, 1, color);
+			sprites[8].Draw(xPos + (_width - sprites[8].Width), yPos + (_height - sprites[8].Height), 1, 1, color);
 		}
-		public void FillData<T>(List<T> values, GameMain gameMain) where T : class
+		public void FillData(List<object> values, GameMain gameMain)
 		{
-			foreach (T t in values)
+			_screens.Clear();
+			foreach (var value in values)
 			{
-				string value = t.GetType().GetProperty("GalaxyScriptName", typeof (string)).GetValue(t, null).ToString();
+				string reason;
+				Screen screen = new Screen();
+				screen.LoadScreen(_template, _templateWidth, _templateHeight, gameMain, out reason);
+				screen.LoadValues(value, gameMain);
+				_screens.Add(screen);
+			}
+		}
+		public void LoadValues<T>(T value, GameMain gameMain) where T : class
+		{
+			foreach (var text in _texts)
+			{
+				if (text.StartsWith("[") && text.EndsWith("]"))
+				{
+					//A value that needs to be replaced
+					string property = text.Substring(1, text.Length - 2);
+					string newValue = value.GetType().GetProperty(property, typeof (string)).GetValue(value, null).ToString();
+					_textSprites[0] = new TextSprite("Label", newValue, gameMain.FontManager.GetDefaultFont());
+				}
 			}
 		}
 		#endregion
@@ -430,16 +487,16 @@ namespace Beyond_Beyaan.Data_Modules
 		#region Individual UI functions
 
 		#region Label functions
-		private void Label_Draw()
+		private void Label_Draw(int xOffset, int yOffset)
 		{
-			_textSprites[0].SetPosition(_xPos, _yPos);
+			_textSprites[0].SetPosition(_xPos + xOffset, _yPos + yOffset);
 			_textSprites[0].Color = _textColor;
 			_textSprites[0].Draw();
 		}
 		#endregion
 
 		#region DropDown Functions
-		private void DropDown_Draw()
+		private void DropDown_Draw(int xOffset, int yOffset)
 		{
 			var bgSprites = new List<BBSprite>(new[] {_sprites[BaseUISprites.TOP_LEFT_BACKGROUND],
 													_sprites[BaseUISprites.TOP_MIDDLE_BACKGROUND],
@@ -463,23 +520,25 @@ namespace Beyond_Beyaan.Data_Modules
 			var bgArrow = _sprites[BaseUISprites.DOWN_BACKGROUND];
 			var fgArrow = _sprites[BaseUISprites.DOWN_FOREGROUND];
 			//If it's not dropped down, we can just imitate the StretchButton
+			int xPos = _xPos + xOffset;
+			int yPos = _yPos + yOffset;
 			if (!_dropped)
 			{
 				if (Enabled)
 				{
 					if (_presseds[BUTTON] || _selecteds[BUTTON])
 					{
-						DrawStretchableWith9(fgSprites, _color);
-						fgArrow.Draw(_xPos + _width - (fgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, _color);
+						DrawStretchableWith9(fgSprites, _color, xOffset, yOffset);
+						fgArrow.Draw(xPos + _width - (fgArrow.Width + _arrowXOffset), yPos + _arrowYOffset, 1, 1, _color);
 					}
 					else
 					{
-						DrawStretchableWith9(bgSprites, _color);
-						bgArrow.Draw(_xPos + _width - (bgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, _color);
+						DrawStretchableWith9(bgSprites, _color, xOffset, yOffset);
+						bgArrow.Draw(xPos + _width - (bgArrow.Width + _arrowXOffset), yPos + _arrowYOffset, 1, 1, _color);
 						if (_pulses[BUTTON] > 0)
 						{
-							DrawStretchableWith9(fgSprites, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
-							fgArrow.Draw(_xPos + _width - (fgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
+							DrawStretchableWith9(fgSprites, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color), xOffset, yOffset);
+							fgArrow.Draw(xPos + _width - (fgArrow.Width + _arrowXOffset), yPos + _arrowYOffset, 1, 1, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
 						}
 					}
 				}
@@ -487,20 +546,24 @@ namespace Beyond_Beyaan.Data_Modules
 				{
 					if (_selecteds[BUTTON])
 					{
-						DrawStretchableWith9(fgSprites, _disabledColor);
-						fgArrow.Draw(_xPos + _width - (fgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, _disabledColor);
+						DrawStretchableWith9(fgSprites, _disabledColor, xOffset, yOffset);
+						fgArrow.Draw(xPos + _width - (fgArrow.Width + _arrowXOffset), yPos + _arrowYOffset, 1, 1, _disabledColor);
 					}
 					else
 					{
-						DrawStretchableWith9(bgSprites, _disabledColor);
-						bgArrow.Draw(_xPos + _width - (bgArrow.Width + _arrowXOffset), _yPos + _arrowYOffset, 1, 1, _disabledColor);
+						DrawStretchableWith9(bgSprites, _disabledColor, xOffset, yOffset);
+						bgArrow.Draw(xPos + _width - (bgArrow.Width + _arrowXOffset), yPos + _arrowYOffset, 1, 1, _disabledColor);
 					}
 				}
 				if (_textSprites.Count > 0)
 				{
-					_textSprites[0].SetPosition(_xPos + _width / 2 - _textSprites[0].Width / 2, _yPos + _height / 2 - _textSprites[0].Height / 2);
+					_textSprites[0].SetPosition(xPos + _width / 2 - _textSprites[0].Width / 2, yPos + _height / 2 - _textSprites[0].Height / 2);
 					_textSprites[0].Color = _textColor;
 					_textSprites[0].Draw();
+				}
+				if (_screens != null && _screens.Count > 0)
+				{
+					_screens[0].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight));
 				}
 			}
 		}
@@ -537,7 +600,7 @@ namespace Beyond_Beyaan.Data_Modules
 		#endregion
 
 		#region Stretchable Image functions
-		private void StretchableImage_Draw()
+		private void StretchableImage_Draw(int xOffset, int yOffset)
 		{
 			var sprites = new List<BBSprite>(new[] {_sprites[BaseUISprites.TOP_LEFT_BACKGROUND],
 													_sprites[BaseUISprites.TOP_MIDDLE_BACKGROUND],
@@ -549,28 +612,28 @@ namespace Beyond_Beyaan.Data_Modules
 													_sprites[BaseUISprites.BOTTOM_MIDDLE_BACKGROUND],
 													_sprites[BaseUISprites.BOTTOM_RIGHT_BACKGROUND]});
 
-			DrawStretchableWith9(sprites, _color);
+			DrawStretchableWith9(sprites, _color, xOffset, yOffset);
 		}
 		#endregion
 
 		#region Image functions
-		private void Image_Draw()
+		private void Image_Draw(int xOffset, int yOffset)
 		{
 			var sprite = _sprites[BaseUISprites.BACKGROUND];
 			if (_width == 0 || _height == 0)
 			{
 				//Possibly just want the normal scale
-				sprite.Draw(_xPos, _yPos, 1, 1, _color);
+				sprite.Draw(_xPos + xOffset, _yPos + yOffset, 1, 1, _color);
 			}
 			else
 			{
-				sprite.Draw(_xPos, _yPos, _width / sprite.Width, _height / sprite.Height, _color);
+				sprite.Draw(_xPos + xOffset, _yPos + yOffset, _width / sprite.Width, _height / sprite.Height, _color);
 			}
 		}
 		#endregion
 
 		#region Stretchable Button Functions
-		private void StretchableButton_Draw()
+		private void StretchableButton_Draw(int xOffset, int yOffset)
 		{
 			var bgSprites = new List<BBSprite>(new[] {_sprites[BaseUISprites.TOP_LEFT_BACKGROUND],
 													_sprites[BaseUISprites.TOP_MIDDLE_BACKGROUND],
@@ -596,14 +659,14 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				if (_presseds[BUTTON] || _selecteds[BUTTON])
 				{
-					DrawStretchableWith9(fgSprites, _color);
+					DrawStretchableWith9(fgSprites, _color, xOffset, yOffset);
 				}
 				else
 				{
-					DrawStretchableWith9(bgSprites, _color);
+					DrawStretchableWith9(bgSprites, _color, xOffset, yOffset);
 					if (_pulses[BUTTON] > 0)
 					{
-						DrawStretchableWith9(fgSprites, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
+						DrawStretchableWith9(fgSprites, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color), xOffset, yOffset);
 					}
 				}
 			}
@@ -611,16 +674,16 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				if (_selecteds[BUTTON])
 				{
-					DrawStretchableWith9(fgSprites, _disabledColor);
+					DrawStretchableWith9(fgSprites, _disabledColor, xOffset, yOffset);
 				}
 				else
 				{
-					DrawStretchableWith9(bgSprites, _disabledColor);
+					DrawStretchableWith9(bgSprites, _disabledColor, xOffset, yOffset);
 				}
 			}
 			if (_textSprites.Count > 0)
 			{
-				_textSprites[0].SetPosition(_xPos + _width / 2 - _textSprites[0].Width / 2, _yPos + _height / 2 - _textSprites[0].Height / 2);
+				_textSprites[0].SetPosition(_xPos + xOffset + _width / 2 - _textSprites[0].Width / 2, _yPos + yOffset + _height / 2 - _textSprites[0].Height / 2);
 				_textSprites[0].Color = _textColor;
 				_textSprites[0].Draw();
 			}
@@ -628,22 +691,24 @@ namespace Beyond_Beyaan.Data_Modules
 		#endregion
 
 		#region Button functions
-		private void Button_Draw()
+		private void Button_Draw(int xOffset, int yOffset)
 		{
 			var backgroundSprite = _sprites[BaseUISprites.BACKGROUND];
 			var foregroundSprite = _sprites[BaseUISprites.FOREGROUND];
+			int xPos = _xPos + xOffset;
+			int yPos = _yPos + yOffset;
 			if (Enabled)
 			{
 				if (_presseds[BUTTON] || _selecteds[BUTTON])
 				{
-					foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _color);
+					foregroundSprite.Draw(xPos, yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _color);
 				}
 				else
 				{
-					backgroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _color);
+					backgroundSprite.Draw(xPos, yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _color);
 					if (_pulses[BUTTON] > 0)
 					{
-						foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
+						foregroundSprite.Draw(xPos, yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, Color.FromArgb((byte)(255 * _pulses[BUTTON]), _color));
 					}
 				}
 			}
@@ -651,16 +716,16 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				if (_selecteds[BUTTON])
 				{
-					foregroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _disabledColor);
+					foregroundSprite.Draw(xPos, yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _disabledColor);
 				}
 				else
 				{
-					backgroundSprite.Draw(_xPos, _yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _disabledColor);
+					backgroundSprite.Draw(xPos, yPos, _width / foregroundSprite.Width, _height / foregroundSprite.Height, _disabledColor);
 				}
 			}
 			if (_textSprites.Count > 0)
 			{
-				_textSprites[0].SetPosition(_xPos + _width / 2 - _textSprites[0].Width / 2, _yPos + _height / 2 - _textSprites[0].Height / 2);
+				_textSprites[0].SetPosition(xPos + _width / 2 - _textSprites[0].Width / 2, yPos + _height / 2 - _textSprites[0].Height / 2);
 				_textSprites[0].Color = _textColor;
 				_textSprites[0].Draw();
 			}
