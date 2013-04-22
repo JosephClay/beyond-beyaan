@@ -219,6 +219,7 @@ namespace Beyond_Beyaan.Data_Modules
 		private int _maxVisible;
 		private int _arrowXOffset;
 		private int _arrowYOffset;
+		private int _selectedIndex;
 		#endregion
 
 		private List<float> _pulses;
@@ -234,6 +235,7 @@ namespace Beyond_Beyaan.Data_Modules
 		#endregion
 
 		#region Template
+		private List<object> _objects; 
 		private List<Screen> _screens;
 		private XElement _template;
 		private int _templateWidth;
@@ -481,9 +483,10 @@ namespace Beyond_Beyaan.Data_Modules
 		
 		public void FillData(List<object> values, GameMain gameMain)
 		{
+			_objects = new List<object>(values);
 			_screens.Clear();
 			ClearButtonData();
-			foreach (var value in values)
+			foreach (var value in _objects)
 			{
 				string reason;
 				Screen screen = new Screen();
@@ -592,15 +595,9 @@ namespace Beyond_Beyaan.Data_Modules
 						bgArrow.Draw(xPos + _width - (bgArrow.Width + _arrowXOffset), yPos + _arrowYOffset, 1, 1, _disabledColor);
 					}
 				}
-				if (_textSprite != null)
-				{
-					_textSprite.SetPosition(xPos + _width / 2 - _textSprite.Width / 2, yPos + _height / 2 - _textSprite.Height / 2);
-					_textSprite.Color = _textColor;
-					_textSprite.Draw();
-				}
 				if (_screens != null && _screens.Count > 0)
 				{
-					_screens[0].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight));
+					_screens[_selectedIndex].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight));
 				}
 			}
 			else
@@ -638,7 +635,7 @@ namespace Beyond_Beyaan.Data_Modules
 				DrawStretchableBottom3(bgSpritesBottom, _color, xOffset, yOffset + topY + (_screens.Count * _templateHeight));
 				if (_screens != null && _screens.Count > 0)
 				{
-					_screens[0].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight));
+					_screens[_selectedIndex].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight));
 					for (int i = 0; i < _screens.Count; i++)
 					{
 						_screens[i].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight) + ((i + 1) * _templateHeight));
@@ -649,9 +646,16 @@ namespace Beyond_Beyaan.Data_Modules
 
 		private void DropDown_MouseDown(int mouseX, int mouseY)
 		{
-			if (!_dropped)
+			Button_MouseDown(mouseX, mouseY);
+			if (_dropped)
 			{
-				Button_MouseDown(mouseX, mouseY);
+				for (int i = 0; i < _screens.Count; i++)
+				{
+					if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos + _height + (_templateHeight*i) && mouseY < _yPos + _height + (_templateHeight*(i + 1)))
+					{
+						_presseds[FIRST_DROPDOWN_BUTTON + i] = true;
+					}
+				}
 			}
 		}
 
@@ -665,6 +669,26 @@ namespace Beyond_Beyaan.Data_Modules
 					return true;
 				}
 			}
+			else
+			{
+				_dropped = false;
+				if (Button_MouseUp(mouseX, mouseY))
+				{
+					return true;
+				}
+				for (int i = 0; i < _screens.Count; i++)
+				{
+					if (_presseds[FIRST_DROPDOWN_BUTTON + i])
+					{
+						_presseds[FIRST_DROPDOWN_BUTTON + i] = false;
+						if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos + _height + (_templateHeight*i) && mouseY < _yPos + _height + (_templateHeight*(i + 1)))
+						{
+							_selectedIndex = i;
+							return true;
+						}
+					}
+				}
+			}
 			return false;
 		}
 
@@ -674,7 +698,20 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				return Button_MouseHover(mouseX, mouseY, frameDeltaTime);
 			}
-			return false;
+			bool result = Button_MouseHover(mouseX, mouseY, frameDeltaTime);
+			for (int i = 0; i < _screens.Count; i++)
+			{
+				if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos + _height + (_templateHeight*i) && mouseY < _yPos + _height + (_templateHeight*(i + 1)))
+				{
+					UpdatePulse(FIRST_DROPDOWN_BUTTON + i, true, frameDeltaTime);
+					result = true;
+				}
+				else
+				{
+					UpdatePulse(FIRST_DROPDOWN_BUTTON + i, false, frameDeltaTime);
+				}
+			}
+			return result;
 		}
 		#endregion
 
@@ -811,16 +848,17 @@ namespace Beyond_Beyaan.Data_Modules
 		}
 		private void Button_MouseDown(int mouseX, int mouseY)
 		{
+			if (!Enabled)
+			{
+				return;
+			}
 			if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos && mouseY < _yPos + _height)
 			{
 				/*if (toolTipEnabled)
 				{
 					toolTip.SetShowing(false);
 				}*/
-				if (Enabled)
-				{
-					_presseds[BUTTON] = true;
-				}
+				_presseds[BUTTON] = true;
 			}
 		}
 		private bool Button_MouseUp(int mouseX, int mouseY)
@@ -843,28 +881,47 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos && mouseY < _yPos + _height)
 			{
-				if (_pulses[BUTTON] < 0.6f)
+				UpdatePulse(BUTTON, true, frameDeltaTime);
+				/*if (toolTipEnabled)
 				{
-					_pulses[BUTTON] = 0.9f;
+					toolTip.SetShowing(true);
+					toolTip.MouseHover(x, y, frameDeltaTime);
+				}*/
+				return true;
+			}
+			UpdatePulse(BUTTON, false, frameDeltaTime);
+			/*if (toolTipEnabled)
+			{
+				toolTip.SetShowing(false);
+			}*/
+			return false;
+		}
+		private void UpdatePulse(int whichButton, bool isHovering, float frameDeltaTime)
+		{
+			if (isHovering)
+			{
+				if (_pulses[whichButton] < 0.6f)
+				{
+					_pulses[whichButton] = 0.9f;
 				}
 				if (Enabled)
 				{
-					if (_directions[BUTTON])
+					if (_directions[whichButton])
 					{
-						_pulses[BUTTON] += frameDeltaTime / 2;
-						if (_pulses[BUTTON] > 0.9f)
+						_pulses[whichButton] += frameDeltaTime / 2;
+						if (_pulses[whichButton] > 0.9f)
 						{
-							_directions[BUTTON] = !_directions[BUTTON];
-							_pulses[BUTTON] = 0.9f;
+							_directions[whichButton] = !_directions[whichButton];
+							_pulses[whichButton] = 0.9f;
 						}
 					}
 					else
 					{
-						_pulses[BUTTON] -= frameDeltaTime / 2;
-						if (_pulses[BUTTON] < 0.6f)
+						_pulses[whichButton] -= frameDeltaTime / 2;
+						if (_pulses[whichButton] < 0.6f)
 						{
-							_directions[BUTTON] = !_directions[BUTTON];
-							_pulses[BUTTON] = 0.6f;
+							_directions[whichButton] = !_directions[whichButton];
+							_pulses[whichButton] = 0.6f;
 						}
 					}
 				}
@@ -873,21 +930,15 @@ namespace Beyond_Beyaan.Data_Modules
 					toolTip.SetShowing(true);
 					toolTip.MouseHover(x, y, frameDeltaTime);
 				}*/
-				return true;
 			}
-			if (_pulses[BUTTON] > 0)
+			else if (_pulses[whichButton] > 0)
 			{
-				_pulses[BUTTON] -= frameDeltaTime * 2;
-				if (_pulses[BUTTON] < 0)
+				_pulses[whichButton] -= frameDeltaTime * 2;
+				if (_pulses[whichButton] < 0)
 				{
-					_pulses[BUTTON] = 0;
+					_pulses[whichButton] = 0;
 				}
 			}
-			/*if (toolTipEnabled)
-			{
-				toolTip.SetShowing(false);
-			}*/
-			return false;
 		}
 		#endregion
 		#endregion
