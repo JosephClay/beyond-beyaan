@@ -7,8 +7,8 @@
   <UIElement UIType="Label" xPos="10" yPos="HEIGHT-30" content="Galaxy Setup Test" />
   <UIElement UIType="StretchableButton" OnClick="ChangeTo,MainMenu" xPos="XMIDDLE-385" yPos="YMIDDLE+250" width="200" height="35" content="Main Menu" />
   <UIElement UIType="StretchableButton" OnClick="UseOldScreenSystem" xPos="XMIDDLE+175" yPos="YMIDDLE+250" width="200" height="35" content="Player Setup" />
-  <UIElement UIType="StretchableButton" OnClick="GenerateGalaxy,[GalaxyDropDown]" xPos="XMIDDLE+130" yPos="YMIDDLE+170" width="250" height="35" content="Generate Galaxy" />
-  <UIElement name="GalaxyDropDown" UIType="DropDown" OnSelect="UpdateGalaxyScript,[GalaxyDropDown]" DataSource="GalaxyScriptList" xPos="XMIDDLE+130" yPos="YMIDDLE-275" width="250" height="35" arrowxoffset="10" arrowyoffset="10">
+  <UIElement UIType="StretchableButton" OnClick="GenerateGalaxy" xPos="XMIDDLE+130" yPos="YMIDDLE+170" width="250" height="35" content="Generate Galaxy" />
+  <UIElement name="GalaxyDropDown" UIType="DropDown" OnClick="UpdateGalaxyScript,[GalaxyDropDown]" DataSource="GalaxyScriptList" xPos="XMIDDLE+130" yPos="YMIDDLE-275" width="250" height="35" arrowxoffset="10" arrowyoffset="10">
     <Template height="30">
       <SubElement UIType="Label" xPos="10" yPos="5" content="[GalaxyScriptName]" />
     </Template>

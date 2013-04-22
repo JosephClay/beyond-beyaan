@@ -8,8 +8,8 @@ using Font = GorgonLibrary.Graphics.Font;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	enum UITypeEnum { IMAGE, STRETCHABLE_IMAGE, LABEL, BUTTON, STRETCHABLE_BUTTON, DROPDOWN }
-	enum BaseUISprites
+	public enum UITypeEnum { IMAGE, STRETCHABLE_IMAGE, LABEL, BUTTON, STRETCHABLE_BUTTON, DROPDOWN }
+	public enum BaseUISprites
 		{
 			BACKGROUND,
 			FOREGROUND,
@@ -225,10 +225,12 @@ namespace Beyond_Beyaan.Data_Modules
 		private List<float> _pulses;
 		private List<bool> _directions;
 		private List<bool> _presseds;
-		private List<bool> _selecteds; 
+		private List<bool> _selecteds;
 
+		public UITypeEnum Type { get { return _type; } }
 		public bool Enabled { get; set; }
 		public string DataSource { get; set; }
+		public object Value { get { return _selectedIndex == -1 ? null : _objects[_selectedIndex]; } }
 
 		#region Events
 		public string OnClick { get; set; }
@@ -485,6 +487,7 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			_objects = new List<object>(values);
 			_screens.Clear();
+			_selectedIndex = -1;
 			ClearButtonData();
 			foreach (var value in _objects)
 			{
@@ -595,7 +598,7 @@ namespace Beyond_Beyaan.Data_Modules
 						bgArrow.Draw(xPos + _width - (bgArrow.Width + _arrowXOffset), yPos + _arrowYOffset, 1, 1, _disabledColor);
 					}
 				}
-				if (_screens != null && _screens.Count > 0)
+				if (_screens != null && _screens.Count > 0 && _selectedIndex >= 0)
 				{
 					_screens[_selectedIndex].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight));
 				}
@@ -635,7 +638,10 @@ namespace Beyond_Beyaan.Data_Modules
 				DrawStretchableBottom3(bgSpritesBottom, _color, xOffset, yOffset + topY + (_screens.Count * _templateHeight));
 				if (_screens != null && _screens.Count > 0)
 				{
-					_screens[_selectedIndex].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight));
+					if (_selectedIndex >= 0)
+					{
+						_screens[_selectedIndex].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight));
+					}
 					for (int i = 0; i < _screens.Count; i++)
 					{
 						_screens[i].Draw(xPos + (_width - _templateWidth), yPos + (_height - _templateHeight) + ((i + 1) * _templateHeight));
@@ -666,7 +672,6 @@ namespace Beyond_Beyaan.Data_Modules
 				if (Button_MouseUp(mouseX, mouseY))
 				{
 					_dropped = true;
-					return true;
 				}
 			}
 			else
@@ -674,7 +679,7 @@ namespace Beyond_Beyaan.Data_Modules
 				_dropped = false;
 				if (Button_MouseUp(mouseX, mouseY))
 				{
-					return true;
+					return false;
 				}
 				for (int i = 0; i < _screens.Count; i++)
 				{
