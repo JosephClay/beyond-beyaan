@@ -675,6 +675,14 @@ namespace Beyond_Beyaan
 							ScreenManager.ChangeScreen(variables[1]);
 							i++;
 						} break;
+					case "GenerateGalaxy":
+						{
+							string reason;
+							if (!Galaxy.GenerateGalaxy(this, out reason))
+							{
+								MessageBox.Show(reason);
+							}
+						} break;
 					case "UseOldScreenSystem":
 						{
 							useOldScreenSystem = true;

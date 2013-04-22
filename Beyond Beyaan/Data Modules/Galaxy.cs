@@ -1,8 +1,10 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
+using Microsoft.CSharp;
 
 namespace Beyond_Beyaan
 {
@@ -44,6 +46,7 @@ namespace Beyond_Beyaan
 
 		public List<Gateway> Gateways { get; set; }
 		QuadNode ParentNode;
+		public GalaxyScript CurrentGalaxyScript { get; set; }
 		//GorgonLibrary.Graphics.Sprite nebula;
 
 		public int GalaxySize { get; private set; }
@@ -72,11 +75,43 @@ namespace Beyond_Beyaan
 		/// <summary>
 		/// Set up the galaxy
 		/// </summary>
-		public void GenerateGalaxy(System.Reflection.MethodInfo genGalaxyFunc, Object scriptInstance, Dictionary<string, string> vars, StarTypeManager starTypeManager, SectorTypeManager sectorTypeManager, SpriteManager spriteManager, GameMain gameMain)
+		public bool GenerateGalaxy(GameMain gameMain, out string reason)
 		{
-			Random r = new Random();
-			
-			List<Dictionary<string, object>> ret = (List<Dictionary<string, object>>)genGalaxyFunc.Invoke(scriptInstance, new object[] { vars });
+			if (CurrentGalaxyScript == null || string.IsNullOrEmpty(CurrentGalaxyScript.GalaxyScriptName))
+			{
+				reason = "Galaxy Script is not selected";
+				return false;
+			}
+			CompilerParameters cp = new CompilerParameters();
+			cp.GenerateExecutable = false;
+			cp.GenerateInMemory = true;
+			cp.ReferencedAssemblies.Add("system.dll");
+
+			CSharpCodeProvider provider = new CSharpCodeProvider();
+
+			string fName = Path.Combine(gameMain.GameDataSet.FullName, "Scripts\\Galaxy");
+			fName = Path.Combine(fName, CurrentGalaxyScript.GalaxyScriptName + ".cs");
+
+			CompilerResults result = provider.CompileAssemblyFromFile(cp, fName);
+
+			if (result.Errors.HasErrors)
+			{
+				reason = string.Empty;
+				foreach (CompilerError err in result.Errors)
+				{
+					reason += err.ToString() + "\n";
+				}
+				return false;
+			}
+
+			System.Reflection.Assembly a = result.CompiledAssembly;
+			Object scriptInstance = a.CreateInstance("Beyond_Beyaan.GalaxyGenerator", false, System.Reflection.BindingFlags.ExactBinding, null, null, null, null);
+			System.Reflection.MethodInfo genGalaxyFunc = a.GetType("Beyond_Beyaan.GalaxyGenerator").GetMethod("Generate");
+
+			Dictionary<string, string> values = new Dictionary<string, string>();
+			values.Add("Size", "30");
+			values.Add("Max Number of Stars", "100");
+			List<Dictionary<string, object>> ret = (List<Dictionary<string, object>>)genGalaxyFunc.Invoke(scriptInstance, new object[] { values });
 
 			// we have a list of stars.  go through the list and find the highest x/y value.  this will be the galaxy size
 			GalaxySize = 0;
@@ -87,12 +122,14 @@ namespace Beyond_Beyaan
 			}
 			GalaxySize += 4;
 
-			FillGalaxyWithStars(ret, starTypeManager, sectorTypeManager, spriteManager, gameMain);
+			FillGalaxyWithStars(ret, gameMain.StarTypeManager, gameMain.SectorTypeManager, gameMain.SpriteManager, gameMain);
 
 			Gateways = new List<Gateway>();
-			ConnectGateways(sectorTypeManager, r);
+			ConnectGateways(gameMain.SectorTypeManager, gameMain.Random);
 
 			//ConvertNebulaToSprite();
+			reason = null;
+			return true;
 		}
 
 		public void ConstructQuadTree()
