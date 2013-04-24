@@ -47,6 +47,10 @@ namespace Beyond_Beyaan.Data_Modules
 					{
 						switch (attribute.Name.LocalName.ToLower())
 						{
+							case "name":
+								{
+									newUI.Name = attribute.Value;
+								} break;
 							case "color":
 								{
 									string[] values = attribute.Value.Split(new[] {','});
@@ -231,7 +235,7 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				if (uiType.MouseUp(x, y))
 				{
-					_gameMain.OnClick(uiType.OnClick);
+					_gameMain.OnClick(uiType.OnClick, this);
 				}
 			}
 		}
@@ -262,6 +266,18 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				uiType.LoadValues(value, gameMain);
 			}
+		}
+
+		public object GetUIValue(string uiName)
+		{
+			foreach (var uiType in UITypes)
+			{
+				if (uiType.Name == uiName)
+				{
+					return uiType.Value;
+				}
+			}
+			return null;
 		}
 	}
 }
