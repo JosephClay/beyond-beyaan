@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.IO;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
@@ -13,7 +12,7 @@ namespace Beyond_Beyaan
 
 	public class GameMain
 	{
-		Form parentForm;
+		System.Windows.Forms.Form parentForm;
 
 		#region Properties
 		internal DirectoryInfo GameDataSet;
@@ -83,7 +82,7 @@ namespace Beyond_Beyaan
 
 		internal int Turn { get; private set; }
 
-		public bool Initalize(int screenWidth, int screenHeight, DirectoryInfo dataSet, bool showTutorial, Form parentForm, out string reason)
+		public bool Initalize(int screenWidth, int screenHeight, DirectoryInfo dataSet, bool showTutorial, System.Windows.Forms.Form parentForm, out string reason)
 		{
 			useOldScreenSystem = false;
 			MousePos = new Point();
@@ -287,7 +286,7 @@ namespace Beyond_Beyaan
 			Cursor.Update(frameDeltaTime, Random);
 		}
 
-		public void MouseDown(MouseEventArgs e)
+		public void MouseDown(System.Windows.Forms.MouseEventArgs e)
 		{
 			int whichButton = 0;
 			switch (e.Button)
@@ -343,7 +342,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void MouseUp(MouseEventArgs e)
+		public void MouseUp(System.Windows.Forms.MouseEventArgs e)
 		{
 			int whichButton = 0;
 			switch (e.Button)
@@ -657,7 +656,7 @@ namespace Beyond_Beyaan
 		}
 
 		#region UI Events
-		public void OnClick(string command)
+		public void OnClick(string command, Screen callingScreen)
 		{
 			if (string.IsNullOrEmpty(command))
 			{
@@ -668,6 +667,14 @@ namespace Beyond_Beyaan
 			for (int i = 0; i < parts.Length; i++)
 			{
 				string[] variables = parts[i].Split(new[] {','});
+				List<object> objects = new List<object>();
+				for (int j = 1; j < variables.Length; j++)
+				{
+					if (variables[j].StartsWith("{") && variables[j].EndsWith("}"))
+					{
+						objects.Add(callingScreen.GetUIValue(variables[j].Substring(1, variables[j].Length - 2)));
+					}
+				}
 				switch (variables[0])
 				{
 					case "ChangeTo":
@@ -680,8 +687,12 @@ namespace Beyond_Beyaan
 							string reason;
 							if (!Galaxy.GenerateGalaxy(this, out reason))
 							{
-								MessageBox.Show(reason);
+								System.Windows.Forms.MessageBox.Show(reason);
 							}
+						} break;
+					case "UpdateGalaxyScript":
+						{
+							Galaxy.CurrentGalaxyScript = (GalaxyScript) objects[0];
 						} break;
 					case "UseOldScreenSystem":
 						{

@@ -227,6 +227,7 @@ namespace Beyond_Beyaan.Data_Modules
 		private List<bool> _presseds;
 		private List<bool> _selecteds;
 
+		public string Name { get; set; }
 		public UITypeEnum Type { get { return _type; } }
 		public bool Enabled { get; set; }
 		public string DataSource { get; set; }
