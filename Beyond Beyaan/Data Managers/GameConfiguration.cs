@@ -6,10 +6,11 @@ namespace Beyond_Beyaan.Data_Managers
 	public static class GameConfiguration
 	{
 		public static bool ShowTutorial { get; set; }
+		public static string FirstScreen { get; private set; }
+		public static string ErrorDialog { get; private set; }
 
 		public static bool LoadConfiguration(string filePath, out string reason)
 		{
-			SetDefaults();
 			try
 			{
 				XDocument file = XDocument.Load(filePath);
@@ -17,11 +18,13 @@ namespace Beyond_Beyaan.Data_Managers
 
 				foreach (XAttribute attribute in root.Attributes())
 				{
-					/*switch (attribute.Name.ToString().ToLower())
+					switch (attribute.Name.ToString().ToLower())
 					{
-						case "showtutorial": ShowTutorial = bool.Parse(attribute.Value);
+						case "firstscreen": FirstScreen = attribute.Value;
 							break;
-					}*/
+						case "errordialog": ErrorDialog = attribute.Value;
+							break;
+					}
 				}
 			}
 			catch (Exception e)
@@ -31,11 +34,6 @@ namespace Beyond_Beyaan.Data_Managers
 			}
 			reason = null;
 			return true;
-		}
-
-		public static void SetDefaults()
-		{
-			ShowTutorial = false;
 		}
 	}
 }

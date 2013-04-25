@@ -193,10 +193,10 @@
     <Frame x="704" y="49" width="60" height="60" />
   </Sprite>
   <Sprite name="MediumBorderBGTC" file="main.png">
-    <Frame x="765" y="176" width="1" height="60" />
+    <Frame x="765" y="49" width="1" height="60" />
   </Sprite>
   <Sprite name="MediumBorderBGTR" file="main.png">
-    <Frame x="767" y="176" width="60" height="60" />
+    <Frame x="767" y="49" width="60" height="60" />
   </Sprite>
   <Sprite name="MediumBorderBGCL" file="main.png">
     <Frame x="704" y="110" width="60" height="1" />

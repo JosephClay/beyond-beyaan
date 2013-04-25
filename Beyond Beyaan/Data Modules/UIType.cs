@@ -346,20 +346,21 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
-		public void MouseDown(int mouseX, int mouseY)
+		public bool MouseDown(int mouseX, int mouseY)
 		{
 			switch (_type)
 			{
 				case UITypeEnum.DROPDOWN:
 					{
-						DropDown_MouseDown(mouseX, mouseY);
-					} break;
+						return DropDown_MouseDown(mouseX, mouseY);
+					}
 				case UITypeEnum.STRETCHABLE_BUTTON:
 				case UITypeEnum.BUTTON:
 					{
-						Button_MouseDown(mouseX, mouseY);
-					} break;
+						return Button_MouseDown(mouseX, mouseY);
+					}
 			}
+			return false;
 		}
 
 		public bool MouseUp(int mouseX, int mouseY)
@@ -651,9 +652,12 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
-		private void DropDown_MouseDown(int mouseX, int mouseY)
+		private bool DropDown_MouseDown(int mouseX, int mouseY)
 		{
-			Button_MouseDown(mouseX, mouseY);
+			if (Button_MouseDown(mouseX, mouseY))
+			{
+				return true;
+			}
 			if (_dropped)
 			{
 				for (int i = 0; i < _screens.Count; i++)
@@ -661,9 +665,11 @@ namespace Beyond_Beyaan.Data_Modules
 					if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos + _height + (_templateHeight*i) && mouseY < _yPos + _height + (_templateHeight*(i + 1)))
 					{
 						_presseds[FIRST_DROPDOWN_BUTTON + i] = true;
+						return true;
 					}
 				}
 			}
+			return false;
 		}
 
 		private bool DropDown_MouseUp(int mouseX, int mouseY)
@@ -852,11 +858,11 @@ namespace Beyond_Beyaan.Data_Modules
 				_textSprite.Draw();
 			}
 		}
-		private void Button_MouseDown(int mouseX, int mouseY)
+		private bool Button_MouseDown(int mouseX, int mouseY)
 		{
 			if (!Enabled)
 			{
-				return;
+				return false;
 			}
 			if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos && mouseY < _yPos + _height)
 			{
@@ -865,7 +871,9 @@ namespace Beyond_Beyaan.Data_Modules
 					toolTip.SetShowing(false);
 				}*/
 				_presseds[BUTTON] = true;
+				return true;
 			}
+			return false;
 		}
 		private bool Button_MouseUp(int mouseX, int mouseY)
 		{
