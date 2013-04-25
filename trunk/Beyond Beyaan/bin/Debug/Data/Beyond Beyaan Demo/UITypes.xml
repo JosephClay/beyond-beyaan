@@ -4,10 +4,9 @@
   <UIType name="LoadGameButton" type="Button" background="LoadGameBG" foreground="LoadGameFG" />
   <UIType name="ContinueGameButton" type="Button" background="ContinueGameBG" foreground="ContinueGameFG" />
   <UIType name="ExitGameButton" type="Button" background="ExitGameBG" foreground="ExitGameFG" />
-  <UIType name="MainBackground" type="Image" background="MainBackground" />
-  <UIType name="MainPlanetBackground" type="Image" background="MainPlanetBackground" />
-  <UIType name="Title" type="Image" background="Title" />
   <UIType name="Label" type="Label" />
+  <UIType name="Image" type="Image" />
+  <UIType name="CameraView" type="CameraView" />
   <UIType name="StretchableButton" type="StretchableButton" 
           top_left_background="ButtonBGTL" 
           top_middle_background="ButtonBGTC" 

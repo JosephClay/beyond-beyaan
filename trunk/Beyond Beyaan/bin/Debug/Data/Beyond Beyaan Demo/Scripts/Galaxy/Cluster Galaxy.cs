@@ -181,8 +181,8 @@ namespace Beyond_Beyaan
 
 				Dictionary<string, object> newStar = new Dictionary<string, object>();
 				newStar["type"] = starType;
-				newStar["x"] = x;
-				newStar["y"] = y;
+				newStar["x"] = x * 32;
+				newStar["y"] = y * 32;
 
 				stars.Add(newStar);
 			}

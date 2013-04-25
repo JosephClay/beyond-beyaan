@@ -695,6 +695,7 @@ namespace Beyond_Beyaan
 							{
 								System.Windows.Forms.MessageBox.Show(reason);
 							}
+							callingScreen.RefreshData();
 						} break;
 					case "UpdateGalaxyScript":
 						{
@@ -724,6 +725,10 @@ namespace Beyond_Beyaan
 				case "GalaxyScriptList":
 					{
 						return Galaxy.GetGalaxyScripts(this);
+					}
+				case "StarSystems":
+					{
+						return Galaxy.GetStars();
 					}
 			}
 			return null;
