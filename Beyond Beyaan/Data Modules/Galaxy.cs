@@ -157,6 +157,16 @@ namespace Beyond_Beyaan
 			return starSystems;
 		}
 
+		public List<object> GetStars()
+		{
+			List<object> stars = new List<object>();
+			foreach (var star in starSystems)
+			{
+				stars.Add(star);
+			}
+			return stars;
+		}
+
 		public StarSystem GetStarAtPoint(Point point)
 		{
 			foreach (StarSystem starSystem in starSystems)

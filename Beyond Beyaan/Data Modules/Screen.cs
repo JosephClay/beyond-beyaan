@@ -88,6 +88,10 @@ namespace Beyond_Beyaan.Data_Modules
 					int y = 0;
 					int uiWidth = 0;
 					int uiHeight = 0;
+					string xStr = null;
+					string yStr = null;
+					string widthStr = null;
+					string heightStr = null;
 					string font = null;
 					string content = null;
 					int arrowXOffset = 0;
@@ -136,18 +140,22 @@ namespace Beyond_Beyaan.Data_Modules
 							case "xpos":
 								{
 									x = GetValue(attribute.Value);
+									xStr = attribute.Value;
 								} break;
 							case "ypos":
 								{
 									y = GetValue(attribute.Value);
+									yStr = attribute.Value;
 								} break;
 							case "width":
 								{
 									uiWidth = GetValue(attribute.Value);
+									widthStr = attribute.Value;
 								} break;
 							case "height":
 								{
 									uiHeight = GetValue(attribute.Value);
+									heightStr = attribute.Value;
 								} break;
 							case "onclick":
 								{
@@ -165,6 +173,10 @@ namespace Beyond_Beyaan.Data_Modules
 								{
 									newUI.DataSource = attribute.Value;
 								} break;
+							case "sprite":
+								{
+									newUI.SetSprite(_gameMain.SpriteManager.GetSprite(attribute.Value, gameMain.Random), attribute.Value);
+								} break;
 						}
 					}
 					if (!string.IsNullOrEmpty(content))
@@ -178,7 +190,7 @@ namespace Beyond_Beyaan.Data_Modules
 							newUI.SetText(content, _gameMain.FontManager.GetDefaultFont());
 						}
 					}
-					newUI.SetRect(x, y, uiWidth, uiHeight);
+					newUI.SetRect(x, y, uiWidth, uiHeight, xStr, yStr, widthStr, heightStr);
 					newUI.SetArrowOffset(arrowXOffset, arrowYOffset);
 					if (element.HasElements)
 					{
@@ -198,6 +210,10 @@ namespace Beyond_Beyaan.Data_Modules
 
 		private int GetValue(string value)
 		{
+			if (value.StartsWith("[") && value.EndsWith("]"))
+			{
+				return -1;
+			}
 			int result = 0;
 			while (value.Length > 0)
 			{

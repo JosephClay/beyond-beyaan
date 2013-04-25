@@ -8,7 +8,7 @@ using Font = GorgonLibrary.Graphics.Font;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	public enum UITypeEnum { IMAGE, STRETCHABLE_IMAGE, LABEL, BUTTON, STRETCHABLE_BUTTON, DROPDOWN }
+	public enum UITypeEnum { IMAGE, STRETCHABLE_IMAGE, LABEL, BUTTON, STRETCHABLE_BUTTON, DROPDOWN, CAMERA_VIEW }
 	public enum BaseUISprites
 		{
 			BACKGROUND,
@@ -78,6 +78,9 @@ namespace Beyond_Beyaan.Data_Modules
 										break;
 									case "dropdown":
 										Type = UITypeEnum.DROPDOWN;
+										break;
+									case "cameraview":
+										Type = UITypeEnum.CAMERA_VIEW;
 										break;
 								}
 							} break;
@@ -200,8 +203,10 @@ namespace Beyond_Beyaan.Data_Modules
 		private const int FIRST_DROPDOWN_BUTTON = 4;
 		#endregion
 
+		private string _spriteStr;
 		private Dictionary<BaseUISprites, BBSprite> _sprites;
 		private TextSprite _textSprite;
+		private RenderImage _renderImage;
 		private string _text; 
 		private UITypeEnum _type;
 		private Color _color;
@@ -210,9 +215,13 @@ namespace Beyond_Beyaan.Data_Modules
 
 		private int _xPos;
 		private int _yPos;
+		private string _xStr; //For data bindings
+		private string _yStr;
 
 		private int _width;
 		private int _height;
+		private string _widthStr;
+		private string _heightStr;
 
 		#region Drop-down properties
 		private bool _dropped;
@@ -274,14 +283,29 @@ namespace Beyond_Beyaan.Data_Modules
 						ClearButtonData();
 					} break;
 			}
+			_text = string.Empty;
+			_xStr = string.Empty;
+			_yStr = string.Empty;
+			_widthStr = string.Empty;
+			_heightStr = string.Empty;
+			_spriteStr = string.Empty;
 		}
 
-		public void SetRect(int x, int y, int width, int height)
+		public void SetRect(int x, int y, int width, int height, string xstr, string ystr, string widthstr, string heightstr)
 		{
 			_xPos = x;
 			_yPos = y;
 			_width = width;
 			_height = height;
+			_xStr = xstr;
+			_yStr = ystr;
+			_widthStr = widthstr;
+			_heightStr = heightstr;
+			if (_type == UITypeEnum.CAMERA_VIEW)
+			{
+				_renderImage = new RenderImage(Name + "RenderImage", width, height, ImageBufferFormats.BufferRGB888A8);
+				_renderImage.BlendingMode = BlendingModes.Modulated;
+			}
 		}
 
 		public void SetColor(byte a, byte r, byte g, byte b)
@@ -305,6 +329,12 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			_textSprite = new TextSprite("Label", content, font);
 			_text = content;
+		}
+
+		public void SetSprite(BBSprite sprite, string spriteStr)
+		{
+			_sprites[BaseUISprites.BACKGROUND] = sprite;
+			_spriteStr = spriteStr;
 		}
 
 		public void SetTemplate(XElement template)
@@ -412,6 +442,10 @@ namespace Beyond_Beyaan.Data_Modules
 					{
 						Label_Draw(xOffset, yOffset);
 					} break;
+				case UITypeEnum.CAMERA_VIEW:
+					{
+						CameraView_Draw(xOffset, yOffset);
+					} break;
 			}
 		}
 
@@ -513,12 +547,27 @@ namespace Beyond_Beyaan.Data_Modules
 		}
 		public void LoadValues<T>(T value, GameMain gameMain) where T : class
 		{
+			//A value that needs to be replaced is denoted with []
 			if (_text.StartsWith("[") && _text.EndsWith("]"))
 			{
-				//A value that needs to be replaced
 				string property = _text.Substring(1, _text.Length - 2);
 				string newValue = value.GetType().GetProperty(property, typeof (string)).GetValue(value, null).ToString();
 				_textSprite = new TextSprite("Label", newValue, gameMain.FontManager.GetDefaultFont());
+			}
+			if (_xStr.StartsWith("[") && _xStr.EndsWith("]"))
+			{
+				string property = _xStr.Substring(1, _xStr.Length - 2);
+				_xPos = (int)value.GetType().GetProperty(property, typeof(int)).GetValue(value, null);
+			}
+			if (_yStr.StartsWith("[") && _yStr.EndsWith("]"))
+			{
+				string property = _yStr.Substring(1, _yStr.Length - 2);
+				_yPos = (int)value.GetType().GetProperty(property, typeof(int)).GetValue(value, null);
+			}
+			if (_spriteStr.StartsWith("[") && _spriteStr.EndsWith("]"))
+			{
+				string property = _spriteStr.Substring(1, _spriteStr.Length - 2);
+				_sprites[BaseUISprites.BACKGROUND] = (BBSprite)value.GetType().GetProperty(property, typeof(BBSprite)).GetValue(value, null);
 			}
 		}
 		#endregion
@@ -531,6 +580,21 @@ namespace Beyond_Beyaan.Data_Modules
 			_textSprite.SetPosition(_xPos + xOffset, _yPos + yOffset);
 			_textSprite.Color = _textColor;
 			_textSprite.Draw();
+		}
+		#endregion
+
+		#region CameraView functions
+		private void CameraView_Draw(int xOffset, int yOffset)
+		{
+			_renderImage.Clear(Color.FromArgb(0, Color.Black));
+			RenderTarget old = GorgonLibrary.Gorgon.CurrentRenderTarget;
+			GorgonLibrary.Gorgon.CurrentRenderTarget = _renderImage;
+			foreach (var item in _screens)
+			{
+				item.Draw(xOffset, yOffset);
+			}
+			GorgonLibrary.Gorgon.CurrentRenderTarget = old;
+			_renderImage.Blit(_xPos, _yPos);
 		}
 		#endregion
 
