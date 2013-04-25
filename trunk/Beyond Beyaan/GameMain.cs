@@ -25,6 +25,7 @@ namespace Beyond_Beyaan
 
 		internal int ScreenWidth;
 		internal int ScreenHeight;
+		private string Error;
 		#endregion
 
 		#region Data Managers
@@ -84,6 +85,7 @@ namespace Beyond_Beyaan
 
 		public bool Initalize(int screenWidth, int screenHeight, DirectoryInfo dataSet, bool showTutorial, System.Windows.Forms.Form parentForm, out string reason)
 		{
+			Error = string.Empty;
 			useOldScreenSystem = false;
 			MousePos = new Point();
 
@@ -194,7 +196,7 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			if (!ScreenManager.Initialize(GameDataSet, this, "MainMenu", out reason))
+			if (!ScreenManager.Initialize(GameDataSet, this, out reason))
 			{
 				return false;
 			}
@@ -229,7 +231,7 @@ namespace Beyond_Beyaan
 		{
 			if (!useOldScreenSystem)
 			{
-				ScreenManager.DrawCurrentScreen();
+				ScreenManager.DrawScreen();
 				ScreenManager.MouseHover(MousePos.X, MousePos.Y, frameDeltaTime);
 			}
 			else
@@ -677,6 +679,10 @@ namespace Beyond_Beyaan
 				}
 				switch (variables[0])
 				{
+					case "ClearErrors":
+						{
+							Error = string.Empty;
+						} break;
 					case "ChangeTo":
 						{
 							ScreenManager.ChangeScreen(variables[1]);
@@ -699,6 +705,10 @@ namespace Beyond_Beyaan
 							useOldScreenSystem = true;
 							ChangeToScreen(ScreenEnum.GalaxySetup);
 						} break;
+					case "CloseWindow":
+						{
+							ScreenManager.CloseScreen(callingScreen);
+						} break;
 					case "QuitGame":
 						{
 							ExitGame();
@@ -717,6 +727,11 @@ namespace Beyond_Beyaan
 					}
 			}
 			return null;
+		}
+
+		public void AddError(string error)
+		{
+			Error += error + "\n";
 		}
 		#endregion
 	}

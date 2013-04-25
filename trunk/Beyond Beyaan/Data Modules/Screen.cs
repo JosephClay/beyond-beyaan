@@ -8,18 +8,63 @@ namespace Beyond_Beyaan.Data_Modules
 	{
 		private int _width;
 		private int _height;
+		private int _xPos;
+		private int _yPos;
+		private bool _movable;
 		private GameMain _gameMain;
 		private List<UIType> UITypes;
 
 		public bool LoadScreen(XElement rootElement, int width, int height, GameMain gameMain, out string reason)
 		{
+			//Set defaults
+			_movable = false;
 			_width = width;
 			_height = height;
+			_xPos = 0;
+			_yPos = 0;
+
 			_gameMain = gameMain;
 			UITypes = new List<UIType>();
 
 			try
 			{
+				int newWidth = -1;
+				int newHeight = -1;
+				foreach (var attribute in rootElement.Attributes())
+				{
+					switch (attribute.Name.LocalName.ToLower())
+					{
+						case "movable":
+							{
+								_movable = bool.Parse(attribute.Value);
+							} break;
+						case "width":
+							{
+								newWidth = GetValue(attribute.Value);
+							} break;
+						case "height":
+							{
+								newHeight = GetValue(attribute.Value);
+							} break;
+						case "xpos":
+							{
+								_xPos = GetValue(attribute.Value);
+							} break;
+						case "ypos":
+							{
+								_yPos = GetValue(attribute.Value);
+							} break;
+					}
+				}
+				if (newWidth != -1)
+				{
+					_width = newWidth;
+				}
+				if (newHeight != -1)
+				{
+					_height = newHeight;
+				}
+
 				foreach (var element in rootElement.Elements())
 				{
 					if (element.Attribute("UIType") == null)
@@ -210,7 +255,7 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			foreach (var uiType in UITypes)
 			{
-				uiType.Draw();
+				uiType.Draw(_xPos, _yPos);
 			}
 		}
 		public void Draw(int x, int y)
@@ -221,32 +266,39 @@ namespace Beyond_Beyaan.Data_Modules
 			}
 		}
 
-		public void MouseDown(int x, int y, int whichButton)
+		public bool MouseDown(int x, int y, int whichButton)
 		{
+			bool result = false;
 			foreach (var uiType in UITypes)
 			{
-				uiType.MouseDown(x, y);
+				result |= uiType.MouseDown(x - _xPos, y - _yPos);
 			}
+			return result;
 		}
 
-		public void MouseUp(int x, int y, int whichButton)
+		public bool MouseUp(int x, int y, int whichButton)
 		{
+			bool result = false;
 			foreach (var uiType in UITypes)
 			{
-				if (uiType.MouseUp(x, y))
+				if (uiType.MouseUp(x - _xPos, y - _yPos))
 				{
+					result = true;
 					_gameMain.OnClick(uiType.OnClick, this);
 				}
 			}
+			return result;
 		}
 
-		public void MouseHover(int x, int y, float frameDeltaTime)
+		public bool MouseHover(int x, int y, float frameDeltaTime)
 		{
+			bool result = false;
 			foreach (var uiType in UITypes)
 			{
-				uiType.MouseHover(x, y, frameDeltaTime);
+				result |= uiType.MouseHover(x - _xPos, y - _yPos, frameDeltaTime);
 				uiType.Update(frameDeltaTime, _gameMain.Random);
 			}
+			return result;
 		}
 
 		public void RefreshData()
