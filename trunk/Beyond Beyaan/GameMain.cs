@@ -729,6 +729,18 @@ namespace Beyond_Beyaan
 			return null;
 		}
 
+		public string GetValue(string attribute)
+		{
+			switch (attribute)
+			{
+				case "ErrorMessage":
+					{
+						return Error;
+					}
+			}
+			return string.Empty;
+		}
+
 		public void AddError(string error)
 		{
 			Error += error + "\n";

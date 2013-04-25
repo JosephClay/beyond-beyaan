@@ -10,6 +10,11 @@ namespace Beyond_Beyaan.Data_Modules
 		private int _height;
 		private int _xPos;
 		private int _yPos;
+		private int _origX;
+		private int _origY;
+		private int _mouseX;
+		private int _mouseY;
+		private bool _moving;
 		private bool _movable;
 		private GameMain _gameMain;
 		private List<UIType> UITypes;
@@ -268,12 +273,24 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public bool MouseDown(int x, int y, int whichButton)
 		{
-			bool result = false;
-			foreach (var uiType in UITypes)
+			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 			{
-				result |= uiType.MouseDown(x - _xPos, y - _yPos);
+				bool result = false;
+				foreach (var uiType in UITypes)
+				{
+					result |= uiType.MouseDown(x - _xPos, y - _yPos);
+				}
+				if (_movable && !result)
+				{
+					_moving = true;
+					_mouseX = x;
+					_mouseY = y;
+					_origX = _xPos;
+					_origY = _yPos;
+				}
+				return true;
 			}
-			return result;
+			return false;
 		}
 
 		public bool MouseUp(int x, int y, int whichButton)
@@ -287,12 +304,40 @@ namespace Beyond_Beyaan.Data_Modules
 					_gameMain.OnClick(uiType.OnClick, this);
 				}
 			}
+			if (_moving)
+			{
+				result = true;
+				_moving = false;
+			}
 			return result;
 		}
 
 		public bool MouseHover(int x, int y, float frameDeltaTime)
 		{
 			bool result = false;
+			if (_moving)
+			{
+				_xPos = (x - _mouseX) + _origX;
+				_yPos = (y - _mouseY) + _origY;
+
+				if (_xPos + _width > _gameMain.ScreenWidth)
+				{
+					_xPos = _gameMain.ScreenWidth - _width;
+				}
+				if (_yPos + _height > _gameMain.ScreenHeight)
+				{
+					_yPos = _gameMain.ScreenHeight - _height;
+				}
+				if (_xPos < 0)
+				{
+					_xPos = 0;
+				}
+				if (_yPos < 0)
+				{
+					_yPos = 0;
+				}
+				return true;
+			}
 			foreach (var uiType in UITypes)
 			{
 				result |= uiType.MouseHover(x - _xPos, y - _yPos, frameDeltaTime);
@@ -309,6 +354,7 @@ namespace Beyond_Beyaan.Data_Modules
 				{
 					uiType.FillData(_gameMain.GetData(uiType.DataSource), _gameMain);
 				}
+				uiType.FillContent(_gameMain);
 			}
 		}
 
