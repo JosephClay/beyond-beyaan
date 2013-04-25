@@ -504,6 +504,13 @@ namespace Beyond_Beyaan.Data_Modules
 				_selecteds.Add(false);
 			}
 		}
+		public void FillContent(GameMain gameMain)
+		{
+			if (!string.IsNullOrEmpty(_text) && _text.StartsWith("[") && _text.EndsWith("]"))
+			{
+				_textSprite = new TextSprite("Label", gameMain.GetValue(_text.Substring(1, _text.Length - 2)), gameMain.FontManager.GetDefaultFont());
+			}
+		}
 		public void LoadValues<T>(T value, GameMain gameMain) where T : class
 		{
 			if (_text.StartsWith("[") && _text.EndsWith("]"))

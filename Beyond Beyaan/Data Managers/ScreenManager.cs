@@ -82,8 +82,12 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			if (_screens.ContainsKey(whichScreen))
 			{
-				_windows.Add(_screens[whichScreen]);
 				_screens[whichScreen].RefreshData();
+				if (_windows.Contains(_screens[whichScreen]))
+				{
+					return;
+				}
+				_windows.Add(_screens[whichScreen]);
 			}
 			else
 			{
