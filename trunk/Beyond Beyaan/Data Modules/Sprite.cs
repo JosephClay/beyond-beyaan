@@ -148,7 +148,7 @@ namespace Beyond_Beyaan.Data_Modules
 			_animated = _baseSprite.Frames.Count > 1;
 			if (_animated)
 			{
-				_frameTimer = Utility.GetIntValue(_baseSprite.FrameLength[_currentFrame], new Random()) / 1000.0f;
+				_frameTimer = Utility.GetIntValue(_baseSprite.FrameLength[_currentFrame], r) / 1000.0f;
 			}
 		}
 
