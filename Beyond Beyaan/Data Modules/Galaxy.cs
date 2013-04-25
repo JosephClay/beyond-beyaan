@@ -182,14 +182,13 @@ namespace Beyond_Beyaan
 		{
 			starSystems = new List<StarSystem>();
 			NameGenerator nameGenerator = new NameGenerator();
-			Random r = new Random();
 
 			foreach (Dictionary<string, object> newStar in starPoints)
 			{
 				StarType type = starTypeManager.GetType((string)newStar["type"]);
 				int x = (int)newStar["x"];
 				int y = (int)newStar["y"];
-				StarSystem newStarSystem = new StarSystem(nameGenerator.GetName(), x, y, type, sectorTypeManager, spriteManager, r, gameMain.FontManager.GetDefaultFont());
+				StarSystem newStarSystem = new StarSystem(nameGenerator.GetName(), x, y, type, sectorTypeManager, spriteManager, gameMain.Random, gameMain.FontManager.GetDefaultFont());
 				starSystems.Add(newStarSystem);
 			}
 		}
