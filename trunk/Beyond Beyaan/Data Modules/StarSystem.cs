@@ -37,6 +37,8 @@ namespace Beyond_Beyaan
 
 		public StarType Type { get; private set; }
 		public BBSprite Sprite { get; private set; }
+		public FXShader Shader { get { return Type.Shader; } }
+		public float[] ShaderValue { get { return Type.ShaderValue; } }
 
 		public Label StarName { get; set; }
 		public Empire DominantEmpire { get; private set; }

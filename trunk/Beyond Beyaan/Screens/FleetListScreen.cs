@@ -456,7 +456,7 @@ namespace Beyond_Beyaan.Screens
 				else
 				{
 					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+					gameMain.StarShader.Parameters["ShaderValue"].SetValue(system.StarColor);
 					drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 					GorgonLibrary.Gorgon.CurrentShader = null;
 				}

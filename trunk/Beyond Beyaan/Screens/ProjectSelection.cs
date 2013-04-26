@@ -348,11 +348,11 @@ namespace Beyond_Beyaan.Screens
 				{
 					if (system.DominantEmpire != null && system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
 					{
-						system.Type.Shader.Parameters["StarColor"].SetValue(system.DominantEmpire.ConvertedColor);
+						system.Type.Shader.Parameters["ShaderValue"].SetValue(system.DominantEmpire.ConvertedColor);
 					}
 					else
 					{
-						system.Type.Shader.Parameters["StarColor"].SetValue(new[] {0.5f, 0.5f, 0.5f, 1});
+						system.Type.Shader.Parameters["ShaderValue"].SetValue(new[] {0.5f, 0.5f, 0.5f, 1});
 					}
 				}
 				system.Sprite.Draw(x, y, 0.1f, 0.1f);

@@ -177,6 +177,14 @@ namespace Beyond_Beyaan.Data_Modules
 								{
 									newUI.SetSprite(_gameMain.SpriteManager.GetSprite(attribute.Value, gameMain.Random), attribute.Value);
 								} break;
+							case "shader":
+								{
+									newUI.SetShader(_gameMain.ShaderManager.GetShader(attribute.Value), attribute.Value);
+								} break;
+							case "shadervalue":
+								{
+									newUI.SetShaderValue(attribute.Value);
+								} break;
 						}
 					}
 					if (!string.IsNullOrEmpty(content))

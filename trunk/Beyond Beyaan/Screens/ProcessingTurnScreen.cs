@@ -41,7 +41,7 @@ namespace Beyond_Beyaan.Screens
 				GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
 				if (system.Type.Shader != null)
 				{
-						system.Type.Shader.Parameters["StarColor"].SetValue(system.Type.ShaderValue);
+						system.Type.Shader.Parameters["ShaderValue"].SetValue(system.Type.ShaderValue);
 				}
 				system.Sprite.Draw(((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), ((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 0.25f, 0.25f);
 				GorgonLibrary.Gorgon.CurrentShader = null;

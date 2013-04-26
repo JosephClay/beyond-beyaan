@@ -5,7 +5,7 @@
   <UIElement UIType="ThinBorder" xPos="XMIDDLE-385" yPos="YMIDDLE-285" width="500" height="500"/>
   <UIElement UIType="CameraView" Name="GalaxyPreview" xPos="XMIDDLE-375" yPos="YMIDDLE-275" width="480" height="480" zoom="MAX" DataSource="StarSystems" >
     <Template>
-      <SubElement UIType="Image" Sprite="[Sprite]" xPos="[X]" yPos="[Y]" />
+      <SubElement UIType="Image" Sprite="[Sprite]" Shader="[Shader]" ShaderValue="[ShaderValue]" xPos="[X]" yPos="[Y]" />
     </Template>
   </UIElement>
   <UIElement UIType="ThinBorder" xPos="XMIDDLE+120" yPos="YMIDDLE-285" width="270" height="500"/>

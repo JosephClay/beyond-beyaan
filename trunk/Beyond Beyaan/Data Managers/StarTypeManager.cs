@@ -55,7 +55,7 @@ namespace Beyond_Beyaan.Data_Managers
 					if (element.Attribute("shader") != null)
 					{
 						gameMain.Log("Attempting to load shader \"" + element.Attribute("shader").Value + "\"");
-						starType.Shader = GorgonLibrary.Graphics.FXShader.FromFile(Path.Combine(shaderDirectory, (element.Attribute("shader").Value + ".fx")), GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
+						starType.Shader = gameMain.ShaderManager.GetShader(element.Attribute("shader").Value);
 					}
 
 					foreach (XElement sectorTypes in element.Elements())
