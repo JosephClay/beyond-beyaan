@@ -169,6 +169,10 @@ namespace Beyond_Beyaan.Data_Modules
 								{
 									arrowYOffset = int.Parse(attribute.Value);
 								} break;
+							case "cameraborder":
+								{
+									newUI.SetCameraBorder(int.Parse(attribute.Value));
+								} break;
 							case "datasource":
 								{
 									newUI.DataSource = attribute.Value;
@@ -373,6 +377,16 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				result |= uiType.MouseHover(x - _xPos, y - _yPos, frameDeltaTime);
 				uiType.Update(frameDeltaTime, _gameMain.Random);
+			}
+			return result;
+		}
+
+		public bool MouseScroll(int mouseX, int mouseY, int delta)
+		{
+			bool result = false;
+			foreach (var uiType in UITypes)
+			{
+				result |= uiType.MouseScroll(mouseX, mouseY, delta);
 			}
 			return result;
 		}

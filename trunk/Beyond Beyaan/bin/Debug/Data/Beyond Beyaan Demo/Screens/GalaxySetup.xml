@@ -3,7 +3,7 @@
   <UIElement UIType="Image" Sprite="MainBackground" xPos="0" yPos="0" width="WIDTH" height="HEIGHT" />
   <UIElement UIType="ThickBorder" xPos="XMIDDLE-430" yPos="YMIDDLE-330" width="860" height="660"/>
   <UIElement UIType="ThinBorder" xPos="XMIDDLE-385" yPos="YMIDDLE-285" width="500" height="500"/>
-  <UIElement UIType="CameraView" Name="GalaxyPreview" xPos="XMIDDLE-375" yPos="YMIDDLE-275" width="480" height="480" zoom="MAX" DataSource="StarSystems" >
+  <UIElement UIType="CameraView" Name="GalaxyPreview" xPos="XMIDDLE-375" yPos="YMIDDLE-275" width="480" height="480" zoom="MAX" cameraBorder="50" DataSource="StarSystems" >
     <Template>
       <SubElement UIType="Image" Sprite="[Sprite]" Shader="[Shader]" ShaderValue="[ShaderValue]" xPos="[X]" yPos="[Y]" />
     </Template>
