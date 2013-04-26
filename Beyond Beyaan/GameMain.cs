@@ -31,6 +31,7 @@ namespace Beyond_Beyaan
 		#region Data Managers
 		internal FontManager FontManager;
 		internal SpriteManager SpriteManager;
+		internal ShaderManager ShaderManager;
 		internal UITypeManager UITypeManager;
 		private ScreenManager ScreenManager;
 		internal EmpireManager empireManager;
@@ -104,6 +105,7 @@ namespace Beyond_Beyaan
 			}
 			GameConfiguration.ShowTutorial = showTutorial;
 			SpriteManager = new SpriteManager();
+			ShaderManager = new ShaderManager();
 			IconManager = new IconManager();
 			ResourceManager = new ResourceManager();
 			MasterItemManager = new MasterItemManager();
@@ -133,6 +135,10 @@ namespace Beyond_Beyaan
 				return false;
 			}
 			if (!SpriteManager.LoadSprites(GameDataSet, graphicDirectory, out reason))
+			{
+				return false;
+			}
+			if (!ShaderManager.LoadShaders(GameDataSet, out reason))
 			{
 				return false;
 			}

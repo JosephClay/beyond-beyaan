@@ -257,16 +257,16 @@ namespace Beyond_Beyaan.Screens
 					{
 						if (system.IsThisSystemExploredByEmpire(currentEmpire))
 						{
-							system.Type.Shader.Parameters["StarColor"].SetValue(system.DominantEmpire.ConvertedColor);
+							system.Type.Shader.Parameters["ShaderValue"].SetValue(system.DominantEmpire.ConvertedColor);
 						}
 						else
 						{
-							system.Type.Shader.Parameters["StarColor"].SetValue(new float[] { 0.5f, 0.5f, 0.5f, 0.5f });
+							system.Type.Shader.Parameters["ShaderValue"].SetValue(new float[] { 0.5f, 0.5f, 0.5f, 0.5f });
 						}
 					}
 					else
 					{
-						system.Type.Shader.Parameters["StarColor"].SetValue(system.Type.ShaderValue);
+						system.Type.Shader.Parameters["ShaderValue"].SetValue(system.Type.ShaderValue);
 					}
 				}
 				system.Sprite.Draw(((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), ((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), camera.Scale < 0.25f ? 0.25f : camera.Scale, camera.Scale < 0.25f ? 0.25f : camera.Scale);
@@ -440,16 +440,16 @@ namespace Beyond_Beyaan.Screens
 					{
 						if (system.IsThisSystemExploredByEmpire(currentEmpire))
 						{
-							system.Type.Shader.Parameters["StarColor"].SetValue(system.DominantEmpire == null ? new[] { 0.5f, 0.5f, 0.5f, 0.5f } : system.DominantEmpire.ConvertedColor);
+							system.Type.Shader.Parameters["ShaderValue"].SetValue(system.DominantEmpire == null ? new[] { 0.5f, 0.5f, 0.5f, 0.5f } : system.DominantEmpire.ConvertedColor);
 						}
 						else
 						{
-							system.Type.Shader.Parameters["StarColor"].SetValue(new[] { 0.5f, 0.5f, 0.5f, 0.5f });
+							system.Type.Shader.Parameters["ShaderValue"].SetValue(new[] { 0.5f, 0.5f, 0.5f, 0.5f });
 						}
 					}
 					else
 					{
-						system.Type.Shader.Parameters["StarColor"].SetValue(system.Type.ShaderValue);
+						system.Type.Shader.Parameters["ShaderValue"].SetValue(system.Type.ShaderValue);
 					}
 				}
 				float scale = camera.Scale;

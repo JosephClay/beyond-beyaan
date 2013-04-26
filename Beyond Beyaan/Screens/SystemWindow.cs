@@ -92,7 +92,7 @@ namespace Beyond_Beyaan.Screens
 			GorgonLibrary.Gorgon.CurrentShader = selectedSystem.Type.Shader;
 			if (selectedSystem.Type.Shader != null)
 			{
-				selectedSystem.Type.Shader.Parameters["StarColor"].SetValue(selectedSystem.Type.ShaderValue);
+				selectedSystem.Type.Shader.Parameters["ShaderValue"].SetValue(selectedSystem.Type.ShaderValue);
 			}
 			selectedSystem.Sprite.Draw(xPos + 58, yPos + 55, 60.0f / selectedSystem.Sprite.Width, 60.0f / selectedSystem.Sprite.Height);
 			GorgonLibrary.Gorgon.CurrentShader = null;
@@ -130,7 +130,7 @@ namespace Beyond_Beyaan.Screens
 			GorgonLibrary.Gorgon.CurrentShader = selectedSystem.Type.Shader;
 			if (selectedSystem.Type.Shader != null)
 			{
-				selectedSystem.Type.Shader.Parameters["StarColor"].SetValue(selectedSystem.Type.ShaderValue);
+				selectedSystem.Type.Shader.Parameters["ShaderValue"].SetValue(selectedSystem.Type.ShaderValue);
 			}
 			selectedSystem.Type.Sprite.SetPosition(40, y + 55);
 			selectedSystem.Type.Sprite.SetScale(60.0f / selectedSystem.Type.Sprite.Width, 60.0f / selectedSystem.Type.Sprite.Height);

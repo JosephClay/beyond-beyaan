@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Managers;
 using GorgonLibrary.Graphics;
@@ -205,6 +206,10 @@ namespace Beyond_Beyaan.Data_Modules
 
 		private string _spriteStr;
 		private Dictionary<BaseUISprites, BBSprite> _sprites;
+		private FXShader _shader;
+		private string _shaderString;
+		private float[] _shaderValues;
+		private string _shaderValuesString;
 		private TextSprite _textSprite;
 		private RenderImage _renderImage;
 		private string _text; 
@@ -289,6 +294,8 @@ namespace Beyond_Beyaan.Data_Modules
 			_widthStr = string.Empty;
 			_heightStr = string.Empty;
 			_spriteStr = string.Empty;
+			_shaderString = string.Empty;
+			_shaderValuesString = string.Empty;
 		}
 
 		public void SetRect(int x, int y, int width, int height, string xstr, string ystr, string widthstr, string heightstr)
@@ -335,6 +342,27 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			_sprites[BaseUISprites.BACKGROUND] = sprite;
 			_spriteStr = spriteStr;
+		}
+
+		public void SetShader(FXShader shader, string shaderStr)
+		{
+			_shader = shader;
+			_shaderString = shaderStr;
+		}
+
+		public void SetShaderValue(string shaderValuesStr)
+		{
+			string[] parts = shaderValuesStr.Split(new[] {','});
+			if (parts.Length == 4)
+			{
+				float[] values = new float[4];
+				for (int i = 0; i < 4; i++)
+				{
+					values[i] = float.Parse(parts[i], CultureInfo.InvariantCulture);
+				}
+				_shaderValues = values;
+			}
+			_shaderValuesString = shaderValuesStr;
 		}
 
 		public void SetTemplate(XElement template)
@@ -577,6 +605,16 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				string property = _spriteStr.Substring(1, _spriteStr.Length - 2);
 				_sprites[BaseUISprites.BACKGROUND] = (BBSprite)value.GetType().GetProperty(property, typeof(BBSprite)).GetValue(value, null);
+			}
+			if (_shaderString.StartsWith("[") && _shaderString.EndsWith("]"))
+			{
+				string property = _shaderString.Substring(1, _shaderString.Length - 2);
+				_shader = (FXShader)value.GetType().GetProperty(property, typeof(FXShader)).GetValue(value, null);
+			}
+			if (_shaderValuesString.StartsWith("[") && _shaderValuesString.EndsWith("]"))
+			{
+				string property = _shaderValuesString.Substring(1, _shaderValuesString.Length - 2);
+				_shaderValues = (float[])value.GetType().GetProperty(property, typeof(float[])).GetValue(value, null);
 			}
 		}
 		#endregion
@@ -839,6 +877,11 @@ namespace Beyond_Beyaan.Data_Modules
 		private void Image_Draw(int xOffset, int yOffset, float scale)
 		{
 			var sprite = _sprites[BaseUISprites.BACKGROUND];
+			if (_shader != null)
+			{
+				_shader.Parameters["ShaderValue"].SetValue(_shaderValues);
+				GorgonLibrary.Gorgon.CurrentShader = _shader;
+			}
 			if ((_width == 0 || _height == 0) && scale == 1)
 			{
 				//Possibly just want the normal scale
@@ -852,6 +895,7 @@ namespace Beyond_Beyaan.Data_Modules
 			{
 				sprite.Draw((_xPos + xOffset) * scale, (_yPos + yOffset) * scale, scale, scale, _color);
 			}
+			GorgonLibrary.Gorgon.CurrentShader = null;
 		}
 		#endregion
 
