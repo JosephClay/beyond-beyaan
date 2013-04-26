@@ -236,6 +236,13 @@ namespace Beyond_Beyaan.Data_Modules
 		private int _selectedIndex;
 		#endregion
 
+		#region CameraView properties
+		private float _cameraScale;
+		private float _cameraX;
+		private float _cameraY;
+		private int _cameraBorderThickness;
+		#endregion
+
 		private List<float> _pulses;
 		private List<bool> _directions;
 		private List<bool> _presseds;
@@ -296,6 +303,7 @@ namespace Beyond_Beyaan.Data_Modules
 			_spriteStr = string.Empty;
 			_shaderString = string.Empty;
 			_shaderValuesString = string.Empty;
+			_cameraScale = 1;
 		}
 
 		public void SetRect(int x, int y, int width, int height, string xstr, string ystr, string widthstr, string heightstr)
@@ -324,6 +332,11 @@ namespace Beyond_Beyaan.Data_Modules
 		public void SetTextColor(byte a, byte r, byte g, byte b)
 		{
 			_textColor = Color.FromArgb(a, r, g, b);
+		}
+
+		public void SetCameraBorder(int thickness)
+		{
+			_cameraBorderThickness = thickness;
 		}
 
 		public void SetArrowOffset(int x, int y)
@@ -440,6 +453,18 @@ namespace Beyond_Beyaan.Data_Modules
 					}
 				default: return false;
 			}
+		}
+
+		public bool MouseScroll(int mouseX, int mouseY, int delta)
+		{
+			switch (_type)
+			{
+				case UITypeEnum.CAMERA_VIEW:
+					{
+						return CameraView_MouseScroll(mouseX, mouseY, delta);
+					}
+			}
+			return false;
 		}
 
 		public void Draw()
@@ -639,7 +664,7 @@ namespace Beyond_Beyaan.Data_Modules
 			GorgonLibrary.Gorgon.CurrentRenderTarget = _renderImage;
 			foreach (var item in _screens)
 			{
-				item.Draw(xOffset, yOffset, 0.5f);
+				item.Draw((int)(xOffset - _cameraX), (int)(yOffset - _cameraY), _cameraScale);
 			}
 			GorgonLibrary.Gorgon.CurrentRenderTarget = old;
 			_renderImage.Blit(_xPos, _yPos);
@@ -647,11 +672,69 @@ namespace Beyond_Beyaan.Data_Modules
 
 		private bool CameraView_MouseHover(int mouseX, int mouseY, float frameDeltaTime)
 		{
+			if (mouseX >= _xPos && mouseX < _xPos + _cameraBorderThickness)
+			{
+				_cameraX -= 300 * frameDeltaTime;
+			}
+			else if (mouseX >= _xPos + _width - _cameraBorderThickness && mouseX < _xPos + _width)
+			{
+				_cameraX += 300 * frameDeltaTime;
+			}
+			if (mouseY >= _yPos && mouseY < _yPos + _cameraBorderThickness)
+			{
+				_cameraY -= 300 * frameDeltaTime;
+			}
+			else if (mouseY >= _yPos + _height - _cameraBorderThickness && mouseY < _yPos + _height)
+			{
+				_cameraY += 300 * frameDeltaTime;
+			}
 			foreach (var item in _screens)
 			{
 				item.MouseHover(mouseX, mouseY, frameDeltaTime);
 			}
 			return false;
+		}
+
+		private bool CameraView_MouseScroll(int mouseX, int mouseY, int delta)
+		{
+			if (mouseX < _xPos || mouseX >= _xPos + _width || mouseY < _yPos || mouseY >= _yPos + _height)
+			{
+				return false;
+			}
+			if (delta > 0)
+			{
+				if (_cameraScale < 1)
+				{
+					float oldScale = _cameraScale;
+					_cameraScale += 0.05f;
+					if (_cameraScale >= 1)
+					{
+						_cameraScale = 1;
+					}
+					
+					float xScale = (mouseX - _xPos) / (float)_width;
+					float yScale = (mouseY - _yPos) / (float)_height;
+					
+					_cameraX -= ((_width / _cameraScale) - (_width / (oldScale))) * xScale;
+					_cameraY -= ((_height / _cameraScale) - (_height / (oldScale))) * yScale;
+				}
+			}
+			else
+			{
+				if (_cameraScale > 0.05f)
+				{
+					float oldScale = _cameraScale;
+					_cameraScale -= 0.05f;
+					if (_cameraScale < 0.05f)
+					{
+						_cameraScale = 0.05f;
+					}
+
+					_cameraX -= ((_width / _cameraScale) - (_width / (oldScale))) / 2;
+					_cameraY -= ((_height / _cameraScale) - (_height / (oldScale))) / 2;
+				}
+			}
+			return true;
 		}
 
 		#endregion

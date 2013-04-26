@@ -137,5 +137,17 @@ namespace Beyond_Beyaan.Data_Managers
 			}
 			_currentScreen.MouseHover(x, y, frameDeltaTime);
 		}
+
+		public void MouseScroll(int mouseX, int mouseY, int delta)
+		{
+			for (int i = _windows.Count - 1; i >= 0; i--)
+			{
+				if (_windows[i].MouseScroll(mouseX, mouseY, delta))
+				{
+					return;
+				}
+			}
+			_currentScreen.MouseScroll(mouseX, mouseY, delta);
+		}
 	}
 }

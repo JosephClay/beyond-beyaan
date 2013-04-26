@@ -410,7 +410,11 @@ namespace Beyond_Beyaan
 		{
 			if (useOldScreenSystem)
 			{
-				screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
+				screenInterface.MouseScroll(delta, MousePos.X, MousePos.Y);
+			}
+			else
+			{
+				ScreenManager.MouseScroll(MousePos.X, MousePos.Y, delta);
 			}
 		}
 
