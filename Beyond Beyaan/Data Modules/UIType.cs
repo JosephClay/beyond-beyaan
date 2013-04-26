@@ -372,6 +372,10 @@ namespace Beyond_Beyaan.Data_Modules
 					{
 						return Button_MouseHover(mouseX, mouseY, frameDeltaTime);
 					}
+				case UITypeEnum.CAMERA_VIEW:
+					{
+						return CameraView_MouseHover(mouseX, mouseY, frameDeltaTime);
+					}
 				default: return false;
 			}
 		}
@@ -412,9 +416,14 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public void Draw()
 		{
-			Draw(0, 0);
+			Draw(0, 0, 1);
 		}
+
 		public void Draw(int xOffset, int yOffset)
+		{
+			Draw(xOffset, yOffset, 1);
+		}
+		public void Draw(int xOffset, int yOffset, float scale)
 		{
 			switch (_type)
 			{
@@ -432,7 +441,7 @@ namespace Beyond_Beyaan.Data_Modules
 					} break;
 				case UITypeEnum.IMAGE:
 					{
-						Image_Draw(xOffset, yOffset);
+						Image_Draw(xOffset, yOffset, scale);
 					} break;
 				case UITypeEnum.DROPDOWN:
 					{
@@ -440,7 +449,7 @@ namespace Beyond_Beyaan.Data_Modules
 					} break;
 				case UITypeEnum.LABEL:
 					{
-						Label_Draw(xOffset, yOffset);
+						Label_Draw(xOffset, yOffset, scale);
 					} break;
 				case UITypeEnum.CAMERA_VIEW:
 					{
@@ -575,9 +584,10 @@ namespace Beyond_Beyaan.Data_Modules
 		#region Individual UI functions
 
 		#region Label functions
-		private void Label_Draw(int xOffset, int yOffset)
+		private void Label_Draw(int xOffset, int yOffset, float scale)
 		{
 			_textSprite.SetPosition(_xPos + xOffset, _yPos + yOffset);
+			_textSprite.SetScale(scale, scale);
 			_textSprite.Color = _textColor;
 			_textSprite.Draw();
 		}
@@ -591,11 +601,21 @@ namespace Beyond_Beyaan.Data_Modules
 			GorgonLibrary.Gorgon.CurrentRenderTarget = _renderImage;
 			foreach (var item in _screens)
 			{
-				item.Draw(xOffset, yOffset);
+				item.Draw(xOffset, yOffset, 0.5f);
 			}
 			GorgonLibrary.Gorgon.CurrentRenderTarget = old;
 			_renderImage.Blit(_xPos, _yPos);
 		}
+
+		private bool CameraView_MouseHover(int mouseX, int mouseY, float frameDeltaTime)
+		{
+			foreach (var item in _screens)
+			{
+				item.MouseHover(mouseX, mouseY, frameDeltaTime);
+			}
+			return false;
+		}
+
 		#endregion
 
 		#region DropDown Functions
@@ -816,17 +836,21 @@ namespace Beyond_Beyaan.Data_Modules
 		#endregion
 
 		#region Image functions
-		private void Image_Draw(int xOffset, int yOffset)
+		private void Image_Draw(int xOffset, int yOffset, float scale)
 		{
 			var sprite = _sprites[BaseUISprites.BACKGROUND];
-			if (_width == 0 || _height == 0)
+			if ((_width == 0 || _height == 0) && scale == 1)
 			{
 				//Possibly just want the normal scale
 				sprite.Draw(_xPos + xOffset, _yPos + yOffset, 1, 1, _color);
 			}
-			else
+			else if (scale == 1)
 			{
 				sprite.Draw(_xPos + xOffset, _yPos + yOffset, _width / sprite.Width, _height / sprite.Height, _color);
+			}
+			else
+			{
+				sprite.Draw((_xPos + xOffset) * scale, (_yPos + yOffset) * scale, scale, scale, _color);
 			}
 		}
 		#endregion
