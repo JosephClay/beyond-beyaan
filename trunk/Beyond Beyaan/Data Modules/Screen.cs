@@ -286,6 +286,13 @@ namespace Beyond_Beyaan.Data_Modules
 				uiType.Draw(x, y);
 			}
 		}
+		public void Draw(int x, int y, float scale)
+		{
+			foreach (var uiType in UITypes)
+			{
+				uiType.Draw(x, y, scale);
+			}
+		}
 
 		public bool MouseDown(int x, int y, int whichButton)
 		{

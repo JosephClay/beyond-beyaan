@@ -693,7 +693,8 @@ namespace Beyond_Beyaan
 							string reason;
 							if (!Galaxy.GenerateGalaxy(this, out reason))
 							{
-								System.Windows.Forms.MessageBox.Show(reason);
+								AddError(reason);
+								ScreenManager.ShowScreen(GameConfiguration.ErrorDialog);
 							}
 							callingScreen.RefreshData();
 						} break;
