@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Screen>
+  <UIElement UIType="Label" xPos="0" yPos="0" content="Number of Stars: {NumOfStars}" />
+  <UIElement UIType="Slider" xPos="0" yPos="30" width="200" height="16" value="{NumOfStars}" minValue="20" maxValue="300" defaultValue="50" />
+  <UIElement UIType="Label" xPos="0" yPos="70" content="Radius: {Radius}" />
+  <UIElement UIType="Slider" xPos="0" yPos="100" width="200" height="16" value="{Radius}" minValue="10" maxValue="100" defaultValue="30" incrValue="5" />
+</Screen>

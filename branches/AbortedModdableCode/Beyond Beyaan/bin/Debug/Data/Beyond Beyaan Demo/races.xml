@@ -1,0 +1,707 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Races>
+  <Race>
+    <Attributes name="Humans" 
+                image="humans" 
+                description="Humans originally started from Sol System, how they ended up here, nobody knows.  Their Encyclopedia Galactica is remarkable in that it contains nearly everything known to man, except for their origin." 
+                shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health"
+                consumes="Food,1.0"
+                produces="Billion Credit,1.0|Development,1.0"/>
+    <ProductionBonuses>
+      <Bonus multiplier="Research,1.2" />
+      <Bonus multiplier="Agriculture,1.3" />
+    </ProductionBonuses>
+    <ConsumptionBonuses>
+      <Bonus multiplier="Industry,1.1" />
+    </ConsumptionBonuses>
+    <ShipNames>
+      <ShipName name="Explorer" size="1"/>
+      <ShipName name="Escorter" size="2"/>
+      <ShipName name="Crusher" size="3"/>
+      <ShipName name="Voyager" size="4"/>
+      <ShipName name="Destroyer" size="5"/>
+      <ShipName name="Annihilator" size="6"/>
+      <ShipName name="Doom Bringer" size="7"/>
+      <ShipName name="Undaunted" size="8"/>
+      <ShipName name="Certain Death" size="9"/>
+      <ShipName name="Widow Maker" size="10"/>
+      <ShipName name="Destroyer of Hope" size="16"/>
+    </ShipNames>
+    <ShipClasses>
+      <!-- All ship class' size are multiples of 16, so it will shrink or stretch as necessary in-game-->
+      <ShipClass size="1" name="Lancer" _maxSpace="40" _shipCost="20" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="0" size="32" />
+        <Style xPos="32" yPos="0" size="32" />
+        <Style xPos="64" yPos="0" size="32" />
+        <Style xPos="96" yPos="0" size="32" />
+        <Style xPos="128" yPos="0" size="32" />
+        <Style xPos="160" yPos="0" size="32" />
+      </ShipClass>
+      <ShipClass size="2" name="Corvette" _maxSpace="160" _shipCost="80" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="0" size="32" />
+        <Style xPos="32" yPos="0" size="32" />
+        <Style xPos="64" yPos="0" size="32" />
+        <Style xPos="96" yPos="0" size="32" />
+        <Style xPos="128" yPos="0" size="32" />
+        <Style xPos="160" yPos="0" size="32" />
+      </ShipClass>
+      <ShipClass size="3" name="Frigate" _maxSpace="360" _shipCost="180" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="32" size="64" />
+        <Style xPos="64" yPos="32" size="64" />
+        <Style xPos="128" yPos="32" size="64" />
+        <Style xPos="192" yPos="32" size="64" />
+        <Style xPos="256" yPos="32" size="64" />
+        <Style xPos="318" yPos="32" size="64" />
+      </ShipClass>
+      <ShipClass size="4" name="Destroyer" _maxSpace="640" _shipCost="320" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="32" size="64" />
+        <Style xPos="64" yPos="32" size="64" />
+        <Style xPos="128" yPos="32" size="64" />
+        <Style xPos="192" yPos="32" size="64" />
+        <Style xPos="256" yPos="32" size="64" />
+        <Style xPos="318" yPos="32" size="64" />
+      </ShipClass>
+      <ShipClass size="5" name="Cruiser" _maxSpace="1000" _shipCost="500" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="96" size="96" />
+        <Style xPos="96" yPos="96" size="96" />
+        <Style xPos="192" yPos="96" size="96" />
+        <Style xPos="278" yPos="96" size="96" />
+        <Style xPos="370" yPos="96" size="96" />
+        <Style xPos="462" yPos="96" size="96" />
+      </ShipClass>
+      <ShipClass size="6" name="Battlecruiser" _maxSpace="1440" _shipCost="720" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="96" size="96" />
+        <Style xPos="96" yPos="96" size="96" />
+        <Style xPos="192" yPos="96" size="96" />
+        <Style xPos="278" yPos="96" size="96" />
+        <Style xPos="370" yPos="96" size="96" />
+        <Style xPos="462" yPos="96" size="96" />
+      </ShipClass>
+      <ShipClass size="7" name="Battleship" _maxSpace="1960" _shipCost="880" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="192" size="128" />
+        <Style xPos="128" yPos="192" size="128" />
+        <Style xPos="256" yPos="192" size="128" />
+        <Style xPos="384" yPos="192" size="128" />
+        <Style xPos="512" yPos="192" size="128" />
+        <Style xPos="640" yPos="192" size="128" />
+      </ShipClass>
+      <ShipClass size="8" name="Behemoth" _maxSpace="2560" _shipCost="1280" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="192" size="128" />
+        <Style xPos="128" yPos="192" size="128" />
+        <Style xPos="256" yPos="192" size="128" />
+        <Style xPos="384" yPos="192" size="128" />
+        <Style xPos="512" yPos="192" size="128" />
+        <Style xPos="640" yPos="192" size="128" />
+      </ShipClass>
+      <ShipClass size="9" name="Titan" _maxSpace="3240" _shipCost="1620" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="320" size="160" />
+        <Style xPos="160" yPos="320" size="160" />
+        <Style xPos="320" yPos="320" size="160" />
+        <Style xPos="480" yPos="320" size="160" />
+        <Style xPos="640" yPos="320" size="160" />
+        <Style xPos="800" yPos="320" size="160" />
+      </ShipClass>
+      <ShipClass size="10" name="Leviathan" _maxSpace="4000" _shipCost="2000" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="320" size="160" />
+        <Style xPos="160" yPos="320" size="160" />
+        <Style xPos="320" yPos="320" size="160" />
+        <Style xPos="480" yPos="320" size="160" />
+        <Style xPos="640" yPos="320" size="160" />
+        <Style xPos="800" yPos="320" size="160" />
+      </ShipClass>
+      <ShipClass size="16" name="Stupendous" _maxSpace="10240" _shipCost="5120" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="768" yPos="64" size="256" />
+      </ShipClass>
+    </ShipClasses>
+    <MiniAvatar xPos="0" yPos="781" />
+    <NeutralAvatar xPos="0" yPos="481" />
+    <PleasedAvatar xPos="300" yPos="481" />
+    <AnnoyedAvatar xPos="600" yPos="481" />
+    <GroundUnit xPos="192" yPos="0" />
+    <GroundUnitDying xPos="256" yPos="0" />
+    <City xPos="128" yPos="781" />
+    <TroopShip xPos="428" yPos="781" />
+    <FleetIcon xPos="224" yPos="0" />
+    <StartingSetup>
+      <StartingTechnologies>
+        <StartingTechnology name="Laser Cannons" />
+        <StartingTechnology name="Tokamak Reactors" />
+      </StartingTechnologies>
+    </StartingSetup>
+    <!--<StartShips>
+      <Ship addToBlueprints="True" name="Scout" class="Corvette" style="1">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Colony Ship" class="Destroyer" style="1" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Standard Colony Base" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Colony Ship 2" class="Destroyer" style="3" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Hostile Colony Base" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Transport Ship" class="Destroyer" style="5" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Small Transport Pod" modifiableValues="_mounts,1" />
+      </Ship>
+    </StartShips>-->
+    <StartSystems>
+      <System override="False" inOrder="False" replacePlanets="True">
+        <Planet type="Terran1" owned="True" population="70">
+          <Region type="Industry" />
+          <Region type="Industry" />
+          <Region type="Agriculture" />
+          <Region type="Agriculture" />
+          <Region type="Agriculture" />
+          <Region type="Research" />
+          <Region type="Mining" />
+          <Region type="Mining" />
+          <Resource type="Food" amount="100" />
+          <Resource type="Billion Credit" amount="50" />
+          <Resource type="Ores" amount="50" />
+        </Planet>
+        <!--<Squadron name="Scout">
+          <Ship name="Scout" count="1" />
+        </Squadron>
+        <Squadron name="Colonizer">
+          <Ship name="Colony Ship" count="1" />
+        </Squadron>-->
+      </System>
+    </StartSystems>
+  </Race>
+  <!--<Race>
+    <Attributes name="Salix Cybornia" 
+                image="salix_cybornia" 
+                description="A long long time ago, they were tasked with protecting the environment, especially forests. After disposing of a bad wizard that was polluting their lands, and finding the females of their species, they proceeded to flourish. Eventually they decided that the best way to maintain the environment was to get rid of all parasites, which includes small people with furry feet, so they fought a war against the other inhabitats. Eventually they won, with the aid of a time machine, and now they've turned their eyes (or the equivalent thereof) to the stars. They will make each planet a paradise, or die trying!"
+                shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health"
+                consumes="Food,0.5|Ores,0.5" />
+    <ProductionBonuses>
+      <Bonus multiplier="Mining,1.2" />
+      <Bonus multiplier="Agriculture,1.3" />
+    </ProductionBonuses>
+    <ConsumptionBonuses>
+    </ConsumptionBonuses>
+    <ShipNames>
+      <ShipName name="Bonsai" size="1"/>
+      <ShipName name="Cotoneaster" size="2"/>
+      <ShipName name="Maple" size="3"/>
+      <ShipName name="Malus" size="4"/>
+      <ShipName name="Cedar" size="5"/>
+      <ShipName name="Pine" size="6"/>
+      <ShipName name="Fir" size="7"/>
+      <ShipName name="Gingko" size="8"/>
+      <ShipName name="Oak" size="9"/>
+      <ShipName name="Spruce" size="10"/>
+      <ShipName name="Redwood" size="16"/>
+    </ShipNames>
+    <ShipClasses>
+      <ShipClass size="1" name="Lancer" _maxSpace="40" _shipCost="20" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="0" size="32" />
+        <Style xPos="32" yPos="0" size="32" />
+        <Style xPos="64" yPos="0" size="32" />
+        <Style xPos="96" yPos="0" size="32" />
+        <Style xPos="128" yPos="0" size="32" />
+        <Style xPos="160" yPos="0" size="32" />
+      </ShipClass>
+      <ShipClass size="2" name="Corvette" _maxSpace="160" _shipCost="80" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="0" size="32" />
+        <Style xPos="32" yPos="0" size="32" />
+        <Style xPos="64" yPos="0" size="32" />
+        <Style xPos="96" yPos="0" size="32" />
+        <Style xPos="128" yPos="0" size="32" />
+        <Style xPos="160" yPos="0" size="32" />
+      </ShipClass>
+      <ShipClass size="3" name="Frigate" _maxSpace="360" _shipCost="180" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="32" size="64" />
+        <Style xPos="64" yPos="32" size="64" />
+        <Style xPos="128" yPos="32" size="64" />
+        <Style xPos="192" yPos="32" size="64" />
+        <Style xPos="256" yPos="32" size="64" />
+        <Style xPos="318" yPos="32" size="64" />
+      </ShipClass>
+      <ShipClass size="4" name="Destroyer" _maxSpace="640" _shipCost="320" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="32" size="64" />
+        <Style xPos="64" yPos="32" size="64" />
+        <Style xPos="128" yPos="32" size="64" />
+        <Style xPos="192" yPos="32" size="64" />
+        <Style xPos="256" yPos="32" size="64" />
+        <Style xPos="318" yPos="32" size="64" />
+      </ShipClass>
+      <ShipClass size="5" name="Cruiser" _maxSpace="1000" _shipCost="500" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="96" size="96" />
+        <Style xPos="96" yPos="96" size="96" />
+        <Style xPos="192" yPos="96" size="96" />
+        <Style xPos="278" yPos="96" size="96" />
+        <Style xPos="370" yPos="96" size="96" />
+        <Style xPos="462" yPos="96" size="96" />
+      </ShipClass>
+      <ShipClass size="6" name="Battlecruiser" _maxSpace="1440" _shipCost="720" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="96" size="96" />
+        <Style xPos="96" yPos="96" size="96" />
+        <Style xPos="192" yPos="96" size="96" />
+        <Style xPos="278" yPos="96" size="96" />
+        <Style xPos="370" yPos="96" size="96" />
+        <Style xPos="462" yPos="96" size="96" />
+      </ShipClass>
+      <ShipClass size="7" name="Battleship" _maxSpace="1960" _shipCost="880" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="192" size="128" />
+        <Style xPos="128" yPos="192" size="128" />
+        <Style xPos="256" yPos="192" size="128" />
+        <Style xPos="384" yPos="192" size="128" />
+        <Style xPos="512" yPos="192" size="128" />
+        <Style xPos="640" yPos="192" size="128" />
+      </ShipClass>
+      <ShipClass size="8" name="Behemoth" _maxSpace="2560" _shipCost="1280" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="192" size="128" />
+        <Style xPos="128" yPos="192" size="128" />
+        <Style xPos="256" yPos="192" size="128" />
+        <Style xPos="384" yPos="192" size="128" />
+        <Style xPos="512" yPos="192" size="128" />
+        <Style xPos="640" yPos="192" size="128" />
+      </ShipClass>
+      <ShipClass size="9" name="Titan" _maxSpace="3240" _shipCost="1620" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="320" size="160" />
+        <Style xPos="160" yPos="320" size="160" />
+        <Style xPos="320" yPos="320" size="160" />
+        <Style xPos="480" yPos="320" size="160" />
+        <Style xPos="640" yPos="320" size="160" />
+        <Style xPos="800" yPos="320" size="160" />
+      </ShipClass>
+      <ShipClass size="10" name="Leviathan" _maxSpace="4000" _shipCost="2000" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="320" size="160" />
+        <Style xPos="160" yPos="320" size="160" />
+        <Style xPos="320" yPos="320" size="160" />
+        <Style xPos="480" yPos="320" size="160" />
+        <Style xPos="640" yPos="320" size="160" />
+        <Style xPos="800" yPos="320" size="160" />
+      </ShipClass>
+      <ShipClass size="16" name="Stupendous" _maxSpace="10240" _shipCost="5120" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="768" yPos="64" size="256" />
+      </ShipClass>
+    </ShipClasses>
+    <MiniAvatar xPos="0" yPos="781" />
+    <NeutralAvatar xPos="0" yPos="481" />
+    <PleasedAvatar xPos="300" yPos="481" />
+    <AnnoyedAvatar xPos="600" yPos="481" />
+    <GroundUnit xPos="192" yPos="0" />
+    <GroundUnitDying xPos="256" yPos="0" />
+    <City xPos="128" yPos="781" />
+    <TroopShip xPos="428" yPos="781" />
+    <FleetIcon xPos="224" yPos="0" />
+    <StartShips>
+      <Ship addToBlueprints="True" name="Scout" class="Corvette" style="1">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Colony Ship" class="Destroyer" style="1" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Standard Colony Base" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Colony Ship 2" class="Destroyer" style="3" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Hostile Colony Base" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Transport Ship" class="Destroyer" style="5" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Small Transport Pod" modifiableValues="_mounts,1" />
+      </Ship>
+    </StartShips>
+    <StartSystems>
+      <System override="False" inOrder="False" replacePlanets="True">
+        <Planet type="Terran1" owned="True" population="70">
+          <Region type="Industry" />
+          <Region type="Industry" />
+          <Region type="Agriculture" />
+          <Region type="Research" />
+          <Region type="Mining" />
+          <Region type="Undeveloped" />
+          <Region type="Undeveloped" />
+          <Region type="Undeveloped" />
+          <OutputSlider type="Industry" value="25" />
+          <OutputSlider type="Agriculture" value="25" />
+          <OutputSlider type="Research" value="25" />
+          <OutputSlider type="Mining" value="25" />
+        </Planet>
+        <Squadron name="Scout">
+          <Ship name="Scout" count="1" />
+        </Squadron>
+        <Squadron name="Colonizer">
+          <Ship name="Colony Ship" count="1" />
+        </Squadron>
+      </System>
+    </StartSystems>
+  </Race>
+  <Race>
+    <Attributes name="Space Hamsters" 
+                image="space_hamsters" 
+                description="Space Hamsters are hamsters in space.  Seriously.  One day they decided that spinning their little wheels aren't satisfactory enough, they want bigger wheels.  Frantic attempts to communicate with their owners failed, so they've decided to take matters in their own paws!" 
+                shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health"
+                consumes="Food,1.0"/>
+    <ProductionBonuses>
+      <Bonus multiplier="Research,1.2" />
+      <Bonus multiplier="Agriculture,0.75" />
+    </ProductionBonuses>
+    <ConsumptionBonuses>
+    </ConsumptionBonuses>
+    <ShipNames>
+      <ShipName name="Explorer" size="1"/>
+      <ShipName name="Escorter" size="2"/>
+      <ShipName name="Crusher" size="3"/>
+      <ShipName name="Voyager" size="4"/>
+      <ShipName name="Destroyer" size="5"/>
+      <ShipName name="Annihilator" size="6"/>
+      <ShipName name="Doom Bringer" size="7"/>
+      <ShipName name="Undaunted" size="8"/>
+      <ShipName name="Certain Death" size="9"/>
+      <ShipName name="Widow Maker" size="10"/>
+      <ShipName name="Destroyer of Hope" size="16"/>
+    </ShipNames>
+    <ShipClasses>      
+      <ShipClass size="1" name="Lancer" _maxSpace="40" _shipCost="20" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="0" size="32" />
+        <Style xPos="32" yPos="0" size="32" />
+        <Style xPos="64" yPos="0" size="32" />
+        <Style xPos="96" yPos="0" size="32" />
+        <Style xPos="128" yPos="0" size="32" />
+        <Style xPos="160" yPos="0" size="32" />
+      </ShipClass>
+      <ShipClass size="2" name="Corvette" _maxSpace="160" _shipCost="80" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="0" size="32" />
+        <Style xPos="32" yPos="0" size="32" />
+        <Style xPos="64" yPos="0" size="32" />
+        <Style xPos="96" yPos="0" size="32" />
+        <Style xPos="128" yPos="0" size="32" />
+        <Style xPos="160" yPos="0" size="32" />
+      </ShipClass>
+      <ShipClass size="3" name="Frigate" _maxSpace="360" _shipCost="180" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="32" size="64" />
+        <Style xPos="64" yPos="32" size="64" />
+        <Style xPos="128" yPos="32" size="64" />
+        <Style xPos="192" yPos="32" size="64" />
+        <Style xPos="256" yPos="32" size="64" />
+        <Style xPos="318" yPos="32" size="64" />
+      </ShipClass>
+      <ShipClass size="4" name="Destroyer" _maxSpace="640" _shipCost="320" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="32" size="64" />
+        <Style xPos="64" yPos="32" size="64" />
+        <Style xPos="128" yPos="32" size="64" />
+        <Style xPos="192" yPos="32" size="64" />
+        <Style xPos="256" yPos="32" size="64" />
+        <Style xPos="318" yPos="32" size="64" />
+      </ShipClass>
+      <ShipClass size="5" name="Cruiser" _maxSpace="1000" _shipCost="500" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="96" size="96" />
+        <Style xPos="96" yPos="96" size="96" />
+        <Style xPos="192" yPos="96" size="96" />
+        <Style xPos="278" yPos="96" size="96" />
+        <Style xPos="370" yPos="96" size="96" />
+        <Style xPos="462" yPos="96" size="96" />
+      </ShipClass>
+      <ShipClass size="6" name="Battlecruiser" _maxSpace="1440" _shipCost="720" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="96" size="96" />
+        <Style xPos="96" yPos="96" size="96" />
+        <Style xPos="192" yPos="96" size="96" />
+        <Style xPos="278" yPos="96" size="96" />
+        <Style xPos="370" yPos="96" size="96" />
+        <Style xPos="462" yPos="96" size="96" />
+      </ShipClass>
+      <ShipClass size="7" name="Battleship" _maxSpace="1960" _shipCost="880" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="192" size="128" />
+        <Style xPos="128" yPos="192" size="128" />
+        <Style xPos="256" yPos="192" size="128" />
+        <Style xPos="384" yPos="192" size="128" />
+        <Style xPos="512" yPos="192" size="128" />
+        <Style xPos="640" yPos="192" size="128" />
+      </ShipClass>
+      <ShipClass size="8" name="Behemoth" _maxSpace="2560" _shipCost="1280" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="192" size="128" />
+        <Style xPos="128" yPos="192" size="128" />
+        <Style xPos="256" yPos="192" size="128" />
+        <Style xPos="384" yPos="192" size="128" />
+        <Style xPos="512" yPos="192" size="128" />
+        <Style xPos="640" yPos="192" size="128" />
+      </ShipClass>
+      <ShipClass size="9" name="Titan" _maxSpace="3240" _shipCost="1620" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="320" size="160" />
+        <Style xPos="160" yPos="320" size="160" />
+        <Style xPos="320" yPos="320" size="160" />
+        <Style xPos="480" yPos="320" size="160" />
+        <Style xPos="640" yPos="320" size="160" />
+        <Style xPos="800" yPos="320" size="160" />
+      </ShipClass>
+      <ShipClass size="10" name="Leviathan" _maxSpace="4000" _shipCost="2000" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="320" size="160" />
+        <Style xPos="160" yPos="320" size="160" />
+        <Style xPos="320" yPos="320" size="160" />
+        <Style xPos="480" yPos="320" size="160" />
+        <Style xPos="640" yPos="320" size="160" />
+        <Style xPos="800" yPos="320" size="160" />
+      </ShipClass>
+      <ShipClass size="16" name="Stupendous" _maxSpace="10240" _shipCost="5120" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="768" yPos="64" size="256" />
+      </ShipClass>
+    </ShipClasses>
+    <MiniAvatar xPos="0" yPos="781" />
+    <NeutralAvatar xPos="0" yPos="481" />
+    <PleasedAvatar xPos="300" yPos="481" />
+    <AnnoyedAvatar xPos="600" yPos="481" />
+    <GroundUnit xPos="192" yPos="0" />
+    <GroundUnitDying xPos="256" yPos="0" />
+    <FleetIcon xPos="224" yPos="0" />
+    <City xPos="128" yPos="781" />
+    <TroopShip xPos="428" yPos="781" />
+    <StartShips>
+      <Ship addToBlueprints="True" name="Scout" class="Corvette" style="1">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Colony Ship" class="Destroyer" style="1" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Standard Colony Base" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Colony Ship 2" class="Destroyer" style="3" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Hostile Colony Base" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Transport Ship" class="Destroyer" style="5" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Small Transport Pod" modifiableValues="_mounts,1" />
+      </Ship>
+    </StartShips>
+    <StartSystems>
+      <System override="False" inOrder="False" replacePlanets="True">
+        <Planet type="Terran1" owned="True" population="70">
+          <Region type="Industry" />
+          <Region type="Industry" />
+          <Region type="Agriculture" />
+          <Region type="Research" />
+          <Region type="Mining" />
+          <Region type="Undeveloped" />
+          <Region type="Undeveloped" />
+          <Region type="Undeveloped" />
+          <OutputSlider type="Industry" value="25" />
+          <OutputSlider type="Agriculture" value="25" />
+          <OutputSlider type="Research" value="25" />
+          <OutputSlider type="Mining" value="25" />
+        </Planet>
+        <Squadron name="Scout">
+          <Ship name="Scout" count="1" />
+        </Squadron>
+        <Squadron name="Colonizer">
+          <Ship name="Colony Ship" count="1" />
+        </Squadron>
+      </System>
+    </StartSystems>
+  </Race>
+  <Race>
+    <Attributes name="Zero People" 
+                image="zero_people" 
+                description="Zero People were accidentally created one night by a group of computer science students trying to create a simple database query.  It gained sentience through luck, improbability, and a dash of spilled tea, and not much else need to be said except that they hate all living forms."
+                shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" 
+                consumes="Ores,1.0"/>
+    <ProductionBonuses>
+      <Bonus multiplier="Research,1.3" />
+      <Bonus multiplier="Agriculture,0" />
+    </ProductionBonuses>
+    <ConsumptionBonuses>
+      <Bonus multiplier="Industry,0.9" />
+    </ConsumptionBonuses>
+    <ShipNames>
+      <ShipName name="Explorer" size="1"/>
+      <ShipName name="Escorter" size="2"/>
+      <ShipName name="Crusher" size="3"/>
+      <ShipName name="Voyager" size="4"/>
+      <ShipName name="Destroyer" size="5"/>
+      <ShipName name="Annihilator" size="6"/>
+      <ShipName name="Doom Bringer" size="7"/>
+      <ShipName name="Undaunted" size="8"/>
+      <ShipName name="Certain Death" size="9"/>
+      <ShipName name="Widow Maker" size="10"/>
+      <ShipName name="Destroyer of Hope" size="16"/>
+    </ShipNames>
+    <ShipClasses>
+      <ShipClass size="1" name="Lancer" _maxSpace="40" _shipCost="20" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="0" size="32" />
+        <Style xPos="32" yPos="0" size="32" />
+        <Style xPos="64" yPos="0" size="32" />
+        <Style xPos="96" yPos="0" size="32" />
+        <Style xPos="128" yPos="0" size="32" />
+        <Style xPos="160" yPos="0" size="32" />
+      </ShipClass>
+      <ShipClass size="2" name="Corvette" _maxSpace="160" _shipCost="80" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="0" size="32" />
+        <Style xPos="32" yPos="0" size="32" />
+        <Style xPos="64" yPos="0" size="32" />
+        <Style xPos="96" yPos="0" size="32" />
+        <Style xPos="128" yPos="0" size="32" />
+        <Style xPos="160" yPos="0" size="32" />
+      </ShipClass>
+      <ShipClass size="3" name="Frigate" _maxSpace="360" _shipCost="180" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="32" size="64" />
+        <Style xPos="64" yPos="32" size="64" />
+        <Style xPos="128" yPos="32" size="64" />
+        <Style xPos="192" yPos="32" size="64" />
+        <Style xPos="256" yPos="32" size="64" />
+        <Style xPos="318" yPos="32" size="64" />
+      </ShipClass>
+      <ShipClass size="4" name="Destroyer" _maxSpace="640" _shipCost="320" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="32" size="64" />
+        <Style xPos="64" yPos="32" size="64" />
+        <Style xPos="128" yPos="32" size="64" />
+        <Style xPos="192" yPos="32" size="64" />
+        <Style xPos="256" yPos="32" size="64" />
+        <Style xPos="318" yPos="32" size="64" />
+      </ShipClass>
+      <ShipClass size="5" name="Cruiser" _maxSpace="1000" _shipCost="500" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="96" size="96" />
+        <Style xPos="96" yPos="96" size="96" />
+        <Style xPos="192" yPos="96" size="96" />
+        <Style xPos="278" yPos="96" size="96" />
+        <Style xPos="370" yPos="96" size="96" />
+        <Style xPos="462" yPos="96" size="96" />
+      </ShipClass>
+      <ShipClass size="6" name="Battlecruiser" _maxSpace="1440" _shipCost="720" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="96" size="96" />
+        <Style xPos="96" yPos="96" size="96" />
+        <Style xPos="192" yPos="96" size="96" />
+        <Style xPos="278" yPos="96" size="96" />
+        <Style xPos="370" yPos="96" size="96" />
+        <Style xPos="462" yPos="96" size="96" />
+      </ShipClass>
+      <ShipClass size="7" name="Battleship" _maxSpace="1960" _shipCost="880" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="192" size="128" />
+        <Style xPos="128" yPos="192" size="128" />
+        <Style xPos="256" yPos="192" size="128" />
+        <Style xPos="384" yPos="192" size="128" />
+        <Style xPos="512" yPos="192" size="128" />
+        <Style xPos="640" yPos="192" size="128" />
+      </ShipClass>
+      <ShipClass size="8" name="Behemoth" _maxSpace="2560" _shipCost="1280" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="192" size="128" />
+        <Style xPos="128" yPos="192" size="128" />
+        <Style xPos="256" yPos="192" size="128" />
+        <Style xPos="384" yPos="192" size="128" />
+        <Style xPos="512" yPos="192" size="128" />
+        <Style xPos="640" yPos="192" size="128" />
+      </ShipClass>
+      <ShipClass size="9" name="Titan" _maxSpace="3240" _shipCost="1620" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="320" size="160" />
+        <Style xPos="160" yPos="320" size="160" />
+        <Style xPos="320" yPos="320" size="160" />
+        <Style xPos="480" yPos="320" size="160" />
+        <Style xPos="640" yPos="320" size="160" />
+        <Style xPos="800" yPos="320" size="160" />
+      </ShipClass>
+      <ShipClass size="10" name="Leviathan" _maxSpace="4000" _shipCost="2000" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="0" yPos="320" size="160" />
+        <Style xPos="160" yPos="320" size="160" />
+        <Style xPos="320" yPos="320" size="160" />
+        <Style xPos="480" yPos="320" size="160" />
+        <Style xPos="640" yPos="320" size="160" />
+        <Style xPos="800" yPos="320" size="160" />
+      </ShipClass>
+      <ShipClass size="16" name="Stupendous" _maxSpace="10240" _shipCost="5120" script="BasicShip" HitPoints="20" shipIcons="ShieldAbsorption|ArmorAbsorption|Power|Time|Health" designIcons="MaxHealth|ShieldAbsorption|ArmorAbsorption|PowerRechargeRate|PowerCapacity|MaxTime|GalaxySpeed|CombatSpeed|Cost|MaxSpace">
+        <Style xPos="768" yPos="64" size="256" />
+      </ShipClass>
+    </ShipClasses>
+    <MiniAvatar xPos="0" yPos="781" />
+    <NeutralAvatar xPos="0" yPos="481" />
+    <PleasedAvatar xPos="300" yPos="481" />
+    <AnnoyedAvatar xPos="600" yPos="481" />
+    <GroundUnit xPos="192" yPos="0" />
+    <GroundUnitDying xPos="256" yPos="0" />
+    <FleetIcon xPos="224" yPos="0" />
+    <City xPos="128" yPos="781" />
+    <TroopShip xPos="428" yPos="781" />
+    <StartShips>
+      <Ship addToBlueprints="True" name="Scout" class="Corvette" style="1">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Colony Ship" class="Destroyer" style="1" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Standard Colony Base" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Colony Ship 2" class="Destroyer" style="3" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Hostile Colony Base" />
+      </Ship>
+      <Ship addToBlueprints="True" name="Transport Ship" class="Destroyer" style="5" >
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Small Transport Pod" modifiableValues="_mounts,1" />
+      </Ship>
+    </StartShips>
+    <StartSystems>
+      <System override="False" inOrder="False" replacePlanets="True">
+        <Planet type="Terran1" owned="True" population="70">
+          <Region type="Industry" />
+          <Region type="Industry" />
+          <Region type="Research" />
+          <Region type="Mining" />
+          <Region type="Mining" />
+          <Region type="Undeveloped" />
+          <Region type="Undeveloped" />
+          <Region type="Undeveloped" />
+          <OutputSlider type="Industry" value="33" />
+          <OutputSlider type="Research" value="33" />
+          <OutputSlider type="Mining" value="34" />
+        </Planet>
+        <Squadron name="Scout">
+          <Ship name="Scout" count="1" />
+        </Squadron>
+        <Squadron name="Colonizer">
+          <Ship name="Colony Ship" count="1" />
+        </Squadron>
+      </System>
+    </StartSystems>
+  </Race>-->
+</Races>

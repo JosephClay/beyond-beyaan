@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Battle>
+  <Layout size="150" />
+  <Empires>
+    <Empire race="Humans" name="Zeraan" player="Human" color="255,0,0">
+      <Ship name="Devastator" class="Destroyer" style="0" posX="10" posY="25" rotation="90">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Plasma" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Ion" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Shield I" mountItem="Shield Generator" modifiableValues="_mounts,1" />
+      </Ship>
+      <Ship name="Devastator" class="Destroyer" style="0" posX="13" posY="35" rotation="90">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Plasma" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Ion" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Shield I" mountItem="Shield Generator" modifiableValues="_mounts,1" />
+      </Ship>
+    </Empire>
+    <Empire race="Zero People" name="Dummy" player="CPU" ai="Bully AI" color="0,0,255">
+      <Ship name="Scout" class="Corvette" style="1" posX="40" posY="25" rotation="270">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Shield I" mountItem="Shield Generator" modifiableValues="_mounts,1" />
+      </Ship>
+      <Ship name="Scout" class="Lancer" style="1" posX="34" posY="21" rotation="270">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Shield I" mountItem="Shield Generator" modifiableValues="_mounts,1" />
+      </Ship>
+      <Ship name="Scout" class="Lancer" style="1" posX="38" posY="29" rotation="270">
+        <Equipment mainItem="Tokamak" mountItem="Light Reactor" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Nuclear" mountItem="Small Drive" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Retro" mountItem="Small Exhaust" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Duralloy" mountItem="Light Plating" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Laser" mountItem="Light Cannon" modifiableValues="_mounts,1" />
+        <Equipment mainItem="Shield I" mountItem="Shield Generator" modifiableValues="_mounts,1" />
+      </Ship>
+    </Empire>
+  </Empires>
+</Battle>

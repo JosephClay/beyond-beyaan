@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SectorTypes>
+  <Planets>
+    <Planet
+      name="Terran"
+      code="Terran1"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*10"
+      description="Terran planets are brimming with life, with a balanced ecosystem and an excellent atmosphere for living in." />
+    <Planet
+      name="Terran"
+      code="Terran2"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*10"
+      description="Terran planets are brimming with life, with a balanced ecosystem and an excellent atmosphere for living in." />
+    <Planet
+      name="Jungle"
+      code="Jungle"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*8"
+      description="Jungle planets are abundant in life, but some of them are hostile or carries parasites." />
+    <Planet
+      name="Steppe"
+      code="Steppe"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*8"
+      description="Steppe planets usually are not very fertile, and supports limited amount of life." />
+    <Planet
+      name="Oceanic"
+      code="Oceanic"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*6"
+      description="Oceanic planets have the vast majority of their surface covered with water, with very little if any landmasses." />
+    <Planet
+      name="Desert"
+      code="Desert"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*6"
+      description="Desert planets have very little water, barely enough to sustain some life." />
+    <Planet
+      name="Badlands"
+      code="Badlands"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*5"
+      description="Badlands planets has a fitting name, bad lands.  Usually they have very rocky surfaces, and very little life." />
+    <Planet
+      name="Tundra"
+      code="Tundra"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*5"
+      description="Tundra planets are very cold, very little life lives on those kind of planets." />
+    <Planet
+      name="Arctic"
+      code="Arctic"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*4"
+      description="Artic planets have an atmosphere, but the temperatures range hundreds below zero on warmest days." />
+    <Planet
+      name="Barren"
+      code="Barren"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*4"
+      description="Barren planets have an atmosphere, but no life forms.  Atmosphere normally aren't breathable." />
+    <Planet
+      name="Dead"
+      code="Dead"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*3"
+      description="Dead planets have no atmosphere, no life, and no core activity.  Just a rock hurling in space." />
+    <Planet
+      name="Volcanic"
+      code="Volcanic"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*3"
+      description="Volcanic planets have a very active molten core.  They are rift with massive earthquakes and volcanoes." />
+    <Planet
+      name="Toxic"
+      code="Toxic1"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*2"
+      description="Toxic planets have corrosive atmosphere, with surface covered with corrosive elements." />
+    <Planet
+      name="Toxic"
+      code="Toxic2"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*2"
+      description="Toxic planets have corrosive atmosphere, with surface covered with corrosive elements." />
+    <Planet
+      name="Radiated"
+      code="Radiated1"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*1"
+      description="Radiated planets are the worst inhabitable type of planets, their surfaces are covered with unstable elements, requiring heavy shielding." />
+    <Planet
+      name="Radiated"
+      code="Radiated2"
+      inhabitable="true"
+      localProjects="true"
+      improvements="5,10"
+      improvementType="Planet"
+      miniImprovementType="Planet"
+      population="#improvements#*1"
+      description="Radiated planets are the worst inhabitable type of planets, their surfaces are covered with unstable elements, requiring heavy shielding." />
+    <Planet
+      name="Asteroids"
+      code="Asteroids"
+      inhabitable="false"
+      localProjects="false"
+      description="Asteroids are a bunch of rocks that either failed to create a planet, or remains of a destroyed planet." />
+    <Planet
+      name="Gas Giant"
+      code="Gas Giant"
+      inhabitable="false"
+      localProjects="false"
+      description="Gas giants are massive planets with crushing atmosphere pressure and gravity." />
+  </Planets>
+  <Starlanes>
+    <Starlane
+      name="Starlane"
+      code="Starlane"
+      generateName="Starlane"
+      inhabitable="false"
+      localProjects="false"
+      improvements="1"
+      isGateway="true"
+      gatewayColor="255,255,255"
+      connectsToAnother="true"
+      connectionAlgorithm="minimum"
+      description="After many years of frequent travel by ships, the space between stars developed a &quot;groove&quot; which is similar to wormholes, but are weakly present.  They make distances shorter for traveling ships." />
+  </Starlanes>
+  <Wormholes>
+    <Wormhole
+      name="Wormhole"
+      code="Wormhole"
+      generateName="Wormhole"
+      inhabitable="false"
+      localProjects="false"
+      improvements="1"
+      isGateway="true"
+      gatewayColor="0,255,0"
+      connectsToAnother="true"
+      connectionAlgorithm="farthest"
+      description="At one point in history, something caused those wormholes to form.  Those wormholes allows ships to travel to the other side almost instantly." />
+  </Wormholes>
+</SectorTypes>

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UITypes>
+  <UIType name="Window" type="Window" />
+  <UIType name="NewGameButton" type="Button" background="NewGameBG" foreground="NewGameFG" />
+  <UIType name="LoadGameButton" type="Button" background="LoadGameBG" foreground="LoadGameFG" />
+  <UIType name="ContinueGameButton" type="Button" background="ContinueGameBG" foreground="ContinueGameFG" />
+  <UIType name="ExitGameButton" type="Button" background="ExitGameBG" foreground="ExitGameFG" />
+  <UIType name="Label" type="Label" />
+  <UIType name="Image" type="Image" />
+  <UIType name="CameraView" type="CameraView" />
+  <UIType name="Slider" type="HorizontalSlider"
+          background="SliderBGBar"
+          foreground="SliderFGBar"
+          left_middle_background="ScrollLeftBGButton"
+          middle_background="SliderBGButton"
+          right_middle_background="ScrollRightBGButton"
+          left_middle_foreground="ScrollLeftFGButton"
+          middle_foreground="SliderFGButton"
+          right_middle_foreground="ScrollRightFGButton"/>
+  <UIType name="StretchableButton" type="StretchableButton" 
+          top_left_background="ButtonBGTL" 
+          top_middle_background="ButtonBGTC" 
+          top_right_background="ButtonBGTR" 
+          left_middle_background="ButtonBGCL" 
+          middle_background="ButtonBGCC" 
+          right_middle_background="ButtonBGCR" 
+          bottom_left_background="ButtonBGBL" 
+          bottom_middle_background="ButtonBGBC" 
+          bottom_right_background="ButtonBGBR" 
+          top_left_foreground="ButtonFGTL" 
+          top_middle_foreground="ButtonFGTC" 
+          top_right_foreground="ButtonFGTR" 
+          left_middle_foreground="ButtonFGCL" 
+          middle_foreground="ButtonFGCC" 
+          right_middle_foreground="ButtonFGCR" 
+          bottom_left_foreground="ButtonFGBL" 
+          bottom_middle_foreground="ButtonFGBC" 
+          bottom_right_foreground="ButtonFGBR" />
+  <UIType name="DropDown" type="DropDown"
+          top_left_background="ButtonBGTL"
+          top_middle_background="ButtonBGTC"
+          top_right_background="ButtonBGTR"
+          left_middle_background="ButtonBGCL"
+          middle_background="ButtonBGCC"
+          right_middle_background="ButtonBGCR"
+          bottom_left_background="ButtonBGBL"
+          bottom_middle_background="ButtonBGBC"
+          bottom_right_background="ButtonBGBR"
+          top_left_foreground="ButtonFGTL"
+          top_middle_foreground="ButtonFGTC"
+          top_right_foreground="ButtonFGTR"
+          left_middle_foreground="ButtonFGCL"
+          middle_foreground="ButtonFGCC"
+          right_middle_foreground="ButtonFGCR"
+          bottom_left_foreground="ButtonFGBL"
+          bottom_middle_foreground="ButtonFGBC"
+          bottom_right_foreground="ButtonFGBR"
+          down_background="DownBG"
+          down_foreground="DownFG" />
+  <UIType name="ThickBorder" type="StretchableImage"
+          top_left_background="ThickBorderBGTL"
+          top_middle_background="ThickBorderBGTC"
+          top_right_background="ThickBorderBGTR"
+          left_middle_background="ThickBorderBGCL"
+          middle_background="ThickBorderBGCC"
+          right_middle_background="ThickBorderBGCR"
+          bottom_left_background="ThickBorderBGBL"
+          bottom_middle_background="ThickBorderBGBC"
+          bottom_right_background="ThickBorderBGBR" />
+  <UIType name="MediumBorder" type="StretchableImage"
+          top_left_background="MediumBorderBGTL"
+          top_middle_background="MediumBorderBGTC"
+          top_right_background="MediumBorderBGTR"
+          left_middle_background="MediumBorderBGCL"
+          middle_background="MediumBorderBGCC"
+          right_middle_background="MediumBorderBGCR"
+          bottom_left_background="MediumBorderBGBL"
+          bottom_middle_background="MediumBorderBGBC"
+          bottom_right_background="MediumBorderBGBR" />
+  <UIType name="ThinBorder" type="StretchableImage"
+          top_left_background="ThinBorderBGTL"
+          top_middle_background="ThinBorderBGTC"
+          top_right_background="ThinBorderBGTR"
+          left_middle_background="ThinBorderBGCL"
+          middle_background="ThinBorderBGCC"
+          right_middle_background="ThinBorderBGCR"
+          bottom_left_background="ThinBorderBGBL"
+          bottom_middle_background="ThinBorderBGBC"
+          bottom_right_background="ThinBorderBGBR" />
+</UITypes>

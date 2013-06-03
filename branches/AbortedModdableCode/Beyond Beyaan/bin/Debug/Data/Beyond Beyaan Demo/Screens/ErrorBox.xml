@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Screen movable="true" width="400" height="200" xPos="XMIDDLE-200" yPos="YMIDDLE-100">
+  <UIElement UIType="MediumBorder" xPos="0" yPos="0" width="WIDTH" height="HEIGHT" />
+  <UIElement UIType="Label" xPos="20" yPos="20" content="[ErrorMessage]" />
+  <UIElement UIType="StretchableButton" OnClick="ClearErrors|CloseWindow" xPos="XMIDDLE-75" yPos="HEIGHT-50" width="150" height="35" content="OK" />
+</Screen>

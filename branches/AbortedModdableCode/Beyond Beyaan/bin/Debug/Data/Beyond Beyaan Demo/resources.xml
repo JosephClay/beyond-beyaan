@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Resources>
+  <Resource name="Billion Credit" abbreviation="BC" icon="Commerce" storable="True" limitTo="Empire" />
+  <Resource name="Food" abbreviation="FD" icon="Food" storable="False" convertsTo="Billion Credit" ratio="0.5" limitTo="Empire" />
+  <Resource name="Ores" abbreviation="OR" icon="Ores" storable="True" limitTo="Empire" />
+  <Resource name="Industry" abbreviation="ID" icon="Industry" storable="False" convertsTo="Billion Credit" ratio="0.75" limitTo="SystemDevelopment" />
+  <Resource name="Research" abbreviation="RP" icon="Research" storable="False" limitTo="EmpireDevelopment" />
+  <Resource name="Radioactives" abbreviation="RA" icon="Research" storable="True" limitTo="Empire" />
+  <Resource name="Development" abbreviation="DM" icon="Industry" storable="False" limitTo="PlanetDevelopment" convertsTo="Billion Credit" ratio="0.5" />
+</Resources>
