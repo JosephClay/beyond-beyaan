@@ -18,9 +18,11 @@ namespace Beyond_Beyaan.Data_Modules
 		private bool _movable;
 		private GameMain _gameMain;
 		private List<UIType> UITypes;
+		public Dictionary<string, string> Values { get; private set; }
 
 		public bool LoadScreen(XElement rootElement, int width, int height, GameMain gameMain, out string reason)
 		{
+			Values = new Dictionary<string, string>();
 			//Set defaults
 			_movable = false;
 			_width = width;
@@ -78,7 +80,7 @@ namespace Beyond_Beyaan.Data_Modules
 						return false;
 					}
 					string type = element.Attribute("UIType").Value;
-					UIType newUI = gameMain.UITypeManager.GetUI(type, _gameMain.Random);
+					UIType newUI = gameMain.UITypeManager.GetUI(type, this, _gameMain.Random);
 					if (newUI == null)
 					{
 						reason = type + " UI Type in {0} is not defined in UITypes.xml.";

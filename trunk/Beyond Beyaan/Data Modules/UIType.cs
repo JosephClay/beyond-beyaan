@@ -9,7 +9,7 @@ using Font = GorgonLibrary.Graphics.Font;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	public enum UITypeEnum { IMAGE, STRETCHABLE_IMAGE, LABEL, BUTTON, STRETCHABLE_BUTTON, DROPDOWN, CAMERA_VIEW }
+	public enum UITypeEnum { IMAGE, STRETCHABLE_IMAGE, LABEL, BUTTON, STRETCHABLE_BUTTON, DROPDOWN, CAMERA_VIEW, WINDOW, HORIZONTIAL_SLIDER, VERTICAL_SLIDER }
 	public enum BaseUISprites
 		{
 			BACKGROUND,
@@ -82,6 +82,15 @@ namespace Beyond_Beyaan.Data_Modules
 										break;
 									case "cameraview":
 										Type = UITypeEnum.CAMERA_VIEW;
+										break;
+									case "window":
+										Type = UITypeEnum.WINDOW;
+										break;
+									case "horizontalslider":
+										Type = UITypeEnum.HORIZONTIAL_SLIDER;
+										break;
+									case "verticalslider":
+										Type = UITypeEnum.VERTICAL_SLIDER;
 										break;
 								}
 							} break;
@@ -266,8 +275,11 @@ namespace Beyond_Beyaan.Data_Modules
 		private int _templateHeight;
 		#endregion
 
-		public UIType(BaseUIType baseUIType, Random r)
+		private Screen _parent;
+
+		public UIType(BaseUIType baseUIType, Screen parent, Random r)
 		{
+			_parent = parent;
 			_color = Color.White;
 			_textColor = Color.White;
 			_sprites = new Dictionary<BaseUISprites, BBSprite>();
@@ -280,17 +292,14 @@ namespace Beyond_Beyaan.Data_Modules
 			_type = baseUIType.Type;
 			Enabled = true;
 
-			_pulses = new List<float>();
-			_directions = new List<bool>();
-			_presseds = new List<bool>();
-			_selecteds = new List<bool>();
-
 			switch (_type)
 			{
-				//TODO: Add scrollbars and sliders
+				//TODO: Add scrollbars
 				case UITypeEnum.DROPDOWN:
 				case UITypeEnum.BUTTON:
 				case UITypeEnum.STRETCHABLE_BUTTON:
+				case UITypeEnum.HORIZONTIAL_SLIDER:
+				case UITypeEnum.VERTICAL_SLIDER:
 					{
 						ClearButtonData();
 					} break;
@@ -508,6 +517,11 @@ namespace Beyond_Beyaan.Data_Modules
 					{
 						CameraView_Draw(xOffset, yOffset);
 					} break;
+				case UITypeEnum.HORIZONTIAL_SLIDER:
+				case UITypeEnum.VERTICAL_SLIDER:
+					{
+						Slider_Draw(xOffset, yOffset);
+					} break;
 			}
 		}
 
@@ -521,6 +535,12 @@ namespace Beyond_Beyaan.Data_Modules
 		#region Handy Dandy Functions
 		private void ClearButtonData()
 		{
+			//Clear out old data
+			_pulses = new List<float>();
+			_directions = new List<bool>();
+			_presseds = new List<bool>();
+			_selecteds = new List<bool>();
+
 			//Main button
 			_pulses.Add(0);
 			_directions.Add(false);
@@ -1175,6 +1195,156 @@ namespace Beyond_Beyaan.Data_Modules
 					_pulses[whichButton] = 0;
 				}
 			}
+		}
+		#endregion
+
+		#region Slider/Scrollbar functions
+		private void Slider_Draw(int xOffset, int yOffset)
+		{
+			var leftOrUpButtonBG = _sprites[BaseUISprites.LEFT_MIDDLE_BACKGROUND];
+			var leftOrUpButtonFG = _sprites[BaseUISprites.LEFT_MIDDLE_FOREGROUND];
+			var rightOrDownButtonBG = _sprites[BaseUISprites.RIGHT_MIDDLE_BACKGROUND];
+			var rightOrDownButtonFG = _sprites[BaseUISprites.RIGHT_MIDDLE_FOREGROUND];
+			var sliderButtonBG = _sprites[BaseUISprites.MIDDLE_BACKGROUND];
+			var sliderButtonFG = _sprites[BaseUISprites.MIDDLE_FOREGROUND];
+			var barBG = _sprites[BaseUISprites.BACKGROUND];
+			var barFG = _sprites[BaseUISprites.FOREGROUND];
+			int xPos = _xPos + xOffset;
+			int yPos = _yPos + yOffset;
+			float scale = Type == UITypeEnum.HORIZONTIAL_SLIDER ? (_height/leftOrUpButtonBG.Height) : (_width/leftOrUpButtonBG.Width);
+			float barScale = Type == UITypeEnum.HORIZONTIAL_SLIDER ? ((_width - (leftOrUpButtonBG.Width * 2)) / barBG.Width) : ((_height - (leftOrUpButtonBG.Height * 2)) / barBG.Height);
+			if (Enabled)
+			{
+				if (_presseds[UP_OR_LEFT] || _selecteds[UP_OR_LEFT])
+				{
+					leftOrUpButtonFG.Draw(xPos, yPos, scale, scale, _color);
+				}
+				else
+				{
+					leftOrUpButtonBG.Draw(xPos, yPos, scale, scale, _color);
+					if (_pulses[UP_OR_LEFT] > 0)
+					{
+						leftOrUpButtonFG.Draw(xPos, yPos, scale, scale, Color.FromArgb((byte)(255 * _pulses[UP_OR_LEFT]), _color));
+					}
+				}
+				if (Type == UITypeEnum.HORIZONTIAL_SLIDER)
+				{
+					xPos += (int)(leftOrUpButtonBG.Width * scale);
+				}
+				else
+				{
+					yPos += (int)(leftOrUpButtonBG.Height * scale);
+				}
+				barBG.Draw(xPos, yPos, Type == UITypeEnum.HORIZONTIAL_SLIDER ? barScale : scale, Type == UITypeEnum.HORIZONTIAL_SLIDER ? scale : barScale, _color);
+				if (Type == UITypeEnum.HORIZONTIAL_SLIDER)
+				{
+					xPos += (int)(barBG.Width * barScale);
+				}
+				else
+				{
+					yPos += (int)(barBG.Height * barScale);
+				}
+				if (_presseds[DOWN_OR_RIGHT] || _selecteds[DOWN_OR_RIGHT])
+				{
+					rightOrDownButtonFG.Draw(xPos, yPos, scale, scale, _color);
+				}
+				else
+				{
+					rightOrDownButtonBG.Draw(xPos, yPos, scale, scale, _color);
+					if (_pulses[DOWN_OR_RIGHT] > 0)
+					{
+						rightOrDownButtonFG.Draw(xPos, yPos, scale, scale, Color.FromArgb((byte)(255 * _pulses[DOWN_OR_RIGHT]), _color));
+					}
+				}
+			}
+			else
+			{
+				if (_selecteds[UP_OR_LEFT])
+				{
+					leftOrUpButtonFG.Draw(xPos, yPos, scale, scale, _disabledColor);
+				}
+				else
+				{
+					leftOrUpButtonBG.Draw(xPos, yPos, scale, scale, _disabledColor);
+				}
+				if (Type == UITypeEnum.HORIZONTIAL_SLIDER)
+				{
+					xPos += (int)(leftOrUpButtonBG.Width * scale);
+				}
+				else
+				{
+					yPos += (int)(leftOrUpButtonBG.Height * scale);
+				}
+				barBG.Draw(xPos, yPos, Type == UITypeEnum.HORIZONTIAL_SLIDER ? barScale : scale, Type == UITypeEnum.HORIZONTIAL_SLIDER ? scale : barScale, _disabledColor);
+				if (Type == UITypeEnum.HORIZONTIAL_SLIDER)
+				{
+					xPos += (int)(barBG.Width * barScale);
+				}
+				else
+				{
+					yPos += (int)(barBG.Height * barScale);
+				}
+				if (_selecteds[DOWN_OR_RIGHT])
+				{
+					rightOrDownButtonBG.Draw(xPos, yPos, scale, scale, _disabledColor);
+				}
+				else
+				{
+					rightOrDownButtonBG.Draw(xPos, yPos, scale, scale, _disabledColor);
+				}
+			}
+		}
+		private bool Slider_MouseDown(int mouseX, int mouseY)
+		{
+			if (!Enabled)
+			{
+				return false;
+			}
+			if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos && mouseY < _yPos + _height)
+			{
+				/*if (toolTipEnabled)
+				{
+					toolTip.SetShowing(false);
+				}*/
+				_presseds[BUTTON] = true;
+				return true;
+			}
+			return false;
+		}
+		private bool Slider_MouseUp(int mouseX, int mouseY)
+		{
+			if (Enabled && _presseds[BUTTON])
+			{
+				/*if (toolTipEnabled)
+				{
+					toolTip.SetShowing(false);
+				}*/
+				_presseds[BUTTON] = false;
+				if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos && mouseY < _yPos + _height)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		private bool Slider_MouseHover(int mouseX, int mouseY, float frameDeltaTime)
+		{
+			if (mouseX >= _xPos && mouseX < _xPos + _width && mouseY >= _yPos && mouseY < _yPos + _height)
+			{
+				UpdatePulse(BUTTON, true, frameDeltaTime);
+				/*if (toolTipEnabled)
+				{
+					toolTip.SetShowing(true);
+					toolTip.MouseHover(x, y, frameDeltaTime);
+				}*/
+				return true;
+			}
+			UpdatePulse(BUTTON, false, frameDeltaTime);
+			/*if (toolTipEnabled)
+			{
+				toolTip.SetShowing(false);
+			}*/
+			return false;
 		}
 		#endregion
 		#endregion
