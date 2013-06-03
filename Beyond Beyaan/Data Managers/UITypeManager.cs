@@ -38,11 +38,11 @@ namespace Beyond_Beyaan.Data_Managers
 			return true;
 		}
 
-		public UIType GetUI(string type, Random r)
+		public UIType GetUI(string type, Screen parent, Random r)
 		{
 			if (_uiTypes.ContainsKey(type))
 			{
-				return new UIType(_uiTypes[type], r);
+				return new UIType(_uiTypes[type], parent, r);
 			}
 			return null;
 		}

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <UITypes>
+  <UIType name="Window" type="Window" />
   <UIType name="NewGameButton" type="Button" background="NewGameBG" foreground="NewGameFG" />
   <UIType name="LoadGameButton" type="Button" background="LoadGameBG" foreground="LoadGameFG" />
   <UIType name="ContinueGameButton" type="Button" background="ContinueGameBG" foreground="ContinueGameFG" />
@@ -7,6 +8,15 @@
   <UIType name="Label" type="Label" />
   <UIType name="Image" type="Image" />
   <UIType name="CameraView" type="CameraView" />
+  <UIType name="Slider" type="HorizontalSlider"
+          background="SliderBGBar"
+          foreground="SliderFGBar"
+          left_middle_background="ScrollLeftBGButton"
+          middle_background="SliderBGButton"
+          right_middle_background="ScrollRightBGButton"
+          left_middle_foreground="ScrollLeftFGButton"
+          middle_foreground="SliderFGButton"
+          right_middle_foreground="ScrollRightFGButton"/>
   <UIType name="StretchableButton" type="StretchableButton" 
           top_left_background="ButtonBGTL" 
           top_middle_background="ButtonBGTC" 

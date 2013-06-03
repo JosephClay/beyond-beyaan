@@ -243,4 +243,30 @@
   <Sprite name="ThinBorderBGBR" file="main.png">
     <Frame x="673" y="65" width="30" height="13" />
   </Sprite>
+  
+  <!--Slider and Scrollbar images-->
+  <Sprite name="ScrollLeftBGButton" file="main.png">
+    <Frame x="560" y="48" width="16" height="16" />
+  </Sprite>
+  <Sprite name="ScrollLeftFGButton" file="main.png">
+    <Frame x="576" y="48" width="16" height="16" />
+  </Sprite>
+  <Sprite name="ScrollRightBGButton" file="main.png">
+    <Frame x="560" y="80" width="16" height="16" />
+  </Sprite>
+  <Sprite name="ScrollRightFGButton" file="main.png">
+    <Frame x="576" y="80" width="16" height="16" />
+  </Sprite>
+  <Sprite name="SliderBGBar" file="main.png">
+    <Frame x="544" y="112" width="16" height="16" />
+  </Sprite>
+  <Sprite name="SliderFGBar" file="main.png">
+    <Frame x="560" y="112" width="16" height="16" />
+  </Sprite>
+  <Sprite name="SliderBGButton" file="main.png">
+    <Frame x="576" y="112" width="16" height="16" />
+  </Sprite>
+  <Sprite name="SliderFGButton" file="main.png">
+    <Frame x="592" y="112" width="16" height="16" />
+  </Sprite>
 </Sprites>
