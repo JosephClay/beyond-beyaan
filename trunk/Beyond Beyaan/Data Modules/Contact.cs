@@ -1,10 +1,13 @@
-﻿namespace Beyond_Beyaan.Data_Modules
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Beyond_Beyaan.Data_Modules
 {
-	public enum MessageType
-	{
-		ALLIANCE, NONAGGRESSION, TRADE, RESEARCH, OFFER_PEACE, WAR, BREAK_ALLIANCE, BREAK_NONAGGRESSION, BREAK_TRADE, BREAK_RESEARCH, HARASS_EMPIRE, RECONCILE_EMPIRE, NONE,
+	enum MessageType { ALLIANCE, NONAGGRESSION, TRADE, RESEARCH, OFFER_PEACE, WAR, BREAK_ALLIANCE, BREAK_NONAGGRESSION, BREAK_TRADE, BREAK_RESEARCH, HARASS_EMPIRE, RECONCILE_EMPIRE, NONE,
 						ACCEPT_ALLIANCE, ACCEPT_NONAGGRESSION, ACCEPT_TRADE, ACCEPT_HARASS, ACCEPT_RECONCILE, ACCEPT_RESEARCH, ACCEPT_PEACE, DECLINE_REQUEST}
-	public class Contact
+	class Contact
 	{
 		public Empire EmpireInContact { get; set; }
 		public bool Contacted { get; set; }

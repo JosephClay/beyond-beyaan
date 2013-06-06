@@ -1,81 +1,300 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
-using GorgonLibrary.Graphics;
-using Beyond_Beyaan.Data_Managers;
+using System.Linq;
+using System.Text;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	public class Ship
+	class Ship
 	{
 		#region Properties
-		public string ClassName { get; private set; }
-		public int Size { get; private set; }
-		public int NumberOfStyles { get; private set; }
-		public List<Sprite> Sprites { get; private set; }
-		public List<Icon> DisplayIcons { get; private set; }
-		public List<Icon> DesignIcons { get; private set; }
-
-		public Dictionary<string, object> Values { get; private set; }
-		public ShipScript ShipScript { get; private set; }
+		public string Name { get; set; }
+		public int Cost { get; set; }
+		public int Size { get; set; }
+		public int WhichStyle { get; set; }
+		public Engine engine;
+		public Shield shield;
+		public Armor armor;
+		public Computer computer;
+		public List<Weapon> weapons;
+		public float Maintenance { get { return Cost * 0.1f; } }
+		public int TotalSpace { get { return Size * Size * 40; } }
 		#endregion
 
 		#region Constructors
-		public Ship(XElement shipClass, Sprite graphicSprite, string raceName, ShipScript shipScript, IconManager iconManager)
+		public Ship()
 		{
-
-			Values = new Dictionary<string,object>();
-
-			foreach (XAttribute attribute in shipClass.Attributes())
+			weapons = new List<Weapon>();
+		}
+		public Ship(Ship shipToCopy)
+		{
+			Name = shipToCopy.Name;
+			Cost = shipToCopy.Cost;
+			Size = shipToCopy.Size;
+			WhichStyle = shipToCopy.WhichStyle;
+			engine = shipToCopy.engine;
+			shield = shipToCopy.shield;
+			armor = shipToCopy.armor;
+			computer = shipToCopy.computer;
+			weapons = new List<Weapon>();
+			foreach (Weapon weapon in shipToCopy.weapons)
 			{
-				KeyValuePair<string, object> newValue = ConvertElementToObject(attribute.Name.LocalName, attribute.Value);
-				Values.Add(newValue.Key, newValue.Value);
+				Weapon weaponToCopy = new Weapon(weapon);
+				weaponToCopy.Mounts = weapon.Mounts;
+				weaponToCopy.Ammo = weapon.Ammo;
+				weapons.Add(new Weapon(weaponToCopy));
 			}
+		}
+		#endregion
+	}
 
-			ClassName = (string)Values["name"];
-			Size = (int)Values["size"];
+	class TransportShip
+	{
+		public Race raceOnShip;
+		public int amount;
+	}
 
-			int i = 0;
-			Sprites = new List<Sprite>();
-			foreach (XElement element in shipClass.Elements())
-			{
-				int x = int.Parse(element.Attribute("xPos").Value);
-				int y = int.Parse(element.Attribute("yPos").Value);
-				int spriteSize = int.Parse(element.Attribute("size").Value);
-				Sprite ship = new Sprite(raceName + Size + ClassName + i.ToString(), graphicSprite.Image, x, y, spriteSize, spriteSize);
-				Sprites.Add(ship);
-				i++;
-			}
-			if (Sprites.Count == 0)
-			{
-				throw new Exception("Class " + ClassName + " have no sprites");
-			}
-			NumberOfStyles = Sprites.Count;
-			ShipScript = shipScript;
+	enum WeaponType { BEAM, PARTICLE, MISSILE, TORPEDO, BOMB, UNKNOWN }
+	class Weapon
+	{
+		//This class wraps the five different weapon types, allowing for easier management
 
-			DisplayIcons = new List<Icon>();
-			DesignIcons = new List<Icon>();
-			string[] icons = ((string)Values["shipIcons"]).Split(new[] { '|' });
-			foreach (string icon in icons)
+		#region Variables
+		private Beam beamWeapon;
+		private Particle particleWeapon;
+		private Missile missileWeapon;
+		private Torpedo torpedoWeapon;
+		private Bomb bombWeapon;
+
+		private int mounts;
+		private int ammo;
+		#endregion
+
+		#region Properties
+		public int Mounts
+		{
+			get { return mounts; }
+			set { mounts = value; }
+		}
+		public int Ammo
+		{
+			get { return ammo; }
+			set { ammo = value; }
+		}
+		#endregion
+
+		#region Constructors
+		public Weapon(Beam beamWeapon)
+		{
+			mounts = 1;
+			ammo = -1; //We don't care about this value if it's beam weapon
+			this.beamWeapon = beamWeapon;
+			particleWeapon = null;
+			missileWeapon = null;
+			torpedoWeapon = null;
+			bombWeapon = null;
+		}
+		
+		public Weapon(Particle particleWeapon)
+		{
+			mounts = 1; 
+			ammo = 1;
+			beamWeapon = null;
+			this.particleWeapon = particleWeapon;
+			missileWeapon = null;
+			torpedoWeapon = null;
+			bombWeapon = null;
+		}
+
+		public Weapon(Missile missileWeapon)
+		{
+			mounts = 1;
+			ammo = 1;
+			beamWeapon = null;
+			particleWeapon = null;
+			this.missileWeapon = missileWeapon;
+			torpedoWeapon = null;
+			bombWeapon = null;
+		}
+
+		public Weapon(Torpedo torpedoWeapon)
+		{
+			mounts = 1;
+			ammo = -1; //We don't care about this value if it's torpedo weapon
+			beamWeapon = null;
+			particleWeapon = null;
+			missileWeapon = null;
+			this.torpedoWeapon = torpedoWeapon;
+			bombWeapon = null;
+		}
+
+		public Weapon(Bomb bombWeapon)
+		{
+			mounts = 1;
+			ammo = 1;
+			beamWeapon = null;
+			particleWeapon = null;
+			missileWeapon = null;
+			torpedoWeapon = null;
+			this.bombWeapon = bombWeapon;
+		}
+
+		public Weapon(Weapon weapon)
+		{
+			beamWeapon = weapon.beamWeapon;
+			particleWeapon = weapon.particleWeapon;
+			missileWeapon = weapon.missileWeapon;
+			torpedoWeapon = weapon.torpedoWeapon;
+			bombWeapon = weapon.bombWeapon;
+
+			mounts = 1;
+			ammo = 1;
+
+			if (beamWeapon != null || torpedoWeapon != null)
 			{
-				DisplayIcons.Add(iconManager.GetIcon(icon));
-			}
-			icons = ((string)Values["designIcons"]).Split(new[] { '|' });
-			foreach (string icon in icons)
-			{
-				DesignIcons.Add(iconManager.GetIcon(icon));
+				ammo = -1;
 			}
 		}
 		#endregion
 
-		private KeyValuePair<string, object> ConvertElementToObject(string name, string value)
+		public string GetName()
 		{
-			switch (name)
+			if (beamWeapon != null)
 			{
-				case "size": return new KeyValuePair<string, object>(name, int.Parse(value));
-				default: return new KeyValuePair<string, object>(name, value);
+				return beamWeapon.GetName();
 			}
+			if (particleWeapon != null)
+			{
+				return particleWeapon.GetName();
+			}
+			if (missileWeapon != null)
+			{
+				return missileWeapon.GetName();
+			}
+			if (torpedoWeapon != null)
+			{
+				return torpedoWeapon.GetName();
+			}
+			if (bombWeapon != null)
+			{
+				return bombWeapon.GetName();
+			}
+			return "Undefined";
+		}
+
+		public float GetDamage(Computer computer)
+		{
+			if (beamWeapon != null)
+			{
+				return (int)(beamWeapon.GetDamage() * (computer.beamEfficiency / 100.0f));
+			}
+			if (particleWeapon != null)
+			{
+				return (int)(particleWeapon.GetDamage() * (computer.particleEfficiency / 100.0f));
+			}
+			if (missileWeapon != null)
+			{
+				return (int)(missileWeapon.GetDamage() * (computer.missileEfficiency / 100.0f));
+			}
+			if (torpedoWeapon != null)
+			{
+				return (int)(torpedoWeapon.GetDamage() * (computer.torpedoEfficiency / 100.0f));
+			}
+			if (bombWeapon != null)
+			{
+				return (int)(bombWeapon.GetDamage() * (computer.bombEfficiency / 100.0f));
+			}
+			return -1; //Unknown
+		}
+
+		public int GetAccuracy(Computer computer)
+		{
+			//This will multiply the computer's accuracy for this type of weapon with this weapon's accuracy
+			if (beamWeapon != null)
+			{
+				return (int)(beamWeapon.GetAccuracy() * (computer.beamEfficiency / 100.0f));
+			}
+			if (particleWeapon != null)
+			{
+				return (int)(particleWeapon.GetAccuracy() * (computer.beamEfficiency / 100.0f));
+			}
+			return -1; //Unknown or not applicable
+		}
+
+		public int GetSpace()
+		{
+			if (beamWeapon != null)
+			{
+				return beamWeapon.GetSpace();
+			}
+			if (particleWeapon != null)
+			{
+				return particleWeapon.GetSpace();
+			}
+			if (missileWeapon != null)
+			{
+				return missileWeapon.GetSpace();
+			}
+			if (torpedoWeapon != null)
+			{
+				return torpedoWeapon.GetSpace();
+			}
+			if (bombWeapon != null)
+			{
+				return bombWeapon.GetSpace();
+			}
+			return -1; //Unknown
+		}
+
+		public int GetCost()
+		{
+			if (beamWeapon != null)
+			{
+				return beamWeapon.GetCost();
+			}
+			if (particleWeapon != null)
+			{
+				return particleWeapon.GetCost();
+			}
+			if (missileWeapon != null)
+			{
+				return missileWeapon.GetCost();
+			}
+			if (torpedoWeapon != null)
+			{
+				return torpedoWeapon.GetCost();
+			}
+			if (bombWeapon != null)
+			{
+				return bombWeapon.GetCost();
+			}
+			return -1; //Unknown
+		}
+
+		public WeaponType GetWeaponType()
+		{
+			if (beamWeapon != null)
+			{
+				return WeaponType.BEAM;
+			}
+			if (particleWeapon != null)
+			{
+				return WeaponType.PARTICLE;
+			}
+			if (missileWeapon != null)
+			{
+				return WeaponType.MISSILE;
+			}
+			if (torpedoWeapon != null)
+			{
+				return WeaponType.TORPEDO;
+			}
+			if (bombWeapon != null)
+			{
+				return WeaponType.BOMB;
+			}
+			return WeaponType.UNKNOWN;
 		}
 	}
 }

@@ -1,0 +1,8 @@
+name|Zero People
+shipnames|Terminator,Null,Eraser,Short Circuit
+graphic|zero.png
+agriculture|0.8
+waste|1.2
+commerce|0.6
+spydefense|1.2
+construction|1.2

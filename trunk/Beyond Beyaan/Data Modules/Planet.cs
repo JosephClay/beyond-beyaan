@@ -1,548 +1,778 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Beyond_Beyaan.Data_Modules;
-using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan
 {
-	/*public enum PLANET_TYPE { TERRAN = 0, JUNGLE, OCEAN, BADLAND, STEPPE, DESERT, ARCTIC, BARREN, TUNDRA, DEAD, VOLCANIC, TOXIC, RADIATED, ASTEROIDS, GAS_GIANT }
-	public enum OUTPUT_TYPE { RESEARCH, COMMERCE, AGRICULTURE, ENVIRONMENT, CONSTRUCTION }
-	public enum PLANET_CONSTRUCTION_BONUS { DEARTH, POOR, AVERAGE, COPIOUS, RICH }
-	public enum PLANET_ENVIRONMENT_BONUS { DESOLATE, INFERTILE, AVERAGE, FERTILE, LUSH }
-	public enum PLANET_ENTERTAINMENT_BONUS { INSIPID, DULL, AVERAGE, SENSATIONAL, EXCITING }*/
-
-	public class Planet
+	enum PLANET_TYPE { TERRAN = 0, JUNGLE, OCEAN, BADLAND, STEPPE, DESERT, ARCTIC, BARREN, TUNDRA, DEAD, VOLCANIC, TOXIC, RADIATED, ASTEROIDS, GAS_GIANT }
+	enum OUTPUT_TYPE { RESEARCH, COMMERCE, AGRICULTURE, ENVIRONMENT, CONSTRUCTION }
+	enum PLANET_CONSTRUCTION_BONUS { DEARTH, POOR, AVERAGE, COPIOUS, RICH }
+	enum PLANET_ENVIRONMENT_BONUS { DESOLATE, INFERTILE, AVERAGE, FERTILE, LUSH }
+	enum PLANET_ENTERTAINMENT_BONUS { INSIPID, DULL, AVERAGE, SENSATIONAL, EXCITING }
+	class Planet
 	{
 		#region Member Variables
-
+		private StarSystem whichSystem;
+		private PLANET_TYPE planetType;
+		private string planetTypeString;
+		private Empire owner;
 		string name;
-		string numericName;
-
+		private float populationMax;
+		private Dictionary<Race, float> racePopulations;
+		private List<Race> races;
+		private int shipSelected;
+		private Ship shipBeingBuilt;
+		private float constructionTotal;
+		private bool isWetClimate;
 		#endregion
 
 		#region Properties
-
-		public StarSystem System { get; private set; }
-
-		public PlanetType PlanetType { get; private set; }
-
+		public StarSystem System
+		{
+			get { return whichSystem; }
+		}
+		public PLANET_TYPE PlanetType
+		{
+			get { return planetType; }
+		}
+		public string PlanetTypeString
+		{
+			get { return planetTypeString; }
+		}
 		public string Name
 		{
 			get { return name; }
 			set { name = value; }
 		}
-		public string NumericName
+		public Empire Owner
 		{
-			get { return numericName; }
-			set { numericName = value; }
+			get { return owner; }
+			set { owner = value; }
 		}
 		public float TotalPopulation
 		{
 			get 
 			{
 				float totalPopulation = 0.0f;
-				foreach (Race race in Races)
+				foreach (Race race in races)
 				{
-					totalPopulation += Population[race];
+					totalPopulation += racePopulations[race];
 				}
 				return totalPopulation;
 			}
 		}
-
-		public float SpaceUsage { get; private set; }
-
-		public List<Race> Races { get; private set; }
-
-		public List<Region> Regions { get; private set; }
-
-		public Dictionary<Resource, float> Productions { get; private set; }
-		public Dictionary<Resource, float> Consumptions { get; private set; }
-		public Dictionary<Resource, float> AvailableResources { get; private set; }
-		public Dictionary<Resource, float> ResourcesSupplied { get; private set; }
-		public Dictionary<Resource, float> ResourcesShared { get; private set; }
-		public Dictionary<Resource, float> Resources { get; private set; }
-		public Dictionary<Resource, float> Shortages { get; private set; }
-		public Dictionary<Resource, float> ProjectResources { get; private set; }
-
-		public Dictionary<Race, float> PopGrowth { get; private set; }
-		public Dictionary<Race, float> Population { get; private set; }
-		#endregion
-
-		#region Constructor
-		public Planet(string name, string numericName, PlanetType planetType, Random r, StarSystem system, int numOfRegions, RegionTypeManager regionTypeManager)
+		public List<Race> Races
 		{
-			System = system;
-			this.name = name;
-			this.numericName = numericName;
-			Races = new List<Race>();
-			Population = new Dictionary<Race, float>();
-			PopGrowth = new Dictionary<Race, float>();
-
-			this.PlanetType = planetType;
-
-			int[] probabilityRange = new int[16];
-
-			string defaultRegionForAll = string.Empty;
-			foreach (string regionDefault in planetType.DefaultRegions)
+			get	{ return races;	}
+		}
+		public float PopulationMax
+		{
+			get { return populationMax; }
+		}
+		public int ShipSelected
+		{
+			get { return shipSelected; }
+			set { shipSelected = value; }
+		}
+		public Ship ShipBeingBuilt
+		{
+			get { return shipBeingBuilt; }
+			set { shipBeingBuilt = value; }
+		}
+		public float ShipConstructionLength
+		{
+			get
 			{
-				string[] values = regionDefault.Split(new[] { ',' });
-				if (values[1] == "-1")
+				if (ConstructionOutput <= 0)
 				{
-					if (!string.IsNullOrEmpty(defaultRegionForAll))
-					{
-						throw new Exception("Planet Type " + planetType.InternalName + " has at least two default general regions (value of -1), max is 1");
-					}
-					defaultRegionForAll = values[0];
+					return -1;
 				}
+				float remaining = (shipBeingBuilt.Cost - constructionTotal);
+				return remaining / ConstructionOutput;
 			}
-			if (string.IsNullOrEmpty(defaultRegionForAll))
-			{
-				throw new Exception("Planet Type " + planetType.InternalName + " has no default general region type (value of -1), must have 1");
-			}
-
-			Regions = new List<Region>();
-			for (int i = 0; i < numOfRegions; i++)
-			{
-				Region newRegion = new Region();
-				newRegion.RegionType = regionTypeManager.GetRegionType(defaultRegionForAll);
-				Regions.Add(newRegion);
-			}
-			//outputPercentages = new Dictionary<string, int>();
-
-			Productions = new Dictionary<Resource,float>();
-			Consumptions = new Dictionary<Resource,float>();
-			AvailableResources = new Dictionary<Resource,float>();
-			ResourcesSupplied = new Dictionary<Resource,float>();
-			ResourcesShared = new Dictionary<Resource,float>();
-			Resources = new Dictionary<Resource,float>();
-			Shortages = new Dictionary<Resource,float>();
-			ProjectResources = new Dictionary<Resource, float>();
 		}
-		#endregion
 
-		public void SetName(string name, string numericName)
+		public float EnvironmentOutput
 		{
-			this.name = name;
-			this.numericName = numericName;
+			get;
+			private set;
 		}
-		public void SetPlanet(Empire owner, PlanetTypeManager planetTypeManager, RegionTypeManager regionTypeManager, ResourceManager resourceManager, StartingPlanet planet) //Set this planet to the specified information
+		public float AgricultureOutput
 		{
-			PlanetType = planetTypeManager.GetPlanet(planet.PlanetType);
-			Regions = new List<Region>();
-			foreach (string region in planet.Regions)
+			get;
+			private set;
+		}
+		public float CommerceOutput
+		{
+			get;
+			private set;
+		}
+		public float ResearchOutput
+		{
+			get;
+			private set;
+		}
+		public float ConstructionOutput
+		{
+			get;
+			private set;
+		}
+		public PLANET_CONSTRUCTION_BONUS ConstructionBonus
+		{
+			get;
+			private set;
+		}
+		public PLANET_ENVIRONMENT_BONUS EnvironmentBonus
+		{
+			get;
+			private set;
+		}
+		public PLANET_ENTERTAINMENT_BONUS EntertainmentBonus
+		{
+			get;
+			private set;
+		}
+		public string AgricultureStringOutput
+		{
+			get 
 			{
-				Region newRegion = new Region();
-				newRegion.RegionType = regionTypeManager.GetRegionType(region);
-				Regions.Add(newRegion);
-			}
-			
-			if (planet.Owned)
-			{
-				Races.Add(owner.EmpireRace);
-				Population[owner.EmpireRace] = planet.Population;
-				//outputPercentages = new Dictionary<string, int>(planet.OutputSliderValues);
-			}
-			foreach (var startingResource in planet.Resources)
-			{
-				Resource resource = resourceManager.GetResource(startingResource.Key);
-				if (resource != null)
+				float growthAmount = CalculateTotalPopGrowth();
+				if (growthAmount < 0)
 				{
-					Resources[resource] = startingResource.Value;
+					return String.Format("Starving ({0:0.00} Pop)", growthAmount);
 				}
-			}
-			CalculateSpaceUsage();
-		}
-
-		/*public void SetPlanetType(PlanetType planet, Random r)
-		{
-			planetType = planet;
-			populationMax = planetType.GetRandomMaxPop(r);
-		}*/
-
-		//Used for end of turn processing
-		public void UpdatePlanet(Dictionary<Resource, float> foodShortages)
-		{
-			//Update ship construction
-			/*if (ConstructionOutput > 0)
-			{
-				constructionTotal += ConstructionOutput;
-			}*/
-
-			//Clean up last turn's pollution
-			//accumulatedWaste = CalculatePollutionCleanup();
-			//Add current turn's pollution
-			//accumulatedWaste += CalculatePollution();
-			//CheckPollutionLevel(planetTypeManager, r);
-
-			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
-			/*foreach (Race race in races)
-			{
-				Population[race] += CalculateRaceGrowth(race, foodShortages);
-			}*/
-
-			Races.Sort((a, b) => { return (Population[a].CompareTo(Population[b])); });
-
-			//CalculateOutputs();
-
-			//SetMinimumFoodAndWaste();
-			//UpdateOutput();
-			CalculateSpaceUsage();
-		}
-
-		public void CalculatePopGrowth()
-		{
-			foreach (Race race in Races)
-			{
-				//First, find the lowest shortage (a race may consume more than one resource)
-				float shortage = 1.0f;
-				foreach (var consumption in race.Consumptions)
+				if (growthAmount > 0.05f)
 				{
-					if (Shortages.ContainsKey(consumption.Key))
-					{
-						float amount = 1.0f - (Shortages[consumption.Key] / Consumptions[consumption.Key]);
-						if (shortage > amount)
-						{
-							shortage = amount;
-						}
-					}
+					return String.Format("Feasting ({0:0.00} Pop)", growthAmount);
 				}
-
-				//Last, calculate the growth formula.  If there's a shortage that exceeds the percentage of space used, there's starvation
-				//If space usage exceeds the planet's capacity, there's overcrowding and will always exceed the max 1.0f value for shortage
-				PopGrowth[race] = Population[race] * 0.05f * (shortage - (SpaceUsage / (Regions.Count * 10)));
+				return "Content"; 
 			}
 		}
-
-		public void TallyConsumptions(Dictionary<Resource, float> consumptions)
+		public string EnvironmentStringOutput
 		{
-			Consumptions.Clear();
-			foreach (Region region in Regions)
+			get
 			{
-				foreach (var consumption in region.RegionType.Consumptions)
+				float increaseAmount = CalculateMaxPopGrowth();
+				if (increaseAmount < 0)
 				{
-					float totalConsumption = 0;
-
-					foreach (var race in Population)
+					return String.Format("Polluting ({0:0.00} Max Pop)", increaseAmount);
+				}
+				if (increaseAmount > 0.05f)
+				{
+					return String.Format("Terraforming ({0:0.00} Max Pop)", increaseAmount);
+				}
+				return "Clean";
+			}
+		}
+		public string ConstructionStringOutput
+		{
+			get
+			{
+				float length = ShipConstructionLength;
+				if (length < 0)
+				{
+					return ShipBeingBuilt.Name + " - No activity";
+				}
+				else if (length <= 1)
+				{
+					int amount = (int)(1.0f / length);
+					if (amount == 1)
 					{
-						float value = (race.Value / Regions.Count) * consumption.Value;
-						if (race.Key.ConsumptionBonuses.ContainsKey(region.RegionType.RegionTypeName))
-						{
-							value *= race.Key.ConsumptionBonuses[region.RegionType.RegionTypeName];
-						}
-						totalConsumption += value;
-					}
-					if (Consumptions.ContainsKey(consumption.Key))
-					{
-						Consumptions[consumption.Key] += totalConsumption;
+						return ShipBeingBuilt.Name + " in 1 year";
 					}
 					else
 					{
-						Consumptions[consumption.Key] = totalConsumption;
-					}
-				}
-			}
-			foreach (var race in Population)
-			{
-				foreach (var consumption in race.Key.Consumptions)
-				{
-					float value = consumption.Value * race.Value;
-					if (Consumptions.ContainsKey(consumption.Key))
-					{
-						Consumptions[consumption.Key] += value;
-					}
-					else
-					{
-						Consumptions[consumption.Key] = value;
-					}
-				}
-			}
-
-			// TODO: Tally building maintenance
-
-			foreach (KeyValuePair<Resource, float> consumption in Consumptions)
-			{
-				if (consumption.Key.LimitTo != LimitTo.PLANET)
-				{
-					if (consumptions.ContainsKey(consumption.Key))
-					{
-						consumptions[consumption.Key] += consumption.Value;
-					}
-					else
-					{
-						consumptions[consumption.Key] = consumption.Value;
-					}
-				}
-			}
-		}
-
-		//We build each system and the empire's total resources from each of the planet (we clear all systems and empire's resources before running this)
-		public void TallyResources(Dictionary<Resource, float> resources)
-		{
-			ProjectResources.Clear();
-			foreach (KeyValuePair<Resource, float> resource in Resources)
-			{
-				if (resource.Key.LimitTo != LimitTo.PLANET && resource.Key.LimitTo != LimitTo.PLANET_DEVELOPMENT)
-				{
-					if (resources.ContainsKey(resource.Key))
-					{
-						resources[resource.Key] += resource.Value;
-					}
-					else
-					{
-						resources[resource.Key] = resource.Value;
-					}
-				}
-				else if (resource.Key.LimitTo == LimitTo.PLANET_DEVELOPMENT)
-				{
-					ProjectResources[resource.Key] = resource.Value;
-				}
-			}
-		}
-
-		//This grabs the resouces, then deducts what it don't need to consume as it is passed to system and empire
-		public void TallyAvailableResourcesAndShortages(Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
-		{
-			//To-do: verify that this copies the dictionary, and not just the reference.  Don't want float changes to affect the original
-			AvailableResources = new Dictionary<Resource, float>(Resources);
-			Shortages.Clear();
-
-			//Calculate what's left after consumpting
-			foreach (KeyValuePair<Resource, float> consumption in Consumptions)
-			{
-				if (AvailableResources.ContainsKey(consumption.Key))
-				{
-					if (AvailableResources[consumption.Key] >= consumption.Value)
-					{
-						AvailableResources[consumption.Key] -= consumption.Value;
-					}
-					else
-					{
-						//We have a shortage here
-						Shortages.Add(consumption.Key, consumption.Value - AvailableResources[consumption.Key]);
-						//Nothing to pass on
-						AvailableResources[consumption.Key] = 0;
+						return ShipBeingBuilt.Name + " x " + amount + " in 1 year";
 					}
 				}
 				else
 				{
-					//We have a shortage here
-					Shortages.Add(consumption.Key, consumption.Value);
-				}
-			}
-
-			foreach (KeyValuePair<Resource, float> resource in AvailableResources)
-			{
-				if (resource.Key.LimitTo != LimitTo.PLANET)
-				{
-					//Can pass this on
-					if (availableResources.ContainsKey(resource.Key))
+					int turns = (int)length;
+					if (length - turns > 0)
 					{
-						availableResources[resource.Key] += resource.Value;
+						turns++;
 					}
-					else
-					{
-						availableResources[resource.Key] = resource.Value;
-					}
+					return ShipBeingBuilt.Name + " in " + turns + " years";
 				}
 			}
 		}
 
-		public void TallyProduction(Dictionary<Resource, float> productions)
+		public int ResearchAmount { get; private set; }
+		public int CommerceAmount { get; private set; }
+		public int AgricultureAmount { get; private set; }
+		public int EnvironmentAmount { get; private set; }
+		public int ConstructionAmount { get; private set; }
+
+		public bool AgricultureLocked { get; set; }
+		public bool EnvironmentLocked { get; set; }
+		public bool ResearchLocked { get; set; }
+		public bool CommerceLocked { get; set; }
+		public bool ConstructionLocked { get; set; }
+		#endregion
+
+		#region Constructor
+		public Planet(string name, Random r, StarSystem system)
 		{
-			Productions.Clear();
-			foreach (Region region in Regions)
+			whichSystem = system;
+			this.name = name;
+			races = new List<Race>();
+			racePopulations = new Dictionary<Race, float>();
+
+			int[] probabilityRange = new int[16];
+
+			isWetClimate = r.Next(2) == 0;
+			populationMax = r.Next(0, 150) - 25;
+
+			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
+			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
+			EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.AVERAGE;
+
+			try //So I can use finally block
 			{
-				float shortage = 1.0f;
-				//First, find out shortages
-				foreach (var consumption in region.RegionType.Consumptions)
+				if (populationMax <= -15)
 				{
-					if (Shortages.ContainsKey(consumption.Key))
-					{
-						float amount = 1.0f - (Shortages[consumption.Key] / Consumptions[consumption.Key]);
-						if (shortage > amount)
-						{
-							shortage = amount;
-						}
-					}
+					planetType = PLANET_TYPE.GAS_GIANT;
+					populationMax = 0;
+					return;
 				}
-				foreach (var production in region.RegionType.Productions)
+				if (populationMax < 5)
 				{
-					float totalProduction = 0;
-					foreach (var race in Population)
-					{
-						float value = (race.Value / Regions.Count) * production.Value;
-						if (race.Key.ProductionBonuses.ContainsKey(region.RegionType.RegionTypeName))
-						{
-							value *= race.Key.ProductionBonuses[region.RegionType.RegionTypeName];
-						}
-						value *= shortage;
-						totalProduction += value;
-					}
-					if (Productions.ContainsKey(production.Key))
-					{
-						Productions[production.Key] += totalProduction;
-					}
-					else
-					{
-						Productions[production.Key] = totalProduction;
-					}
+					planetType = PLANET_TYPE.ASTEROIDS;
+					populationMax = 0;
+					return;
+				}
+				if (populationMax <= 10)
+				{
+					planetType = PLANET_TYPE.RADIATED;
+					return;
+				}
+				if (populationMax <= 15)
+				{
+					planetType = PLANET_TYPE.TOXIC;
+					return;
+				}
+				if (populationMax <= 20)
+				{
+					planetType = isWetClimate ? PLANET_TYPE.ARCTIC : PLANET_TYPE.VOLCANIC;
+					return;
+				}
+				if (populationMax <= 30)
+				{
+					planetType = isWetClimate ? PLANET_TYPE.DEAD : PLANET_TYPE.BARREN;
+					return;
+				}
+				if (populationMax <= 40)
+				{
+					planetType = isWetClimate ? PLANET_TYPE.TUNDRA : PLANET_TYPE.BADLAND;
+					return;
+				}
+				if (populationMax <= 70)
+				{
+					planetType = isWetClimate ? PLANET_TYPE.OCEAN : PLANET_TYPE.DESERT;
+					return;
+				}
+				if (populationMax <= 90)
+				{
+					planetType = isWetClimate ? PLANET_TYPE.JUNGLE : PLANET_TYPE.STEPPE;
+					return;
+				}
+				planetType = PLANET_TYPE.TERRAN;
+
+				//Get the construction bonus
+				int number = r.Next(1000);
+				if (!isWetClimate)
+				{
+					number += 25;
+				}
+				if (number < 50)
+				{
+					ConstructionBonus = PLANET_CONSTRUCTION_BONUS.DEARTH;
+				}
+				else if (number < 200)
+				{
+					ConstructionBonus = PLANET_CONSTRUCTION_BONUS.POOR;
+				}
+				else if (number >= 950)
+				{
+					ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+				}
+				else if (number >= 800)
+				{
+					ConstructionBonus = PLANET_CONSTRUCTION_BONUS.COPIOUS;
+				}
+
+				//Get the environment bonus
+				number = r.Next(1000);
+				if (isWetClimate)
+				{
+					number += 25;
+				}
+				if (number < 50)
+				{
+					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.DESOLATE;
+				}
+				else if (number < 200)
+				{
+					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.INFERTILE;
+				}
+				else if (number >= 950)
+				{
+					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.LUSH;
+				}
+				else if (number >= 800)
+				{
+					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
+				}
+
+				//Get the entertainment bonus
+				number = r.Next(1000);
+				if (number < 50)
+				{
+					EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.INSIPID;
+				}
+				else if (number < 200)
+				{
+					EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.DULL;
+				}
+				else if (number >= 950)
+				{
+					EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.EXCITING;
+				}
+				else if (number >= 800)
+				{
+					EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.SENSATIONAL;
 				}
 			}
-			//Now add races' passive productions
-			foreach (var race in Population)
+			finally
 			{
-				foreach (var production in race.Key.Productions)
-				{
-					if (Productions.ContainsKey(production.Key))
-					{
-						Productions[production.Key] += production.Value * race.Value;
-					}
-					else
-					{
-						Productions[production.Key] = production.Value * race.Value;
-					}
-				}
-			}
-			foreach (KeyValuePair<Resource, float> production in Productions)
-			{
-				if (production.Key.LimitTo != LimitTo.PLANET)
-				{
-					if (productions.ContainsKey(production.Key))
-					{
-						productions[production.Key] += production.Value;
-					}
-					else
-					{
-						productions[production.Key] = production.Value;
-					}
-				}
+				planetTypeString = Utility.PlanetTypeToString(planetType);
 			}
 		}
+		#endregion
 
-		//Resources that's donated by other planets are added here
-		public void SetSharedResources(Dictionary<Resource, float> empireSharedAvailable, Dictionary<Resource, float> empireConsumpedShared, Dictionary<Resource, float> systemSharedAvailable, Dictionary<Resource, float> systemConsumpedShared)
+		public void SetHomeworld(Empire owner) //Set this planet as homeworld
 		{
-			ResourcesShared.Clear();
-			ResourcesSupplied.Clear();
-			List<Resource> availableToRemove = new List<Resource>();
-			List<Resource> shortageToRemove = new List<Resource>();
-			foreach (var resource in AvailableResources)
+			this.owner = owner;
+			planetType = PLANET_TYPE.TERRAN;
+			planetTypeString = Utility.PlanetTypeToString(planetType);
+			populationMax = 100;
+			races.Add(owner.EmpireRace);
+			racePopulations.Add(owner.EmpireRace, 50.0f);
+			SetMinimumFoodAndWaste();
+			AgricultureLocked = true;
+			EnvironmentLocked = true;
+			SetOutputAmount(OUTPUT_TYPE.COMMERCE, 15);
+			SetOutputAmount(OUTPUT_TYPE.RESEARCH, 15);
+			AgricultureLocked = false;
+			EnvironmentLocked = false;
+			EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.AVERAGE;
+			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
+			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
+		}
+
+		public void SetOutputAmount(OUTPUT_TYPE outputType, int amount)
+		{
+			int remainingPercentile = 100;
+			if (AgricultureLocked)
 			{
-				if (empireSharedAvailable.ContainsKey(resource.Key))
+				remainingPercentile -= AgricultureAmount;
+			}
+			if (EnvironmentLocked)
+			{
+				remainingPercentile -= EnvironmentAmount;
+			}
+			if (CommerceLocked)
+			{
+				remainingPercentile -= CommerceAmount;
+			}
+			if (ConstructionLocked)
+			{
+				remainingPercentile -= ConstructionAmount;
+			}
+			if (ResearchLocked)
+			{
+				remainingPercentile -= ResearchAmount;
+			}
+
+			//if the player set the slider to or beyond the allowed percentile, all other sliders except food and waste are set to 0
+			if (amount >= remainingPercentile)
+			{
+				//set all sliders to 0, and change amount to remainingPercentile
+				if (!AgricultureLocked)
 				{
-					ResourcesShared[resource.Key] = resource.Value * empireSharedAvailable[resource.Key];
-					AvailableResources[resource.Key] -= ResourcesShared[resource.Key];
-					if (AvailableResources[resource.Key] <= 0)
+					AgricultureAmount = 0;
+				}
+				if (!EnvironmentLocked)
+				{
+					EnvironmentAmount = 0;
+				}
+				if (!CommerceLocked)
+				{
+					CommerceAmount = 0;
+				}
+				if (!ResearchLocked)
+				{
+					ResearchAmount = 0;
+				}
+				if (!ConstructionLocked)
+				{
+					ConstructionAmount = 0;
+				}
+				amount = remainingPercentile;
+			}
+
+			//Now scale
+			int totalPointsExcludingSelectedType = 0;
+			switch (outputType)
+			{
+				case OUTPUT_TYPE.AGRICULTURE:
 					{
-						availableToRemove.Add(resource.Key);
+						AgricultureAmount = amount;
+						remainingPercentile -= AgricultureAmount;
+						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + CommerceAmount + EnvironmentAmount;
+					} break;
+				case OUTPUT_TYPE.ENVIRONMENT:
+					{
+						EnvironmentAmount = amount;
+						remainingPercentile -= EnvironmentAmount;
+						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + CommerceAmount + AgricultureAmount;
+					} break;
+				case OUTPUT_TYPE.COMMERCE:
+					{
+						CommerceAmount = amount;
+						remainingPercentile -= CommerceAmount;
+						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + AgricultureAmount + EnvironmentAmount;
+					} break;
+				case OUTPUT_TYPE.CONSTRUCTION:
+					{
+						ConstructionAmount = amount;
+						remainingPercentile -= ConstructionAmount;
+						totalPointsExcludingSelectedType = CommerceAmount + ResearchAmount + AgricultureAmount + EnvironmentAmount;
+					} break;
+				case OUTPUT_TYPE.RESEARCH:
+					{
+						ResearchAmount = amount;
+						remainingPercentile -= ResearchAmount;
+						totalPointsExcludingSelectedType = ConstructionAmount + CommerceAmount + AgricultureAmount + EnvironmentAmount;
+					} break;
+			}
+			if (remainingPercentile < totalPointsExcludingSelectedType)
+			{
+				int amountToDeduct = totalPointsExcludingSelectedType - remainingPercentile;
+				int prevValue;
+				if (!AgricultureLocked && outputType != OUTPUT_TYPE.AGRICULTURE)
+				{
+					prevValue = AgricultureAmount;
+					AgricultureAmount -= (AgricultureAmount >= amountToDeduct ? amountToDeduct : AgricultureAmount);
+					amountToDeduct -= (prevValue - AgricultureAmount);
+				}
+				if (amountToDeduct > 0)
+				{
+					if (!EnvironmentLocked && outputType != OUTPUT_TYPE.ENVIRONMENT)
+					{
+						prevValue = EnvironmentAmount;
+						EnvironmentAmount -= (EnvironmentAmount >= amountToDeduct ? amountToDeduct : EnvironmentAmount);
+						amountToDeduct -= (prevValue - EnvironmentAmount);
 					}
 				}
-				else if (systemSharedAvailable.ContainsKey(resource.Key))
+				if (amountToDeduct > 0)
 				{
-					ResourcesShared[resource.Key] = resource.Value * systemSharedAvailable[resource.Key];
-					AvailableResources[resource.Key] -= ResourcesShared[resource.Key];
-					if (AvailableResources[resource.Key] <= 0)
+					if (!CommerceLocked && outputType != OUTPUT_TYPE.COMMERCE)
 					{
-						availableToRemove.Add(resource.Key);
+						prevValue = CommerceAmount;
+						CommerceAmount -= (CommerceAmount >= amountToDeduct ? amountToDeduct : CommerceAmount);
+						amountToDeduct -= (prevValue - CommerceAmount);
+					}
+				}
+				if (amountToDeduct > 0)
+				{
+					if (!ResearchLocked && outputType != OUTPUT_TYPE.RESEARCH)
+					{
+						prevValue = ResearchAmount;
+						ResearchAmount -= (ResearchAmount >= amountToDeduct ? amountToDeduct : ResearchAmount);
+						amountToDeduct -= (prevValue - ResearchAmount);
+					}
+				}
+				if (amountToDeduct > 0)
+				{
+					if (!ConstructionLocked && outputType != OUTPUT_TYPE.CONSTRUCTION)
+					{
+						prevValue = ConstructionAmount;
+						ConstructionAmount -= (ConstructionAmount >= amountToDeduct ? amountToDeduct : ConstructionAmount);
+						amountToDeduct -= (prevValue - ConstructionAmount);
 					}
 				}
 			}
-			foreach (var shortage in Shortages)
+			if (remainingPercentile > totalPointsExcludingSelectedType) //excess points needed to allocate
 			{
-				if (empireConsumpedShared.ContainsKey(shortage.Key))
+				int amountToAdd = remainingPercentile - totalPointsExcludingSelectedType;
+				if (!AgricultureLocked && outputType != OUTPUT_TYPE.AGRICULTURE)
 				{
-					ResourcesSupplied[shortage.Key] = shortage.Value * empireConsumpedShared[shortage.Key];
-					Shortages[shortage.Key] -= ResourcesSupplied[shortage.Key];
-					if (Shortages[shortage.Key] <= 0)
+					AgricultureAmount += amountToAdd;
+					amountToAdd = 0;
+				}
+				if (amountToAdd > 0)
+				{
+					if (!EnvironmentLocked && outputType != OUTPUT_TYPE.ENVIRONMENT)
 					{
-						shortageToRemove.Add(shortage.Key);
+						EnvironmentAmount += amountToAdd;
+						amountToAdd = 0;
 					}
 				}
-				else if (systemConsumpedShared.ContainsKey(shortage.Key))
+				if (amountToAdd > 0)
 				{
-					ResourcesSupplied[shortage.Key] = shortage.Value * systemConsumpedShared[shortage.Key];
-					Shortages[shortage.Key] -= ResourcesSupplied[shortage.Key];
-					if (Shortages[shortage.Key] <= 0)
+					if (!CommerceLocked && outputType != OUTPUT_TYPE.COMMERCE)
 					{
-						shortageToRemove.Add(shortage.Key);
+						CommerceAmount += amountToAdd;
+						amountToAdd = 0;
+					}
+				}
+				if (amountToAdd > 0)
+				{
+					if (!ResearchLocked && outputType != OUTPUT_TYPE.RESEARCH)
+					{
+						ResearchAmount += amountToAdd;
+						amountToAdd = 0;
+					}
+				}
+				if (amountToAdd > 0)
+				{
+					if (!ConstructionLocked && outputType != OUTPUT_TYPE.CONSTRUCTION)
+					{
+						ConstructionAmount += amountToAdd;
+						amountToAdd = 0;
 					}
 				}
 			}
-			foreach (var shortage in shortageToRemove)
+			UpdateOutput();
+		}
+
+		public void SetMinimumFoodAndWaste()
+		{
+			while (CalculateTotalPopGrowth() < 0)
 			{
-				Shortages.Remove(shortage);
+				SetOutputAmount(OUTPUT_TYPE.AGRICULTURE, AgricultureAmount + 1);
 			}
-			foreach (var resource in availableToRemove)
+			AgricultureLocked = true;
+			while (CalculateMaxPopGrowth() < 0)
 			{
-				AvailableResources.Remove(resource);
+				SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, EnvironmentAmount + 1);
 			}
+			AgricultureLocked = false;
+			/*
+			//Waste Processing uses the formula: Waste Processing Percentage must be greater than or equal to 1 / (3 + tech improvements + racial bonuses/negatives)
+			amount = (1.0f / (3.0f)) * 100.0f; //add tech improvements and racial bonuses/negatives inside (3.0f)
+			if (amount - (int)amount > 0)
+			{
+				amount += 1;
+			}
+			EnvironmentAmount = (int)amount;
+
+			if (AgricultureAmount + EnvironmentAmount > 100)
+			{
+				//Starvation ensues, this planet is now unproductive until population drops or migrates
+				AgricultureAmount = (AgricultureAmount + EnvironmentAmount) - 100;
+				CommerceAmount = 0;
+				ResearchAmount = 0;
+				ConstructionAmount = 0;
+				return; //Nothing more can be done at this point
+			}
+			int remainingPercentile = 100 - (AgricultureAmount + EnvironmentAmount);
+			//If necessary, scale the other percentiles so it all adds up to 100
+
+			int totalMiscPercentile = CommerceAmount + ConstructionAmount + ResearchAmount;
+			if (totalMiscPercentile != remainingPercentile && totalMiscPercentile != 0)
+			{
+				//We need to scale them down or up, even if they're locked
+				float scale = (float)remainingPercentile / totalMiscPercentile;
+				totalMiscPercentile = 0;
+				
+				CommerceAmount = (int)(CommerceAmount * scale);
+				totalMiscPercentile += CommerceAmount;
+
+				ResearchAmount = (int)(ResearchAmount * scale);
+				totalMiscPercentile += ResearchAmount;
+
+				ConstructionAmount = (int)(ConstructionAmount * scale);
+				totalMiscPercentile += ConstructionAmount;
+
+				if (totalMiscPercentile < remainingPercentile)
+				{
+					//We have some extra points left from roundoff
+					int highest = 0;
+					OUTPUT_TYPE type = OUTPUT_TYPE.COMMERCE;
+					if (CommerceAmount > highest)
+					{
+						type = OUTPUT_TYPE.COMMERCE;
+						highest = CommerceAmount;
+					}
+					if (ResearchAmount > highest)
+					{
+						type = OUTPUT_TYPE.RESEARCH;
+						highest = ResearchAmount;
+					}
+					if (ConstructionAmount > highest)
+					{
+						type = OUTPUT_TYPE.CONSTRUCTION;
+					}
+					switch (type)
+					{
+						case OUTPUT_TYPE.COMMERCE:
+							{
+								CommerceAmount += (remainingPercentile - totalMiscPercentile);
+							} break;
+						case OUTPUT_TYPE.CONSTRUCTION:
+							{
+								ConstructionAmount += (remainingPercentile - totalMiscPercentile);
+							} break;
+						case OUTPUT_TYPE.RESEARCH:
+							{
+								ResearchAmount += (remainingPercentile - totalMiscPercentile);
+							} break;
+					}
+				}
+				else if (totalMiscPercentile > remainingPercentile)
+				{
+					//We have too much points, remove from highest
+					int total = totalMiscPercentile - remainingPercentile;
+					if (CommerceAmount > total)
+					{
+						CommerceAmount -= total;
+						return;
+					}
+					if (ResearchAmount > total)
+					{
+						ResearchAmount -= total;
+						return;
+					}
+					if (ConstructionAmount > total)
+					{
+						ConstructionAmount -= total;
+						return;
+					}
+
+					//At this point, subtract from more than one field
+					total -= CommerceAmount;
+					CommerceAmount = 0;
+					if (total > 0)
+					{
+						total -= ResearchAmount;
+						ResearchAmount = 0;
+						if (total > 0)
+						{
+							ConstructionAmount = 0;
+						}
+					}
+				}
+			}
+			else if (totalMiscPercentile == 0 && remainingPercentile > 0)
+			{
+				SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, remainingPercentile);
+			}*/
+		}
+
+		private void UpdateOutput()
+		{
+			EnvironmentOutput = (((float)(EnvironmentAmount) / 100.0f) * TotalPopulation) * 4;
+			AgricultureOutput = (((float)(AgricultureAmount) / 100.0f) * TotalPopulation) * 4;
+			CommerceOutput = ((float)(CommerceAmount) / 100.0f) * TotalPopulation;
+			ResearchOutput = ((float)(ResearchAmount) / 100.0f) * TotalPopulation;
+			ConstructionOutput = ((float)(ConstructionAmount) / 100.0f) * TotalPopulation;
+		}
+
+		//Used for end of turn processing
+		public void UpdatePlanet()
+		{
+			//Update ship construction
+			if (ConstructionOutput > 0)
+			{
+				constructionTotal += ConstructionOutput;
+			}
+
+			float foodModifier = (AgricultureOutput - TotalPopulation) / TotalPopulation;
+
+			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
+			foreach (Race race in races)
+			{
+				racePopulations[race] += (racePopulations[race] * (0.05f)) * (foodModifier - (TotalPopulation / (PopulationMax + CalculateMaxPopGrowth())));
+			}
+
+			races.Sort((Race a, Race b) => { return (racePopulations[a].CompareTo(racePopulations[b])); });
+
+			UpdateOutput();
+		}
+
+		public Ship CheckIfShipBuilt(out int amount)
+		{
+			if (constructionTotal >= shipBeingBuilt.Cost)
+			{
+				amount = 0;
+				while (constructionTotal >= shipBeingBuilt.Cost)
+				{
+					amount++;
+					constructionTotal -= shipBeingBuilt.Cost;
+				}
+				return shipBeingBuilt;
+			}
+			amount = 0;
+			return null;
+		}
+
+		private float CalculateTotalPopGrowth()
+		{
+			//Factor in food surplus/starvation
+			float foodModifier = (AgricultureOutput - TotalPopulation) / TotalPopulation;
+
+			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
+			float popGrowth = 0;
+			foreach (Race race in races)
+			{
+				popGrowth += (racePopulations[race] * (0.05f)) * (foodModifier - (TotalPopulation / (PopulationMax + CalculateMaxPopGrowth())));
+			}
+
+			return popGrowth;
+		}
+
+		private float CalculateMaxPopGrowth()
+		{
+			float amount = ((PopulationMax / 125.0f) * (EnvironmentOutput - CalculateOptimalCleanEffort())) * 0.10f;
+			if (amount + PopulationMax > 125)
+			{
+				amount = 125 - PopulationMax;
+			}
+			else if (amount + PopulationMax < 5)
+			{
+				amount = PopulationMax - 5;
+			}
+			return amount;
+		}
+
+		private float CalculateOptimalCleanEffort()
+		{
+			return (AgricultureOutput + ConstructionOutput + CommerceOutput + ResearchOutput) / 2;
 		}
 
 		public float GetRacePopulation(Race whichRace)
 		{
-			return Population[whichRace];
-		}
-		public KeyValuePair<Race, int> GetDominantRacePop()
-		{
-			int pop = 0;
-			Race whichRace = null;
-			foreach (Race race in Races)
-			{
-				if (Population[race] > pop)
-				{
-					pop = (int)Population[race];
-					whichRace = race;
-				}
-			}
-			return new KeyValuePair<Race,int>(whichRace, pop);
+			return racePopulations[whichRace];
 		}
 
 		public void AddRacePopulation(Race whichRace, float amount)
 		{
-			if (!Population.ContainsKey(whichRace))
-			{
-				Population.Add(whichRace, amount);
-				Races.Add(whichRace);
-			}
-			else
-			{
-				Population[whichRace] += amount;
-			}
-			CalculateSpaceUsage();
+			racePopulations[whichRace] += amount;
 		}
 
 		public void RemoveRacePopulation(Race whichRace, float amount)
 		{
-			Population[whichRace] -= amount;
-			if (Population[whichRace] < 0.1f)
-			{
-				//Must have at least 1.0 to have self-sustaining population
-				Population.Remove(whichRace);
-				Races.Remove(whichRace);
-			}
+			racePopulations[whichRace] -= amount;
 		}
 
 		public void RemoveRace(Race whichRace)
 		{
-			Population.Remove(whichRace);
-			Races.Remove(whichRace);
-			CalculateSpaceUsage();
-		}
-
-		public void RemoveAllRaces()
-		{
-			Population.Clear();
-			Races.Clear();
-			CalculateSpaceUsage();
-		}
-
-		private void CalculateSpaceUsage()
-		{
-			SpaceUsage = 0;
-			foreach (var race in Population)
-			{
-				SpaceUsage += race.Value * 1.0f; // race.Key.SpaceUsage[planetType.InternalName];
-			}
+			racePopulations.Remove(whichRace);
+			races.Remove(whichRace);
 		}
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.IO;
 using Beyond_Beyaan.Data_Modules;
 
@@ -9,12 +11,20 @@ namespace Beyond_Beyaan.Data_Managers
 	{
 		public List<AI> AIs { get; private set; }
 
-		public bool Initialize(DirectoryInfo path, out string reason)
+		public AIManager()
 		{
 			AIs = new List<AI>();
 			try
 			{
-				DirectoryInfo di = new DirectoryInfo(Path.Combine(path.FullName, "AI"));
+				string directory = Path.Combine(Environment.CurrentDirectory, "data");
+				directory = Path.Combine(directory, "default");
+				directory = Path.Combine(directory, "ai");
+				DirectoryInfo di = new DirectoryInfo(directory);
+				if (!di.Exists)
+				{
+					//If it don't exist, create one so users can add races
+					di.Create();
+				}
 				foreach (FileInfo fi in di.GetFiles("*.txt"))
 				{
 					AI ai = new AI();
@@ -23,13 +33,10 @@ namespace Beyond_Beyaan.Data_Managers
 						AIs.Add(ai);
 					}
 				}
-				reason = null;
-				return true;
 			}
-			catch (Exception e)
+			catch
 			{
-				reason = e.Message;
-				return false;
+				//Do nothing, not much we can do at this point
 			}
 		}
 	}

@@ -1,320 +1,771 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
 	class DesignScreen : ScreenInterface
 	{
-		private GameMain gameMain;
+		private const int NONE = 0;
+		private const int ENGINE = 1;
+		private const int COMPUTER = 2;
+		private const int ARMOR = 3;
+		private const int SHIELD = 4;
+		private const int WEAPON = 5;
 
 		#region Variables
-		private StretchableImage background;
-		private StretchableImage shipBackground;
-		private StretchableImage statsBackground;
-		private StretchableImage componentsBackground;
-		private StretchableImage buttonsBackground;
-		private StretchableImage descriptionBackground;
-		private StretchableImage titleBackground;
-
-		private Label designNameLabel;
-		private SingleLineTextBox nameTextBox;
-
-		private InvisibleStretchButton[] equipmentButtons;
-		private ScrollBar equipmentScrollbar;
-		private Button[] removeButtons;
-		private Label[] equipmentLabels;
-		private int maxEquipmentVisible;
-
-		private Button addButton;
-		private StretchButton clearButton;
-		private StretchButton confirmButton;
-		private ComboBox shipClassComboBox;
-		private Button prevShip;
-		private Button nextShip;
-
-		//private ShipDesign shipDesign;
-		//private Dictionary<string, object> shipValues;
-		//private GorgonLibrary.Graphics.Sprite shipSprite;
-
-		private int xPos;
-		private int yPos;
-
-		private EquipmentSelection equipmentSelection;
-		private bool selectionShowing;
+		private List<SpriteName> spriteNames;
+		private GameMain gameMain;
+		private Ship shipDesign;
+		private GorgonLibrary.Graphics.Sprite shipSprite;
+		private int totalSpace;
+		private int usedSpace;
+		private int totalCost;
+		private int x;
+		private int y;
+		Button[] removeButtons;
+		Button clear;
+		Button confirm;
+		Button addWeapon;
+		Button[] mountUpButton;
+		Button[] mountDownButton;
+		Button[] shotUpButton;
+		Button[] shotDownButton;
+		Button prevShip;
+		Button nextShip;
+		ComboBox sizeComboBox;
+		Button engineButton;
+		Button computerButton;
+		Button armorButton;
+		Button shieldButton;
+		ProgressBar spaceUsage;
+		List<Engine> availableEngines;
+		List<Armor> availableArmors;
+		List<Shield> availableShields;
+		List<Computer> availableComputers;
+		List<Weapon> availableWeapons;
+		Button[] techButtons;
+		int displayingTechOption;
+		int shipWeaponIndex;
+		SingleLineTextBox nameTextBox;
+		Label[] techLabels;
+		ScrollBar techScrollBar;
 		#endregion
 
 		public void Initialize(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
 
-			xPos = (gameMain.ScreenWidth / 2) - 420;
-			yPos = (gameMain.ScreenHeight / 2) - 320;
+			x = gameMain.ScreenWidth / 2 - 400;
+			y = gameMain.ScreenHeight / 2 - 300;
 
-			background = new StretchableImage(xPos, yPos, 840, 640, 200, 200, DrawingManagement.ScreenBorder);
-			componentsBackground = new StretchableImage(xPos + 25, yPos + 25, 565, 450, 60, 60, DrawingManagement.BorderBorder);
-			shipBackground = new StretchableImage(xPos + 590, yPos + 25, 225, 225, 30, 13, DrawingManagement.BoxBorder);
-			statsBackground = new StretchableImage(xPos + 590, yPos + 250, 225, 275, 30, 13, DrawingManagement.BoxBorder);
-			buttonsBackground = new StretchableImage(xPos + 590, yPos + 525, 225, 90, 30, 13, DrawingManagement.BoxBorder);
-			descriptionBackground = new StretchableImage(xPos + 25, yPos + 475, 565, 140, 30, 13, DrawingManagement.BoxBorder);
-			titleBackground = new StretchableImage(xPos + 35, yPos + 35, 545, 60, 30, 13, DrawingManagement.BoxBorder);
-
-			prevShip = new Button(SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton, string.Empty, xPos + 600, yPos + 112, 16, 16, gameMain.FontManager.GetDefaultFont());
-			nextShip = new Button(SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, string.Empty, xPos + 790, yPos + 112, 16, 16, gameMain.FontManager.GetDefaultFont());
-
-			clearButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Clear All", xPos + 600, yPos + 533, 205, 35, gameMain.FontManager.GetDefaultFont());
-			confirmButton = new StretchButton(DrawingManagement.ButtonBackground, DrawingManagement.ButtonForeground, "Confirm Design", xPos + 600, yPos + 572, 205, 35, gameMain.FontManager.GetDefaultFont());
-
-			addButton = new Button(SpriteName.AddEquipment, SpriteName.AddEquipmentHL, string.Empty, xPos + 494, yPos + 46, 80, 40, gameMain.FontManager.GetDefaultFont());
-			addButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Add equipment", "addEquipmentToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-			designNameLabel = new Label("Name:", xPos + 45, yPos + 55, gameMain.FontManager.GetDefaultFont());
-			nameTextBox = new SingleLineTextBox(xPos + 105, yPos + 49, 200, 35, DrawingManagement.TextBox, gameMain.FontManager.GetDefaultFont());
+			spriteNames = new List<SpriteName>();
+			spriteNames.Add(SpriteName.MiniBackgroundButton);
+			spriteNames.Add(SpriteName.MiniForegroundButton);
+			spriteNames.Add(SpriteName.ScrollUpBackgroundButton);
+			spriteNames.Add(SpriteName.ScrollUpForegroundButton);
+			spriteNames.Add(SpriteName.ScrollVerticalBar);
+			spriteNames.Add(SpriteName.ScrollDownBackgroundButton);
+			spriteNames.Add(SpriteName.ScrollDownForegroundButton);
+			spriteNames.Add(SpriteName.ScrollVerticalBackgroundButton);
+			spriteNames.Add(SpriteName.ScrollVerticalForegroundButton);
 
 			List<string> shipSizes = new List<string>();
-
-			shipClassComboBox = new ComboBox(DrawingManagement.ComboBox, shipSizes, xPos + 600, yPos + 200, 205, 35, 10, true, gameMain.FontManager.GetDefaultFont());
-
-			equipmentScrollbar = new ScrollBar(xPos + 560, yPos + 107, 16, 318, 10, 10, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
-			equipmentButtons = new InvisibleStretchButton[10];
-			removeButtons = new Button[equipmentButtons.Length];
-			equipmentLabels = new Label[equipmentButtons.Length];
-			for (int i = 0; i < equipmentButtons.Length; i++)
+			for (int i = 1; i <= 10; i++)
 			{
-				equipmentButtons[i] = new InvisibleStretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 40, yPos + 107 + (35 * i), 520, 35, 30, 13, gameMain.FontManager.GetDefaultFont());
-				removeButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, xPos + 536, yPos + 118 + (35 * i), 16, 16, gameMain.FontManager.GetDefaultFont());
-				equipmentLabels[i] = new Label(xPos + 64, yPos + 117 + (35 * i), gameMain.FontManager.GetDefaultFont());
+				shipSizes.Add(Utility.ShipSizeToString(i));
 			}
-			maxEquipmentVisible = 10;
 
-			equipmentSelection = new EquipmentSelection(xPos + 140, yPos + 150, gameMain, OnOkClick, OnCancelClick);
-			selectionShowing = false;
+			sizeComboBox = new ComboBox(spriteNames, shipSizes, x + 75, y + 40, 140, 25, 10);
+
+			prevShip = new Button(SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton, string.Empty, x + 50, y + 135, 24, 24);
+			nextShip = new Button(SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, string.Empty, x + 225, y + 135, 24, 24);
+			addWeapon = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Add Weapon", x + 590, y + 10, 200, 25);
+			confirm = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Confirm Design", x + 640, y + 570, 150, 25);
+			clear = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Clear Design", x + 640, y + 530, 150, 25);
+
+			engineButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, string.Empty, x + 75, y + 230, 140, 25);
+			computerButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, string.Empty, x + 75, y + 300, 140, 25);
+			armorButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, string.Empty, x + 75, y + 400, 140, 25);
+			shieldButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, string.Empty, x + 75, y + 500, 140, 25);
+
+			spaceUsage = new ProgressBar(x + 295, y + 575, 300, 16, 300, 0, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
+
+
+			displayingTechOption = NONE;
+			shipWeaponIndex = 0;
+
+			techButtons = new Button[15];
+			for (int i = 0; i < techButtons.Length; i++)
+			{
+				techButtons[i] = new Button(SpriteName.NormalBackgroundButton, SpriteName.NormalForegroundButton, string.Empty, x + 138, y + 40 + (i * 35), 500, 30);
+			}
+
+			int amount = 13;
+			removeButtons = new Button[amount];
+			mountUpButton = new Button[amount];
+			mountDownButton = new Button[amount];
+			shotUpButton = new Button[amount];
+			shotDownButton = new Button[amount];
+			for (int i = 0; i < removeButtons.Length; i++)
+			{
+				removeButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, x + 750, y + 84 + (i * 34), 16, 16);
+				mountUpButton[i] = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, string.Empty, x + 600, y + 84 + (i * 34), 16, 16);
+				mountDownButton[i] = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, string.Empty, x + 560, y + 84 + (i * 34), 16, 16);
+				shotUpButton[i] = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, string.Empty, x + 660, y + 84 + (i * 34), 16, 16);
+				shotDownButton[i] = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, string.Empty, x + 620, y + 84 + (i * 34), 16, 16);
+			}
+			nameTextBox = new SingleLineTextBox(x + 70, y + 5, 200, 25, SpriteName.MiniBackgroundButton);
+			techLabels = new Label[5];
+			techLabels[0] = new Label("Name", x + 138, y + 10);
+			techLabels[1] = new Label(x + 350, y + 10);
+			techLabels[2] = new Label(x + 425, y + 10);
+			techLabels[3] = new Label("Cost", x + 500, y + 10);
+			techLabels[4] = new Label("Space", x + 575, y + 10);
+
+			techScrollBar = new ScrollBar(x + 640, y + 40, 16, 488, 15, 30, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
+				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
+				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
+			techScrollBar.SetEnabledState(false);
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			//Draw the backgrounds
 			gameMain.DrawGalaxyBackground();
-			background.Draw(drawingManagement);
-			componentsBackground.Draw(drawingManagement);
-			shipBackground.Draw(drawingManagement);
-			statsBackground.Draw(drawingManagement);
-			buttonsBackground.Draw(drawingManagement);
-			descriptionBackground.Draw(drawingManagement);
-			titleBackground.Draw(drawingManagement);
 
-			//Draw the UI and information
-			addButton.Draw(drawingManagement);
-			prevShip.Draw(drawingManagement);
-			nextShip.Draw(drawingManagement);
-			clearButton.Draw(drawingManagement);
-			confirmButton.Draw(drawingManagement);
-
-			/*for (int i = 0; i < shipDesign.ShipClass.DesignIcons.Count; i++)
-			{
-				shipDesign.ShipClass.DesignIcons[i].Draw(xPos + 600, yPos + 265 + (i * 25), 150, 25, drawingManagement);
-			}*/
-
-			designNameLabel.Draw();
-			nameTextBox.Draw(drawingManagement);
-
-			equipmentScrollbar.Draw(drawingManagement);
-			for (int i = 0; i < maxEquipmentVisible; i++)
-			{
-				equipmentButtons[i].Draw(drawingManagement);
-				removeButtons[i].Draw(drawingManagement);
-				equipmentLabels[i].Draw(drawingManagement);
-				SpriteName sprite = SpriteName.BeamIcon;
-				/*switch (shipDesign.Equipments[i + equipmentScrollbar.TopIndex].EquipmentType)
-				{
-					case EquipmentType.BEAM: sprite = SpriteName.BeamIcon;
-						break;
-					case EquipmentType.PROJECTILE: sprite = SpriteName.ProjectileIcon;
-						break;
-					case EquipmentType.SHOCKWAVE: sprite = SpriteName.ShockwaveIcon;
-						break;
-					case EquipmentType.MISSILE: sprite = SpriteName.MissileIcon;
-						break;
-					case EquipmentType.TORPEDO: sprite = SpriteName.TorpedoIcon;
-						break;
-					case EquipmentType.BOMB: sprite = SpriteName.BombIcon;
-						break;
-					case EquipmentType.COMPUTER: sprite = SpriteName.ComputerIcon;
-						break;
-					case EquipmentType.SHIELD: sprite = SpriteName.ShieldIcon;
-						break;
-					case EquipmentType.ARMOR: sprite = SpriteName.ArmorIcon;
-						break;
-					case EquipmentType.SYSTEM_ENGINE: sprite = SpriteName.SystemEngineIcon;
-						break;
-					case EquipmentType.STELLAR_ENGINE: sprite = SpriteName.StellarEngineIcon;
-						break;
-					case EquipmentType.REACTOR: sprite = SpriteName.PowerIcon;
-						break;
-					case EquipmentType.SPECIAL: sprite = SpriteName.SpecialIcon;
-						break;
-				}*/
-				drawingManagement.DrawSprite(sprite, xPos + 40, yPos + 117 + (i * 35));
-			}
-
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y - 1, 255, 285, 228, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 226, 255, 285, 67, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 293, 255, 285, 102, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 395, 255, 285, 102, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 497, 255, 285, 102, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 599, 255, 285, 1, System.Drawing.Color.White);
 			GorgonLibrary.Gorgon.CurrentShader = gameMain.ShipShader;
 			gameMain.ShipShader.Parameters["EmpireColor"].SetValue(gameMain.empireManager.CurrentEmpire.ConvertedColor);
-			//shipSprite.Draw();
+			shipSprite.Draw();
 			GorgonLibrary.Gorgon.CurrentShader = null;
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x + 285, y - 1, 255, 515, 75, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x + 285, y + 75, 255, 515, 450, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x + 285, y + 525, 255, 515, 75, System.Drawing.Color.White);
 
-			shipClassComboBox.Draw(drawingManagement);
+			drawingManagement.DrawText("Arial", "Name:", x + 25, y + 6, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Size:", x + 35, y + 41, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Engine:", x + 20, y + 231, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Computer:", x, y + 301, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Armor:", x + 23, y + 401, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Shield:", x + 20, y + 501, System.Drawing.Color.White);
+			nameTextBox.Draw(drawingManagement);
+			//drawingManagement.DrawText("Arial", shipName, x + 75, y + 6, System.Drawing.Color.White);
 
-			addButton.DrawToolTip(drawingManagement);
+			drawingManagement.DrawText("Arial", "Weapon Name", x + 290, y + 55, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Damage", x + 415, y + 55, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Accuracy", x + 480, y + 55, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Mounts", x + 560, y + 55, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Shots", x + 620, y + 55, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Space", x + 685, y + 55, System.Drawing.Color.White);
 
-			if (selectionShowing)
+			drawingManagement.DrawText("Arial", "Galaxy Speed: " + shipDesign.engine.GetGalaxySpeed(), x + 2, y + 255, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Combat Speed: " + shipDesign.engine.GetCombatSpeed(), x + 2, y + 274, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Space Used: " + shipDesign.engine.GetSpace(totalSpace), x + 150, y + 255, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Cost: " + shipDesign.engine.GetCost(totalSpace), x + 150, y + 274, System.Drawing.Color.White);
+
+			drawingManagement.DrawSprite(SpriteName.BeamIcon, x + 227, y + 295, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ParticleIcon, x + 227, y + 315, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.MissileIcon, x + 227, y + 335, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.TorpedoIcon, x + 227, y + 355, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.BombIcon, x + 227, y + 375, 255, System.Drawing.Color.White);
+
+			drawingManagement.DrawText("Arial", shipDesign.computer.beamEfficiency.ToString() + "%", x + 242, y + 295, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.computer.particleEfficiency.ToString() + "%", x + 242, y + 315, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.computer.missileEfficiency.ToString() + "%", x + 242, y + 335, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.computer.torpedoEfficiency.ToString() + "%", x + 242, y + 355, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.computer.bombEfficiency.ToString() + "%", x + 242, y + 375, System.Drawing.Color.White);
+
+			drawingManagement.DrawText("Arial", "Space Used: " + shipDesign.computer.GetSpace(totalSpace), x + 2, y + 340, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Cost: " + shipDesign.computer.GetCost(totalSpace), x + 2, y + 365, System.Drawing.Color.White);
+
+			drawingManagement.DrawSprite(SpriteName.BeamIcon, x + 227, y + 397, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ParticleIcon, x + 227, y + 417, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.MissileIcon, x + 227, y + 437, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.TorpedoIcon, x + 227, y + 457, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.BombIcon, x + 227, y + 477, 255, System.Drawing.Color.White);
+
+			drawingManagement.DrawText("Arial", shipDesign.armor.beamEfficiency.ToString() + "%", x + 242, y + 397, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.armor.particleEfficiency.ToString() + "%", x + 242, y + 417, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.armor.missileEfficiency.ToString() + "%", x + 242, y + 437, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.armor.torpedoEfficiency.ToString() + "%", x + 242, y + 457, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.armor.bombEfficiency.ToString() + "%", x + 242, y + 477, System.Drawing.Color.White);
+
+			drawingManagement.DrawText("Arial", "Hit Points: " + shipDesign.armor.GetHP(totalSpace), x + 2, y + 428, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Space Used: " + shipDesign.armor.GetSpace(totalSpace), x + 2, y + 448, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Cost: " + shipDesign.armor.GetCost(totalSpace), x + 2, y + 468, System.Drawing.Color.White);
+
+			drawingManagement.DrawSprite(SpriteName.BeamIcon, x + 227, y + 499, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ParticleIcon, x + 227, y + 519, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.MissileIcon, x + 227, y + 539, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.TorpedoIcon, x + 227, y + 559, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.BombIcon, x + 227, y + 579, 255, System.Drawing.Color.White);
+
+			drawingManagement.DrawText("Arial", shipDesign.shield.beamEfficiency.ToString() + "%", x + 242, y + 499, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.shield.particleEfficiency.ToString() + "%", x + 242, y + 519, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.shield.missileEfficiency.ToString() + "%", x + 242, y + 539, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.shield.torpedoEfficiency.ToString() + "%", x + 242, y + 559, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", shipDesign.shield.bombEfficiency.ToString() + "%", x + 242, y + 579, System.Drawing.Color.White);
+
+			drawingManagement.DrawText("Arial", "Resistance: " + shipDesign.shield.GetResistance(), x + 2, y + 528, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Space Used: " + shipDesign.shield.GetSpace(totalSpace), x + 2, y + 548, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Cost: " + shipDesign.shield.GetCost(totalSpace), x + 2, y + 568, System.Drawing.Color.White);
+
+			shieldButton.Draw(drawingManagement);
+			armorButton.Draw(drawingManagement);
+			computerButton.Draw(drawingManagement);
+			engineButton.Draw(drawingManagement);
+			prevShip.Draw(drawingManagement);
+			nextShip.Draw(drawingManagement);
+			sizeComboBox.Draw(drawingManagement);
+			spaceUsage.Draw(drawingManagement);
+
+			drawingManagement.DrawText("Arial", "Total Space: " + totalSpace, x + 300, y + 555, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Space Used: " + usedSpace, x + 470, y + 555, usedSpace <= totalSpace ? System.Drawing.Color.White : System.Drawing.Color.Red);
+
+			drawingManagement.DrawText("Arial", "Total Cost: " + totalCost, x + 300, y + 535, System.Drawing.Color.White);
+
+			int count = shipDesign.weapons.Count > 13 ? 13 : shipDesign.weapons.Count;
+
+			for (int i = 0; i < count; i++)
 			{
-				equipmentSelection.DrawWindow(drawingManagement);
+				switch (shipDesign.weapons[i + shipWeaponIndex].GetWeaponType())
+				{
+					case WeaponType.BEAM:
+						{
+							drawingManagement.DrawSprite(SpriteName.BeamIcon, x + 289, y + 80 + (i * 34), 255, System.Drawing.Color.White);
+						} break;
+					case WeaponType.PARTICLE:
+						{
+							drawingManagement.DrawSprite(SpriteName.ParticleIcon, x + 289, y + 80 + (i * 34), 255, System.Drawing.Color.White);
+						} break;
+					case WeaponType.MISSILE:
+						{
+							drawingManagement.DrawSprite(SpriteName.MissileIcon, x + 289, y + 80 + (i * 34), 255, System.Drawing.Color.White);
+						} break;
+					case WeaponType.TORPEDO:
+						{
+							drawingManagement.DrawSprite(SpriteName.TorpedoIcon, x + 289, y + 80 + (i * 34), 255, System.Drawing.Color.White);
+						} break;
+					case WeaponType.BOMB:
+						{
+							drawingManagement.DrawSprite(SpriteName.BombIcon, x + 289, y + 80 + (i * 34), 255, System.Drawing.Color.White);
+						} break;
+				}
+				drawingManagement.DrawText("Arial", shipDesign.weapons[i + shipWeaponIndex].GetName(), x + 305, y + 82 + (i * 34), System.Drawing.Color.White);
+				drawingManagement.DrawText("Arial", shipDesign.weapons[i + shipWeaponIndex].GetDamage(shipDesign.computer).ToString(), x + 440, y + 82 + (i * 34), System.Drawing.Color.White);
+				if (shipDesign.weapons[i + shipWeaponIndex].GetAccuracy(shipDesign.computer) >= 0)
+				{
+					drawingManagement.DrawText("Arial", shipDesign.weapons[i + shipWeaponIndex].GetAccuracy(shipDesign.computer).ToString() + "%", x + 500, y + 82 + (i * 34), System.Drawing.Color.White);
+				}
+				int space = shipDesign.weapons[i + shipWeaponIndex].GetSpace();
+				if (shipDesign.weapons[i + shipWeaponIndex].Mounts >= 1)
+				{
+					space *= shipDesign.weapons[i + shipWeaponIndex].Mounts;
+					drawingManagement.DrawText("Arial", shipDesign.weapons[i + shipWeaponIndex].Mounts.ToString(), x + 578, y + 82 + (i * 34), System.Drawing.Color.White);
+				}
+				if (shipDesign.weapons[i + shipWeaponIndex].Ammo >= 1)
+				{
+					space *= shipDesign.weapons[i + shipWeaponIndex].Ammo;
+					drawingManagement.DrawText("Arial", shipDesign.weapons[i + shipWeaponIndex].Ammo.ToString(), x + 637, y + 82 + (i * 34), System.Drawing.Color.White);
+				}
+				drawingManagement.DrawText("Arial", space.ToString(), x + 690, y + 82 + (i * 34), System.Drawing.Color.White);
+				removeButtons[i].Draw(drawingManagement);
+				if (shipDesign.weapons[i + shipWeaponIndex].Mounts > 0)
+				{
+					mountUpButton[i].Draw(drawingManagement);
+					mountDownButton[i].Draw(drawingManagement);
+				}
+				if (shipDesign.weapons[i + shipWeaponIndex].Ammo > 0)
+				{
+					shotUpButton[i].Draw(drawingManagement);
+					shotDownButton[i].Draw(drawingManagement);
+				}
+			}
+
+			addWeapon.Draw(drawingManagement);
+			confirm.Draw(drawingManagement);
+			clear.Draw(drawingManagement);
+
+			if (displayingTechOption != NONE)
+			{
+				drawingManagement.DrawSprite(SpriteName.ControlBackground, x + 130, y, 255, 540, 570, System.Drawing.Color.White);
+				//drawingManagement.DrawText("Arial", "Name", x + 160, y + 20, System.Drawing.Color.White);
+				techScrollBar.DrawScrollBar(drawingManagement);
+				foreach (Label label in techLabels)
+				{
+					label.Draw();
+				}
+				count = 0;
+				switch (displayingTechOption)
+				{
+					case ENGINE:
+						{
+							count = availableEngines.Count > 15 ? 15 : availableEngines.Count;
+						} break;
+					case COMPUTER:
+						{
+							count = availableComputers.Count > 15 ? 15 : availableComputers.Count;
+						} break;
+					case ARMOR:
+						{
+							count = availableArmors.Count > 15 ? 15 : availableArmors.Count;
+						} break;
+					case SHIELD:
+						{
+							count = availableShields.Count > 15 ? 15 : availableShields.Count;
+						} break;
+					case WEAPON:
+						{
+							count = availableWeapons.Count > 15 ? 15 : availableWeapons.Count;;
+							for (int i = 0; i < count; i++)
+							{
+								techButtons[i].Draw(drawingManagement);
+								drawingManagement.DrawText("Arial", availableWeapons[i + techScrollBar.TopIndex].GetDamage(shipDesign.computer).ToString(), x + 400, y + 54 + (i * 35), System.Drawing.Color.White);
+								if (availableWeapons[i + techScrollBar.TopIndex].GetAccuracy(shipDesign.computer) >= 0)
+								{
+									drawingManagement.DrawText("Arial", availableWeapons[i + techScrollBar.TopIndex].GetAccuracy(shipDesign.computer).ToString() + "%", x + 500, y + 54 + (i * 35), System.Drawing.Color.White);
+								}
+								drawingManagement.DrawText("Arial", availableWeapons[i + techScrollBar.TopIndex].GetSpace().ToString(), x + 600, y + 54 + (i * 35), System.Drawing.Color.White);
+							}
+						} break;
+				}
 			}
 		}
 
-		public void UpdateBackground(float frameDeltaTime)
+		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			gameMain.UpdateGalaxyBackground(frameDeltaTime);
-		}
-
-		public void Update(int x, int y, float frameDeltaTime)
-		{
-			UpdateBackground(frameDeltaTime);
-
-			if (!selectionShowing)
+			switch (displayingTechOption)
 			{
-				nameTextBox.Update(frameDeltaTime);
-				if (shipClassComboBox.MouseHover(x, y, frameDeltaTime))
-				{
-					return;
-				}
-				nextShip.MouseHover(x, y, frameDeltaTime);
-				prevShip.MouseHover(x, y, frameDeltaTime);
-				addButton.MouseHover(x, y, frameDeltaTime);
-				clearButton.MouseHover(x, y, frameDeltaTime);
-				confirmButton.MouseHover(x, y, frameDeltaTime);
-				for (int i = 0; i < maxEquipmentVisible; i++)
-				{
-					removeButtons[i].MouseHover(x, y, frameDeltaTime);
-				}
-			}
-			else
-			{
-				equipmentSelection.MouseHover(x, y, frameDeltaTime);
+				case NONE:
+					{
+						nameTextBox.Update(frameDeltaTime);
+						sizeComboBox.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						engineButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						computerButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						armorButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						shieldButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						nextShip.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						prevShip.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						confirm.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						clear.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						addWeapon.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						int count = shipDesign.weapons.Count > 13 ? 13 : shipDesign.weapons.Count;
+						for (int i = 0; i < count; i++)
+						{
+							removeButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+							if (shipDesign.weapons[i + shipWeaponIndex].Mounts > 0)
+							{
+								mountUpButton[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+								mountDownButton[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+							}
+							if (shipDesign.weapons[i + shipWeaponIndex].Ammo > 0)
+							{
+								shotUpButton[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+								shotDownButton[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+							}
+						}
+					} break;
+				case ENGINE:
+					{
+						if (techScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+						{
+							RefreshTechOptions();
+							break;
+						}
+						int count = availableEngines.Count > 15 ? 15 : availableEngines.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						}
+					} break;
+				case COMPUTER:
+					{
+						if (techScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+						{
+							RefreshTechOptions();
+							break;
+						}
+						int count = availableComputers.Count > 15 ? 15 : availableComputers.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						}
+					} break;
+				case ARMOR:
+					{
+						if (techScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+						{
+							RefreshTechOptions();
+							break;
+						}
+						int count = availableArmors.Count > 15 ? 15 : availableArmors.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						}
+					} break;
+				case SHIELD:
+					{
+						if (techScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+						{
+							RefreshTechOptions();
+							break;
+						}
+						int count = availableShields.Count > 15 ? 15 : availableShields.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						}
+					} break;
+				case WEAPON:
+					{
+						if (techScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+						{
+							RefreshTechOptions();
+							break;
+						}
+						int count = availableWeapons.Count > 15 ? 15 : availableWeapons.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						}
+					} break;
 			}
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			if (!selectionShowing)
+			switch (displayingTechOption)
 			{
-				if (nameTextBox.MouseDown(x, y))
-				{
-					return;
-				}
-				if (shipClassComboBox.MouseDown(x, y))
-				{
-					return;
-				}
-				prevShip.MouseDown(x, y);
-				nextShip.MouseDown(x, y);
-				addButton.MouseDown(x, y);
-				clearButton.MouseDown(x, y);
-				confirmButton.MouseDown(x, y);
-				for (int i = 0; i < maxEquipmentVisible; i++)
-				{
-					removeButtons[i].MouseDown(x, y);
-				}
-			}
-			else
-			{
-				equipmentSelection.MouseDown(x, y);
+				case NONE:
+					{
+						if (nameTextBox.MouseDown(x, y))
+						{
+							return;
+						}
+						if (sizeComboBox.MouseDown(x, y))
+						{
+							return;
+						}
+						prevShip.MouseDown(x, y);
+						nextShip.MouseDown(x, y);
+						engineButton.MouseDown(x, y);
+						computerButton.MouseDown(x, y);
+						armorButton.MouseDown(x, y);
+						shieldButton.MouseDown(x, y);
+						confirm.MouseDown(x, y);
+						clear.MouseDown(x, y);
+						addWeapon.MouseDown(x, y);
+
+						int count = shipDesign.weapons.Count > 13 ? 13 : shipDesign.weapons.Count;
+						for (int i = 0; i < count; i++)
+						{
+							removeButtons[i].MouseDown(x, y);
+							if (shipDesign.weapons[i + shipWeaponIndex].Mounts > 0)
+							{
+								mountUpButton[i].MouseDown(x, y);
+								mountDownButton[i].MouseDown(x, y);
+							}
+							if (shipDesign.weapons[i + shipWeaponIndex].Ammo > 0)
+							{
+								shotUpButton[i].MouseDown(x, y);
+								shotDownButton[i].MouseDown(x, y);
+							}
+						}
+					} break;
+				case ENGINE:
+					{
+						techScrollBar.MouseDown(x, y);
+						int count = availableEngines.Count > 15 ? 15 : availableEngines.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].MouseDown(x, y);
+						}
+					} break;
+				case COMPUTER:
+					{
+						techScrollBar.MouseDown(x, y);
+						int count = availableComputers.Count > 15 ? 15 : availableComputers.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].MouseDown(x, y);
+						}
+					} break;
+				case ARMOR:
+					{
+						techScrollBar.MouseDown(x, y);
+						int count = availableArmors.Count > 15 ? 15 : availableArmors.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].MouseDown(x, y);
+						}
+					} break;
+				case SHIELD:
+					{
+						techScrollBar.MouseDown(x, y);
+						int count = availableShields.Count > 15 ? 15 : availableShields.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].MouseDown(x, y);
+						}
+					} break;
+				case WEAPON:
+					{
+						techScrollBar.MouseDown(x, y);
+						int count = availableWeapons.Count > 15 ? 15 : availableWeapons.Count;
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].MouseDown(x, y);
+						}
+					} break;
 			}
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			/*if (!selectionShowing)
+			switch (displayingTechOption)
 			{
-				if (nameTextBox.MouseUp(x, y))
-				{
-					return;
-				}
-				if (shipClassComboBox.MouseUp(x, y))
-				{
-					shipDesign.ShipClass = shipDesign.Race.ShipClasses[shipClassComboBox.SelectedIndex];
-					shipDesign.WhichStyle = 0;
-					UpdateInformation();
-					shipSprite = shipDesign.ShipClass.Sprites[shipDesign.WhichStyle];
-					nameTextBox.SetString(shipDesign.Race.GetRandomShipName(shipDesign.ShipClass.Size));
-					LoadShipSprite();
-					return;
-				}
-				if (prevShip.MouseUp(x, y))
-				{
-					shipDesign.WhichStyle--;
-					if (shipDesign.WhichStyle < 0)
+				case NONE:
 					{
-						shipDesign.WhichStyle = shipDesign.ShipClass.NumberOfStyles - 1;
-					}
-					shipSprite = shipDesign.ShipClass.Sprites[shipDesign.WhichStyle];
-					LoadShipSprite();
-					return;
-				}
-				if (nextShip.MouseUp(x, y))
-				{
-					shipDesign.WhichStyle++;
-					if (shipDesign.WhichStyle >= shipDesign.ShipClass.NumberOfStyles)
+						if (nameTextBox.MouseUp(x, y))
+						{
+							return;
+						}
+						if (sizeComboBox.MouseUp(x, y))
+						{
+							shipDesign.Size = sizeComboBox.SelectedIndex + 1;
+							UpdateSpaceUsageAndCost();
+							shipSprite = gameMain.empireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
+							shipSprite.SetPosition((gameMain.ScreenWidth / 2) - 305, (gameMain.ScreenHeight / 2) - 205);
+							shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
+							return;
+						}
+						if (prevShip.MouseUp(x, y))
+						{
+							shipDesign.WhichStyle--;
+							if (shipDesign.WhichStyle < 0)
+							{
+								shipDesign.WhichStyle = 5;
+							}
+							shipSprite = gameMain.empireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
+							shipSprite.SetPosition((gameMain.ScreenWidth / 2) - 305, (gameMain.ScreenHeight / 2) - 205);
+							shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
+							return;
+						}
+						if (nextShip.MouseUp(x, y))
+						{
+							shipDesign.WhichStyle++;
+							if (shipDesign.WhichStyle > 5)
+							{
+								shipDesign.WhichStyle = 0;
+							}
+							shipSprite = gameMain.empireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
+							shipSprite.SetPosition((gameMain.ScreenWidth / 2) - 305, (gameMain.ScreenHeight / 2) - 205);
+							shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
+							return;
+						}
+						if (engineButton.MouseUp(x, y))
+						{
+							displayingTechOption = ENGINE;
+							LoadTechOptions();
+							return;
+						}
+						if (computerButton.MouseUp(x, y))
+						{
+							displayingTechOption = COMPUTER;
+							LoadTechOptions();
+							return;
+						}
+						if (armorButton.MouseUp(x, y))
+						{
+							displayingTechOption = ARMOR;
+							LoadTechOptions();
+							return;
+						}
+						if (shieldButton.MouseUp(x, y))
+						{
+							displayingTechOption = SHIELD;
+							LoadTechOptions();
+							return;
+						}
+						if (addWeapon.MouseUp(x, y))
+						{
+							displayingTechOption = WEAPON;
+							LoadTechOptions();
+							return;
+						}
+						if (clear.MouseUp(x, y))
+						{
+							shipDesign.engine = availableEngines[0];
+							engineButton.SetButtonText(shipDesign.engine.GetName());
+							shipDesign.computer = availableComputers[0];
+							computerButton.SetButtonText(shipDesign.computer.GetName());
+							shipDesign.armor = availableArmors[0];
+							armorButton.SetButtonText(shipDesign.armor.GetName());
+							shipDesign.shield = availableShields[0];
+							shieldButton.SetButtonText(shipDesign.shield.GetName());
+							shipDesign.weapons.Clear();
+							UpdateSpaceUsageAndCost();
+						}
+						if (confirm.MouseUp(x, y))
+						{
+							shipDesign.Name = nameTextBox.GetString();
+							gameMain.empireManager.CurrentEmpire.FleetManager.AddShipDesign(shipDesign);
+							NameGenerator generator = new NameGenerator();
+							shipDesign.Name = generator.GetName();
+							nameTextBox.SetString(shipDesign.Name);
+						}
+						int count = shipDesign.weapons.Count > 13 ? 13 : shipDesign.weapons.Count;
+						for (int i = 0; i < count; i++)
+						{
+							if (removeButtons[i].MouseUp(x, y))
+							{
+								shipDesign.weapons.RemoveAt(i + shipWeaponIndex);
+								UpdateSpaceUsageAndCost();
+								break;
+							}
+							if (shipDesign.weapons[i + shipWeaponIndex].Mounts > 0)
+							{
+								if (mountUpButton[i].MouseUp(x, y))
+								{
+									shipDesign.weapons[i + shipWeaponIndex].Mounts++;
+									UpdateSpaceUsageAndCost();
+								}
+								if (mountDownButton[i].MouseUp(x, y) && shipDesign.weapons[i + shipWeaponIndex].Mounts > 1)
+								{
+									shipDesign.weapons[i + shipWeaponIndex].Mounts--;
+									UpdateSpaceUsageAndCost();
+								}
+							}
+							if (shipDesign.weapons[i + shipWeaponIndex].Ammo > 0)
+							{
+								if (shotUpButton[i].MouseUp(x, y))
+								{
+									shipDesign.weapons[i + shipWeaponIndex].Ammo++;
+									UpdateSpaceUsageAndCost();
+								}
+								if (shotDownButton[i].MouseUp(x, y) && shipDesign.weapons[i + shipWeaponIndex].Ammo > 1)
+								{
+									shipDesign.weapons[i + shipWeaponIndex].Ammo--;
+									UpdateSpaceUsageAndCost();
+								}
+							}
+						}
+					} break;
+				case ENGINE:
 					{
-						shipDesign.WhichStyle = 0;
-					}
-					shipSprite = shipDesign.ShipClass.Sprites[shipDesign.WhichStyle];
-					LoadShipSprite();
-					return;
-				}
-				if (addButton.MouseUp(x, y))
-				{
-					selectionShowing = true;
-					equipmentSelection.LoadWindow(shipDesign.ShipClass.Size, shipDesign.ShipClass.Values);
-					return;
-				}
-				if (clearButton.MouseUp(x, y))
-				{
-					shipDesign.Equipments.Clear();
-					UpdateInformation();
-					return;
-				}
-				if (confirmButton.MouseUp(x, y))
-				{
-					shipDesign.Name = nameTextBox.GetString();
-					gameMain.empireManager.CurrentEmpire.FleetManager.AddShipDesign(shipDesign);
-					shipDesign.Equipments.Clear();
-					nameTextBox.SetString(shipDesign.Race.GetRandomShipName(shipDesign.ShipClass.Size));
-					UpdateInformation();
-				}
-				for (int i = 0; i < maxEquipmentVisible; i++)
-				{
-					if (removeButtons[i].MouseUp(x, y))
+						if (techScrollBar.MouseUp(x, y))
+						{
+							RefreshTechOptions();
+							return;
+						}
+						int count = availableEngines.Count > 15 ? 15 : availableEngines.Count;
+						for (int i = 0; i < count; i++)
+						{
+							if (techButtons[i].MouseUp(x, y))
+							{
+								shipDesign.engine = availableEngines[i + techScrollBar.TopIndex];
+								engineButton.SetButtonText(shipDesign.engine.GetName());
+								displayingTechOption = NONE;
+								UpdateSpaceUsageAndCost();
+								return;
+							}
+						}
+					} break;
+				case COMPUTER:
 					{
-						shipDesign.Equipments.RemoveAt(i + equipmentScrollbar.TopIndex);
-						UpdateInformation();
-						return;
-					}
+						if (techScrollBar.MouseUp(x, y))
+						{
+							RefreshTechOptions();
+							return;
+						}
+						int count = availableComputers.Count > 15 ? 15 : availableComputers.Count;
+						for (int i = 0; i < count; i++)
+						{
+							if (techButtons[i].MouseUp(x, y))
+							{
+								shipDesign.computer = availableComputers[i + techScrollBar.TopIndex];
+								computerButton.SetButtonText(shipDesign.computer.GetName());
+								displayingTechOption = NONE;
+								UpdateSpaceUsageAndCost();
+								return;
+							}
+						}
+					} break;
+				case ARMOR:
+					{
+						if (techScrollBar.MouseUp(x, y))
+						{
+							RefreshTechOptions();
+							return;
+						}
+						int count = availableArmors.Count > 15 ? 15 : availableArmors.Count;
+						for (int i = 0; i < count; i++)
+						{
+							if (techButtons[i].MouseUp(x, y))
+							{
+								shipDesign.armor = availableArmors[i + techScrollBar.TopIndex];
+								armorButton.SetButtonText(shipDesign.armor.GetName());
+								displayingTechOption = NONE;
+								UpdateSpaceUsageAndCost();
+								return;
+							}
+						}
+					} break;
+				case SHIELD:
+					{
+						if (techScrollBar.MouseUp(x, y))
+						{
+							RefreshTechOptions();
+							return;
+						}
+						int count = availableShields.Count > 15 ? 15 : availableShields.Count;
+						for (int i = 0; i < count; i++)
+						{
+							if (techButtons[i].MouseUp(x, y))
+							{
+								shipDesign.shield = availableShields[i + techScrollBar.TopIndex];
+								shieldButton.SetButtonText(shipDesign.shield.GetName());
+								displayingTechOption = NONE;
+								UpdateSpaceUsageAndCost();
+								return;
+							}
+						}
+					} break;
+				case WEAPON:
+					{
+						if (techScrollBar.MouseUp(x, y))
+						{
+							RefreshTechOptions();
+							return;
+						}
+						int count = availableWeapons.Count > 15 ? 15 : availableWeapons.Count;
+						for (int i = 0; i < count; i++)
+						{
+							if (techButtons[i].MouseUp(x, y))
+							{
+								shipDesign.weapons.Add(new Weapon(availableWeapons[i + techScrollBar.TopIndex]));
+								displayingTechOption = NONE;
+								UpdateSpaceUsageAndCost();
+								return;
+							}
+						}
+					} break;
+			}
+			if (displayingTechOption != NONE)
+			{
+				if (x < this.x + 130 || x >= this.x + 670 || y < this.y || y >= this.y + 570)
+				{
+					displayingTechOption = NONE;
 				}
 			}
-			else
-			{
-				equipmentSelection.MouseUp(x, y);
-			}*/
-		}
-
-		private void OnOkClick(Equipment finalEquipment)
-		{
-			//shipDesign.Equipments.Add(finalEquipment);
-			UpdateInformation();
-		}
-
-		private void OnCancelClick()
-		{
-			selectionShowing = false;
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -323,117 +774,335 @@ namespace Beyond_Beyaan.Screens
 
 		public void Resize()
 		{
-			/*x = gameMain.ScreenWidth / 2 - 400;
+			x = gameMain.ScreenWidth / 2 - 400;
 			y = gameMain.ScreenHeight / 2 - 300;
 
-			sizeComboBox.MoveTo(x + 75, y + 40);
-			engineButton.MoveTo(x + 75, y + 230);
-			computerButton.MoveTo(x + 75, y + 300);
-			armorButton.MoveTo(x + 75, y + 400);
-			shieldButton.MoveTo(x + 75, y + 500);
+			sizeComboBox.MoveComboBox(x + 75, y + 40);
+			engineButton.MoveButton(x + 75, y + 230);
+			computerButton.MoveButton(x + 75, y + 300);
+			armorButton.MoveButton(x + 75, y + 400);
+			shieldButton.MoveButton(x + 75, y + 500);
 
-			prevShip.MoveTo(x + 75, y + 135);
-			nextShip.MoveTo(x + 251, y + 135);
+			prevShip.MoveButton(x + 75, y + 135);
+			nextShip.MoveButton(x + 251, y + 135);
 
 			for (int i = 0; i < techButtons.Length; i++)
 			{
-				techButtons[i].MoveTo(x + 150, y + 50 + (i * 35));
-			}*/
-		}
-
-		private void LoadShipSprite()
-		{
-			/*float scale = 1.0f;
-			if (shipDesign.ShipClass.Size <= 10)
-			{
-				scale = (shipDesign.ShipClass.Size * 16) / shipSprite.Width;
+				techButtons[i].MoveButton(x + 150, y + 50 + (i * 35));
 			}
-			else
-			{
-				scale = 160.0f / shipSprite.Width;
-			}
-			shipSprite.SetScale(scale, scale);
-			shipSprite.SetPosition(xPos + 702 - (shipSprite.ScaledWidth / 2), yPos + 115 - (shipSprite.ScaledHeight / 2));*/
 		}
 
 		public void LoadScreen()
 		{
-			/*xPos = gameMain.ScreenWidth / 2 - 420;
-			yPos = gameMain.ScreenHeight / 2 - 320;
+			x = gameMain.ScreenWidth / 2 - 400;
+			y = gameMain.ScreenHeight / 2 - 300;
 
-			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
+			shipDesign = gameMain.empireManager.CurrentEmpire.FleetManager.LastShipDesign;
+			shipSprite = gameMain.empireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
+			shipSprite.SetPosition(x + 95, y + 95);
+			shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
 
-			shipDesign = currentEmpire.FleetManager.LastShipDesign;
-			shipSprite = shipDesign.ShipClass.Sprites[shipDesign.WhichStyle];
+			engineButton.SetButtonText(shipDesign.engine.GetName());
+			computerButton.SetButtonText(shipDesign.computer.GetName());
+			armorButton.SetButtonText(shipDesign.armor.GetName());
+			shieldButton.SetButtonText(shipDesign.shield.GetName());
+			sizeComboBox.SelectedIndex = shipDesign.Size - 1;
 
-			List<string> shipSizeLabels = new List<string>();
-			int selectedIndex = 0;
-			for (int i = 0; i < currentEmpire.EmpireRace.ShipClasses.Count; i++)
+			UpdateSpaceUsageAndCost();
+
+			NameGenerator generator = new NameGenerator();
+
+			string shipName = generator.GetName();
+			shipDesign.Name = shipName;
+			nameTextBox.SetString(shipName);
+
+			TechnologyManager techManager = gameMain.empireManager.CurrentEmpire.TechnologyManager;
+
+			availableEngines = new List<Engine>();
+			foreach (Engine engine in techManager.VisibleEngines)
 			{
-				shipSizeLabels.Add(currentEmpire.EmpireRace.ShipClasses[i].ClassName);
-				if (shipDesign.ShipClass == currentEmpire.EmpireRace.ShipClasses[i])
+				if (engine.GetLevel() > 0)
 				{
-					selectedIndex = i;
+					availableEngines.Add(engine);
+				}
+			}
+			availableComputers = new List<Computer>();
+			foreach (Computer computer in techManager.VisibleComputers)
+			{
+				if (computer.GetLevel() > 0)
+				{
+					availableComputers.Add(computer);
+				}
+			}
+			availableArmors = new List<Armor>();
+			foreach (Armor armor in techManager.VisibleArmors)
+			{
+				if (armor.GetLevel() > 0)
+				{
+					availableArmors.Add(armor);
+				}
+			}
+			availableShields = new List<Shield>();
+			foreach (Shield shield in techManager.VisibleShields)
+			{
+				if (shield.GetLevel() > 0)
+				{
+					availableShields.Add(shield);
 				}
 			}
 
-			shipClassComboBox.SetItems(shipSizeLabels);
-			shipClassComboBox.SelectedIndex = selectedIndex;
-			LoadShipSprite();
-			nameTextBox.SetString(shipDesign.Race.GetRandomShipName(shipDesign.ShipClass.Size));
-
-			UpdateInformation();*/
+			availableWeapons = new List<Weapon>();
+			foreach (Beam beam in techManager.VisibleBeams)
+			{
+				if (beam.GetLevel() > 0)
+				{
+					availableWeapons.Add(new Weapon(beam));
+				}
+			}
+			foreach (Particle particle in techManager.VisibleParticles)
+			{
+				if (particle.GetLevel() > 0)
+				{
+					availableWeapons.Add(new Weapon(particle));
+				}
+			}
+			foreach (Missile missile in techManager.VisibleMissiles)
+			{
+				if (missile.GetLevel() > 0)
+				{
+					availableWeapons.Add(new Weapon(missile));
+				}
+			}
+			foreach (Torpedo torpedo in techManager.VisibleTorpedoes)
+			{
+				if (torpedo.GetLevel() > 0)
+				{
+					availableWeapons.Add(new Weapon(torpedo));
+				}
+			}
+			foreach (Bomb bomb in techManager.VisibleBombs)
+			{
+				if (bomb.GetLevel() > 0)
+				{
+					availableWeapons.Add(new Weapon(bomb));
+				}
+			}
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
+				gameMain.ChangeToScreen(Screen.Galaxy);
 			}
 			if (nameTextBox.KeyDown(e))
 			{
-				UpdateInformation();
 				return;
 			}
-			/*if (e.Key == KeyboardKeys.Space)
+			if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}*/
+			}
 		}
 
-		private void UpdateInformation()
+		private void UpdateSpaceUsageAndCost()
 		{
-			/*shipValues = shipDesign.GetBasicValues();
+			totalSpace = shipDesign.TotalSpace;
+			usedSpace = 0;
+			usedSpace += shipDesign.engine.GetSpace(totalSpace);
+			usedSpace += shipDesign.armor.GetSpace(totalSpace);
+			usedSpace += shipDesign.computer.GetSpace(totalSpace);
+			usedSpace += shipDesign.shield.GetSpace(totalSpace);
 
-			foreach (Icon icon in shipDesign.ShipClass.DesignIcons)
+			totalCost = 0;
+			totalCost += shipDesign.engine.GetCost(totalSpace);
+			totalCost += shipDesign.armor.GetCost(totalSpace);
+			totalCost += shipDesign.computer.GetCost(totalSpace);
+			totalCost += shipDesign.shield.GetCost(totalSpace);
+
+			foreach (Weapon weapon in shipDesign.weapons)
 			{
-				icon.UpdateText(shipValues);
+				int weaponSpace = weapon.GetSpace();
+				int weaponCost = weapon.GetCost();
+				if (weapon.Mounts > 0)
+				{
+					weaponSpace *= weapon.Mounts;
+					weaponCost *= weapon.Mounts;
+				}
+				if (weapon.Ammo > 0)
+				{
+					weaponSpace *= weapon.Ammo;
+					weaponCost *= weapon.Ammo;
+				}
+				usedSpace += weaponSpace;
+				totalCost += weaponCost;
 			}
 
-			string isValid = shipDesign.ShipClass.ShipScript.IsShipDesignValid(shipValues);
-			confirmButton.Active = string.IsNullOrEmpty(isValid);
+			spaceUsage.SetMaxProgress(totalSpace);
+			spaceUsage.SetProgress(usedSpace);
 
-			maxEquipmentVisible = shipDesign.Equipments.Count > equipmentButtons.Length ? equipmentButtons.Length : shipDesign.Equipments.Count;
-
-			if (shipDesign.Equipments.Count > equipmentButtons.Length)
+			confirm.Active = totalSpace >= usedSpace;
+			if (confirm.Active)
 			{
-				maxEquipmentVisible = equipmentButtons.Length;
-				equipmentScrollbar.SetEnabledState(true);
-				equipmentScrollbar.SetAmountOfItems(shipDesign.Equipments.Count);
+				spaceUsage.SetColor(System.Drawing.Color.Green);
 			}
 			else
 			{
-				maxEquipmentVisible = shipDesign.Equipments.Count;
-				equipmentScrollbar.SetEnabledState(false);
-				equipmentScrollbar.SetAmountOfItems(10);
+				spaceUsage.SetColor(System.Drawing.Color.Red);
 			}
-			equipmentScrollbar.TopIndex = 0;
 
-			for (int i = 0; i < maxEquipmentVisible; i++)
+			shipDesign.Cost = totalCost;
+		}
+
+		public void LoadTechOptions()
+		{
+			techScrollBar.TopIndex = 0;
+			switch (displayingTechOption)
 			{
-				equipmentLabels[i].SetText(shipDesign.Equipments[i].GetName());
-			}*/
+				case ENGINE:
+					{
+						int count = availableEngines.Count > 15 ? 15 : availableEngines.Count;
+						if (count < availableEngines.Count)
+						{
+							techScrollBar.SetEnabledState(true);
+							techScrollBar.SetAmountOfItems(availableEngines.Count);
+						}
+						else
+						{
+							techScrollBar.SetEnabledState(false);
+							techScrollBar.SetAmountOfItems(30);
+						}
+						
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].SetButtonText(availableEngines[i].GetName());
+						}
+						techLabels[1].SetText("Combat Speed");
+						techLabels[2].SetText("Galaxy Speed");
+					} break;
+				case COMPUTER:
+					{
+						int count = availableComputers.Count > 15 ? 15 : availableComputers.Count;
+						if (count < availableComputers.Count)
+						{
+							techScrollBar.SetEnabledState(true);
+							techScrollBar.SetAmountOfItems(availableComputers.Count);
+						}
+						else
+						{
+							techScrollBar.SetEnabledState(false);
+							techScrollBar.SetAmountOfItems(30);
+						}
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].SetButtonText(availableComputers[i].GetName());
+						}
+						techLabels[1].SetText("Efficiency");
+						techLabels[2].SetText(string.Empty);
+					} break;
+				case ARMOR:
+					{
+						int count = availableArmors.Count > 15 ? 15 : availableArmors.Count;
+						if (count < availableArmors.Count)
+						{
+							techScrollBar.SetEnabledState(true);
+							techScrollBar.SetAmountOfItems(availableArmors.Count);
+						}
+						else
+						{
+							techScrollBar.SetEnabledState(false);
+							techScrollBar.SetAmountOfItems(30);
+						}
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].SetButtonText(availableArmors[i].GetName());
+						}
+						techLabels[1].SetText("Efficiency");
+						techLabels[2].SetText("HP");
+					} break;
+				case SHIELD:
+					{
+						int count = availableShields.Count > 15 ? 15 : availableShields.Count;
+						if (count < availableShields.Count)
+						{
+							techScrollBar.SetEnabledState(true);
+							techScrollBar.SetAmountOfItems(availableShields.Count);
+						}
+						else
+						{
+							techScrollBar.SetEnabledState(false);
+							techScrollBar.SetAmountOfItems(30);
+						}
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].SetButtonText(availableShields[i].GetName());
+						}
+						techLabels[1].SetText("Efficiency");
+						techLabels[2].SetText("Resistance");
+					} break;
+				case WEAPON:
+					{
+						int count = availableWeapons.Count > 15 ? 15 : availableWeapons.Count;
+						if (count < availableWeapons.Count)
+						{
+							techScrollBar.SetEnabledState(true);
+							techScrollBar.SetAmountOfItems(availableWeapons.Count);
+						}
+						else
+						{
+							techScrollBar.SetEnabledState(false);
+							techScrollBar.SetAmountOfItems(30);
+						}
+						for (int i = 0; i < count; i++)
+						{
+							techButtons[i].SetButtonText(availableWeapons[i].GetName());
+						}
+						techLabels[1].SetText("Damage");
+						techLabels[2].SetText("Accuracy");
+					} break;
+			}
+		}
+		private void RefreshTechOptions()
+		{
+			//This is when the tech scrollbar is moved
+			switch (displayingTechOption)
+			{
+				case ENGINE:
+					{
+						for (int i = 0; i < techButtons.Length; i++)
+						{
+							techButtons[i].SetButtonText(availableEngines[i + techScrollBar.TopIndex].GetName());
+						}
+					} break;
+				case COMPUTER:
+					{
+						for (int i = 0; i < techButtons.Length; i++)
+						{
+							techButtons[i].SetButtonText(availableComputers[i + techScrollBar.TopIndex].GetName());
+						}
+					} break;
+				case ARMOR:
+					{
+						for (int i = 0; i < techButtons.Length; i++)
+						{
+							techButtons[i].SetButtonText(availableArmors[i + techScrollBar.TopIndex].GetName());
+						}
+					} break;
+				case SHIELD:
+					{
+						for (int i = 0; i < techButtons.Length; i++)
+						{
+							techButtons[i].SetButtonText(availableShields[i + techScrollBar.TopIndex].GetName());
+						}
+					} break;
+				case WEAPON:
+					{
+						for (int i = 0; i < techButtons.Length; i++)
+						{
+							techButtons[i].SetButtonText(availableWeapons[i + techScrollBar.TopIndex].GetName());
+						}
+					} break;
+			}
 		}
 	}
 }

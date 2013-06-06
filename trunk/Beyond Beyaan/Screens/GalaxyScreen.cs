@@ -1,138 +1,112 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using GorgonLibrary.InputDevices;
-using GorgonLibrary.Graphics;
+using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
 {
 	class GalaxyScreen : ScreenInterface
 	{
-		private BackgroundStars backgroundStars;
+		#region Constants
+		private const int AGRICULTURE = 0;
+		private const int WASTE = 1;
+		private const int COMMERCE = 2;
+		private const int RESEARCH = 3;
+		private const int CONSTRUCTION = 4;
+		#endregion
+
 		private GameMain gameMain;
 		private Camera camera;
+		private GorgonLibrary.Graphics.Sprite shipSprite;
+		private Button[] systemButtons;
+		private Button[] fleetButtons;
+		private ScrollBar systemScrollBar;
+		private ScrollBar[] planetScrollBars;
+		private Button[] planetFieldLocks;
+		private Button prevShip;
+		private Button nextShip;
+		private ScrollBar fleetScrollBar;
+		private ScrollBar shipSelectorScrollBar;
+		private ScrollBar[] shipScrollBars;
+		private GorgonLibrary.Graphics.RenderTarget oldTarget;
+		private GorgonLibrary.Graphics.RenderImage starName;
 
-		private RenderTarget oldTarget;
-		private RenderImage starName;
-
-		private float rotation;
+		private float[] sizes;
 		private bool pressedInWindow;
+		private Label[] racePopLabels;
+		private Label planetOwner;
+		private Button transferButton;
 
 		private Button transferOKButton;
 		private Button transferCancelButton;
 		private ScrollBar[] popTransferSliders;
 		private Label[] amountPopTransferLabel;
-		private ScrollBar listOfPopTransferScrollBar;
-		//private bool showingSplitWindow;
-		private Label transferUpkeepCost;
-
-		private SystemWindow systemWindow;
-		private SquadronListWindow squadronListWindow;
-		//private SplitPopulation splitPopulation;
-
-		//private AnimatedImage fleetDest;
-		//private AnimatedImage stargate;
-
-		private Point LastClickedPosition; //used for refreshing fleet list
-		private Point whichGridCellClicked;
-
-		private Sprite movementPath;
-		private Sprite starlaneSprite;
+		private List<TransportShip> tempTransportShips;
+		//private ScrollBar listOfPopTransferSlier;
+		private bool showingTransferUI;
+		private int maxVisible;
 
 		public void Initialize(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
 
 			camera = new Camera(gameMain.ScreenWidth, gameMain.ScreenHeight);
-			camera.InitCamera(gameMain.Galaxy.GalaxySize, 32);
+			camera.InitCamera(gameMain.galaxy.GalaxySize, 32);
 
+			RecalculateSizes();
+
+			systemButtons = new Button[6];
+			for (int i = 0; i < systemButtons.Length; i++)
+			{
+				systemButtons[i] = new Button(SpriteName.NormalBackgroundButton, SpriteName.NormalForegroundButton, string.Empty, gameMain.ScreenWidth - 490, 8 + (47 * i), 215, 47);
+			}
+			systemScrollBar = new ScrollBar(gameMain.ScreenWidth - 274, 8, 20, 242, 6, 6, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
+							SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton,
+							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
+			fleetScrollBar = new ScrollBar(gameMain.ScreenWidth - 24, 30, 16, 48, 4, 6, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
+							SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton,
+							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
+			shipSelectorScrollBar = new ScrollBar(gameMain.ScreenWidth - 20, 130, 16, 286, 8, 10, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
+							SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton,
+							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
+
+			planetOwner = new Label(gameMain.ScreenWidth - 490, 300);
+			racePopLabels = new Label[0];
+
+			planetScrollBars = new ScrollBar[5];
+			planetFieldLocks = new Button[5];
+
+			for (int i = 0; i < 5; i++)
+			{
+				planetScrollBars[i] = new ScrollBar(gameMain.ScreenWidth - 245, 30 + (i * 40), 16, 188, 1, 101, true, true, SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton,
+					SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, SpriteName.SliderHorizontalBackgroundButton,
+					SpriteName.SliderHorizontalForegroundButton, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
+				planetFieldLocks[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, gameMain.ScreenWidth - 21, 30 + (i * 40), 16, 16);
+			}
+
+			prevShip = new Button(SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton, string.Empty, gameMain.ScreenWidth - 245, 275, 16, 16);
+			nextShip = new Button(SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, string.Empty, gameMain.ScreenWidth - 25, 275, 16, 16);
 			pressedInWindow = false;
 
-			starName = new RenderImage("starNameRendered", 1, 1, ImageBufferFormats.BufferRGB888A8);
-			starName.BlendingMode = BlendingModes.Modulated;
+			starName = new GorgonLibrary.Graphics.RenderImage("starNameRendered", 1, 1, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
+			starName.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
 
-			//transferButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Transfer Population", gameMain.ScreenWidth - 245, 370, 240, 25);
+			transferButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Transfer Population", gameMain.ScreenWidth - 245, 370, 240, 25);
 
-			//transferOKButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Create Transport", gameMain.ScreenWidth / 2 + 10, gameMain.ScreenHeight / 2 + 70, 150, 25);
-			//transferCancelButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Cancel", gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 70, 150, 25);
-			transferUpkeepCost = new Label(gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 50, System.Drawing.Color.White, gameMain.FontManager.GetDefaultFont());
+			transferOKButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Create Transport", gameMain.ScreenWidth / 2 + 10, gameMain.ScreenHeight / 2 + 50, 150, 25);
+			transferCancelButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Cancel", gameMain.ScreenWidth / 2 - 160, gameMain.ScreenHeight / 2 + 50, 150, 25);
 			popTransferSliders = new ScrollBar[4];
 			amountPopTransferLabel = new Label[4];
 			for (int i = 0; i < 4; i++)
 			{
-				popTransferSliders[i] = new ScrollBar(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40) + 22, 16, 268, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
-				amountPopTransferLabel[i] = new Label(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40), gameMain.FontManager.GetDefaultFont());
+				popTransferSliders[i] = new ScrollBar(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40) + 22, 16, 288, 1, 100, true, true, SpriteName.ScrollLeftBackgroundButton,
+					SpriteName.ScrollLeftForegroundButton, SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, SpriteName.SliderHorizontalBackgroundButton, SpriteName.SliderHorizontalForegroundButton,
+					SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
+				amountPopTransferLabel[i] = new Label(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40));
 			}
-			listOfPopTransferScrollBar = new ScrollBar(gameMain.ScreenWidth / 2 + 142, gameMain.ScreenHeight / 2 - 120, 16, 128, 4, 10, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
-
-			systemWindow = new SystemWindow(gameMain.ScreenWidth / 2, gameMain.ScreenHeight / 2, gameMain);
-			squadronListWindow = new SquadronListWindow(gameMain.ScreenHeight / 2, gameMain);
-			//splitPopulation = new SplitPopulation(gameMain.ScreenWidth / 2, 220, gameMain, SplitFleet);
-
-			Image starlaneImage = new Image("starlaneImage", 1, 3, ImageBufferFormats.BufferRGB888A8);
-			Image.ImageLockBox newImage0 = starlaneImage.GetImageData();
-			newImage0.Lock(false);
-
-			newImage0[0, 0] = System.Drawing.Color.FromArgb(200, 150, 150, 150).ToArgb();
-			//newImage0[0, 1] = System.Drawing.Color.FromArgb(255, 200, 200, 200).ToArgb();
-			newImage0[0, 1] = System.Drawing.Color.FromArgb(255, 255, 255, 255).ToArgb();
-			//newImage0[0, 3] = System.Drawing.Color.FromArgb(255, 200, 200, 200).ToArgb();
-			newImage0[0, 2] = System.Drawing.Color.FromArgb(200, 150, 150, 150).ToArgb();
-
-			newImage0.Unlock();
-
-			starlaneSprite = new Sprite("starlaneSprite", starlaneImage);
-			starlaneSprite.HorizontalWrapMode = ImageAddressing.Wrapping;
-			starlaneSprite.Axis = new GorgonLibrary.Vector2D(0.5f, 1.0f);
-
-			Image movementImage = new Image("movementImage", 20, 5, ImageBufferFormats.BufferRGB888A8);
-			Image.ImageLockBox newImage = movementImage.GetImageData();
-			newImage.Lock(false);
-
-			for (int i = 0; i < 20; i++)
-			{
-				int value = (int)(255 - (i / 20.0f) * 130);
-				int value2 = value - 80;
-				int value3 = value2 - 40;
-				newImage[i, 0] = System.Drawing.Color.FromArgb(255, value3, value3, value3).ToArgb();
-				newImage[i, 1] = System.Drawing.Color.FromArgb(255, value2, value2, value2).ToArgb();
-				newImage[i, 2] = System.Drawing.Color.FromArgb(255, value, value, value).ToArgb();
-				newImage[i, 3] = System.Drawing.Color.FromArgb(255, value2, value2, value2).ToArgb();
-				newImage[i, 4] = System.Drawing.Color.FromArgb(255, value3, value3, value3).ToArgb();
-			}
-
-			newImage.Unlock();
-
-			movementPath = new Sprite("movementPath", movementImage);
-			movementPath.HorizontalWrapMode = ImageAddressing.Wrapping;
-			movementPath.Axis = new GorgonLibrary.Vector2D(0.5f, 2.5f);
-
-			backgroundStars = new BackgroundStars(gameMain.Galaxy.GalaxySize, gameMain.Random, 40, gameMain.SpriteManager);
-			rotation = 0;
-
-			List<SpriteName> frames = new List<SpriteName>
-			{
-				SpriteName.FleetDest1, 
-				SpriteName.FleetDest2, 
-				SpriteName.FleetDest3, 
-				SpriteName.FleetDest4
-			};
-			//fleetDest = new AnimatedImage(0, 0, 32, 32, frames, true, 0.25f);
-			/*List<SpriteName> stargateFrames = new List<SpriteName>
-			{
-				SpriteName.Stargate1,
-				SpriteName.Stargate2,
-				SpriteName.Stargate3,
-				SpriteName.Stargate4
-			};
-			stargate = new AnimatedImage(0, 0, 32, 32, stargateFrames, true, 0.10f);*/
-			LastClickedPosition = new Point(int.MinValue, int.MinValue);
-			whichGridCellClicked = new Point(int.MinValue, int.MinValue);
-		}
-
-		public void LoadScreen()
-		{
-			gameMain.taskBar.UpdateDisplays();
 		}
 
 		public void CenterScreen()
@@ -141,8 +115,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				gameMain.empireManager.CurrentEmpire.SelectedSystem = gameMain.empireManager.CurrentEmpire.LastSelectedSystem;
 				camera.CenterCamera(gameMain.empireManager.CurrentEmpire.SelectedSystem.X + 2, gameMain.empireManager.CurrentEmpire.SelectedSystem.Y + 2);
-				systemWindow.LoadSystem();
-				//LoadSystemInfoIntoUI(gameMain.empireManager.CurrentEmpire.SelectedSystem);
+				LoadSystemInfoIntoUI(gameMain.empireManager.CurrentEmpire.SelectedSystem);
 			}
 		}
 
@@ -155,15 +128,7 @@ namespace Beyond_Beyaan.Screens
 		public void DrawGalaxyBackground(DrawingManagement drawingManagement)
 		{
 			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
-			/*if (!currentEmpire.ShowBorders)
-			{
-				GorgonLibrary.Graphics.Sprite nebula = gameMain.galaxy.Nebula;
-				nebula.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
-				nebula.SetScale(sizes[0], sizes[0]);
-				nebula.Opacity = 200;
-				nebula.Draw();
-			}*/
-
+			GorgonLibrary.Graphics.Sprite nebula = gameMain.galaxy.Nebula;
 			/*GorgonLibrary.Graphics.Sprite influenceMap = currentEmpire.InfluenceMap;
 			influenceMap.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
 			influenceMap.SetScale(sizes[0], sizes[0]);
@@ -178,106 +143,36 @@ namespace Beyond_Beyaan.Screens
 					influenceMap.Draw();
 				}
 			}*/
-
-			backgroundStars.Draw(camera.CameraX, camera.CameraY, camera.GetViewSize().X, camera.GetViewSize().Y, camera.XOffset, camera.YOffset, camera.Scale, drawingManagement);
+			nebula.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
+			nebula.SetScale(sizes[0], sizes[0]);
+			nebula.Opacity = 200;
+			nebula.Draw();
 
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
-			SquadronGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
-			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
-			//GridCell[][] gridCells = gameMain.galaxy.GetGridCells();
+			FleetGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
+			List<StarSystem> systems = gameMain.galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
+			GridCell[][] gridCells = gameMain.galaxy.GetGridCells();
 			bool displayName = camera.ZoomDistance < 4;
-
-			Point size = camera.GetViewSize();
-			int left = camera.CameraX - 3;
-			int right = camera.CameraX + size.X + 3;
-			int top = camera.CameraY - 3;
-			int bottom = camera.CameraY + size.Y + 3;
-
-			/*foreach (Starlane starlane in gameMain.galaxy.Starlanes)
-			{
-				if (Utility.LineRectangleIntersected(starlane.SystemA.X, starlane.SystemA.Y, starlane.SystemB.X, starlane.SystemB.Y, left, top, right, bottom))
-				/*if ((starlane.SystemA.X >= camera.CameraX - 10 && starlane.SystemA.X < camera.CameraX + 30 &&
-					starlane.SystemA.Y >= camera.CameraY - 10 && starlane.SystemA.Y < camera.CameraY + 30) ||
-					(starlane.SystemB.X >= camera.CameraX - 10 && starlane.SystemB.X < camera.CameraX + 30 &&
-					starlane.SystemB.Y >= camera.CameraY - 10 && starlane.SystemB.Y < camera.CameraY + 30))*/
-				/*{
-					//Draw Starlanes first so Star will overlap them
-					int X1 = (int)((((starlane.SystemA.X - camera.CameraX) * 32 + (starlane.SystemA.Type.Width / 2)) - camera.XOffset) * camera.Scale);
-					int Y1 = (int)((((starlane.SystemA.Y - camera.CameraY) * 32 + (starlane.SystemA.Type.Height / 2)) - camera.YOffset) * camera.Scale);
-
-					if (starlane.Visible)
-					{
-						starlaneSprite.SetPosition(X1, Y1);
-						starlaneSprite.Width = (float)starlane.Length * camera.Scale;
-						//starlaneSprite.Height = 5 * camera.Scale;
-						starlaneSprite.Rotation = starlane.Angle;
-						starlaneSprite.Draw();
-						//Draw the line
-						//drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.White);
-						//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.DimGray);
-					}
-					else
-					{
-						//drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.DimGray);
-					}
-
-					/*if (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) && starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire))
-					{
-						//Both systems are explored, check to see if owner are same, if so, then color the starlane their color
-						if (starlane.SystemA.DominantEmpire == starlane.SystemB.DominantEmpire && starlane.SystemA.DominantEmpire != null)
-						{
-							drawingManagement.DrawLine(X1, Y1, X2, Y2, starlane.SystemA.DominantEmpire.EmpireColor);
-							//target.Line( + incrementsX / 2,  + incrementsY / 2,  empires[starlanes[i].System1.GetSystemOwner()].EmpireColor);
-						}
-						else //bright line to show explored
-						{
-							drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.Snow);
-							//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.Snow);
-						}
-					}
-					else if (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) || starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire) == true)
-					{
-						//Draw the line
-						drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.DimGray);
-						//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.DimGray);
-					}
-					else
-					{
-						drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.LightGray);
-					}*/
-				//}
-			//}
 
 			foreach (StarSystem system in systems)
 			{
-				GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
-				if (system.Type.Shader != null)
+				if (system.Type == StarType.BLACK_HOLE)
 				{
-					if (currentEmpire.ShowBorders)
-					{
-						if (system.IsThisSystemExploredByEmpire(currentEmpire))
-						{
-							system.Type.Shader.Parameters["ShaderValue"].SetValue(system.DominantEmpire.ConvertedColor);
-						}
-						else
-						{
-							system.Type.Shader.Parameters["ShaderValue"].SetValue(new float[] { 0.5f, 0.5f, 0.5f, 0.5f });
-						}
-					}
-					else
-					{
-						system.Type.Shader.Parameters["ShaderValue"].SetValue(system.Type.ShaderValue);
-					}
+					drawingManagement.DrawSprite(SpriteName.BlackHole, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
 				}
-				system.Sprite.Draw(((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), ((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), camera.Scale < 0.25f ? 0.25f : camera.Scale, camera.Scale < 0.25f ? 0.25f : camera.Scale);
-				GorgonLibrary.Gorgon.CurrentShader = null;
-
-				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)))
+				else
 				{
-					int x = (int)((((system.X - camera.CameraX) * 32) + (system.Sprite.Width / 2) - camera.XOffset) * camera.Scale);
+					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+					drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
+					GorgonLibrary.Gorgon.CurrentShader = null;
+				}
+				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)) && system.Type == StarType.NORMAL)
+				{
+					int x = (int)(((((float)(system.X - camera.CameraX) + (system.Size / 2.0f)) * 32) - camera.XOffset) * camera.Scale);
 					x -= (int)(system.StarName.GetWidth() / 2);
-					int y = (int)((((system.Y - camera.CameraY) * 32) + system.Sprite.Height - camera.YOffset) * camera.Scale);
-					system.StarName.MoveTo(x, y);
+					int y = (int)(((((system.Y - camera.CameraY) + system.Size) * 32) - camera.YOffset) * camera.Scale);
+					system.StarName.Move(x, y);
 					if (system.DominantEmpire != null)
 					{
 						float percentage = 1.0f;
@@ -285,16 +180,16 @@ namespace Beyond_Beyaan.Screens
 						starName.Width = (int)system.StarName.GetWidth();
 						starName.Height = (int)system.StarName.GetHeight();
 						GorgonLibrary.Gorgon.CurrentRenderTarget = starName;
-						system.StarName.MoveTo(0, 0);
+						system.StarName.Move(0, 0);
 						system.StarName.Draw();
 						GorgonLibrary.Gorgon.CurrentRenderTarget = oldTarget;
 						//GorgonLibrary.Gorgon.CurrentShader = gameMain.NameShader;
-						foreach (Empire empire in system.EmpiresWithSectorsInThisSystem)
+						foreach (Empire empire in system.EmpiresWithPlanetsInThisSystem)
 						{
 							/*gameMain.NameShader.Parameters["EmpireColor"].SetValue(empire.ConvertedColor);
 							gameMain.NameShader.Parameters["startPos"].SetValue(percentage);
 							gameMain.NameShader.Parameters["endPos"].SetValue(percentage + system.OwnerPercentage[empire]);*/
-							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, BlitterSizeMode.Crop);
+							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, GorgonLibrary.Graphics.BlitterSizeMode.Crop);
 							percentage -= system.OwnerPercentage[empire];
 						}
 						//GorgonLibrary.Gorgon.CurrentShader = null;
@@ -306,33 +201,20 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 
-			foreach (Squadron fleet in gameMain.empireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
+			foreach (Fleet fleet in gameMain.empireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
 			{
 				bool visible = false;
 				if (fleet.Empire == gameMain.empireManager.CurrentEmpire)
 				{
 					visible = true;
 				}
-				/*if (gridCells[fleet.GalaxyX][fleet.GalaxyY].dominantEmpire == currentEmpire || gridCells[fleet.GalaxyX][fleet.GalaxyY].secondaryEmpire == currentEmpire)
+				if (gridCells[fleet.GalaxyX][fleet.GalaxyY].dominantEmpire == currentEmpire || gridCells[fleet.GalaxyX][fleet.GalaxyY].secondaryEmpire == currentEmpire)
 				{
 					visible = true;
-				}*/
+				}
 				if (visible)
 				{
-					/*if (fleet.HasTransports)
-					{
-						drawingManagement.DrawSprite(SpriteName.Transport, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[0], sizes[0], fleet.Empire.EmpireColor);
-					}
-					else
-					{*/
-					Sprite icon = fleet.Empire.EmpireRace.GetFleetIcon();
-					icon.Color = fleet.Empire.EmpireColor;
-					icon.SetPosition(((fleet.FleetLocation.X - camera.XOffset - (camera.CameraX * 32)) * camera.Scale), ((fleet.FleetLocation.Y - camera.YOffset - (camera.CameraY * 32)) * camera.Scale));
-					float scale = camera.Scale;
-					icon.SetScale(scale, scale);
-					icon.Draw();
-						//drawingManagement.DrawSprite(SpriteName.Fleet, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[0], sizes[0], fleet.Empire.EmpireColor);
-					//}
+					drawingManagement.DrawSprite(SpriteName.Fleet, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[0], sizes[0], fleet.Empire.EmpireColor);
 				}
 			}
 		}
@@ -340,14 +222,7 @@ namespace Beyond_Beyaan.Screens
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
 			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
-			/*if (!currentEmpire.ShowBorders)
-			{
-				GorgonLibrary.Graphics.Sprite nebula = gameMain.galaxy.Nebula;
-				nebula.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
-				nebula.SetScale(sizes[0], sizes[0]);
-				nebula.Opacity = 200;
-				nebula.Draw();
-			}*/
+			GorgonLibrary.Graphics.Sprite nebula = gameMain.galaxy.Nebula;
 			/*GorgonLibrary.Graphics.Sprite influenceMap = currentEmpire.InfluenceMap;
 			influenceMap.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
 			influenceMap.SetScale(sizes[0], sizes[0]);
@@ -362,154 +237,57 @@ namespace Beyond_Beyaan.Screens
 					influenceMap.Draw();
 				}
 			}*/
-
-			backgroundStars.Draw(camera.CameraX, camera.CameraY, camera.GetViewSize().X, camera.GetViewSize().Y, camera.XOffset, camera.YOffset, camera.Scale, drawingManagement);
+			nebula.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
+			nebula.SetScale(sizes[0], sizes[0]);
+			nebula.Opacity = 200;
+			nebula.Draw();
 
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
-			SquadronGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
-			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
-			//GridCell[][] gridCells = gameMain.galaxy.GetGridCells();
+			FleetGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
+			List<StarSystem> systems = gameMain.galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
+			GridCell[][] gridCells = gameMain.galaxy.GetGridCells();
 			bool displayName = camera.ZoomDistance < 4;
-
-			Point size = camera.GetViewSize();
-			int left = camera.CameraX - 3;
-			int right = camera.CameraX + size.X + 3;
-			int top = camera.CameraY - 3;
-			int bottom = camera.CameraY + size.Y + 3;
-
-			foreach (Gateway gateway in gameMain.Galaxy.Gateways)
-			{
-				if (Utility.LineRectangleIntersected(gateway.SystemA.X, gateway.SystemA.Y, gateway.SystemB.X, gateway.SystemB.Y, left, top, right, bottom))
-				{
-					//Draw Starlanes first so Star will overlap them
-					int X1 = (int)((((gateway.SystemA.X - camera.CameraX) * 32 + (gateway.SystemA.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
-					int Y1 = (int)((((gateway.SystemA.Y - camera.CameraY) * 32 + (gateway.SystemA.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
-					/*int X2 = (int)(((starlane.SystemB.X - starlane.SystemA.X) * 32) * camera.Scale);
-					int Y2 = (int)(((starlane.SystemB.Y - starlane.SystemA.Y) * 32) * camera.Scale);*/
-
-					//if (starlane.Visible && (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) || starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire)))
-					//{
-						starlaneSprite.SetPosition(X1, Y1);
-						starlaneSprite.Width = (float)gateway.Length * camera.Scale;
-						//starlaneSprite.Height = 5 * camera.Scale;
-						starlaneSprite.Rotation = gateway.Angle;
-						starlaneSprite.Color = gateway.Type.GatewayColor;
-						starlaneSprite.Draw();
-						//Draw the line
-						//drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.White);
-						//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.DimGray);
-					/*}
-					else
-					{
-						//drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.DimGray);
-					}
-
-					/*if (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) && starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire))
-					{
-						//Both systems are explored, check to see if owner are same, if so, then color the starlane their color
-						if (starlane.SystemA.DominantEmpire == starlane.SystemB.DominantEmpire && starlane.SystemA.DominantEmpire != null)
-						{
-							drawingManagement.DrawLine(X1, Y1, X2, Y2, starlane.SystemA.DominantEmpire.EmpireColor);
-							//target.Line( + incrementsX / 2,  + incrementsY / 2,  empires[starlanes[i].System1.GetSystemOwner()].EmpireColor);
-						}
-						else //bright line to show explored
-						{
-							drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.Snow);
-							//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.Snow);
-						}
-					}
-					else if (starlane.SystemA.IsThisSystemExploredByEmpire(currentEmpire) || starlane.SystemB.IsThisSystemExploredByEmpire(currentEmpire) == true)
-					{
-						//Draw the line
-						drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.DimGray);
-						//target.Line(X1 + incrementsX / 2, Y1 + incrementsY / 2, X2, Y2, Color.DimGray);
-					}
-					else
-					{
-						drawingManagement.DrawLine(X1, Y1, X2, Y2, System.Drawing.Color.LightGray);
-					}*/
-				}
-			}
 
 			foreach (StarSystem system in systems)
 			{
-				GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
-				if (system.Type.Shader != null)
+				if (system.Type == StarType.BLACK_HOLE)
 				{
-					if (currentEmpire.ShowBorders)
-					{
-						if (system.IsThisSystemExploredByEmpire(currentEmpire))
-						{
-							system.Type.Shader.Parameters["ShaderValue"].SetValue(system.DominantEmpire == null ? new[] { 0.5f, 0.5f, 0.5f, 0.5f } : system.DominantEmpire.ConvertedColor);
-						}
-						else
-						{
-							system.Type.Shader.Parameters["ShaderValue"].SetValue(new[] { 0.5f, 0.5f, 0.5f, 0.5f });
-						}
-					}
-					else
-					{
-						system.Type.Shader.Parameters["ShaderValue"].SetValue(system.Type.ShaderValue);
-					}
+					drawingManagement.DrawSprite(SpriteName.BlackHole, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
 				}
-				float scale = camera.Scale;
-				if (scale < 0.25f)
+				else
 				{
-					scale = 0.25f;
-				}
-				system.Sprite.Draw((((((system.X - camera.CameraX) * 32) - camera.XOffset) + system.Sprite.Width / 2.0f) * camera.Scale), (((((system.Y - camera.CameraY) * 32) - camera.YOffset) + system.Sprite.Height / 2.0f) * camera.Scale), scale, scale);
-				GorgonLibrary.Gorgon.CurrentShader = null;
-
-				/*if (system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire) && system.GetStargates().Count > 0)
-				{
-					GorgonLibrary.Gorgon.CurrentShader = gameMain.ShipShader;
-					if (system.GetStargates().ContainsKey(gameMain.empireManager.CurrentEmpire))
-					{
-						gameMain.ShipShader.Parameters["EmpireColor"].SetValue(gameMain.empireManager.CurrentEmpire.ConvertedColor);
-					}
-					else
-					{
-						foreach (KeyValuePair<Empire, Stargate> keyValuePair in system.GetStargates())
-						{
-							gameMain.ShipShader.Parameters["EmpireColor"].SetValue(keyValuePair.Key.ConvertedColor);
-							break;
-						}
-					}
-					stargate.MoveTo((int)((((system.X + system.Size - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y + system.Size - 1 - camera.CameraY) * 32) - camera.YOffset) * camera.Scale));
-					stargate.SetScale(sizes[0], sizes[0]);
-					stargate.Draw(drawingManagement);
+					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+					drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
 					GorgonLibrary.Gorgon.CurrentShader = null;
-				}*/
+				}
 				if (currentEmpire != null && system == currentEmpire.SelectedSystem)
 				{
-					drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
-					int max = Math.Max((int)system.Sprite.Width, (int)system.Sprite.Height) + 32;
-					drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)((((system.X - camera.CameraX) * 32) + (system.Sprite.Width / 2) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) + (system.Sprite.Height / 2) - camera.YOffset) * camera.Scale), 255, max * scale, max * scale, System.Drawing.Color.White);
+					drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)(((((system.X - 1) - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((system.Y - 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size + 2], sizes[system.Size + 2], System.Drawing.Color.White);
 				}
-				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)))
+				if (displayName && (gameMain.empireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire)) && system.Type == StarType.NORMAL)
 				{
-					int x = (int)((((system.X - camera.CameraX) * 32) + (system.Sprite.Width / 2) - camera.XOffset) * camera.Scale);
+					int x = (int)(((((float)(system.X - camera.CameraX) + (system.Size / 2.0f)) * 32) - camera.XOffset) * camera.Scale);
 					x -= (int)(system.StarName.GetWidth() / 2);
-					int y = (int)((((system.Y - camera.CameraY) * 32) + system.Sprite.Height - camera.YOffset) * camera.Scale);
-					system.StarName.MoveTo(x, y);
+					int y = (int)(((((system.Y - camera.CameraY) + system.Size) * 32) - camera.YOffset) * camera.Scale);
+					system.StarName.Move(x, y);
 					if (system.DominantEmpire != null)
 					{
 						float percentage = 1.0f;
 						oldTarget = GorgonLibrary.Gorgon.CurrentRenderTarget;
 						starName.Width = (int)system.StarName.GetWidth();
 						starName.Height = (int)system.StarName.GetHeight();
-                        starName.Clear(System.Drawing.Color.Transparent);
 						GorgonLibrary.Gorgon.CurrentRenderTarget = starName;
-						system.StarName.MoveTo(0, 0);
+						system.StarName.Move(0, 0);
 						system.StarName.Draw();
 						GorgonLibrary.Gorgon.CurrentRenderTarget = oldTarget;
 						//GorgonLibrary.Gorgon.CurrentShader = gameMain.NameShader;
-						foreach (Empire empire in system.EmpiresWithSectorsInThisSystem)
+						foreach (Empire empire in system.EmpiresWithPlanetsInThisSystem)
 						{
 							/*gameMain.NameShader.Parameters["EmpireColor"].SetValue(empire.ConvertedColor);
 							gameMain.NameShader.Parameters["startPos"].SetValue(percentage);
 							gameMain.NameShader.Parameters["endPos"].SetValue(percentage + system.OwnerPercentage[empire]);*/
-							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, BlitterSizeMode.Crop);
+							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, GorgonLibrary.Graphics.BlitterSizeMode.Crop);
 							percentage -= system.OwnerPercentage[empire];
 						}
 						//GorgonLibrary.Gorgon.CurrentShader = null;
@@ -518,198 +296,317 @@ namespace Beyond_Beyaan.Screens
 					{
 						system.StarName.Draw();
 					}
-					/*if (system.SystemFleets.Count > 0)
-					{
-						drawingManagement.DrawSprite(SpriteName.SystemShips, (int)((((system.SystemFleets[0].GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.SystemFleets[0].GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[0], sizes[0], system.SystemFleets[0].Empire.EmpireColor);
-					}*/
 				}
 			}
 
-			foreach (Squadron fleet in gameMain.empireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
+			foreach (Fleet fleet in gameMain.empireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
 			{
 				bool visible = false;
 				if (fleet.Empire == gameMain.empireManager.CurrentEmpire)
 				{
 					visible = true;
 				}
-				/*if (gridCells[fleet.GalaxyX][fleet.GalaxyY].dominantEmpire == currentEmpire || gridCells[fleet.GalaxyX][fleet.GalaxyY].secondaryEmpire == currentEmpire)
+				if (gridCells[fleet.GalaxyX][fleet.GalaxyY].dominantEmpire == currentEmpire || gridCells[fleet.GalaxyX][fleet.GalaxyY].secondaryEmpire == currentEmpire)
 				{
 					visible = true;
-				}*/
+				}
 				if (visible)
 				{
-					Sprite icon = fleet.Empire.EmpireRace.GetFleetIcon();
-					icon.Color = fleet.Empire.EmpireColor;
-					icon.SetPosition(((fleet.FleetLocation.X - camera.XOffset - (camera.CameraX * 32)) * camera.Scale), ((fleet.FleetLocation.Y - camera.YOffset - (camera.CameraY * 32)) * camera.Scale));
-					float scale = camera.Scale;
-					icon.SetScale(scale, scale);
-					icon.Draw();
+					drawingManagement.DrawSprite(SpriteName.Fleet, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[0], sizes[0], fleet.Empire.EmpireColor);
 				}
 			}
 
 			if (selectedFleetGroup != null)
 			{
-				drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
-				drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)((selectedFleetGroup.Squadrons[0].FleetLocation.X - camera.XOffset - (camera.CameraX * 32)) * camera.Scale), (int)((selectedFleetGroup.Squadrons[0].FleetLocation.Y - camera.YOffset - (camera.CameraY * 32)) * camera.Scale), 255, 48 * camera.Scale, 48 * camera.Scale, System.Drawing.Color.White);
-				movementPath.SetScale(camera.Scale, camera.Scale);
-				if (selectedFleetGroup.TravelNodes != null)
+				drawingManagement.DrawSprite(SpriteName.SelectedFleet, (int)(((((selectedFleetGroup.Fleets[0].GalaxyX - 1) - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((selectedFleetGroup.Fleets[0].GalaxyY - 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[2], sizes[2], System.Drawing.Color.White);
+				if (selectedFleetGroup.FleetToSplit.TentativeNodes != null)
 				{
-					movementPath.Color = System.Drawing.Color.Green;
-
-					for (int i = 1; i < selectedFleetGroup.TravelNodes.Count; i++)
+					foreach (Point node in selectedFleetGroup.FleetToSplit.TentativeNodes)
 					{
-						KeyValuePair<StarSystem, Starlane> starlane = selectedFleetGroup.TravelNodes[i];
-
-						int X1;
-						int Y1;
-
-						if (i == 1)
+						if (gameMain.galaxy.GetGridCells()[node.X][node.Y].passable)
 						{
-							//X1 = (int)(((selectedFleetGroup.SquadronToSplit.FleetLocation.X - camera.CameraX * 32) - camera.XOffset) * camera.Scale);
-							//Y1 = (int)(((selectedFleetGroup.SquadronToSplit.FleetLocation.Y - camera.CameraY * 32) - camera.YOffset) * camera.Scale);
-
-							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
-							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
-
-							movementPath.SetPosition(X1, Y1);
-							movementPath.Width = selectedFleetGroup.Length;
-							movementPath.Rotation = selectedFleetGroup.Angle;
-							movementPath.Draw();
+							drawingManagement.DrawSprite(SpriteName.SelectCell, (int)((((node.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((node.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 150, sizes[0], sizes[0], System.Drawing.Color.LightGreen);
 						}
-						else
+					}
+					Point lastNode = selectedFleetGroup.FleetToSplit.TentativeNodes[selectedFleetGroup.FleetToSplit.TentativeNodes.Count - 1];
+					drawingManagement.DrawText("Arial", "ETA: " + selectedFleetGroup.FleetToSplit.TentativeETA + " Turns", (int)((((lastNode.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((lastNode.Y + 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), System.Drawing.Color.White);
+				}
+				if (selectedFleetGroup.FleetToSplit.TravelNodes != null)
+				{
+					foreach (Point node in selectedFleetGroup.FleetToSplit.TravelNodes)
+					{
+						if (gameMain.galaxy.GetGridCells()[node.X][node.Y].passable)
 						{
-							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
-							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
-
-							movementPath.SetPosition(X1, Y1);
-							movementPath.Width = (float)starlane.Value.Length;
-							if (starlane.Value.SystemA == starlane.Key)
-							{
-								movementPath.Rotation = starlane.Value.Angle;
-							}
-							else
-							{
-								movementPath.Rotation = starlane.Value.Angle + 180;
-							}
-							movementPath.Draw();
+							drawingManagement.DrawSprite(SpriteName.SelectCell, (int)((((node.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((node.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 150, sizes[0], sizes[0], System.Drawing.Color.Green);
 						}
 					}
 				}
-				if (selectedFleetGroup.TentativeNodes != null)
+
+				drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 207, 0, 255, 207, 460, System.Drawing.Color.White);
+				drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 204, 6, 255, 200, 110, System.Drawing.Color.DarkGray);
+				int max = selectedFleetGroup.Fleets.Count > 4 ? 4 : selectedFleetGroup.Fleets.Count;
+
+				int x = gameMain.ScreenWidth - 200;
+				if (selectedFleetGroup.Fleets.Count <= 4)
 				{
-					movementPath.Color = System.Drawing.Color.LightGreen;
-
-					for (int i = 1; i < selectedFleetGroup.TentativeNodes.Count; i++)
-					{
-						KeyValuePair<StarSystem, Starlane> starlane = selectedFleetGroup.TentativeNodes[i];
-
-						int X1;
-						int Y1;
-
-						if (i == 1)
-						{
-							//X1 = (int)(((selectedFleetGroup.SquadronToSplit.FleetLocation.X - camera.CameraX * 32) - camera.XOffset) * camera.Scale);
-							//Y1 = (int)(((selectedFleetGroup.SquadronToSplit.FleetLocation.Y - camera.CameraY * 32) - camera.YOffset) * camera.Scale);
-
-							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
-							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
-
-							movementPath.SetPosition(X1, Y1);
-							movementPath.Width = selectedFleetGroup.TentativeLength;
-							movementPath.Rotation = selectedFleetGroup.TentativeAngle;
-							movementPath.Draw();
-						}
-						else
-						{
-							X1 = (int)((((starlane.Key.X - camera.CameraX) * 32 + (starlane.Key.Sprite.Width / 2)) - camera.XOffset) * camera.Scale);
-							Y1 = (int)((((starlane.Key.Y - camera.CameraY) * 32 + (starlane.Key.Sprite.Height / 2)) - camera.YOffset) * camera.Scale);
-
-							movementPath.SetPosition(X1, Y1);
-							movementPath.Width = (float)starlane.Value.Length;
-							if (starlane.Value.SystemA == starlane.Key)
-							{
-								movementPath.Rotation = starlane.Value.Angle;
-							}
-							else
-							{
-								movementPath.Rotation = starlane.Value.Angle + 180;
-							}
-							movementPath.Draw();
-						}
-					}
-
-					/*Point lastNode = selectedFleetGroup.SquadronToSplit.TentativeNodes[selectedFleetGroup.SquadronToSplit.TentativeNodes.Count - 1];
-					//fleetDest.SetRotation(rotation);
-					fleetDest.MoveTo((int)((((lastNode.X - camera.CameraX + 0.5f) * 32) - camera.XOffset) * camera.Scale), (int)(((((lastNode.Y + 0.5f) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale));
-					//fleetDest.MoveTo(0, 0);
-					fleetDest.SetScale(sizes[0], sizes[0]);
-					fleetDest.Draw(System.Drawing.Color.LightGreen, 255, drawingManagement);
-					//drawingManagement.DrawSprite(SpriteName.FleetDest1, 16, 16);*/
-					//drawingManagement.DrawText("Arial", "ETA: " + (selectedFleetGroup.SquadronToSplit.TentativeETA >= 0 ? (selectedFleetGroup.SquadronToSplit.TentativeETA + " Turns") : "Infinite"), (int)((((lastNode.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((lastNode.Y + 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), System.Drawing.Color.White);
+					x += 10;
 				}
-				squadronListWindow.DrawWindow(drawingManagement);
-				/*if (showingSplitWindow)
+				for (int i = 0; i < max; i++)
 				{
-					splitPopulation.DrawWindow(drawingManagement);
-				}*/
+					string travel = selectedFleetGroup.Fleets[i + selectedFleetGroup.FleetIndex].ETA > 0 ? " - ETA " + selectedFleetGroup.Fleets[i + selectedFleetGroup.FleetIndex].ETA :
+					" - Idling";
+					fleetButtons[i].Draw(drawingManagement);
+					drawingManagement.DrawText("Arial", selectedFleetGroup.Fleets[i + selectedFleetGroup.FleetIndex].Empire.EmpireName + " Fleet" + travel, x, 32 + (i * 20), selectedFleetGroup.Fleets[i + selectedFleetGroup.FleetIndex].Empire.EmpireColor);
+				}
+				if (selectedFleetGroup.Fleets.Count > 4)
+				{
+					fleetScrollBar.DrawScrollBar(drawingManagement);
+				}
+
+				drawingManagement.DrawText("Arial", "Fleets at this location", gameMain.ScreenWidth - 200, 10, System.Drawing.Color.White);
+
+				x = gameMain.ScreenWidth - 203;
+				if (selectedFleetGroup.Fleets[gameMain.empireManager.CurrentEmpire.FleetSelected].Ships.Count <= 8)
+				{
+					x += 10;
+				}
+				else
+				{
+					shipSelectorScrollBar.DrawScrollBar(drawingManagement);
+				}
+				for (int i = 0; i < shipScrollBars.Length; i++)
+				{
+					shipScrollBars[i].DrawScrollBar(drawingManagement);
+					drawingManagement.DrawText("Arial", selectedFleetGroup.GetShipsForDisplay()[i].Name + " x " +  selectedFleetGroup.FleetToSplit.Ships[selectedFleetGroup.GetShipsForDisplay()[i]], x, 130 + i * 40, System.Drawing.Color.White);
+				}
 			}
-			if (selectedSystem != null)
+			if (selectedSystem != null && selectedSystem.Type != StarType.BLACK_HOLE)
 			{
-				systemWindow.DrawWindow(drawingManagement);
+				drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 500, 0, 255, 500, 400, System.Drawing.Color.White);
+				drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 497, 4, 255, 244, 294, System.Drawing.Color.DarkGray);
+				if (selectedSystem.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
+				{
+					int x = gameMain.ScreenWidth - 490;
+					int max = selectedSystem.Planets.Count > 6 ? 6 : selectedSystem.Planets.Count;
+					for (int i = 0; i < max; i++)
+					{
+						systemButtons[i].Draw(drawingManagement);
+						drawingManagement.DrawSprite(Utility.PlanetTypeToSprite(selectedSystem.Planets[i + systemScrollBar.TopIndex].PlanetType), x + 2, 11 + (i * 47), 255, System.Drawing.Color.White);
+						if (selectedSystem.Planets[i + systemScrollBar.TopIndex].ConstructionBonus != PLANET_CONSTRUCTION_BONUS.AVERAGE)
+						{
+							drawingManagement.DrawSprite(Utility.PlanetConstructionBonusToSprite(selectedSystem.Planets[i + systemScrollBar.TopIndex].ConstructionBonus), x + 155, 11 + (i * 47), 255, System.Drawing.Color.White);
+						}
+						if (selectedSystem.Planets[i + systemScrollBar.TopIndex].EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.AVERAGE)
+						{
+							drawingManagement.DrawSprite(Utility.PlanetEnvironmentBonusToSprite(selectedSystem.Planets[i + systemScrollBar.TopIndex].EnvironmentBonus), x + 175, 11 + (i * 47), 255, System.Drawing.Color.White);
+						}
+						if (selectedSystem.Planets[i + systemScrollBar.TopIndex].EntertainmentBonus != PLANET_ENTERTAINMENT_BONUS.AVERAGE)
+						{
+							drawingManagement.DrawSprite(Utility.PlanetEntertainmentBonusToSprite(selectedSystem.Planets[i + systemScrollBar.TopIndex].EntertainmentBonus), x + 195, 11 + (i * 47), 255, System.Drawing.Color.White);
+						}
+					}
+					systemScrollBar.DrawScrollBar(drawingManagement);
+					planetOwner.Draw();
+					for (int k = 0; k < racePopLabels.Length; k++)
+					{
+						racePopLabels[k].Draw();
+					}
+					if (max > 0)
+					{
+						Planet selectedPlanet = selectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected];
+						if (selectedPlanet.Owner == gameMain.empireManager.CurrentEmpire)
+						{
+							for (int i = 0; i < planetScrollBars.Length; i++)
+							{
+								planetScrollBars[i].DrawScrollBar(drawingManagement);
+								planetFieldLocks[i].Draw(drawingManagement);
+							}
+							prevShip.Draw(drawingManagement);
+							nextShip.Draw(drawingManagement);
+						}
+						x += 45;
+						for (int i = 0; i < max; i++)
+						{
+							Planet currentPlanet = selectedSystem.Planets[i + systemScrollBar.TopIndex];
+							drawingManagement.DrawText("Arial", currentPlanet.Name, x, 10 + (i * 47), currentPlanet.Owner != null ? currentPlanet.Owner.EmpireColor : System.Drawing.Color.White);
+							drawingManagement.DrawText("Arial", currentPlanet.PlanetTypeString, x, 30 + (i * 47), System.Drawing.Color.White);
+							if (currentPlanet.Owner != null)
+							{
+								drawingManagement.DrawText("Arial", String.Format("{0:0}", currentPlanet.TotalPopulation) + "/" + currentPlanet.PopulationMax, x + 90, 30 + (i * 47), System.Drawing.Color.White);
+							}
+							else if (currentPlanet.PlanetType != PLANET_TYPE.ASTEROIDS && currentPlanet.PlanetType != PLANET_TYPE.GAS_GIANT)
+							{
+								drawingManagement.DrawText("Arial", String.Format("{0:0}", currentPlanet.PopulationMax), x + 90, 30 + (i * 47), System.Drawing.Color.White);
+							}
+						}
+
+						if (selectedPlanet.Owner == gameMain.empireManager.CurrentEmpire)
+						{
+							x = gameMain.ScreenWidth - 245;
+							drawingManagement.DrawSprite(SpriteName.AgricultureIcon, x, 10, 255, System.Drawing.Color.White);
+							drawingManagement.DrawSprite(SpriteName.EnvironmentIcon, x, 50, 255, System.Drawing.Color.White);
+							drawingManagement.DrawSprite(SpriteName.CommerceIcon, x, 90, 255, System.Drawing.Color.White);
+							drawingManagement.DrawSprite(SpriteName.ResearchIcon, x, 130, 255, System.Drawing.Color.White);
+							drawingManagement.DrawSprite(SpriteName.ConstructionIcon, x, 170, 255, System.Drawing.Color.White);
+							x += 20;
+							drawingManagement.DrawText("Arial", selectedPlanet.AgricultureStringOutput, x, 10, System.Drawing.Color.White);
+							drawingManagement.DrawText("Arial", selectedPlanet.EnvironmentStringOutput, x, 50, System.Drawing.Color.White);
+							drawingManagement.DrawText("Arial", String.Format("{0:0.00}", selectedPlanet.CommerceOutput) + " BC", x, 90, System.Drawing.Color.White);
+							drawingManagement.DrawText("Arial", String.Format("{0:0.00}", selectedPlanet.ResearchOutput) + " RP", x, 130, System.Drawing.Color.White);
+							drawingManagement.DrawText("Arial", selectedPlanet.ConstructionStringOutput, x, 170, System.Drawing.Color.White);
+							GorgonLibrary.Gorgon.CurrentShader = gameMain.ShipShader;
+							gameMain.ShipShader.Parameters["EmpireColor"].SetValue(currentEmpire.ConvertedColor);
+							shipSprite.Draw();
+							GorgonLibrary.Gorgon.CurrentShader = null;
+							transferButton.Draw(drawingManagement);
+						}
+					}
+				}
+				else
+				{
+					for (int i = 0; i < 6; i++)
+					{
+						systemButtons[i].Draw(drawingManagement);
+					}
+					drawingManagement.DrawText("Arial", "Unexplored", gameMain.ScreenWidth - 450, 10, System.Drawing.Color.White);
+				}
 			}
-		}
-
-		public void UpdateBackground(float frameDeltaTime)
-		{
-			rotation -= frameDeltaTime * 100;
-			backgroundStars.Update(frameDeltaTime);
-			//fleetDest.Update(frameDeltaTime);
-
-			movementPath.ImageOffset -= new GorgonLibrary.Vector2D(frameDeltaTime * -50.0f, 0);
-			//stargate.Update(frameDeltaTime);
+			if (showingTransferUI)
+			{
+				drawingManagement.DrawSprite(SpriteName.ControlBackground, (gameMain.ScreenWidth / 2) - 170, (gameMain.ScreenHeight / 2) - 130, 255, 340, 250, System.Drawing.Color.White);
+				transferOKButton.Draw(drawingManagement);
+				transferCancelButton.Draw(drawingManagement);
+				for (int i = 0; i < maxVisible; i++)
+				{
+					popTransferSliders[i].DrawScrollBar(drawingManagement);
+				}
+			}
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			UpdateBackground(frameDeltaTime);
-			gameMain.Galaxy.UpdateStars(frameDeltaTime, gameMain.Random);
-
-			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
-			if (currentEmpire.SelectedSystem != null)
+			if (showingTransferUI)
 			{
-				if (systemWindow.MouseHover(mouseX, mouseY, frameDeltaTime))
+				transferCancelButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				transferOKButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				for (int i = 0; i < maxVisible; i++)
+				{
+					popTransferSliders[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				}
+				return;
+			}
+			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
+			if (currentEmpire.SelectedSystem != null && currentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && currentEmpire.PlanetSelected >= 0)
+			{
+				if (currentEmpire.SelectedSystem.Planets.Count > 6 && systemScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+				{
+					for (int i = 0; i < (currentEmpire.SelectedSystem.Planets.Count <= 6 ? currentEmpire.SelectedSystem.Planets.Count : 6); i++)
+					{
+						//When a planet is selected, this may move the button up or down, need to update as needed
+						if (currentEmpire.PlanetSelected - systemScrollBar.TopIndex == i)
+						{
+							systemButtons[i].Selected = true;
+						}
+						else
+						{
+							systemButtons[i].Selected = false;
+						}
+					}
+					return;
+				}
+				foreach (Button button in systemButtons)
+				{
+					button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				}
+				if (currentEmpire.SelectedSystem.Planets.Count > 0 && currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].Owner == currentEmpire)
+				{
+					for (int i = 0; i < planetScrollBars.Length; i++)
+					{
+						if (planetScrollBars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
+						{
+							switch (i)
+							{
+								case AGRICULTURE:
+									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.AGRICULTURE, planetScrollBars[i].TopIndex);
+									break;
+								case WASTE:
+									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, planetScrollBars[i].TopIndex);
+									break;
+								case COMMERCE:
+									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.COMMERCE, planetScrollBars[i].TopIndex);
+									break;
+								case RESEARCH:
+									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.RESEARCH, planetScrollBars[i].TopIndex);
+									break;
+								case CONSTRUCTION:
+									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, planetScrollBars[i].TopIndex);
+									break;
+							}
+							planetScrollBars[AGRICULTURE].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].AgricultureAmount;
+							planetScrollBars[WASTE].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].EnvironmentAmount;
+							planetScrollBars[COMMERCE].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].CommerceAmount;
+							planetScrollBars[RESEARCH].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].ResearchAmount;
+							planetScrollBars[CONSTRUCTION].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].ConstructionAmount;
+							return;
+						}
+					}
+					prevShip.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+					nextShip.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+					transferButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				}
+				if ((mouseX >= gameMain.ScreenWidth - 207 && mouseX < gameMain.ScreenWidth - 1) && (mouseY < 650 && mouseY > 0))
 				{
 					return;
 				}
 			}
 			if (currentEmpire.SelectedFleetGroup != null)
 			{
-				/*if (showingSplitWindow)
+				if (currentEmpire.SelectedFleetGroup.Fleets.Count > 4)
 				{
-					if (splitPopulation.MouseHover(mouseX, mouseY, frameDeltaTime))
+					if (fleetScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 					{
-						return;
+						//When a fleet is selected, this may move the button up or down, need to update as needed
+						currentEmpire.SelectedFleetGroup.FleetIndex = fleetScrollBar.TopIndex;
+						foreach (Button button in fleetButtons)
+						{
+							button.Selected = false;
+						}
+						int adjustedIndex = currentEmpire.FleetSelected - fleetScrollBar.TopIndex;
+						if (adjustedIndex >= 0 && adjustedIndex < fleetButtons.Length)
+						{
+							fleetButtons[adjustedIndex].Selected = true;
+						}
 					}
-				}*/
-				if (squadronListWindow.MouseHover(mouseX, mouseY, frameDeltaTime))
-				{
-					return;
+					foreach (Button button in fleetButtons)
+					{
+						button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+					}
 				}
-				if (currentEmpire.SelectedFleetGroup.Squadrons[currentEmpire.FleetSelected].Empire == currentEmpire)
+				if (currentEmpire.SelectedFleetGroup.Fleets[currentEmpire.FleetSelected].Empire == currentEmpire)
 				{
+					for (int i = 0; i < shipScrollBars.Length; i++)
+					{
+						if (shipScrollBars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
+						{
+							//incremented/decremented the amount of ships for moving
+							currentEmpire.SelectedFleetGroup.FleetToSplit.Ships[currentEmpire.SelectedFleetGroup.GetShipsForDisplay()[i]] = shipScrollBars[i].TopIndex;
+						}
+					}
+					if (shipSelectorScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+					{
+						//update the list of ships
+						currentEmpire.SelectedFleetGroup.ShipIndex = shipSelectorScrollBar.TopIndex;
+						LoadSelectedFleetInfoIntoUI(currentEmpire.SelectedFleetGroup);
+						shipSelectorScrollBar.TopIndex = currentEmpire.SelectedFleetGroup.ShipIndex;
+					}
 					int mouseOverX = (int)(((mouseX / camera.Scale) + camera.XOffset) / 32) + camera.CameraX;
 					int mouseOverY = (int)(((mouseY / camera.Scale) + camera.YOffset) / 32) + camera.CameraY;
 
-					StarSystem destination = gameMain.Galaxy.GetStarAtPoint(new Point(mouseOverX, mouseOverY));
-
-					if (destination != null)
-					{
-						currentEmpire.SelectedFleetGroup.SetTentativePath(destination, gameMain.Galaxy, gameMain.Input.Keyboard.KeyStates[KeyboardKeys.ControlKey] == KeyState.Down, currentEmpire);
-					}
-					else
-					{
-						currentEmpire.SelectedFleetGroup.SetTentativePath(null, null, false, currentEmpire);
-					}
+					currentEmpire.SelectedFleetGroup.FleetToSplit.SetTentativePath(mouseOverX, mouseOverY, gameMain.galaxy);
+				}
+				if ((mouseX >= gameMain.ScreenWidth - 207 && mouseX < gameMain.ScreenWidth - 1) && (mouseY < 460 && mouseY > 0))
+				{
+					return;
 				}
 			}
 			camera.HandleUpdate(mouseX, mouseY, frameDeltaTime);
@@ -719,26 +616,97 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (whichButton == 1)
 			{
-				Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
-				if (currentEmpire.SelectedSystem != null)
+				if (showingTransferUI)
 				{
-					if (systemWindow.MouseDown(x, y))
+					transferCancelButton.MouseDown(x, y);
+					transferOKButton.MouseDown(x, y);
+					for (int i = 0; i < maxVisible; i++)
+					{
+						popTransferSliders[i].MouseDown(x, y);
+					}
+					return;
+				}
+				if (gameMain.empireManager.CurrentEmpire.SelectedSystem != null && gameMain.empireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && gameMain.empireManager.CurrentEmpire.PlanetSelected >= 0)
+				{
+					if (x >= gameMain.ScreenWidth - 207 && y < 650)
+					{
+						pressedInWindow = true;
+					}
+					if (systemScrollBar.MouseDown(x, y))
 					{
 						return;
+					}
+					for (int i = 0; i < systemButtons.Length; i++)
+					{
+						if (systemButtons[i].MouseDown(x, y))
+						{
+							return;
+						}
+					}
+					if (gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets.Count > 0 && gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].Owner == gameMain.empireManager.CurrentEmpire)
+					{
+						for (int i = 0; i < planetScrollBars.Length; i++)
+						{
+							if (planetScrollBars[i].MouseDown(x, y))
+							{
+								switch (i)
+								{
+									case AGRICULTURE:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.AGRICULTURE, planetScrollBars[i].TopIndex);
+										break;
+									case WASTE:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, planetScrollBars[i].TopIndex);
+										break;
+									case COMMERCE:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.COMMERCE, planetScrollBars[i].TopIndex);
+										break;
+									case RESEARCH:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.RESEARCH, planetScrollBars[i].TopIndex);
+										break;
+									case CONSTRUCTION:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, planetScrollBars[i].TopIndex);
+										break;
+								}
+								planetScrollBars[AGRICULTURE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].AgricultureAmount;
+								planetScrollBars[WASTE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].EnvironmentAmount;
+								planetScrollBars[COMMERCE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].CommerceAmount;
+								planetScrollBars[RESEARCH].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].ResearchAmount;
+								planetScrollBars[CONSTRUCTION].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].ConstructionAmount;
+								break;
+							}
+						}
+						prevShip.MouseDown(x, y);
+						nextShip.MouseDown(x, y);
+						transferButton.MouseDown(x, y);
 					}
 				}
 				else if (gameMain.empireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{
-					/*if (showingSplitWindow)
+					if (x >= gameMain.ScreenWidth - 250 && y < 720)
 					{
-						if (splitPopulation.MouseDown(x, y))
+						pressedInWindow = true;
+					}
+					if (fleetScrollBar.MouseDown(x, y))
+					{
+						return;
+					}
+					for (int i = 0; i < fleetButtons.Length; i++)
+					{
+						if (fleetButtons[i].MouseDown(x, y))
 						{
 							return;
 						}
-					}*/
-					if (squadronListWindow.MouseDown(x, y))
+					}
+					if (shipSelectorScrollBar.MouseDown(x, y))
 					{
 						return;
+					}
+					for (int i = 0; i < shipScrollBars.Length; i++)
+					{
+						if (shipScrollBars[i].MouseDown(x, y))
+						{
+							return;
+						}
 					}
 				}
 			}
@@ -746,27 +714,200 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
 			if (whichButton == 1)
 			{
-				if (currentEmpire.SelectedSystem != null)
+				if (showingTransferUI)
 				{
-					if (systemWindow.MouseUp(x, y))
+					if (transferCancelButton.MouseUp(x, y))
 					{
+						showingTransferUI = false;
+					}
+					if (transferOKButton.MouseUp(x, y))
+					{
+						//Create the transports
+					}
+					for (int i = 0; i < popTransferSliders.Length; i++)
+					{
+						if (popTransferSliders[i].MouseUp(x, y))
+						{
+							//Update the corresponding label
+						}
+					}
+					return;
+				}
+				if (gameMain.empireManager.CurrentEmpire.SelectedSystem != null && gameMain.empireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && gameMain.empireManager.CurrentEmpire.PlanetSelected >= 0)
+				{
+					if (systemScrollBar.MouseUp(x, y))
+					{
+						for (int i = 0; i < (gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets.Count <= 6 ? gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets.Count : 6); i++)
+						{
+							if (gameMain.empireManager.CurrentEmpire.PlanetSelected - systemScrollBar.TopIndex == i)
+							{
+								systemButtons[i].Selected = true;
+							}
+							else
+							{
+								systemButtons[i].Selected = false;
+							}
+						}
+						pressedInWindow = false;
+						return;
+					}
+					for (int i = 0; i < systemButtons.Length; i++)
+					{
+						if (systemButtons[i].MouseUp(x, y))
+						{
+							foreach (Button button in systemButtons)
+							{
+								button.Selected = false;
+							}
+							systemButtons[i].Selected = true;
+							gameMain.empireManager.CurrentEmpire.PlanetSelected = i + systemScrollBar.TopIndex;
+							LoadPlanetInfoIntoUI(gameMain.empireManager.CurrentEmpire.SelectedSystem);
+							if (gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].Owner == gameMain.empireManager.CurrentEmpire)
+							{
+								planetScrollBars[AGRICULTURE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].AgricultureAmount;
+								planetScrollBars[WASTE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].EnvironmentAmount;
+								planetScrollBars[COMMERCE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].CommerceAmount;
+								planetScrollBars[RESEARCH].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].ResearchAmount;
+								planetScrollBars[CONSTRUCTION].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].ConstructionAmount;
+								LoadShipSprite(gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected]);
+							}
+							pressedInWindow = false;
+							return;
+						}
+					}
+					if (gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets.Count > 0 && gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].Owner == gameMain.empireManager.CurrentEmpire)
+					{
+						for (int i = 0; i < planetScrollBars.Length; i++)
+						{
+							if (planetScrollBars[i].MouseUp(x, y))
+							{
+								switch (i)
+								{
+									case AGRICULTURE:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.AGRICULTURE, planetScrollBars[i].TopIndex);
+										break;
+									case WASTE:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, planetScrollBars[i].TopIndex);
+										break;
+									case COMMERCE:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.COMMERCE, planetScrollBars[i].TopIndex);
+										break;
+									case RESEARCH:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.RESEARCH, planetScrollBars[i].TopIndex);
+										break;
+									case CONSTRUCTION:
+										gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, planetScrollBars[i].TopIndex);
+										break;
+								}
+								planetScrollBars[AGRICULTURE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].AgricultureAmount;
+								planetScrollBars[WASTE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].EnvironmentAmount;
+								planetScrollBars[COMMERCE].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].CommerceAmount;
+								planetScrollBars[RESEARCH].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].ResearchAmount;
+								planetScrollBars[CONSTRUCTION].TopIndex = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].ConstructionAmount;
+								pressedInWindow = false;
+								break;
+							}
+						}
+						if (prevShip.MouseUp(x, y))
+						{
+							Planet selectedPlanet = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected];
+							selectedPlanet.ShipSelected--;
+							if (selectedPlanet.ShipSelected < 0)
+							{
+								selectedPlanet.ShipSelected = gameMain.empireManager.CurrentEmpire.FleetManager.CurrentDesigns.Count - 1;
+							}
+							selectedPlanet.ShipBeingBuilt = gameMain.empireManager.CurrentEmpire.FleetManager.CurrentDesigns[selectedPlanet.ShipSelected];
+							LoadShipSprite(selectedPlanet);
+							pressedInWindow = false;
+						}
+						if (nextShip.MouseUp(x, y))
+						{
+							Planet selectedPlanet = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected];
+							selectedPlanet.ShipSelected++;
+							if (selectedPlanet.ShipSelected >= gameMain.empireManager.CurrentEmpire.FleetManager.CurrentDesigns.Count)
+							{
+								selectedPlanet.ShipSelected = 0;
+							}
+							selectedPlanet.ShipBeingBuilt = gameMain.empireManager.CurrentEmpire.FleetManager.CurrentDesigns[selectedPlanet.ShipSelected];
+							LoadShipSprite(selectedPlanet);
+							pressedInWindow = false;
+						}
+						if (transferButton.MouseUp(x, y))
+						{
+							Planet selectedPlanet = gameMain.empireManager.CurrentEmpire.SelectedSystem.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected];
+							//Do something
+							showingTransferUI = true;
+							tempTransportShips = new List<TransportShip>();
+							foreach (Race race in selectedPlanet.Races)
+							{
+								TransportShip tempShip = new TransportShip();
+								tempShip.raceOnShip = race;
+								tempTransportShips.Add(tempShip);
+							}
+							maxVisible = tempTransportShips.Count > 4 ? 4 : tempTransportShips.Count;
+							for (int i = 0; i < maxVisible; i++)
+							{
+								popTransferSliders[i].SetAmountOfItems((int)selectedPlanet.GetRacePopulation(selectedPlanet.Races[i]));
+							}
+						}
+					}
+					if (x >= gameMain.ScreenWidth - 250 && y < 720)
+					{
+						pressedInWindow = false;
 						return;
 					}
 				}
 				if (gameMain.empireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{
-					/*if (showingSplitWindow)
+					if (fleetScrollBar.MouseUp(x, y))
 					{
-						if (splitPopulation.MouseUp(x, y))
+						gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.FleetIndex = fleetScrollBar.TopIndex;
+						foreach (Button button in fleetButtons)
 						{
-							return;
+							button.Selected = false;
 						}
-					}*/
-					if (squadronListWindow.MouseUp(x, y))
+						int adjustedIndex = gameMain.empireManager.CurrentEmpire.FleetSelected - fleetScrollBar.TopIndex;
+						if (adjustedIndex >= 0 && adjustedIndex < fleetButtons.Length)
+						{
+							fleetButtons[adjustedIndex].Selected = true;
+						}
+						pressedInWindow = false;
+					}
+					for (int i = 0; i < fleetButtons.Length; i++)
 					{
+						if (fleetButtons[i].MouseUp(x, y))
+						{
+							gameMain.empireManager.CurrentEmpire.FleetSelected = i + gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.FleetIndex;
+							gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.SelectFleet(gameMain.empireManager.CurrentEmpire.FleetSelected);
+							LoadSelectedFleetInfoIntoUI(gameMain.empireManager.CurrentEmpire.SelectedFleetGroup);
+							foreach (Button fleetButton in fleetButtons)
+							{
+								fleetButton.Selected = false;
+							}
+							fleetButtons[i].Selected = true;
+							pressedInWindow = false;
+						}
+					}
+					if (gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.Ships.Count > 8 && shipSelectorScrollBar.MouseUp(x, y))
+					{
+						gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.ShipIndex = shipSelectorScrollBar.TopIndex;
+						LoadSelectedFleetInfoIntoUI(gameMain.empireManager.CurrentEmpire.SelectedFleetGroup);
+						shipSelectorScrollBar.TopIndex = gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.ShipIndex;
+						pressedInWindow = false;
+					}
+					for (int i = 0; i < shipScrollBars.Length; i++)
+					{
+						if (shipScrollBars[i].MouseUp(x, y))
+						{
+							gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.Ships[gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.GetShipsForDisplay()[i]] = shipScrollBars[i].TopIndex;
+							pressedInWindow = false;
+						}
+					}
+					if (x >= gameMain.ScreenWidth - 207 && y < 460)
+					{
+						pressedInWindow = false;
 						return;
 					}
 				}
@@ -775,11 +916,12 @@ namespace Beyond_Beyaan.Screens
 					pressedInWindow = false;
 					return;
 				}
+				Point whichGridCellClicked = new Point();
 
 				whichGridCellClicked.X = (int)(((x / camera.Scale) + camera.XOffset) / 32) + camera.CameraX;
 				whichGridCellClicked.Y = (int)(((y / camera.Scale) + camera.YOffset) / 32) + camera.CameraY;
 
-				StarSystem selectedSystem = gameMain.Galaxy.GetStarAtPoint(whichGridCellClicked);
+				StarSystem selectedSystem = gameMain.galaxy.GetStarAtPoint(whichGridCellClicked);
 				if (selectedSystem != null && selectedSystem == gameMain.empireManager.CurrentEmpire.SelectedSystem)
 				{
 					return;
@@ -790,64 +932,28 @@ namespace Beyond_Beyaan.Screens
 				{
 					gameMain.empireManager.CurrentEmpire.LastSelectedSystem = selectedSystem;
 					gameMain.empireManager.CurrentEmpire.SelectedFleetGroup = null;
-					systemWindow.LoadSystem();
+					LoadSystemInfoIntoUI(selectedSystem);
 					return;
 				}
 
-				//See if there is an adjacent system
-				selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X - 1, whichGridCellClicked.Y));
-				if (selectedSystem == null)
-				{
-					selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X + 1, whichGridCellClicked.Y));
-					if (selectedSystem == null)
-					{
-						selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y - 1));
-						if (selectedSystem == null)
-						{
-							selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y + 1));
-						}
-					}
-				}
-				LastClickedPosition.X = (int)(((x / camera.Scale) + camera.XOffset) + (camera.CameraX * 32));
-				LastClickedPosition.Y = (int)(((y / camera.Scale) + camera.YOffset) + (camera.CameraY * 32));
-				SquadronGroup selectedFleetGroup = gameMain.empireManager.GetSquadronsAtPoint(selectedSystem, LastClickedPosition.X, LastClickedPosition.Y);
+				FleetGroup selectedFleetGroup = gameMain.empireManager.GetFleetsAtPoint(whichGridCellClicked.X, whichGridCellClicked.Y);
 				gameMain.empireManager.CurrentEmpire.SelectedFleetGroup = selectedFleetGroup;
 
 				if (selectedFleetGroup != null)
 				{
-					squadronListWindow.LoadFleetGroup();
+					selectedFleetGroup.ShipIndex = 0;
+					LoadFleetInfoIntoUI(selectedFleetGroup);
 					return;
 				}
 				camera.CenterCamera(whichGridCellClicked.X, whichGridCellClicked.Y);
 			}
 			else if (whichButton == 2)
 			{
-				if (gameMain.empireManager.CurrentEmpire.SelectedFleetGroup != null && gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.Empire == gameMain.empireManager.CurrentEmpire)
+				if (gameMain.empireManager.CurrentEmpire.SelectedFleetGroup != null && gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.Empire == gameMain.empireManager.CurrentEmpire)
 				{
-					gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.ConfirmPath();
-					//gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.SplitFleet(gameMain.empireManager.CurrentEmpire, new Dictionary<Race, int>());
-					//See if there is an adjacent system
-					StarSystem selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X - 1, whichGridCellClicked.Y));
-					if (selectedSystem == null)
-					{
-						selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X + 1, whichGridCellClicked.Y));
-						if (selectedSystem == null)
-						{
-							selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y - 1));
-							if (selectedSystem == null)
-							{
-								selectedSystem = gameMain.Galaxy.GetStarAtPoint(new Point(whichGridCellClicked.X, whichGridCellClicked.Y + 1));
-							}
-						}
-					}
-					SquadronGroup selectedFleetGroup = gameMain.empireManager.GetSquadronsAtPoint(selectedSystem, LastClickedPosition.X, LastClickedPosition.Y);
-					gameMain.empireManager.CurrentEmpire.SelectedFleetGroup = selectedFleetGroup;
-					if (selectedFleetGroup != null)
-					{
-						squadronListWindow.LoadFleetGroup();
-					}
-					//showingSplitWindow = true;
-					//splitPopulation.LoadSplitPopulation(gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.SquadronToSplit, gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.Fleets[gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.FleetIndex]);
+					gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.ConfirmPath();
+					gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.SplitFleet(gameMain.empireManager.CurrentEmpire, gameMain.galaxy.GetGridCells());
+					LoadFleetInfoIntoUI(gameMain.empireManager.CurrentEmpire.SelectedFleetGroup);
 				}
 			}
 		}
@@ -855,34 +961,207 @@ namespace Beyond_Beyaan.Screens
 		public void MouseScroll(int direction, int x, int y)
 		{
 			camera.MouseWheel(direction, x, y);
+			RecalculateSizes();
 		}
 
 		public void Resize()
 		{
 			camera.ResizeScreen(gameMain.ScreenWidth, gameMain.ScreenHeight);
+			RecalculateSizes();
+		}
+
+		private void RecalculateSizes()
+		{
+			sizes = new float[7];
+			sizes[0] = 32 * camera.Scale;
+			sizes[1] = 2 * 32 * camera.Scale;
+			sizes[2] = 3 * 32 * camera.Scale;
+			sizes[3] = 4 * 32 * camera.Scale;
+			sizes[4] = 4 * 32 * camera.Scale;
+			sizes[5] = 5 * 32 * camera.Scale;
+			sizes[6] = 6 * 32 * camera.Scale;
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(ScreenEnum.InGameMenu);
+				gameMain.ChangeToScreen(Screen.InGameMenu);
 			}
-			/*if (e.Key == KeyboardKeys.Space)
+			if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}*/
-			if (e.Key == KeyboardKeys.B)
-			{
-				gameMain.empireManager.CurrentEmpire.ToggleBorder();
 			}
 		}
 
-		/*private void SplitFleet(Dictionary<Race, int> races)
+		private void LoadSystemInfoIntoUI(StarSystem system)
 		{
-			gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.SplitFleet(gameMain.empireManager.CurrentEmpire, races);
-			fleetWindow.LoadFleetGroup();
-			showingSplitWindow = false;
-		}*/
+			if (system.Type == StarType.BLACK_HOLE)
+			{
+				return;
+			}
+			if (system.IsThisSystemExploredByEmpire(gameMain.empireManager.CurrentEmpire))
+			{
+				int maxVisible = (system.Planets.Count < 6 ? system.Planets.Count : 6);
+				int x = gameMain.ScreenWidth - 240;
+				systemScrollBar.TopIndex = 0;
+				if (system.Planets.Count <= 6)
+				{
+					systemScrollBar.SetAmountOfItems(10);
+					systemScrollBar.SetEnabledState(false);
+				}
+				else
+				{
+					systemScrollBar.SetAmountOfItems(system.Planets.Count);
+					systemScrollBar.SetEnabledState(true);
+				}
+
+				if (system.Planets.Count > 0)
+				{
+					systemButtons[0].Selected = true;
+					gameMain.empireManager.CurrentEmpire.PlanetSelected = 0;
+					LoadPlanetInfoIntoUI(system);
+
+					if (system.Planets[0].Owner == gameMain.empireManager.CurrentEmpire)
+					{
+						planetScrollBars[AGRICULTURE].TopIndex = system.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].AgricultureAmount;
+						planetScrollBars[WASTE].TopIndex = system.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].EnvironmentAmount;
+						planetScrollBars[COMMERCE].TopIndex = system.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].CommerceAmount;
+						planetScrollBars[RESEARCH].TopIndex = system.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].ResearchAmount;
+						planetScrollBars[CONSTRUCTION].TopIndex = system.Planets[gameMain.empireManager.CurrentEmpire.PlanetSelected].ConstructionAmount;
+						LoadShipSprite(system.Planets[0]);
+					}
+				}
+				for (int i = 0; i < systemButtons.Length; i++)
+				{
+					systemButtons[i].Active = true;
+				}
+			}
+			else
+			{
+				gameMain.empireManager.CurrentEmpire.PlanetSelected = -1;
+				for (int i = 0; i < 6; i++)
+				{
+					systemButtons[i].Active = false;
+				}
+				systemScrollBar.SetAmountOfItems(10);
+				systemScrollBar.SetEnabledState(false);
+			}
+		}
+
+		private void LoadPlanetInfoIntoUI(StarSystem system)
+		{
+			int selectedPlanetIter = gameMain.empireManager.CurrentEmpire.PlanetSelected;
+			if (selectedPlanetIter >= 0 && system.Planets.Count > selectedPlanetIter)
+			{
+				Planet selectedPlanet = system.Planets[selectedPlanetIter];
+				planetOwner.SetText(selectedPlanet.Owner == null ? "Unowned" : "Owned by " + selectedPlanet.Owner.EmpireName);
+				planetOwner.SetColor(selectedPlanet.Owner == null ? System.Drawing.Color.White : selectedPlanet.Owner.EmpireColor);
+
+				int maxPopLabels = selectedPlanet.Races.Count > 4 ? 4 : selectedPlanet.Races.Count;
+				racePopLabels = new Label[maxPopLabels];
+				for (int i = 0; i < maxPopLabels; i++)
+				{
+					if (i < 3)
+					{
+						racePopLabels[i] = new Label(selectedPlanet.Races[i].RaceName + " - " + selectedPlanet.GetRacePopulation(selectedPlanet.Races[i]), 0, 0);
+						racePopLabels[i].Move((int)((gameMain.ScreenWidth - 252) - racePopLabels[i].GetWidth()), 320 + (i * 20));
+					}
+					else
+					{
+						if (selectedPlanet.Races.Count == 4)
+						{
+							racePopLabels[i] = new Label(selectedPlanet.Races[i].RaceName + " - " + selectedPlanet.GetRacePopulation(selectedPlanet.Races[i]), 0, 0);
+							racePopLabels[i].Move((int)((gameMain.ScreenWidth - 252) - racePopLabels[i].GetWidth()), 320 + (i * 20));
+						}
+						else
+						{
+							float totalRemainingPop = 0.0f;
+							for (int j = 3; j < selectedPlanet.Races.Count; j++)
+							{
+								totalRemainingPop += (selectedPlanet.GetRacePopulation(selectedPlanet.Races[j]));
+							}
+							racePopLabels[i] = new Label("Others - " + totalRemainingPop, 0, 0);
+							racePopLabels[i].Move((int)((gameMain.ScreenWidth - 252) - racePopLabels[i].GetWidth()), 320 + (i * 20));
+						}
+					}
+				}
+			}
+			else
+			{
+				planetOwner.SetText("Unknown");
+				planetOwner.SetColor(System.Drawing.Color.White);
+				racePopLabels = new Label[0];
+			}
+		}
+
+		private void LoadFleetInfoIntoUI(FleetGroup fleetGroup)
+		{
+			int maxVisible = fleetGroup.Fleets.Count > 4 ? 4 : fleetGroup.Fleets.Count;
+			fleetButtons = new Button[maxVisible];
+			int x = gameMain.ScreenWidth - 200;
+			if (fleetGroup.Fleets.Count <= 4)
+			{
+				x += 10;
+			}
+			for (int i = 0; i < maxVisible; i++)
+			{
+				fleetButtons[i] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, /*fleetGroup.Fleets[i + fleetGroup.FleetIndex].Empire.EmpireName + " Fleet" + travel*/"", x, 30 + (20 * i), 175, 20);
+			}
+			fleetScrollBar.SetAmountOfItems(fleetGroup.Fleets.Count);
+			fleetScrollBar.TopIndex = 0;
+			fleetButtons[0].Selected = true;
+			gameMain.empireManager.CurrentEmpire.FleetSelected = 0;
+			gameMain.empireManager.CurrentEmpire.SelectedFleetGroup.SelectFleet(0);
+			LoadSelectedFleetInfoIntoUI(fleetGroup);
+		}
+
+		private void LoadSelectedFleetInfoIntoUI(FleetGroup fleetGroup)
+		{
+			Fleet selectedFleet = fleetGroup.Fleets[gameMain.empireManager.CurrentEmpire.FleetSelected];
+			bool isEnabled = selectedFleet.Empire == gameMain.empireManager.CurrentEmpire;
+			int x = gameMain.ScreenWidth - 203;
+			if (selectedFleet.Ships.Count <= 8)
+			{
+				x += 10;
+			}
+
+			List<Ship> ships = fleetGroup.GetShipsForDisplay();
+			shipScrollBars = new ScrollBar[ships.Count];
+
+			for (int i = 0; i < ships.Count; i++)
+			{
+				int itemSize = (int)(168.0f / selectedFleet.Ships[ships[i]]);
+				shipScrollBars[i] = new ScrollBar(x, 150 + i * 40, 16, 148, 1, selectedFleet.Ships[ships[i]] + 1, true, true, SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton,
+					SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, SpriteName.SliderHorizontalBackgroundButton,
+					SpriteName.SliderHorizontalForegroundButton, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
+				shipScrollBars[i].TopIndex = selectedFleet.Ships[ships[i]];
+				shipScrollBars[i].SetEnabledState(isEnabled);
+			}
+			shipSelectorScrollBar.SetAmountOfItems(fleetGroup.Fleets[gameMain.empireManager.CurrentEmpire.FleetSelected].Ships.Count);
+		}
+
+		private void LoadShipSprite(Planet planet)
+		{
+			if (planet.Owner == null || planet.Owner != gameMain.empireManager.CurrentEmpire)
+			{
+				return;
+			}
+			if (planet.ShipBeingBuilt == null)
+			{
+				shipSprite = gameMain.drawingManagement.GetSprite(SpriteName.CancelBackground);
+			}
+			shipSprite = planet.Owner.EmpireRace.GetShip(planet.ShipBeingBuilt.Size, planet.ShipBeingBuilt.WhichStyle);
+			if (planet.ShipBeingBuilt.Size % 2 == 0)
+			{
+				shipSprite.SetScale(1.0f, 1.0f);
+				shipSprite.SetPosition(gameMain.ScreenWidth - 125 - (shipSprite.Width / 2), 275 - (shipSprite.Height / 2));
+			}
+			else
+			{
+				shipSprite.SetScale((shipSprite.Width - 16) / shipSprite.Width, (shipSprite.Height - 16) / shipSprite.Height);
+				shipSprite.SetPosition(gameMain.ScreenWidth - 117 - (shipSprite.Width / 2), 283 - (shipSprite.Height / 2));
+			}
+		}
 	}
 }

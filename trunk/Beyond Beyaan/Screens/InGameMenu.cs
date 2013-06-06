@@ -1,52 +1,52 @@
-﻿using GorgonLibrary.InputDevices;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
 	class InGameMenu : ScreenInterface
 	{
 		GameMain gameMain;
-		StretchableImage background;
-		StretchButton[] buttons;
+		Button[] buttons;
+		Label version;
 
 		public void Initialize(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
 
-			buttons = new StretchButton[5];
+			buttons = new Button[5];
 
-			buttons[0] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, "New Game", 400, 200, 175, 30, 30, 13, gameMain.FontManager.GetDefaultFont());
-			buttons[1] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, "Load Game", 400, 275, 175, 30, 30, 13, gameMain.FontManager.GetDefaultFont());
-			buttons[2] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, "Save Game", 400, 350, 175, 30, 30, 13, gameMain.FontManager.GetDefaultFont());
-			buttons[3] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, "Options", 400, 425, 175, 30, 30, 13, gameMain.FontManager.GetDefaultFont());
-			buttons[4] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, "Exit to Main Menu", 400, 500, 175, 30, 30, 13, gameMain.FontManager.GetDefaultFont());
+			buttons[0] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Save Game", 400, 200, 175, 25);
+			buttons[1] = new Button(SpriteName.NewGame, SpriteName.NewGame, string.Empty, 400, 275, 260, 40);
+			buttons[2] = new Button(SpriteName.LoadGame, SpriteName.LoadGame, string.Empty, 400, 350, 260, 40);
+			buttons[3] = new Button(SpriteName.Options, SpriteName.Options, string.Empty, 400, 500, 260, 40);
+			buttons[4] = new Button(SpriteName.Exit, SpriteName.Exit, string.Empty, 400, 575, 260, 40);
 
-			background = new StretchableImage(350, 150, 275, 450, 60, 60, DrawingManagement.BorderBorder);
+			version = new Label("Version 0.4", 5, gameMain.ScreenHeight - 25);
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			background.Draw(drawingManagement);
-			foreach (StretchButton button in buttons)
+			foreach (Button button in buttons)
 			{
 				button.Draw(drawingManagement);
 			}
-		}
-
-		public void UpdateBackground(float frameDeltaTime)
-		{
+			version.Draw();
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			foreach (StretchButton button in buttons)
+			foreach (Button button in buttons)
 			{
-				button.MouseHover(mouseX, mouseY, frameDeltaTime);
+				button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			}
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			foreach (StretchButton button in buttons)
+			foreach (Button button in buttons)
 			{
 				button.MouseDown(x, y);
 			}
@@ -60,11 +60,15 @@ namespace Beyond_Beyaan.Screens
 				{
 					switch (i)
 					{
-						case 0:
-							gameMain.ChangeToScreen(ScreenEnum.GalaxySetup);
+						case 1:
+							gameMain.ClearAll();
+							gameMain.ChangeToScreen(Screen.NewGame);
 							break;
 						case 4:
-							gameMain.ChangeToScreen(ScreenEnum.MainMenu);
+							gameMain.ClearAll();
+							gameMain.ChangeToScreen(Screen.MainMenu);
+							break;
+						default:
 							break;
 					}
 				}
@@ -83,7 +87,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
+				gameMain.ChangeToScreen(Screen.Galaxy);
 			}
 		}
 	}

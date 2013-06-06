@@ -1,45 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Data_Managers
 {
-	public class ContactManager
+	class ContactManager
 	{
+		private List<Contact> contacts;
 		private Empire thisEmpire;
 
-		public List<Contact> Contacts { get; private set; }
+		public List<Contact> Contacts
+		{
+			get { return contacts; }
+		}
 
 		public ContactManager(Empire currentEmpire, List<Empire> allEmpires)
 		{
 			thisEmpire = currentEmpire;
-			Contacts = new List<Contact>();
+			contacts = new List<Contact>();
 			foreach (Empire empire in allEmpires)
 			{
 				if (empire != currentEmpire)
 				{
 					Contact newContact = new Contact();
 					newContact.EmpireInContact = empire;
-					newContact.Contacted = false;
+					newContact.Contacted = true;
 					newContact.RelationshipStatus = 100;
 					newContact.OutgoingMessage = MessageType.NONE;
 					newContact.IncomingMessage = MessageType.NONE;
-					Contacts.Add(newContact);
+					contacts.Add(newContact);
 				}
 			}
 		}
 
 		public void EstablishContact(Empire empireContacted, SitRepManager sitRepManager)
 		{
-			foreach (Contact contact in Contacts)
+			foreach (Contact contact in contacts)
 			{
 				if (contact.EmpireInContact == empireContacted && !contact.Contacted)
 				{
 					//Need to add some fudge factor
-					contact.RelationshipStatus = 50; //(int)(thisEmpire.EmpireRace.CharismaMultipler * empireContacted.EmpireRace.CharismaMultipler * 500);
+					contact.RelationshipStatus = (int)(thisEmpire.EmpireRace.CharismaMultipler * empireContacted.EmpireRace.CharismaMultipler * 500);
 					contact.Contacted = true;
 					contact.OutgoingMessage = MessageType.NONE;
 					contact.IncomingMessage = MessageType.NONE;
-					sitRepManager.AddItem(new SitRepItem(ScreenEnum.Diplomacy, null, null, new Point(-1, -1), "You have established contact with " + empireContacted.EmpireName + " empire."));
+					sitRepManager.AddItem(new SitRepItem(Screen.Diplomacy, null, null, new Point(-1, -1), "You have established contact with " + empireContacted.EmpireName + " empire."));
 					return;
 				}
 			}
@@ -49,7 +56,7 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			//Handle messages
 
-			foreach (Contact contact in Contacts)
+			foreach (Contact contact in contacts)
 			{
 				if (!contact.Contacted)
 				{
@@ -60,7 +67,7 @@ namespace Beyond_Beyaan.Data_Managers
 				contact.IncomingEmpireRequest = whichEmpireInRequest;
 				if (contact.IncomingMessage != MessageType.NONE)
 				{
-					sitRepManager.AddItem(new SitRepItem(ScreenEnum.Diplomacy, null, null, new Point(), "You have received a message from the " + contact.EmpireInContact.EmpireName + " Empire."));
+					sitRepManager.AddItem(new SitRepItem(Screen.Diplomacy, null, null, new Point(), "You have received a message from the " + contact.EmpireInContact.EmpireName + " Empire."));
 					HandleMessage(contact, contact.IncomingMessage, contact.IncomingEmpireRequest);
 				}
 			}
@@ -70,7 +77,7 @@ namespace Beyond_Beyaan.Data_Managers
 
 		private MessageType GetMessage(Empire forWhichEmpire, out Empire whichEmpireInRequest)
 		{
-			foreach (Contact contact in Contacts)
+			foreach (Contact contact in contacts)
 			{
 				if (contact.EmpireInContact == forWhichEmpire && contact.OutgoingMessage != MessageType.NONE)
 				{
@@ -89,7 +96,7 @@ namespace Beyond_Beyaan.Data_Managers
 
 		public bool IsContacted(Empire empire)
 		{
-			foreach (Contact contact in Contacts)
+			foreach (Contact contact in contacts)
 			{
 				if (contact.EmpireInContact == empire)
 				{

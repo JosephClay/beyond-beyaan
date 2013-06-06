@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
 
@@ -26,14 +29,15 @@ namespace Beyond_Beyaan.Screens
 		ScrollBar empireScrollBar;
 		ScrollBar[] spyEffortScrollbars;
 		ScrollBar[] spyDefenseScrollbars;
-		//Button[] empireButtons;
+		Button[] empireButtons;
 		Label[] relationLabels;
 		Label[] empireNameLabels;
 		GorgonLibrary.Graphics.Sprite[] avatars;
 		GorgonLibrary.Graphics.Sprite profile;
 		int whichContactSelected;
-		//Button[] messageOptions;
+		Button[] messageOptions;
 		ComboBox listOfEmpires;
+		List<SpriteName> spriteNames;
 		private bool isViewingReceivedMessage;
 		private int whichMessageToSend;
 		private List<Empire> adjustedEmpiresForSelection;
@@ -49,25 +53,30 @@ namespace Beyond_Beyaan.Screens
 			this.gameMain = gameMain;
 			x = (gameMain.ScreenWidth / 2) - 400;
 			y = (gameMain.ScreenHeight / 2) - 300;
-			//empireButtons = new Button[4];
+			empireButtons = new Button[4];
 			spyEffortScrollbars = new ScrollBar[4];
 			spyDefenseScrollbars = new ScrollBar[4];
-			/*for (int i = 0; i < empireButtons.Length; i++)
+			for (int i = 0; i < empireButtons.Length; i++)
 			{
 				empireButtons[i] = new Button(SpriteName.NormalBackgroundButton, SpriteName.NormalForegroundButton, string.Empty, x, y + (150 * i), 384, 150);
-				spyEffortScrollbars[i] = new ScrollBar(x + 145, y + 45 + (150 * i), 16, 174, 1, 101, true, true, DrawingManagement.HorizontalScrollBar);
-				spyDefenseScrollbars[i] = new ScrollBar(x + 145, y + 85 + (150 * i), 16, 174, 1, 101, true, true, DrawingManagement.HorizontalScrollBar);
-			}*/
-			empireScrollBar = new ScrollBar(x + 384, y, 16, 568, 4, 10, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
+				spyEffortScrollbars[i] = new ScrollBar(x + 145, y + 45 + (150 * i), 16, 174, 1, 101, true, true, SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton,
+					SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, SpriteName.SliderHorizontalBackgroundButton, SpriteName.SliderHorizontalForegroundButton,
+					SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
+				spyDefenseScrollbars[i] = new ScrollBar(x + 145, y + 85 + (150 * i), 16, 174, 1, 101, true, true, SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton,
+					SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, SpriteName.SliderHorizontalBackgroundButton, SpriteName.SliderHorizontalForegroundButton,
+					SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
+			}
+			empireScrollBar = new ScrollBar(x + 384, y, 16, 568, 4, 10, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton, SpriteName.ScrollDownBackgroundButton,
+				SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
 
 			incomingMessages = new Button[4];
 			for (int i = 0; i < incomingMessages.Length; i++)
 			{
-				incomingMessages[i] = new Button(SpriteName.IncomingMessageBackground, SpriteName.IncomingMessageForeground, string.Empty, x + 98, y + 98 + (150 * i), 40, 40, gameMain.FontManager.GetDefaultFont());
+				incomingMessages[i] = new Button(SpriteName.IncomingMessageBackground, SpriteName.IncomingMessageForeground, string.Empty, x + 98, y + 98 + (150 * i), 40, 40);
 			}
-			IncomingMessageTextBox = new Label(x + 405, y + 320, gameMain.FontManager.GetDefaultFont());
+			IncomingMessageTextBox = new Label(x + 405, y + 320);
 
-			/*messageOptions = new Button[10];
+			messageOptions = new Button[10];
 			messageOptions[TRADE] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Trade", x + 405, y + 320, 190, 25);
 			messageOptions[RESEARCH] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Research", x + 605, y + 320, 190, 25);
 			messageOptions[ALLY] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Ally", x + 405, y + 350, 190, 25);
@@ -77,23 +86,32 @@ namespace Beyond_Beyaan.Screens
 			messageOptions[WAR] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "War", x + 505, y + 500, 190, 25);
 			messageOptions[SEND] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Send Message", x + 505, y + 570, 190, 25);
 			messageOptions[ACCEPT] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Accept", x + 405, y + 570, 190, 25);
-			messageOptions[REJECT] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Decline", x + 605, y + 570, 190, 25);*/
+			messageOptions[REJECT] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Decline", x + 605, y + 570, 190, 25);
 			whichContactSelected = -1;
 			isViewingReceivedMessage = false;
 
-			
+			spriteNames = new List<SpriteName>();
+			spriteNames.Add(SpriteName.MiniBackgroundButton);
+			spriteNames.Add(SpriteName.MiniForegroundButton);
+			spriteNames.Add(SpriteName.ScrollUpBackgroundButton);
+			spriteNames.Add(SpriteName.ScrollUpForegroundButton);
+			spriteNames.Add(SpriteName.ScrollVerticalBar);
+			spriteNames.Add(SpriteName.ScrollDownBackgroundButton);
+			spriteNames.Add(SpriteName.ScrollDownForegroundButton);
+			spriteNames.Add(SpriteName.ScrollVerticalBackgroundButton);
+			spriteNames.Add(SpriteName.ScrollVerticalForegroundButton);
 			whichMessageToSend = -1;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
 			gameMain.DrawGalaxyBackground();
-			//drawingManagement.DrawSprite(SpriteName.ControlBackground, x, y, 255, 800, 600, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x, y, 255, 800, 600, System.Drawing.Color.White);
 			for (int i = 0; i < maxVisible; i++)
 			{
-				//empireButtons[i].Draw(drawingManagement);
-				spyEffortScrollbars[i].Draw(drawingManagement);
-				spyDefenseScrollbars[i].Draw(drawingManagement);
+				empireButtons[i].Draw(drawingManagement);
+				spyEffortScrollbars[i].DrawScrollBar(drawingManagement);
+				spyDefenseScrollbars[i].DrawScrollBar(drawingManagement);
 				drawingManagement.DrawSprite(SpriteName.RelationBar, x + 145, y + 124 + (150 * i), 255, System.Drawing.Color.White);
 				drawingManagement.DrawSprite(SpriteName.RelationSlider, x + 135 + empiresInContact[i + empireScrollBar.TopIndex].RelationshipStatus, y + 122 + (150 * i), 255, System.Drawing.Color.White);
 				avatars[i].SetPosition(x + 10, y + 10 + (150 * i));
@@ -112,7 +130,7 @@ namespace Beyond_Beyaan.Screens
 					drawingManagement.DrawSprite(SpriteName.OutgoingMessageBackground, x + 10, y + 98 + (150 * i), 255, System.Drawing.Color.White);
 				}
 			}
-			empireScrollBar.Draw(drawingManagement);
+			empireScrollBar.DrawScrollBar(drawingManagement);
 			if (whichContactSelected >= 0)
 			{
 				profile.Draw();
@@ -120,44 +138,40 @@ namespace Beyond_Beyaan.Screens
 				{
 					for (int i = 0; i < 8; i++)
 					{
-						//messageOptions[i].Draw(drawingManagement);
+						messageOptions[i].Draw(drawingManagement);
 					}
 					listOfEmpires.Draw(drawingManagement);
 				}
 				else
 				{
 					IncomingMessageTextBox.Draw();
-					//messageOptions[ACCEPT].Draw(drawingManagement);
-					//messageOptions[REJECT].Draw(drawingManagement);
+					messageOptions[ACCEPT].Draw(drawingManagement);
+					messageOptions[REJECT].Draw(drawingManagement);
 				}
 			}
 		}
 
-		public void UpdateBackground(float frameDeltaTime)
-		{
-		}
-
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			if (empireScrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+			if (empireScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 			{
 				RefreshContactList();
 			}
 			for (int i = 0; i < maxVisible; i++)
 			{
-				if (spyEffortScrollbars[i].MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (spyEffortScrollbars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
 					empiresInContact[i + empireScrollBar.TopIndex].SpyEffort = spyEffortScrollbars[i].TopIndex;
 					return;
 				}
-				if (spyDefenseScrollbars[i].MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (spyDefenseScrollbars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
 					empiresInContact[i + empireScrollBar.TopIndex].AntiSpyEffort = spyDefenseScrollbars[i].TopIndex;
 					return;
 				}
 				if (empiresInContact[i + empireScrollBar.TopIndex].IncomingMessage != MessageType.NONE)
 				{
-					incomingMessages[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+					incomingMessages[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 				}
 			}
 			if (whichContactSelected >= 0)
@@ -166,14 +180,14 @@ namespace Beyond_Beyaan.Screens
 				{
 					for (int i = 0; i < 8; i++)
 					{
-						//messageOptions[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+						messageOptions[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 					}
-					listOfEmpires.MouseHover(mouseX, mouseY, frameDeltaTime);
+					listOfEmpires.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 				}
 				else
 				{
-					//messageOptions[ACCEPT].MouseHover(mouseX, mouseY, frameDeltaTime);
-					//messageOptions[REJECT].MouseHover(mouseX, mouseY, frameDeltaTime);
+					messageOptions[ACCEPT].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+					messageOptions[REJECT].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 				}
 			}
 		}
@@ -201,10 +215,10 @@ namespace Beyond_Beyaan.Screens
 						return;
 					}
 				}
-				/*if (empireButtons[i].MouseDown(x, y))
+				if (empireButtons[i].MouseDown(x, y))
 				{
 					return;
-				}*/
+				}
 			}
 			if (whichContactSelected >= 0)
 			{
@@ -216,13 +230,13 @@ namespace Beyond_Beyaan.Screens
 					}
 					for (int i = 0; i < 8; i++)
 					{
-						//messageOptions[i].MouseDown(x, y);
+						messageOptions[i].MouseDown(x, y);
 					}
 				}
 				else
 				{
-					//messageOptions[ACCEPT].MouseDown(x, y);
-					//messageOptions[REJECT].MouseDown(x, y);
+					messageOptions[ACCEPT].MouseDown(x, y);
+					messageOptions[REJECT].MouseDown(x, y);
 				}
 			}
 		}
@@ -251,16 +265,16 @@ namespace Beyond_Beyaan.Screens
 					if (incomingMessages[i].MouseUp(x, y))
 					{
 						whichContactSelected = i + empireScrollBar.TopIndex;
-						/*foreach (Button button in empireButtons)
+						foreach (Button button in empireButtons)
 						{
 							button.Selected = false;
 						}
-						empireButtons[i].Selected = true;*/
+						empireButtons[i].Selected = true;
 						LoadMessage();
 						return;
 					}
 				}
-				/*if (empireButtons[i].MouseUp(x, y))
+				if (empireButtons[i].MouseUp(x, y))
 				{
 					whichContactSelected = i + empireScrollBar.TopIndex;
 					foreach (Button button in empireButtons)
@@ -270,7 +284,7 @@ namespace Beyond_Beyaan.Screens
 					empireButtons[i].Selected = true;
 					LoadContact();
 					return;
-				}*/
+				}
 			}
 			if (whichContactSelected >= 0)
 			{
@@ -282,7 +296,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					for (int i = 0; i < 8; i++)
 					{
-						/*if (messageOptions[i].MouseUp(x, y))
+						if (messageOptions[i].MouseUp(x, y))
 						{
 							switch (i)
 							{
@@ -375,12 +389,12 @@ namespace Beyond_Beyaan.Screens
 										break;
 									}
 							}
-						}*/
+						}
 					}
 				}
 				else
 				{
-					/*if (messageOptions[ACCEPT].MouseUp(x, y))
+					if (messageOptions[ACCEPT].MouseUp(x, y))
 					{
 						switch (empiresInContact[whichContactSelected].IncomingMessage)
 						{
@@ -415,7 +429,8 @@ namespace Beyond_Beyaan.Screens
 					{
 						empiresInContact[whichContactSelected].OutgoingMessage = MessageType.DECLINE_REQUEST;
 						LoadMessage();
-					}*/
+						return;
+					}
 				}
 			}
 		}
@@ -464,7 +479,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void RefreshContactList()
 		{
-			/*foreach (Button button in empireButtons)
+			foreach (Button button in empireButtons)
 			{
 				button.Selected = false;
 			}
@@ -480,17 +495,17 @@ namespace Beyond_Beyaan.Screens
 				avatars[i] = empiresInContact[i + empireScrollBar.TopIndex].EmpireInContact.EmpireRace.GetMiniAvatar();
 				relationLabels[i] = new Label(Utility.RelationToLabel(empiresInContact[i + empireScrollBar.TopIndex].RelationshipStatus), x + 165, y + 104 + (i * 150));
 				empireNameLabels[i] = new Label(empiresInContact[i + empireScrollBar.TopIndex].EmpireInContact.EmpireName, x + 145, y + 3 + (i * 150), empiresInContact[i + empireScrollBar.TopIndex].EmpireInContact.EmpireColor);
-			}*/
+			}
 		}
 
 		private void LoadContact()
 		{
 			isViewingReceivedMessage = false;
-			/*for (int i = 0; i < messageOptions.Length; i++)
+			for (int i = 0; i < messageOptions.Length; i++)
 			{
 				messageOptions[i].Selected = false;
 				messageOptions[i].Active = true;
-			}*/
+			}
 			Contact contact = empiresInContact[whichContactSelected];
 			Expression whichExpression = Expression.NEUTRAL;
 			if (contact.RelationshipStatus < 70)
@@ -503,7 +518,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			profile = contact.EmpireInContact.EmpireRace.GetAvatar(whichExpression);
 			profile.SetPosition(x + 450, y + 10);
-			/*if (contact.AtWar)
+			if (contact.AtWar)
 			{
 				messageOptions[TRADE].Active = false;
 				messageOptions[RESEARCH].Active = false;
@@ -557,7 +572,7 @@ namespace Beyond_Beyaan.Screens
 			else
 			{
 				messageOptions[RESEARCH].SetButtonText("Offer Shared Research");
-			}*/
+			}
 
 			List<string> empires = new List<string>();
 			adjustedEmpiresForSelection = new List<Empire>();
@@ -570,12 +585,12 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 
-			listOfEmpires = new ComboBox(DrawingManagement.ComboBox, empires, x + 505, y + 440, 200, 25, 6, true, gameMain.FontManager.GetDefaultFont());
+			listOfEmpires = new ComboBox(spriteNames, empires, x + 505, y + 440, 200, 25, 6);
 			if (empires.Count == 0)
 			{
 				listOfEmpires.Active = false;
-				//messageOptions[RECONCILE].Active = false;
-				//messageOptions[HARASS].Active = false;
+				messageOptions[RECONCILE].Active = false;
+				messageOptions[HARASS].Active = false;
 			}
 
 			if (empiresInContact[whichContactSelected].OutgoingMessage != MessageType.NONE)
@@ -583,10 +598,10 @@ namespace Beyond_Beyaan.Screens
 				//already sending a message, disable everything
 				for (int i = 0; i < 8; i++)
 				{
-					//messageOptions[i].Active = false;
+					messageOptions[i].Active = false;
 				}
 				listOfEmpires.Active = false;
-				/*switch (empiresInContact[whichContactSelected].OutgoingMessage)
+				switch (empiresInContact[whichContactSelected].OutgoingMessage)
 				{
 					case MessageType.BREAK_TRADE:
 					case MessageType.TRADE: messageOptions[TRADE].Selected = true;
@@ -624,7 +639,7 @@ namespace Beyond_Beyaan.Screens
 					case MessageType.OFFER_PEACE: messageOptions[WAR].Selected = true;
 						break;
 				}
-				messageOptions[7].Selected = true;*/
+				messageOptions[7].Selected = true;
 			}
 		}
 		private void LoadMessage()
@@ -646,67 +661,67 @@ namespace Beyond_Beyaan.Screens
 			switch (contact.IncomingMessage)
 			{
 				case MessageType.TRADE:
-					IncomingMessageTextBox.SetText("We want trade agreement, do you agree?", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We want trade agreement, do you agree?");
 					break;
 				case MessageType.BREAK_TRADE:
-					IncomingMessageTextBox.SetText("We don't want your cheap items anymore!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We don't want your cheap items anymore!");
 					break;
 				case MessageType.RESEARCH:
-					IncomingMessageTextBox.SetText("We would like us to share our research.", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We would like us to share our research.");
 					break;
 				case MessageType.BREAK_RESEARCH:
-					IncomingMessageTextBox.SetText("We don't want your lousy research!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We don't want your lousy research!");
 					break;
 				case MessageType.NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We want non-aggression!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We want non-aggression!");
 					break;
 				case MessageType.ALLIANCE:
-					IncomingMessageTextBox.SetText("We want alliance!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We want alliance!");
 					break;
 				case MessageType.BREAK_NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We want aggression!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We want aggression!");
 					break;
 				case MessageType.BREAK_ALLIANCE:
-					IncomingMessageTextBox.SetText("We want to break our alliance!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We want to break our alliance!");
 					break;
 				case MessageType.HARASS_EMPIRE:
-					IncomingMessageTextBox.SetText("We want you to bully " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We want you to bully " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!");
 					break;
 				case MessageType.RECONCILE_EMPIRE:
-					IncomingMessageTextBox.SetText("We want you to make peace with " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We want you to make peace with " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!");
 					break;
 				case MessageType.WAR:
-					IncomingMessageTextBox.SetText("We're going to KILL you!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We're going to KILL you!");
 					break;
 				case MessageType.OFFER_PEACE:
-					IncomingMessageTextBox.SetText("Please have mercy on us!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("Please have mercy on us!");
 					break;
 				case MessageType.ACCEPT_ALLIANCE:
-					IncomingMessageTextBox.SetText("We agree to ally with you!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We agree to ally with you!");
 					break;
 				case MessageType.ACCEPT_NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We agree to not be aggressive!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We agree to not be aggressive!");
 					break;
 				case MessageType.ACCEPT_PEACE:
-					IncomingMessageTextBox.SetText("We will spare you for now!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We will spare you for now!");
 					break;
 				case MessageType.ACCEPT_RECONCILE:
-					IncomingMessageTextBox.SetText("We will make peace with " + "!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We will make peace with " + "!");
 					break;
 				case MessageType.ACCEPT_HARASS:
-					IncomingMessageTextBox.SetText("We will bully " + "!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We will bully " + "!");
 					break;
 				case MessageType.ACCEPT_RESEARCH:
-					IncomingMessageTextBox.SetText("We accept the deal to share research!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We accept the deal to share research!");
 					break;
 				case MessageType.ACCEPT_TRADE:
-					IncomingMessageTextBox.SetText("We accept the trade offer!", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We accept the trade offer!");
 					break;
 				case MessageType.DECLINE_REQUEST:
-					IncomingMessageTextBox.SetText("We decline your request.", gameMain.FontManager.GetDefaultFont());
+					IncomingMessageTextBox.SetText("We decline your request.");
 					break;
 			}
-			/*if (whichMessage == MessageType.BREAK_ALLIANCE || whichMessage == MessageType.BREAK_NONAGGRESSION || whichMessage == MessageType.BREAK_RESEARCH ||
+			if (whichMessage == MessageType.BREAK_ALLIANCE || whichMessage == MessageType.BREAK_NONAGGRESSION || whichMessage == MessageType.BREAK_RESEARCH ||
 				whichMessage == MessageType.BREAK_TRADE || whichMessage == MessageType.WAR || whichMessage == MessageType.DECLINE_REQUEST)
 			{
 				messageOptions[ACCEPT].SetButtonText("Oh really?");
@@ -751,14 +766,14 @@ namespace Beyond_Beyaan.Screens
 						messageOptions[REJECT].Selected = true;
 						break;
 				}
-			}*/
+			}
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
+				gameMain.ChangeToScreen(Screen.Galaxy);
 			}
 		}
 	}

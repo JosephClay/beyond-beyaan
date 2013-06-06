@@ -1,66 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using GorgonLibrary.Graphics;
+using System.Linq;
+using System.Text;
 using GorgonLibrary.InputDevices;
-using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	public class UIElement
-	{
-		protected int xPos;
-		protected int yPos;
-		protected int width;
-		protected int height;
-
-		public UIElement(int xPos, int yPos, int width, int height)
-		{
-			this.xPos = xPos;
-			this.yPos = yPos;
-			this.width = width;
-			this.height = height;
-		}
-
-		virtual public bool MouseUp(int x, int y)
-		{
-			return false;
-		}
-
-		virtual public bool MouseDown(int x, int y)
-		{
-			return false;
-		}
-		virtual public bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			return false;
-		}
-
-		virtual public void MoveTo(int x, int y)
-		{
-			this.xPos = x;
-			this.yPos = y;
-		}
-
-		virtual public void Draw(DrawingManagement drawingManagement)
-		{
-		}
-	}
-
-	public class Button : UIElement
+	class Button
 	{
 		#region Member Variables
 		//Button drawing information
 		private SpriteName backgroundSprite;
 		private SpriteName foregroundSprite;
+		private int xPos;
+		private int yPos;
+		private int width;
+		private int height;
 		private Label label;
-		private ToolTip toolTip;
-		private Font font;
 
 		//Button state information
 		private bool pressed;
 		private float pulse;
 		private bool direction;
-		private bool toolTipEnabled;
 		#endregion
 
 		#region Properties
@@ -69,12 +30,16 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public Button(SpriteName backgroundSprite, SpriteName foregroundSprite, string buttonText, int xPos, int yPos, int width, int height, Font font) : base(xPos, yPos, width, height)
+		public Button(SpriteName backgroundSprite, SpriteName foregroundSprite, string buttonText, int xPos, int yPos, int width, int height)
 		{
 			this.backgroundSprite = backgroundSprite;
 			this.foregroundSprite = foregroundSprite;
+			this.xPos = xPos;
+			this.yPos = yPos;
+			this.width = width;
+			this.height = height;
 
-			label = new Label(buttonText, xPos + 15, yPos + 5, System.Drawing.Color.DarkGreen, font);
+			label = new Label(buttonText, xPos + 2, yPos + 2);
 
 			Reset();
 		}
@@ -90,26 +55,16 @@ namespace Beyond_Beyaan
 			Selected = false;
 		}
 
-		public void SetToolTip(List<SpriteName> toolTipSections, GorgonLibrary.Graphics.Font font, string toolTip, string buttonName, int toolTipSectionWidth, int toolTipSectionHeight, int screenWidth, int screenHeight)
-		{
-			toolTipEnabled = true;
-			this.toolTip = new ToolTip(buttonName, toolTip, font, toolTipSections, toolTipSectionWidth, toolTipSectionHeight, screenWidth, screenHeight);
-		}
-		public void SetToolTip(string toolTip)
-		{
-			this.toolTip.SetText(toolTip);
-		}
-
 		public void SetButtonText(string text)
 		{
-			label.SetText(text, font);
+			label.SetText(text);
 		}
 
-		public override void MoveTo(int x, int y)
+		public void MoveButton(int x, int y)
 		{
 			xPos = x;
 			yPos = y;
-			label.MoveTo(x + 15, y + 5);
+			label.Move(x, y);
 		}
 
 		public void ResizeButton(int width, int height)
@@ -118,7 +73,7 @@ namespace Beyond_Beyaan
 			this.height = height;
 		}
 
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
+		public bool UpdateHovering(int x, int y, float frameDeltaTime)
 		{
 			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
 			{
@@ -147,14 +102,9 @@ namespace Beyond_Beyaan
 						}
 					}
 				}
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(true);
-					toolTip.MouseHover(x, y, frameDeltaTime);
-				}
 				return true;
 			}
-			if (pulse > 0)
+			else if (pulse > 0)
 			{
 				pulse -= frameDeltaTime * 2;
 				if (pulse < 0)
@@ -162,21 +112,13 @@ namespace Beyond_Beyaan
 					pulse = 0;
 				}
 			}
-			if (toolTipEnabled)
-			{
-				toolTip.SetShowing(false);
-			}
 			return false;
 		}
 
-		public override bool MouseDown(int x, int y)
+		public bool MouseDown(int x, int y)
 		{
 			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
 			{
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(false);
-				}
 				if (Active)
 				{
 					pressed = true;
@@ -186,14 +128,10 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public override bool MouseUp(int x, int y)
+		public bool MouseUp(int x, int y)
 		{
 			if (Active && pressed)
 			{
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(false);
-				}
 				pressed = false;
 				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
 				{
@@ -203,7 +141,7 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public override void Draw(DrawingManagement drawingManagement)
+		public void Draw(DrawingManagement drawingManagement)
 		{
 			if (Active)
 			{
@@ -237,1009 +175,36 @@ namespace Beyond_Beyaan
 				label.Draw();
 			}
 		}
-		public void DrawToolTip(DrawingManagement drawingManagement)
-		{
-			if (toolTipEnabled)
-			{
-				toolTip.Draw(drawingManagement);
-			}
-		}
 		#endregion
 	}
 
-	public class UniStretchButton : UIElement
-	{
-		#region Member Variables
-		private UniStretchableImage backgroundImage;
-		private UniStretchableImage foregroundImage;
-		private Label label;
-		private Font font;
-
-		//Button state information
-		private bool pressed;
-		private float pulse;
-		private bool direction;
-		#endregion
-
-		#region Properties
-		public bool Active { get; set; }
-		public bool Selected { get; set; }
-		#endregion
-
-		#region Constructors
-		public UniStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, bool isHorizontal, string buttonText, int xPos, int yPos, int width, int height, Font font)
-			: base(xPos, yPos, width, height)
-		{
-			this.font = font;
-			backgroundImage = new UniStretchableImage(xPos, yPos, width, height, 7, 2, isHorizontal, backgroundSections);
-			foregroundImage = new UniStretchableImage(xPos, yPos, width, height, 7, 2, isHorizontal, foregroundSections);
-
-			label = new Label(buttonText, 0, 0, font);
-			SetButtonText(buttonText);
-			label.SetColor(System.Drawing.Color.DarkBlue);
-
-			Reset();
-		}
-		#endregion
-
-		#region Functions
-		public void Reset()
-		{
-			pulse = 0;
-			direction = false;
-			Active = true;
-			pressed = false;
-			Selected = false;
-		}
-
-		public void SetButtonText(string text)
-		{
-			label.SetText(text, font);
-			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
-		}
-
-		public override void MoveTo(int x, int y)
-		{
-			xPos = x;
-			yPos = y;
-			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
-			backgroundImage.MoveTo(x, y);
-			foregroundImage.MoveTo(x, y);
-		}
-
-		public void ResizeButton(int width, int height)
-		{
-			this.width = width;
-			this.height = height;
-			backgroundImage.Resize(width, height);
-			foregroundImage.Resize(width, height);
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				if (pulse < 0.6f)
-				{
-					pulse = 0.9f;
-				}
-				if (Active)
-				{
-					if (direction)
-					{
-						pulse += frameDeltaTime / 2;
-						if (pulse > 0.9f)
-						{
-							direction = !direction;
-							pulse = 0.9f;
-						}
-					}
-					else
-					{
-						pulse -= frameDeltaTime / 2;
-						if (pulse < 0.6f)
-						{
-							direction = !direction;
-							pulse = 0.6f;
-						}
-					}
-				}
-				return true;
-			}
-			if (pulse > 0)
-			{
-				pulse -= frameDeltaTime * 2;
-				if (pulse < 0)
-				{
-					pulse = 0;
-				}
-			}
-			return false;
-		}
-
-		public override bool MouseDown(int x, int y)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				if (Active)
-				{
-					pressed = true;
-				}
-				return true;
-			}
-			return false;
-		}
-
-		public override bool MouseUp(int x, int y)
-		{
-			if (Active && pressed)
-			{
-				pressed = false;
-				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			if (Active)
-			{
-				if (pressed)
-				{
-					foregroundImage.Draw(drawingManagement);
-				}
-				else if (!Selected)
-				{
-					backgroundImage.Draw(drawingManagement);
-					if (pulse > 0)
-					{
-						foregroundImage.Draw((byte)(255 * pulse), drawingManagement);
-					}
-				}
-				else
-				{
-					foregroundImage.Draw(drawingManagement);
-				}
-			}
-			else
-			{
-				backgroundImage.Draw(System.Drawing.Color.Tan, 255, drawingManagement);
-				if (Selected)
-				{
-					foregroundImage.Draw(System.Drawing.Color.Tan, 255, drawingManagement);
-				}
-			}
-			if (label.Text.Length > 0)
-			{
-				label.Draw();
-			}
-		}
-		#endregion
-	}
-
-	public class StretchButton : UIElement
-	{
-		#region Member Variables
-		private StretchableImage backgroundImage;
-		private StretchableImage foregroundImage;
-		private Label label;
-		private ToolTip toolTip;
-		private InfoTip infoTip;
-		private Font font;
-
-		//Button state information
-		private bool pressed;
-		private float pulse;
-		private bool direction;
-		private bool toolTipEnabled;
-		private bool infoTipEnabled;
-		#endregion
-
-		#region Properties
-		public bool Active { get; set; }
-		public bool Selected { get; set; }
-		#endregion
-
-		#region Constructors
-		public StretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, Font font)
-			: this(backgroundSections, foregroundSections, buttonText, xPos, yPos, width, height, 60, 13, font)
-		{
-		}
-		public StretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight, Font font)
-			: base(xPos, yPos, width, height)
-		{
-			this.font = font;
-			toolTipEnabled = false;
-			infoTipEnabled = false;
-
-			backgroundImage = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, backgroundSections);
-			foregroundImage = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, foregroundSections);
-
-			label = new Label(buttonText, 0, 0, font);
-			SetButtonText(buttonText);
-
-			Reset();
-		}
-		#endregion
-
-		#region Functions
-		public void Reset()
-		{
-			pulse = 0;
-			direction = false;
-			Active = true;
-			pressed = false;
-			Selected = false;
-		}
-
-		public void SetToolTip(List<SpriteName> toolTipSections, GorgonLibrary.Graphics.Font font, string toolTip, string buttonName, int toolTipSectionWidth, int toolTipSectionHeight, int screenWidth, int screenHeight)
-		{
-			toolTipEnabled = true;
-			this.toolTip = new ToolTip(buttonName, toolTip, font, toolTipSections, toolTipSectionWidth, toolTipSectionHeight, screenWidth, screenHeight);
-		}
-
-		public void SetInfoTip(string title, List<Icon> icons, Dictionary<string, object> values, List<SpriteName> backgroundImage, int sectionWidth, int sectionHeight, int screenWidth, int screenHeight)
-		{
-			infoTipEnabled = true;
-			this.infoTip = new InfoTip(title, icons, values, backgroundImage, sectionWidth, sectionHeight, screenWidth, screenHeight, font);
-		}
-
-		public void SetButtonText(string text)
-		{
-			label.SetText(text, font);
-			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
-		}
-
-		public void SetButtonColor(System.Drawing.Color color)
-		{
-			label.SetColor(color);
-		}
-
-		public override void MoveTo(int x, int y)
-		{
-			xPos = x;
-			yPos = y;
-			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
-			backgroundImage.MoveTo(x, y);
-			foregroundImage.MoveTo(x, y);
-		}
-
-		public void ResizeButton(int width, int height)
-		{
-			this.width = width;
-			this.height = height;
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				if (pulse < 0.6f)
-				{
-					pulse = 0.9f;
-				}
-				if (Active)
-				{
-					if (direction)
-					{
-						pulse += frameDeltaTime / 2;
-						if (pulse > 0.9f)
-						{
-							direction = !direction;
-							pulse = 0.9f;
-						}
-					}
-					else
-					{
-						pulse -= frameDeltaTime / 2;
-						if (pulse < 0.6f)
-						{
-							direction = !direction;
-							pulse = 0.6f;
-						}
-					}
-				}
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(true);
-					toolTip.MouseHover(x, y, frameDeltaTime);
-				}
-				if (infoTipEnabled)
-				{
-					infoTip.SetShowing(true);
-					infoTip.MouseHover(x, y, frameDeltaTime);
-				}
-				return true;
-			}
-			if (pulse > 0)
-			{
-				pulse -= frameDeltaTime * 2;
-				if (pulse < 0)
-				{
-					pulse = 0;
-				}
-			}
-			if (toolTipEnabled)
-			{
-				toolTip.SetShowing(false);
-			}
-			if (infoTipEnabled)
-			{
-				infoTip.SetShowing(false);
-			}
-			return false;
-		}
-
-		public override bool MouseDown(int x, int y)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(false);
-				}
-				if (infoTipEnabled)
-				{
-					infoTip.SetShowing(false);
-				}
-				if (Active)
-				{
-					pressed = true;
-				}
-				return true;
-			}
-			return false;
-		}
-
-		public override bool MouseUp(int x, int y)
-		{
-			if (Active && pressed)
-			{
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(false);
-				}
-				if (infoTipEnabled)
-				{
-					infoTip.SetShowing(false);
-				}
-				pressed = false;
-				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			if (Active)
-			{
-				if (pressed)
-				{
-					foregroundImage.Draw(drawingManagement);
-				}
-				else if (!Selected)
-				{
-					backgroundImage.Draw(drawingManagement);
-					if (pulse > 0)
-					{
-						foregroundImage.Draw((byte)(255 * pulse), drawingManagement);
-					}
-				}
-				else
-				{
-					foregroundImage.Draw(drawingManagement);
-				}
-			}
-			else
-			{
-				backgroundImage.Draw(System.Drawing.Color.Tan, 255, drawingManagement);
-				if (Selected)
-				{
-					foregroundImage.Draw(System.Drawing.Color.Tan, 255, drawingManagement);
-				}
-			}
-			if (label.Text.Length > 0)
-			{
-				label.Draw();
-			}
-		}
-		public void DrawTips(DrawingManagement drawingManagement)
-		{
-			if (toolTipEnabled)
-			{
-				toolTip.Draw(drawingManagement);
-			}
-			if (infoTipEnabled)
-			{
-				infoTip.Draw(drawingManagement);
-			}
-		}
-		#endregion
-	}
-
-	//This button is invisible until it's being hovered above or selected
-	public class InvisibleStretchButton : UIElement
-	{
-		#region Member Variables
-		private StretchableImage backgroundImage;
-		private StretchableImage foregroundImage;
-		private Label label;
-		private ToolTip toolTip;
-		private InfoTip infoTip;
-		private Font font;
-
-		//Button state information
-		private bool pressed;
-		private float pulse;
-		private bool direction;
-		private bool visible;
-
-		private bool toolTipEnabled;
-		private bool infoTipEnabled;
-		#endregion
-
-		#region Properties
-		public bool Active { get; set; }
-		public bool Selected { get; set; }
-		#endregion
-
-		#region Constructors
-		public InvisibleStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight, Font font)
-			: this(backgroundSections, foregroundSections, buttonText, xPos, yPos, width, height, sectionWidth, sectionHeight, System.Drawing.Color.Blue, font)
-		{
-		}
-
-		public InvisibleStretchButton(List<SpriteName> backgroundSections, List<SpriteName> foregroundSections, string buttonText, int xPos, int yPos, int width, int height, int sectionWidth, int sectionHeight, System.Drawing.Color color, Font font)
-			: base(xPos, yPos, width, height)
-		{
-			this.font = font;
-			backgroundImage = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, backgroundSections);
-			foregroundImage = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, foregroundSections);
-
-			label = new Label(buttonText, 0, 0, font);
-			SetButtonText(buttonText);
-			label.SetColor(color);
-			visible = false;
-
-			Reset();
-		}
-		#endregion
-
-		#region Functions
-		public void Reset()
-		{
-			pulse = 0;
-			direction = false;
-			Active = true;
-			pressed = false;
-			Selected = false;
-		}
-
-		public void SetButtonText(string text)
-		{
-			label.SetText(text, font);
-			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
-		}
-
-		public void SetToolTip(List<SpriteName> toolTipSections, GorgonLibrary.Graphics.Font font, string toolTip, string buttonName, int toolTipSectionWidth, int toolTipSectionHeight, int screenWidth, int screenHeight)
-		{
-			toolTipEnabled = true;
-			this.toolTip = new ToolTip(buttonName, toolTip, font, toolTipSections, toolTipSectionWidth, toolTipSectionHeight, screenWidth, screenHeight);
-		}
-
-		public void SetInfoTip(string title, List<Icon> icons, Dictionary<string, object> values, List<SpriteName> backgroundImage, int sectionWidth, int sectionHeight, int screenWidth, int screenHeight)
-		{
-			infoTipEnabled = true;
-			this.infoTip = new InfoTip(title, icons, values, backgroundImage, sectionWidth, sectionHeight, screenWidth, screenHeight, font);
-		}
-
-		public override void MoveTo(int x, int y)
-		{
-			xPos = x;
-			yPos = y;
-			label.MoveTo((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
-			backgroundImage.MoveTo(x, y);
-			foregroundImage.MoveTo(x, y);
-		}
-
-		public void ResizeButton(int width, int height)
-		{
-			this.width = width;
-			this.height = height;
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				visible = true;
-				if (pulse < 0.3f)
-				{
-					pulse = 0.9f;
-				}
-				if (Active)
-				{
-					if (direction)
-					{
-						pulse += frameDeltaTime;
-						if (pulse > 0.9f)
-						{
-							direction = !direction;
-							pulse = 0.9f;
-						}
-					}
-					else
-					{
-						pulse -= frameDeltaTime;
-						if (pulse < 0.3f)
-						{
-							direction = !direction;
-							pulse = 0.3f;
-						}
-					}
-				}
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(true);
-					toolTip.MouseHover(x, y, frameDeltaTime);
-				}
-				if (infoTipEnabled)
-				{
-					infoTip.SetShowing(true);
-					infoTip.MouseHover(x, y, frameDeltaTime);
-				}
-				return true;
-			}
-			if (pulse > 0)
-			{
-				pulse -= frameDeltaTime * 2;
-				if (pulse < 0)
-				{
-					pulse = 0;
-				}
-			}
-			if (toolTipEnabled)
-			{
-				toolTip.SetShowing(false);
-			}
-			if (infoTipEnabled)
-			{
-				infoTip.SetShowing(false);
-			}
-			visible = false;
-			return false;
-		}
-
-		public override bool MouseDown(int x, int y)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				if (Active)
-				{
-					pressed = true;
-				}
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(false);
-				}
-				if (infoTipEnabled)
-				{
-					infoTip.SetShowing(false);
-				}
-				return true;
-			}
-			return false;
-		}
-
-		public override bool MouseUp(int x, int y)
-		{
-			if (Active && pressed)
-			{
-				pressed = false;
-				if (toolTipEnabled)
-				{
-					toolTip.SetShowing(false);
-				}
-				if (infoTipEnabled)
-				{
-					infoTip.SetShowing(false);
-				}
-				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			if (Active && (visible || Selected))
-			{
-				if (pressed)
-				{
-					foregroundImage.Draw(drawingManagement);
-				}
-				else if (!Selected)
-				{
-					backgroundImage.Draw(drawingManagement);
-					if (pulse > 0)
-					{
-						foregroundImage.Draw((byte)(255 * pulse), drawingManagement);
-					}
-				}
-				else
-				{
-					foregroundImage.Draw(drawingManagement);
-				}
-			}
-			if (label.Text.Length > 0)
-			{
-				label.Draw();
-			}
-		}
-
-		public void DrawTips(DrawingManagement drawingManagement)
-		{
-			if (toolTipEnabled)
-			{
-				toolTip.Draw(drawingManagement);
-			}
-			if (infoTipEnabled)
-			{
-				infoTip.Draw(drawingManagement);
-			}
-		}
-		#endregion
-	}
-
-	public class CheckBox : UIElement
-	{
-		#region Member Variables
-		private SpriteName backgroundNonChecked;
-		private SpriteName foregroundNonChecked;
-		private SpriteName backgroundChecked;
-		private SpriteName foregroundChecked;
-		private Label text;
-		private Font font;
-
-		private bool isChecked;
-		//Button state information
-		private bool pressed;
-		private float pulse;
-		private bool direction;
-		private bool isRadioButton;
-		#endregion
-
-		#region Properties
-		public bool Active { get; set; }
-		public bool IsChecked
-		{
-			get { return isChecked; }
-			set { isChecked = value; }
-		}
-		#endregion
-
-		#region Constructors
-		public CheckBox(List<SpriteName> sprites, string text, int xPos, int yPos, int width, int height, int buttonSize, bool isRadioButton, Font font)
-			: base(xPos, yPos, width, height)
-		{
-			this.font = font;
-			this.xPos = xPos;
-			this.yPos = yPos;
-
-			backgroundNonChecked = sprites[0];
-			foregroundNonChecked = sprites[1];
-			backgroundChecked = sprites[2];
-			foregroundChecked = sprites[3];
-
-			this.text = new Label(text, 0, 0, font);
-
-			MoveTo(xPos, yPos);
-
-			this.isRadioButton = isRadioButton;
-
-			Reset();
-		}
-		#endregion
-
-		#region Functions
-		public void Reset()
-		{
-			pulse = 0;
-			direction = false;
-			Active = true;
-			pressed = false;
-			IsChecked = false;
-		}
-
-		public void SetButtonText(string text)
-		{
-			this.text.SetText(text, font);
-			this.text.MoveTo(xPos + 35, (int)(yPos + (height / 2) - (this.text.GetHeight() / 2)));
-		}
-
-		public override void MoveTo(int x, int y)
-		{
-			xPos = x;
-			yPos = y;
-			text.MoveTo(xPos + 35, (int)(yPos + (height / 2) - (this.text.GetHeight() / 2)));
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				if (pulse < 0.6f)
-				{
-					pulse = 0.9f;
-				}
-				if (Active)
-				{
-					if (direction)
-					{
-						pulse += frameDeltaTime / 2;
-						if (pulse > 0.9f)
-						{
-							direction = !direction;
-							pulse = 0.9f;
-						}
-					}
-					else
-					{
-						pulse -= frameDeltaTime / 2;
-						if (pulse < 0.6f)
-						{
-							direction = !direction;
-							pulse = 0.6f;
-						}
-					}
-				}
-				return true;
-			}
-			if (pulse > 0)
-			{
-				pulse -= frameDeltaTime * 2;
-				if (pulse < 0)
-				{
-					pulse = 0;
-				}
-			}
-			return false;
-		}
-
-		public override bool MouseDown(int x, int y)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				if (Active)
-				{
-					pressed = true;
-				}
-				return true;
-			}
-			return false;
-		}
-
-		public override bool MouseUp(int x, int y)
-		{
-			if (Active && pressed)
-			{
-				pressed = false;
-				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-				{
-					if (isRadioButton)
-					{
-						isChecked = true;
-					}
-					else
-					{
-						isChecked = !isChecked;
-					}
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			if (Active)
-			{
-				if (pressed)
-				{
-					drawingManagement.DrawSprite(isChecked ? foregroundChecked : foregroundNonChecked, xPos + 10, yPos + height / 2 - 9);
-				}
-				else
-				{
-					drawingManagement.DrawSprite(isChecked ? backgroundChecked : backgroundNonChecked, xPos + 10, yPos + height / 2 - 9);
-					if (pulse > 0)
-					{
-						drawingManagement.DrawSprite(isChecked ? foregroundChecked : foregroundNonChecked, xPos + 10, yPos + height / 2 - 9, (byte)(255 * pulse));
-					}
-				}
-			}
-			else
-			{
-				drawingManagement.DrawSprite(isChecked ? backgroundChecked : backgroundNonChecked, xPos + 10, yPos + height / 2 - 9, 255, System.Drawing.Color.Tan);
-			}
-			text.Draw();
-		}
-		#endregion
-	}
-
-	public class NumericUpDown : UIElement
-	{
-		#region Member Variables
-		private Button upButton;
-		private Button downButton;
-		private int minimum;
-		private int maximum;
-		private Label valueLabel;
-		private int incrementAmount;
-		private Font font;
-		#endregion
-
-		#region Properties
-
-		public int Value { get; private set; }
-
-		#endregion
-
-		#region Constructors
-		public NumericUpDown(int xPos, int yPos, int width, int min, int max, int initialAmount, Font font) : base (xPos, yPos, width, 23)
-		{
-			this.font = font;
-			minimum = min;
-			maximum = max;
-			Value = initialAmount;
-			valueLabel = new Label(xPos + 20, yPos, System.Drawing.Color.White, font);
-			CheckAmount();
-
-			upButton = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, string.Empty, xPos + width - 18, yPos + 2, 16, 16, font);
-			downButton = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, string.Empty, xPos + 2, yPos + 2, 16, 16, font);
-			incrementAmount = 1;
-		}
-
-		public NumericUpDown(int xPos, int yPos, int width, int min, int max, int initialAmount, int incrementAmount, Font font)
-			: this(xPos, yPos, width, min, max, initialAmount, font)
-		{
-			this.incrementAmount = incrementAmount;
-		}
-		#endregion
-
-		#region Functions
-		public override bool MouseUp(int x, int y)
-		{
-			if (upButton.MouseUp(x, y))
-			{
-				Value += incrementAmount;
-				CheckAmount();
-				return true;
-			}
-			if (downButton.MouseUp(x, y))
-			{
-				Value -= incrementAmount;
-				CheckAmount();
-				return true;
-			}
-			return false;
-		}
-
-		public override bool MouseDown(int x, int y)
-		{
-			if (upButton.MouseDown(x, y))
-			{
-				return true;
-			}
-			if (downButton.MouseDown(x, y))
-			{
-				return true;
-			}
-			return false;
-		}
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			bool result = false;
-			if (upButton.MouseHover(x, y, frameDeltaTime))
-			{
-				result = true;
-			}
-			if (downButton.MouseHover(x, y, frameDeltaTime))
-			{
-				result = true;
-			}
-			return result;
-		}
-
-		public override void MoveTo(int x, int y)
-		{
-			base.MoveTo(x, y);
-			upButton.MoveTo(xPos + width - 18, yPos + 2);
-			downButton.MoveTo(xPos + 2, yPos + 2);
-			valueLabel.MoveTo(xPos + 20, yPos);
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			upButton.Draw(drawingManagement);
-			downButton.Draw(drawingManagement);
-			valueLabel.Draw();
-		}
-
-		public void SetMin(int min)
-		{
-			minimum = min;
-			CheckAmount();
-		}
-
-		public void SetMax(int max)
-		{
-			maximum = max;
-			CheckAmount();
-		}
-
-		public void SetValue(int value)
-		{
-			this.Value = value;
-			CheckAmount();
-		}
-
-		private void CheckAmount()
-		{
-			if (minimum >= 0 && Value < minimum)
-			{
-				Value = minimum;
-			}
-			if (maximum >= 0 && Value > maximum)
-			{
-				Value = maximum;
-			}
-			valueLabel.SetText(Value.ToString(), font);
-		}
-		#endregion
-	}
-
-	public class ComboBoxNoStretch : UIElement
+	class ComboBox
 	{
 		#region Member Variables
 		//ComboBox drawing information
 		private SpriteName downArrowSprite;
+		private int xPos;
+		private int yPos;
+		private int width;
+		private int height;
 		private List<string> items;
 		private List<Button> buttons;
 		private ScrollBar RealScrollBar;
-		private Font font;
 
 		//ComboBox state information
+		private bool dropped;
 		private bool haveScroll;
 		private int selectedIndex;
-
+		
 		#endregion
 
 		#region Properties
 		public bool Active { get; set; }
-		public int SelectedIndex
-		{
+		public int SelectedIndex 
+		{ 
 			get { return selectedIndex; }
 			set { selectedIndex = value; }
 		}
-		public int Count
-		{
-			get { return items.Count; }
-		}
-		public string CurrentText
-		{
-			get { return items[selectedIndex]; }
-		}
-
-		public bool IsDroppedDown { get; private set; }
-
 		#endregion
 
 		#region Constructors
@@ -1253,14 +218,16 @@ namespace Beyond_Beyaan
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <param name="maxVisible"></param>
-		public ComboBoxNoStretch(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, Font font)
-			: base(xPos, yPos, width, height)
+		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible)
 		{
 			this.items = items;
-			this.font = font;
+			this.xPos = xPos;
+			this.yPos = yPos;
+			this.width = width;
+			this.height = height;
 
-			IsDroppedDown = false;
-			downArrowSprite = sprites[2];
+			dropped = false;
+			downArrowSprite = sprites[5];
 
 			if (items.Count < maxVisible)
 			{
@@ -1276,43 +243,28 @@ namespace Beyond_Beyaan
 			buttons = new List<Button>();
 			for (int i = 0; i <= maxVisible; i++)
 			{
-				Button button = new Button(sprites[0], sprites[1], string.Empty, xPos, yPos + (i * height), width, height, font);
+				Button button = new Button(sprites[0], sprites[1], string.Empty, xPos, yPos + (i * height), width, height);
 				buttons.Add(button);
 			}
-			List<SpriteName> scrollbarSections = new List<SpriteName>()
-			{
-				sprites[3],
-				sprites[4],
-				sprites[5],
-				sprites[6],
-				sprites[7],
-				sprites[8],
-				sprites[9],
-				sprites[10],
-				sprites[11],
-				sprites[12],
-				sprites[13],
-				sprites[13]
-			};
-			RealScrollBar = new ScrollBar(xPos + width, yPos + height, 16, (height * maxVisible) - 32, maxVisible, items.Count, false, false, scrollbarSections, font);
+			RealScrollBar = new ScrollBar(xPos + width, yPos + height, 16, (height * maxVisible) - 32, maxVisible, items.Count, false, false, sprites[2], sprites[3], sprites[5], sprites[6], sprites[7], sprites[8], sprites[4], sprites[4]);
 		}
 		#endregion
 
 		#region Functions
-		public override void MoveTo(int x, int y)
+		public void MoveComboBox(int x, int y)
 		{
 			xPos = x;
 			yPos = y;
 
 			for (int i = 0; i < buttons.Count; i++)
 			{
-				buttons[i].MoveTo(x, y + (i * height));
+				buttons[i].MoveButton(x, y + (i * height));
 			}
 
-			RealScrollBar.MoveTo(xPos + width, yPos + height);
+			RealScrollBar.MoveScrollBar(xPos + width, yPos + height);
 		}
 
-		public override void Draw(DrawingManagement drawingManagement)
+		public void Draw(DrawingManagement drawingManagement)
 		{
 			if (items.Count <= 0)
 			{
@@ -1325,8 +277,8 @@ namespace Beyond_Beyaan
 				buttons[0].SetButtonText(items[selectedIndex]);
 			}
 			buttons[0].Draw(drawingManagement);
-			drawingManagement.DrawSprite(downArrowSprite, xPos + width - 33, yPos + 3, 255, System.Drawing.Color.White);
-			if (IsDroppedDown)
+			drawingManagement.DrawSprite(downArrowSprite, xPos + width - 20, yPos + 4, 255, System.Drawing.Color.White);
+			if (dropped)
 			{
 				for (int i = 0; i < buttons.Count - 1; i++)
 				{
@@ -1335,46 +287,35 @@ namespace Beyond_Beyaan
 				}
 				if (haveScroll)
 				{
-					RealScrollBar.Draw(drawingManagement);
+					RealScrollBar.DrawScrollBar(drawingManagement);
 				}
 			}
 		}
 
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
+		public void UpdateHovering(int x, int y, float frameDeltaTime)
 		{
-			bool result = false;
 			if (Active)
 			{
-				if (!IsDroppedDown)
+				if (!dropped)
 				{
-					if (buttons[0].MouseHover(x, y, frameDeltaTime))
-					{
-						result = true;
-					}
+					buttons[0].UpdateHovering(x, y, frameDeltaTime);
 				}
 				else
 				{
 					foreach (Button button in buttons)
 					{
-						if (button.MouseHover(x, y, frameDeltaTime))
-						{
-							result = true;
-						}
+						button.UpdateHovering(x, y, frameDeltaTime);
 					}
-					if (RealScrollBar.MouseHover(x, y, frameDeltaTime))
-					{
-						result = true;
-					}
+					RealScrollBar.UpdateHovering(x, y, frameDeltaTime);
 				}
 			}
-			return result;
 		}
 
-		public override bool MouseDown(int x, int y)
+		public bool MouseDown(int x, int y)
 		{
 			if (Active)
 			{
-				if (!IsDroppedDown)
+				if (!dropped)
 				{
 					return buttons[0].MouseDown(x, y);
 				}
@@ -1393,15 +334,15 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public override bool MouseUp(int x, int y)
+		public bool MouseUp(int x, int y)
 		{
 			if (Active)
 			{
-				if (!IsDroppedDown)
+				if (!dropped)
 				{
 					if (buttons[0].MouseUp(x, y))
 					{
-						IsDroppedDown = true;
+						dropped = true;
 						return true;
 					}
 				}
@@ -1415,7 +356,7 @@ namespace Beyond_Beyaan
 							{
 								selectedIndex = i + RealScrollBar.TopIndex - 1;
 							}
-							IsDroppedDown = false;
+							dropped = false;
 							return true;
 						}
 					}
@@ -1425,287 +366,27 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-			IsDroppedDown = false;
+			dropped = false;
 			return false;
 		}
 		#endregion
 	}
 
-	public class ComboBox : UIElement
-	{
-		#region Member Variables
-		//ComboBox drawing information
-		private SpriteName downArrowSprite;
-		private List<string> items;
-		private List<StretchButton> buttons;
-		private ScrollBar RealScrollBar;
-		private Font font;
-
-		//ComboBox state information
-		private bool haveScroll;
-		private int selectedIndex;
-		private bool dropDirection;
-		private int maxVisible;
-		private int actualVisible;
-		private List<SpriteName> backgroundSections;
-		private List<SpriteName> foregroundSections;
-		private int sectionWidth;
-		private int sectionHeight;
-		#endregion
-
-		#region Properties
-		public bool Active { get; set; }
-		public int SelectedIndex 
-		{ 
-			get { return selectedIndex; }
-			set { selectedIndex = value; }
-		}
-		public int Count
-		{
-			get { return items.Count; }
-		}
-		public string CurrentText
-		{
-			get { return items[selectedIndex]; }
-		}
-
-		public bool IsDroppedDown { get; private set; }
-
-		#endregion
-
-		#region Constructors
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sprites">0 - bkgnd Button, 1 - Foregnd Button, 2 - bkgnd up, 3 - foregnd up, 4 - scrollbar, 5 - bkgnd down, 6 - foregnd down, 7 - bkgnd scroll, 8 - foregnd scroll</param>
-		/// <param name="items"></param>
-		/// <param name="xPos"></param>
-		/// <param name="yPos"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="maxVisible"></param>
-		/// <param name="dropDirection"></param>
-		/// <param name="font"></param>
-		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, bool dropDirection, Font font) 
-			: this(sprites, items, xPos, yPos, width, height, maxVisible, dropDirection, 60, 13, font)
-		{
-		}
-
-		public ComboBox(List<SpriteName> sprites, List<string> items, int xPos, int yPos, int width, int height, int maxVisible, bool dropDirection, int sectionWidth, int sectionHeight, Font font)
-			: base(xPos, yPos, width, height)
-		{
-			this.font = font;
-			IsDroppedDown = false;
-			this.dropDirection = dropDirection;
-			downArrowSprite = sprites[20];
-
-			Active = true;
-
-			backgroundSections = new List<SpriteName>();
-			foregroundSections = new List<SpriteName>();
-			for (int i = 0; i < 9; i++)
-			{
-				backgroundSections.Add(sprites[i]);
-				foregroundSections.Add(sprites[i + 9]);
-			}
-			this.sectionWidth = sectionWidth;
-			this.sectionHeight = sectionHeight;
-
-			this.maxVisible = maxVisible;
-			actualVisible = items.Count < maxVisible ? items.Count : maxVisible;
-			haveScroll = items.Count > maxVisible;
-
-			buttons = new List<StretchButton>();
-			for (int i = 0; i <= actualVisible; i++)
-			{
-				StretchButton button = new StretchButton(backgroundSections, foregroundSections, string.Empty, xPos, yPos + (dropDirection ? (i * height) : (i * height * -1)), width, height, sectionWidth, sectionHeight, font);
-				buttons.Add(button);
-			}
-			List<SpriteName> scrollbarSections = new List<SpriteName>
-			{
-				sprites[18],
-				sprites[19],
-				sprites[20],
-				sprites[21],
-				sprites[22],
-				sprites[23],
-				sprites[24],
-				sprites[25],
-				sprites[26],
-				sprites[27],
-				sprites[28],
-				sprites[28]
-			};
-			RealScrollBar = new ScrollBar(xPos + width, yPos + height, 16, (height * maxVisible) - 32, maxVisible, items.Count, false, false, scrollbarSections, font);
-
-			SetItems(items);
-		}
-		#endregion
-
-		#region Functions
-		public override void MoveTo(int x, int y)
-		{
-			xPos = x;
-			yPos = y;
-
-			for (int i = 0; i < buttons.Count; i++)
-			{
-				buttons[i].MoveTo(x, y + (i * height));
-			}
-
-			RealScrollBar.MoveTo(xPos + width, yPos + height);
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			
-			buttons[0].Draw(drawingManagement);
-			drawingManagement.DrawSprite(downArrowSprite, xPos + width - 24, yPos + 8, 255, System.Drawing.Color.White);
-			if (IsDroppedDown)
-			{
-				for (int i = 0; i < actualVisible; i++)
-				{
-					buttons[i + 1].SetButtonText(items[RealScrollBar.TopIndex + i]);
-					buttons[i + 1].Draw(drawingManagement);
-				}
-				if (haveScroll)
-				{
-					RealScrollBar.Draw(drawingManagement);
-				}
-			}
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			bool result = false;
-			if (Active)
-			{
-				if (!IsDroppedDown)
-				{
-					if (buttons[0].MouseHover(x, y, frameDeltaTime))
-					{
-						result = true;
-					}
-				}
-				else
-				{
-					for (int i = 0; i < actualVisible + 1; i++)
-					{
-						if (buttons[i].MouseHover(x, y, frameDeltaTime))
-						{
-							result = true;
-						}
-					}
-					if (RealScrollBar.MouseHover(x, y, frameDeltaTime))
-					{
-						result = true;
-					}
-				}
-			}
-			return result;
-		}
-
-		public override bool MouseDown(int x, int y)
-		{
-			if (Active)
-			{
-				if (!IsDroppedDown)
-				{
-					return buttons[0].MouseDown(x, y);
-				}
-				for (int i = 0; i < actualVisible + 1; i++)
-				{
-					if (buttons[i].MouseDown(x, y))
-					{
-						return true;
-					}
-				}
-				return RealScrollBar.MouseDown(x, y);
-			}
-			return false;
-		}
-
-		public override bool MouseUp(int x, int y)
-		{
-			if (Active)
-			{
-				if (!IsDroppedDown)
-				{
-					if (buttons[0].MouseUp(x, y))
-					{
-						IsDroppedDown = true;
-						return true;
-					}
-				}
-				else
-				{
-					for (int i = 0; i < actualVisible + 1; i++)
-					{
-						if (buttons[i].MouseUp(x, y))
-						{
-							if (i > 0)
-							{
-								selectedIndex = i + RealScrollBar.TopIndex - 1;
-								buttons[0].SetButtonText(items[selectedIndex]);
-							}
-							IsDroppedDown = false;
-							return true;
-						}
-					}
-					if (RealScrollBar.MouseUp(x, y))
-					{
-						return true;
-					}
-				}
-			}
-			IsDroppedDown = false;
-			return false;
-		}
-
-		public void SetItems(List<string> items)
-		{
-			this.items = items;
-			actualVisible = items.Count < maxVisible ? items.Count : maxVisible;
-			haveScroll = items.Count > maxVisible;
-
-			buttons = new List<StretchButton>();
-			for (int i = 0; i <= actualVisible; i++)
-			{
-				StretchButton button = new StretchButton(backgroundSections, foregroundSections, string.Empty, xPos, yPos + (dropDirection ? (i * height) : (i * height * -1)), width, height, sectionWidth, sectionHeight, font);
-				buttons.Add(button);
-			}
-			RealScrollBar.SetAmountOfItems(items.Count);
-			if (items.Count <= 0)
-			{
-				selectedIndex = -1;
-				buttons[0].Active = false;
-				buttons[0].SetButtonText(string.Empty);
-			}
-			else
-			{
-				selectedIndex = 0;
-				buttons[0].Active = Active;
-				buttons[0].SetButtonText(items[selectedIndex]);
-			}
-		}
-		#endregion
-	}
-
-	public class ScrollBar : UIElement
+	class ScrollBar
 	{
 		#region Member Variables
 		//Variables that are defined in constructor
+		private int xPos;
+		private int yPos;
 		private int scrollSize;
 		private Button Up;
 		private Button Down;
-		private UniStretchButton Scroll;
+		private Button Scroll;
 		private SpriteName scrollBar;
 		private SpriteName highlightedScrollBar;
 		private int amountOfItems;
 		private int amountVisible;
 		private int scrollBarLength;
-		private Font font;
 
 		private int topIndex; //Which topmost item is visible
 		private int scrollPos;
@@ -1734,24 +415,10 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-
-		/// <summary>
-		/// Fills out the scrollbar data
-		/// </summary>
-		/// <param name="xPos"></param>
-		/// <param name="yPos"></param>
-		/// <param name="scrollSize"></param>
-		/// <param name="scrollBarLength"></param>
-		/// <param name="amountOfVisibleItems"></param>
-		/// <param name="amountOfItems"></param>
-		/// <param name="isHorizontal"></param>
-		/// <param name="isSlider"></param>
-		/// <param name="components">UpBackground, UpForeground, DownBackground, DownForeground, ScrollBackground, ScrollForeground, ScrollBarBackground, ScrollBarForeground</param>
-		/// <param name="font"></param>
-		public ScrollBar(int xPos, int yPos, int scrollSize, int scrollBarLength, int amountOfVisibleItems, int amountOfItems, bool isHorizontal, bool isSlider, List<SpriteName> components, Font font) 
-			: base(xPos, yPos, 0, 0)
+		public ScrollBar(int xPos, int yPos, int scrollSize, int scrollBarLength, int amountOfVisibleItems, int amountOfItems, bool isHorizontal, bool isSlider, SpriteName UpBackground, SpriteName UpForeGround, SpriteName DownBackGround, SpriteName DownForeground, SpriteName ScrollBackground, SpriteName ScrollForeground, SpriteName ScrollBar, SpriteName HighlightedScrollBar)
 		{
-			this.font = font;
+			this.xPos = xPos;
+			this.yPos = yPos;
 			this.scrollSize = scrollSize;
 			this.scrollBarLength = scrollBarLength;
 			this.amountOfItems = amountOfItems;
@@ -1759,7 +426,7 @@ namespace Beyond_Beyaan
 			this.isSlider = isSlider;
 			this.isHorizontal = isHorizontal;
 
-			Up = new Button(components[0], components[1], "", xPos, yPos, scrollSize, scrollSize, font);
+			Up = new Button(UpBackground, UpForeGround, "", xPos, yPos, scrollSize, scrollSize);
 
 			if (isSlider)
 			{
@@ -1773,18 +440,18 @@ namespace Beyond_Beyaan
 					scrollButtonLength = 8;
 				}
 			}
-			this.scrollBar = components[10];
-			this.highlightedScrollBar = components[11];
+			this.scrollBar = ScrollBar;
+			this.highlightedScrollBar = HighlightedScrollBar;
 
 			if (isHorizontal)
 			{
-				Scroll = new UniStretchButton(new List<SpriteName>() { components[4], components[5], components[6] }, new List<SpriteName>() { components[7], components[8], components[9] }, isHorizontal, "", xPos + scrollSize, yPos, scrollButtonLength, scrollSize, font);
-				Down = new Button(components[2], components[3], "", xPos + scrollBarLength + scrollSize, yPos, scrollSize, scrollSize, font);
+				Scroll = new Button(ScrollBackground, ScrollForeground, "", xPos + scrollSize, yPos, scrollButtonLength, scrollSize);
+				Down = new Button(DownBackGround, DownForeground, "", xPos + scrollBarLength + scrollSize, yPos, scrollSize, scrollSize);
 			}
 			else
 			{
-				Scroll = new UniStretchButton(new List<SpriteName>() { components[4], components[5], components[6] }, new List<SpriteName>() { components[7], components[8], components[9] }, isHorizontal, "", xPos, yPos + scrollSize, scrollSize, scrollButtonLength, font);
-				Down = new Button(components[2], components[3], "", xPos, yPos + scrollBarLength + scrollSize, scrollSize, scrollSize, font);
+				Scroll = new Button(ScrollBackground, ScrollForeground, "", xPos, yPos + scrollSize, scrollSize, scrollButtonLength);
+				Down = new Button(DownBackGround, DownForeground, "", xPos, yPos + scrollBarLength + scrollSize, scrollSize, scrollSize);
 			}
 
 			topIndex = 0;
@@ -1808,17 +475,17 @@ namespace Beyond_Beyaan
 			}
 			if (isHorizontal)
 			{
-				Scroll.MoveTo(xPos + scrollSize + scrollPos, yPos);
+				Scroll.MoveButton(xPos + scrollSize + scrollPos, yPos);
 			}
 			else
 			{
-				Scroll.MoveTo(xPos, yPos + scrollSize + scrollPos);
+				Scroll.MoveButton(xPos, yPos + scrollSize + scrollPos);
 			}
 		}
 		#endregion
 
 		#region Public Functions
-		public override void Draw(DrawingManagement drawingManagement)
+		public void DrawScrollBar(DrawingManagement drawingManagement)
 		{
 			System.Drawing.Color enabledColor = isEnabled ? System.Drawing.Color.White : System.Drawing.Color.Tan;
 			if (isHorizontal)
@@ -1850,7 +517,7 @@ namespace Beyond_Beyaan
 			Scroll.Draw(drawingManagement);
 		}
 
-		public override bool MouseDown(int x, int y)
+		public bool MouseDown(int x, int y)
 		{
 			if (isEnabled)
 			{
@@ -1912,7 +579,7 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public override bool MouseUp(int x, int y)
+		public bool MouseUp(int x, int y)
 		{
 			if (isEnabled)
 			{
@@ -1951,14 +618,14 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
+		public bool UpdateHovering(int x, int y, float frameDeltaTime)
 		{
 			if (isEnabled)
 			{
-				Scroll.MouseHover(x, y, frameDeltaTime);
+				Scroll.UpdateHovering(x, y, frameDeltaTime);
 				if (scrollSelected)
 				{
-					int newPosition;
+					int newPosition = 0;
 					if (isHorizontal)
 					{
 						newPosition = initialScrollPos + (x - (isSlider ? (xPos + scrollSize + (scrollButtonLength / 2)) : initialMousePos));
@@ -1975,7 +642,7 @@ namespace Beyond_Beyaan
 					{
 						newPosition = scrollBarLength - scrollButtonLength;
 					}
-					float itemsPerIncrement = ((amountOfItems - amountVisible) / (float)(scrollBarLength - scrollButtonLength));
+					float itemsPerIncrement = ((float)(amountOfItems - amountVisible) / (float)(scrollBarLength - scrollButtonLength));
 					int oldIndex = topIndex;
 					topIndex = (int)((itemsPerIncrement * newPosition) + 0.5f);
 					SetScrollButtonPosition();
@@ -1983,26 +650,26 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					Up.MouseHover(x, y, frameDeltaTime);
-					Down.MouseHover(x, y, frameDeltaTime);
+					Up.UpdateHovering(x, y, frameDeltaTime);
+					Down.UpdateHovering(x, y, frameDeltaTime);
 					return false;
 				}
 			}
 			return false;
 		}
 
-		public override void MoveTo(int x, int y)
+		public void MoveScrollBar(int x, int y)
 		{
-			Up.MoveTo(x, y);
+			Up.MoveButton(x, y);
 			if (isHorizontal)
 			{
-				Down.MoveTo(x + scrollBarLength + scrollSize, y);
-				Scroll.MoveTo(x + scrollSize + scrollPos, y);
+				Down.MoveButton(x + scrollBarLength + scrollSize, y);
+				Scroll.MoveButton(x + scrollSize + scrollPos, y);
 			}
 			else
 			{
-				Down.MoveTo(x, y + scrollBarLength + scrollSize);
-				Scroll.MoveTo(x, y + scrollSize + scrollPos);
+				Down.MoveButton(x, y + scrollBarLength + scrollSize);
+				Scroll.MoveButton(x, y + scrollSize + scrollPos);
 			}
 			xPos = x;
 			yPos = y;
@@ -2012,29 +679,6 @@ namespace Beyond_Beyaan
 		{
 			topIndex = 0;
 			amountOfItems = amount;
-			if (!isSlider)
-			{
-				scrollButtonLength = (int)(((float)amountVisible / amountOfItems) * scrollBarLength);
-				if (scrollButtonLength < 8)
-				{
-					scrollButtonLength = 8;
-				}
-				if (isHorizontal)
-				{
-					Scroll.ResizeButton(scrollButtonLength, scrollSize);
-				}
-				else
-				{
-					Scroll.ResizeButton(scrollSize, scrollButtonLength);
-				}
-			}
-			SetScrollButtonPosition();
-		}
-
-		public void SetAmountVisible(int amount)
-		{
-			topIndex = 0;
-			amountVisible = amount;
 			if (!isSlider)
 			{
 				scrollButtonLength = (int)(((float)amountVisible / amountOfItems) * scrollBarLength);
@@ -2064,23 +708,31 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
-	public class ProgressBar : UIElement
+	class ProgressBar
 	{
 		#region Member Variables
-		private float maxItems;
-		private float currentItems;
+		private int xPos;
+		private int yPos;
+		private int width;
+		private int height;
+		private int maxItems;
+		private int currentItems;
 		private SpriteName barBackground;
 		private SpriteName barForeground;
 		private int currentWidth;
 		private int potentialWidth;
 		private System.Drawing.Color color;
-		private float potentinalIncrease;
+		private int potentinalIncrease;
 		private System.Drawing.Color potentialIncreaseColor;
 		#endregion
 
 		#region Constructor
-		public ProgressBar(int xPos, int yPos, int width, int height, int maxItems, int currentItems, SpriteName barBackground, SpriteName barForeground) : base(xPos, yPos, width, height)
+		public ProgressBar(int xPos, int yPos, int width, int height, int maxItems, int currentItems, SpriteName barBackground, SpriteName barForeground)
 		{
+			this.xPos = xPos;
+			this.yPos = yPos;
+			this.width = width;
+			this.height = height;
 			this.maxItems = maxItems;
 			this.currentItems = currentItems;
 
@@ -2089,16 +741,15 @@ namespace Beyond_Beyaan
 			color = System.Drawing.Color.White;
 			potentinalIncrease = -1;
 		}
-		public ProgressBar(int xPos, int yPos, int width, int height, int maxItems, int currentItems, SpriteName barBackground, SpriteName barForeground, System.Drawing.Color potentialColor, System.Drawing.Color progressColor) : 
+		public ProgressBar(int xPos, int yPos, int width, int height, int maxItems, int currentItems, SpriteName barBackground, SpriteName barForeground, System.Drawing.Color potentialColor) : 
 			this(xPos, yPos, width, height, maxItems, currentItems, barBackground, barForeground)
 		{
 			potentialIncreaseColor = potentialColor;
-			color = progressColor;
 		}
 		#endregion
 
 		#region Functions
-		public override void MoveTo(int xPos, int yPos)
+		public void Move(int xPos, int yPos)
 		{
 			this.xPos = xPos;
 			this.yPos = yPos;
@@ -2106,7 +757,7 @@ namespace Beyond_Beyaan
 
 		private void UpdateWidth()
 		{
-			currentWidth = (int)(width * (currentItems / (double)maxItems));
+			currentWidth = (int)(width * ((float)currentItems / (float)maxItems));
 			if (currentWidth > width)
 			{
 				//in case we went over
@@ -2117,10 +768,13 @@ namespace Beyond_Beyaan
 				//Don't want negative progress extending to left
 				currentWidth = 0;
 			}
-			potentialWidth = (int)(width * (potentinalIncrease / (double)maxItems));
-			if (currentWidth + potentialWidth > width)
+			if (potentinalIncrease > 0)
 			{
-				potentialWidth = (width - currentWidth);
+				potentialWidth = (int)(width * ((float)potentinalIncrease / (float)maxItems));
+				if (currentWidth + potentialWidth > width)
+				{
+					potentialWidth = (width - currentWidth);
+				}
 			}
 		}
 
@@ -2130,25 +784,25 @@ namespace Beyond_Beyaan
 			UpdateWidth();
 		}
 
-		public void SetProgress(long currentItems)
+		public void SetProgress(int currentItems)
 		{
 			this.currentItems = currentItems;
 			UpdateWidth();
 		}
 
-		public void SetPotentialProgress(long potentialAmount)
+		public void SetPotentialProgress(int potentialAmount)
 		{
 			potentinalIncrease = potentialAmount;
 			UpdateWidth();
 		}
 
-		public void SetMaxProgress(float maxItems)
+		public void SetMaxProgress(int maxItems)
 		{
 			this.maxItems = maxItems;
 			UpdateWidth();
 		}
 
-		public override void Draw(DrawingManagement drawingManagement)
+		public void Draw(DrawingManagement drawingManagement)
 		{
 			drawingManagement.DrawSprite(barBackground, xPos, yPos, 255, width, height, System.Drawing.Color.White);
 			drawingManagement.DrawSprite(barForeground, xPos, yPos, 255, currentWidth, height, color);
@@ -2162,270 +816,17 @@ namespace Beyond_Beyaan
 		{
 			this.color = color;
 		}
-		public void SetPotentialColor(System.Drawing.Color color)
-		{
-			potentialIncreaseColor = color;
-		}
 		#endregion
 	}
 
-	public class AnimatedImage : UIElement
+	class Label
 	{
 		#region Member Variables
-		private List<SpriteName> frames;
-		private int frameIter;
-		private bool reverse;
-		private bool direction;
-		private float frameTick;
-		private float frameLength;
-		private float rotation;
-		private float scaleX;
-		private float scaleY;
-		#endregion
-
-		#region Constructor
-		#endregion
-
-		public AnimatedImage(int x, int y, int width, int height, List<SpriteName> frames, bool reverse, float frameLength) :
-			base (x, y, width, height)
-		{
-			this.frames = frames;
-			this.frameLength = frameLength;
-			this.reverse = reverse;
-			rotation = 0;
-			frameTick = 0;
-			frameIter = 0;
-			scaleX = 1;
-			scaleY = 1;
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			Draw(System.Drawing.Color.White, 255, drawingManagement);
-		}
-
-		public void Draw(byte alpha, DrawingManagement drawingManagement)
-		{
-			Draw(System.Drawing.Color.White, alpha, drawingManagement);
-		}
-
-		public void Draw(System.Drawing.Color color, byte alpha, DrawingManagement drawingManagement)
-		{
-			drawingManagement.GetSprite(frames[frameIter]).Rotation = rotation;
-			drawingManagement.DrawSprite(frames[frameIter], xPos, yPos, alpha, scaleX, scaleY, color);
-		}
-
-		public void SetRotation(float rotation)
-		{
-			this.rotation = rotation;
-		}
-
-		public void SetScale(float scaleX, float scaleY)
-		{
-			this.scaleX = scaleX;
-			this.scaleY = scaleY;
-		}
-
-		public void Update(float frameDeltaTime)
-		{
-			frameTick += frameDeltaTime;
-			if (frameTick >= frameLength)
-			{
-				if (!direction)
-				{
-					frameIter++;
-					if (frameIter >= frames.Count)
-					{
-						if (reverse)
-						{
-							direction = !direction;
-							frameIter--;
-						}
-						else
-						{
-							frameIter = 0;
-						}
-					}
-				}
-				else
-				{
-					frameIter--;
-					if (frameIter < 0)
-					{
-						direction = !direction;
-						frameIter++;
-					}
-				}
-				frameTick -= frameLength;
-			}
-		}
-	}
-
-	public class StretchableImage : UIElement
-	{
-		#region Member Variables
-		private int sectionWidth;
-		private int sectionHeight;
-		private int horizontalStretchLength;
-		private int verticalStretchLength;
-		private List<SpriteName> sections;
-		#endregion
-
-		#region Properties
-		#endregion
-
-		#region Constructor
-		public StretchableImage(int x, int y, int width, int height, int sectionWidth, int sectionHeight, List<SpriteName> sections) :
-			base(x, y, width, height)
-		{
-			this.sectionWidth = sectionWidth;
-			this.sectionHeight = sectionHeight;
-			this.sections = new List<SpriteName>();
-			foreach (SpriteName spriteName in sections)
-			{
-				this.sections.Add(spriteName);
-			}
-			horizontalStretchLength = (width - (sectionWidth * 2));
-			verticalStretchLength = (height - (sectionHeight * 2));
-
-			if (horizontalStretchLength < 0)
-			{
-				horizontalStretchLength = 0;
-			}
-			if (verticalStretchLength < 0)
-			{
-				verticalStretchLength = 0;
-			}
-		}
-		#endregion
-
-		#region Functions
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			Draw(System.Drawing.Color.White, 255, drawingManagement);
-		}
-
-		public void Draw(byte alpha, DrawingManagement drawingManagement)
-		{
-			Draw(System.Drawing.Color.White, alpha, drawingManagement);
-		}
-
-		public void Draw(System.Drawing.Color color, byte alpha, DrawingManagement drawingManagement)
-		{
-			drawingManagement.DrawSprite(sections[0], xPos, yPos, alpha, color);
-			drawingManagement.DrawSprite(sections[1], xPos + sectionWidth, yPos, alpha, horizontalStretchLength, sectionHeight, color);
-			drawingManagement.DrawSprite(sections[2], xPos + sectionWidth + horizontalStretchLength, yPos, alpha, color);
-			drawingManagement.DrawSprite(sections[3], xPos, yPos + sectionHeight, alpha, sectionWidth, verticalStretchLength, color);
-			drawingManagement.DrawSprite(sections[4], xPos + sectionWidth, yPos + sectionHeight, alpha, horizontalStretchLength, verticalStretchLength, color);
-			drawingManagement.DrawSprite(sections[5], xPos + sectionWidth + horizontalStretchLength, yPos + sectionHeight, alpha, sectionWidth, verticalStretchLength, color);
-			drawingManagement.DrawSprite(sections[6], xPos, yPos + sectionHeight + verticalStretchLength, alpha, color);
-			drawingManagement.DrawSprite(sections[7], xPos + sectionWidth, yPos + sectionHeight + verticalStretchLength, alpha, horizontalStretchLength, sectionHeight, color);
-			drawingManagement.DrawSprite(sections[8], xPos + sectionWidth + horizontalStretchLength, yPos + sectionHeight + verticalStretchLength, alpha, color);
-		}
-		public void SetDimensions(int width, int height)
-		{
-			this.width = width;
-			this.height = height;
-			horizontalStretchLength = (width - (sectionWidth * 2));
-			verticalStretchLength = (height - (sectionHeight * 2));
-		}
-		#endregion
-	}
-
-	public class UniStretchableImage : UIElement
-	{
-		#region Member Variables
-		private int mainLength;
-		private int stretchLength;
-		private int stretchAmount;
-		private List<SpriteName> sections;
-		private bool isHorizontal;
-		#endregion
-
-		#region Properties
-		#endregion
-
-		#region Constructor
-		public UniStretchableImage(int x, int y, int width, int height, int mainLength, int stretchLength, bool isHorizontal, List<SpriteName> sections) :
-			base(x, y, width, height)
-		{
-			this.mainLength = mainLength;
-			this.stretchLength = stretchLength;
-			this.sections = new List<SpriteName>();
-			foreach (SpriteName spriteName in sections)
-			{
-				this.sections.Add(spriteName);
-			}
-			this.isHorizontal = isHorizontal;
-			if (isHorizontal)
-			{
-				stretchAmount = (width - (mainLength * 2));
-			}
-			else
-			{
-				stretchAmount = (height - (mainLength * 2));
-			}
-
-			if (stretchAmount < 0)
-			{
-				stretchAmount = 0;
-			}
-		}
-		#endregion
-
-		#region Functions
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			Draw(System.Drawing.Color.White, 255, drawingManagement);
-		}
-
-		public void Draw(byte alpha, DrawingManagement drawingManagement)
-		{
-			Draw(System.Drawing.Color.White, alpha, drawingManagement);
-		}
-
-		public void Draw(System.Drawing.Color color, byte alpha, DrawingManagement drawingManagement)
-		{
-			drawingManagement.DrawSprite(sections[0], xPos, yPos, alpha, color);
-			if (isHorizontal)
-			{
-				drawingManagement.DrawSprite(sections[1], xPos + mainLength, yPos, alpha, stretchAmount, height, color);
-				drawingManagement.DrawSprite(sections[2], xPos + mainLength + stretchAmount, yPos, alpha, color);
-			}
-			else
-			{
-				drawingManagement.DrawSprite(sections[1], xPos, yPos + mainLength, alpha, width, stretchAmount, color);
-				drawingManagement.DrawSprite(sections[2], xPos, yPos + mainLength + stretchAmount, alpha, color);
-			}
-		}
-
-		public void Resize(int width, int height)
-		{
-			this.width = width;
-			this.height = height;
-			if (isHorizontal)
-			{
-				stretchAmount = (width - (mainLength * 2));
-			}
-			else
-			{
-				stretchAmount = (height - (mainLength * 2));
-			}
-
-			if (stretchAmount < 0)
-			{
-				stretchAmount = 0;
-			}
-		}
-		#endregion
-	}
-
-	public class Label : UIElement
-	{
-		#region Member Variables
-
+		private string label;
+		private int x;
+		private int y;
 		private bool isRightAligned;
-		private TextSprite textSprite;
+		private GorgonLibrary.Graphics.TextSprite textSprite;
 		private System.Drawing.Color color;
 		#endregion
 
@@ -2434,37 +835,46 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public Label(int x, int y, Font font) : base(x, y, 0, 0)
+		public Label(int x, int y)
 		{
+			this.x = x;
+			this.y = y;
 			color = System.Drawing.Color.White;
-			SetText(string.Empty, font);
 		}
-		public Label(string label, int x, int y, Font font)
-			: base(x, y, 0, 0)
+		public Label(string label, int x, int y)
 		{
+			this.x = x;
+			this.y = y;
 			color = System.Drawing.Color.White;
-			SetText(label, font);
+			SetText(label);
 		}
-		public Label(int x, int y, System.Drawing.Color color, Font font)
-			: base(x, y, 0, 0)
+		public Label(int x, int y, System.Drawing.Color color)
 		{
-			SetText(string.Empty, font);
+			this.x = x;
+			this.y = y;
 			this.color = color;
 		}
-		public Label(string label, int x, int y, System.Drawing.Color color, Font font)
-			: base(x, y, 0, 0)
+		public Label(string label, int x, int y, System.Drawing.Color color)
 		{
+			this.x = x;
+			this.y = y;
 			this.color = color;
-			SetText(label, font);
+			SetText(label);
 		}
 		#endregion
 
 		#region Functions
-		public void SetText(string label, Font font)
+		public void SetText(string label)
 		{
-			textSprite = new GorgonLibrary.Graphics.TextSprite("Arial", label, font);
-			SetAlignment(isRightAligned);
-			Text = label;
+			this.label = label;
+
+			GorgonLibrary.Graphics.Font font;
+			if (DrawingManagement.fonts.TryGetValue("Arial", out font))
+			{
+				textSprite = new GorgonLibrary.Graphics.TextSprite("Arial", label, font);
+				SetAlignment(isRightAligned);
+				Text = label;
+			}
 		}
 		public void SetAlignment(bool isRightAligned)
 		{
@@ -2473,11 +883,11 @@ namespace Beyond_Beyaan
 			{
 				if (isRightAligned)
 				{
-					textSprite.SetPosition(xPos - textSprite.Width, yPos);
+					textSprite.SetPosition(x - textSprite.Width, y);
 				}
 				else
 				{
-					textSprite.SetPosition(xPos, yPos);
+					textSprite.SetPosition(x, y);
 				}
 			}
 		}
@@ -2490,19 +900,15 @@ namespace Beyond_Beyaan
 		{
 			return textSprite.Height;
 		}
-		public override void MoveTo(int x, int y)
+		public void Move(int x, int y)
 		{
-			xPos = x;
-			yPos = y;
+			this.x = x;
+			this.y = y;
 			textSprite.SetPosition(x, y);
 		}
 		public void SetColor(System.Drawing.Color color)
 		{
 			this.color = color;
-		}
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			Draw();
 		}
 		public void Draw()
 		{
@@ -2512,164 +918,16 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
-	public class TextBox : UIElement
-	{
-		#region Member Variables
-		private Viewport wrapView;
-		private TextSprite textSprite;
-		//private StretchableImage background;
-		private ScrollBar textScrollBar;
-		//private int borderWidth;
-		//private int borderHeight;
-		private RenderImage target;
-		private bool scrollbarVisible;
-		private bool usingScrollBar;
-		private Font font;
-		#endregion
-
-		#region Properties
-		#endregion
-
-		#region Constructor
-		public TextBox(int xPos, int yPos, int width, int height, /*int sectionWidth, int sectionHeight, int borderWidth, int borderHeight,*/ string name, string message, Font font, /*List<SpriteName> sections,*/ List<SpriteName> scrollBarSprites)
-			: base(xPos, yPos, width, height)
-		{
-			//this.borderWidth = borderWidth;
-			//this.borderHeight = borderHeight;
-			//background = new StretchableImage(xPos, yPos, width, height, sectionWidth, sectionHeight, sections);
-			textScrollBar = new ScrollBar(xPos + width - 16, yPos, 16, height - 32, height, 1, false, false, scrollBarSprites, font);
-
-			//Set the text stuff
-			wrapView = new GorgonLibrary.Graphics.Viewport(0, 0, width - 16, height);
-			textSprite = new GorgonLibrary.Graphics.TextSprite(name, string.Empty, font);
-			textSprite.WordWrap = true;
-			textSprite.Bounds = wrapView;
-
-			target = new GorgonLibrary.Graphics.RenderImage(name + "render", width - 16, height, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
-			target.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
-			usingScrollBar = true;
-
-			SetMessage(message);
-
-			textScrollBar.SetAmountOfItems((int)textSprite.Height);
-		}
-		//No scrollbar, everything will be visible
-		public TextBox(int xPos, int yPos, int width, int height, string name, string message, GorgonLibrary.Graphics.Font font)
-			: base(xPos, yPos, width, height)
-		{
-			wrapView = new GorgonLibrary.Graphics.Viewport(0, 0, width, height);
-			textSprite = new GorgonLibrary.Graphics.TextSprite(name, string.Empty, font);
-			textSprite.WordWrap = true;
-			textSprite.Bounds = wrapView;
-
-			target = new GorgonLibrary.Graphics.RenderImage(name + "Render", width, height, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
-			target.BlendingMode = GorgonLibrary.Graphics.BlendingModes.Modulated;
-			usingScrollBar = false;
-
-			SetMessage(message);
-			this.height = (int)textSprite.Height;
-		}
-		#endregion
-
-		#region Functions
-		public void SetMessage(string message)
-		{
-			textSprite.Text = message;
-			if (usingScrollBar)
-			{
-				textScrollBar.TopIndex = 0;
-				if (textSprite.Height > height)
-				{
-					scrollbarVisible = true;
-					textScrollBar.SetAmountOfItems((int)textSprite.Height);
-				}
-				else
-				{
-					scrollbarVisible = false;
-				}
-			}
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			//background.Draw(drawingManagement);
-			if (usingScrollBar && scrollbarVisible)
-			{
-				textScrollBar.Draw(drawingManagement);
-			}
-
-			target.Clear(System.Drawing.Color.FromArgb(0, 0, 0, 0));
-			GorgonLibrary.Graphics.RenderTarget old = GorgonLibrary.Gorgon.CurrentRenderTarget;
-			GorgonLibrary.Gorgon.CurrentRenderTarget = target;
-			textSprite.SetPosition(0, usingScrollBar ? -textScrollBar.TopIndex : 0);
-			textSprite.Draw();
-			GorgonLibrary.Gorgon.CurrentRenderTarget = old;
-			target.Blit(xPos, yPos);
-		}
-
-		public override bool MouseDown(int x, int y)
-		{
-			bool result = base.MouseDown(x, y);
-
-			if (usingScrollBar && scrollbarVisible)
-			{
-				result = textScrollBar.MouseDown(x, y) || result;
-			}
-
-			return result;
-		}
-
-		public override bool MouseUp(int x, int y)
-		{
-			bool result = base.MouseUp(x, y);
-
-			if (usingScrollBar && scrollbarVisible)
-			{
-				result = textScrollBar.MouseUp(x, y) || result;
-			}
-
-			return result;
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			bool result = base.MouseHover(x, y, frameDeltaTime);
-
-			if (usingScrollBar && scrollbarVisible)
-			{
-				result = textScrollBar.MouseHover(x, y, frameDeltaTime) || result;
-			}
-
-			return result;
-		}
-
-		public override void MoveTo(int x, int y)
-		{
-			base.MoveTo(x, y);
-			if (usingScrollBar)
-			{
-				textScrollBar.MoveTo(xPos + width - 16, yPos);
-			}
-		}
-
-		public int GetTextBoxHeight()
-		{
-			return (int)textSprite.Height;
-		}
-		public int GetTextBoxWidth()
-		{
-			return (int)textSprite.Width;
-		}
-		#endregion
-	}
-
-	public class SingleLineTextBox : UIElement
+	class SingleLineTextBox
 	{
 		#region Member Variables
 		private Label text;
 		private string actualText;
-		private StretchableImage background;
-		private Font font;
+		private int xPos;
+		private int yPos;
+		private int width;
+		private int height;
+		private SpriteName background;
 
 		private bool isSelected;
 		private bool pressed;
@@ -2678,25 +936,29 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public SingleLineTextBox(int x, int y, int width, int height, List<SpriteName> components, Font font)
-			: base(x, y, width, height)
+		public SingleLineTextBox(int x, int y, int width, int height, SpriteName background)
 		{
-			this.font = font;
-			this.background = new StretchableImage(x, y, width, height, 30, 13, components);
+			xPos = x;
+			yPos = y;
+			this.width = width;
+			this.height = height;
+			this.background = background;
 			actualText = string.Empty;
-			text = new Label(string.Empty, x + 6, y + 7, font);
+			text = new Label(string.Empty, x + 2, y + 2);
 			pressed = false;
 			isSelected = false;
 			blink = true;
 		}
 
-		public SingleLineTextBox(string text, int x, int y, int width, int height, List<SpriteName> components, Font font)
-			: base(x, y, width, height)
+		public SingleLineTextBox(string text, int x, int y, int width, int height, SpriteName background)
 		{
-			this.font = font;
-			this.background = new StretchableImage(x, y, width, height, 30, 13, components);
+			xPos = x;
+			yPos = y;
+			this.width = width;
+			this.height = height;
+			this.background = background;
 			actualText = text;
-			this.text = new Label(text, x + 6, y + 7, font);
+			this.text = new Label(text, x + 2, y + 2);
 			pressed = false;
 			isSelected = false;
 			blink = false;
@@ -2704,7 +966,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Functions
-		public override bool MouseDown(int x, int y)
+		public bool MouseDown(int x, int y)
 		{
 			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
 			{
@@ -2714,7 +976,7 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public override bool MouseUp(int x, int y)
+		public bool MouseUp(int x, int y)
 		{
 			if (pressed)
 			{
@@ -2736,7 +998,7 @@ namespace Beyond_Beyaan
 			if (!isSelected)
 			{
 				blink = false;
-				text.SetText(actualText, font);
+				text.SetText(actualText);
 			}
 			return isSelected;
 		}
@@ -2749,22 +1011,15 @@ namespace Beyond_Beyaan
 				if (timer >= 0.25f)
 				{
 					blink = !blink;
-					text.SetText(actualText + (blink ? "|" : ""), font);
+					text.SetText(actualText + (blink ? "|" : ""));
 					timer -= 0.25f;
 				}
 			}
 		}
 
-		public override void MoveTo(int x, int y)
+		public void Draw(DrawingManagement drawingManagement)
 		{
-			base.MoveTo(x, y);
-			background.MoveTo(x, y);
-			text.MoveTo(x + 6, y + 7);
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			background.Draw(drawingManagement);
+			drawingManagement.DrawSprite(background, xPos, yPos, 255, width, height, System.Drawing.Color.White);
 			text.Draw();
 		}
 
@@ -2776,7 +1031,7 @@ namespace Beyond_Beyaan
 		public void SetString(string text)
 		{
 			actualText = text;
-			this.text.SetText(text, font);
+			this.text.SetText(text);
 		}
 
 		#region Keys
@@ -2968,10 +1223,10 @@ namespace Beyond_Beyaan
 						}
 						break;
 				}
-				text.SetText(actualText, font);
-				if (text.GetWidth() > width - 8)
+				text.SetText(actualText);
+				if (text.GetWidth() > width)
 				{
-					text.SetText(prevText, font);
+					text.SetText(prevText);
 					actualText = prevText;
 				}
 				return true;
@@ -2980,197 +1235,5 @@ namespace Beyond_Beyaan
 		}
 		#endregion
 		#endregion
-	}
-
-	public class ToolTip : UIElement
-	{
-		#region Member Variables
-		private const int WIDTH = 250;
-
-		private StretchableImage background;
-		private TextBox textBox;
-
-		private float delayBeforeShowing;
-		private bool showing;
-
-		private int screenWidth;
-		private int screenHeight;
-
-		private int textHeight;
-		private int textWidth;
-		private int sectionWidth;
-		private int sectionHeight;
-		#endregion
-
-		public ToolTip(string name, string message, GorgonLibrary.Graphics.Font font, List<SpriteName> backgroundImage, int sectionWidth, int sectionHeight, int screenWidth, int screenHeight)
-			: base(0, 0, WIDTH, 45)
-		{
-			textBox = new TextBox(sectionWidth, sectionHeight, WIDTH - sectionWidth, 400, name, message, font);
-			textHeight = textBox.GetTextBoxHeight() + sectionHeight;
-			textWidth = Math.Min(textBox.GetTextBoxWidth() + sectionWidth, WIDTH);
-			background = new StretchableImage(0, 0, textWidth, textHeight, sectionWidth, sectionHeight, backgroundImage);
-
-			showing = false;
-			delayBeforeShowing = 0; //1 second will turn on showing
-
-			this.screenWidth = screenWidth;
-			this.screenHeight = screenHeight;
-
-			this.sectionWidth = sectionWidth / 2;
-			this.sectionHeight = sectionHeight / 2;
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			if (showing && delayBeforeShowing >= 1)
-			{
-				background.Draw(drawingManagement);
-				textBox.Draw(drawingManagement);
-			}
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			if (showing)
-			{
-				int modifiedX;
-				int modifiedY;
-				if (x < screenWidth - textWidth)
-				{
-					modifiedX = x;
-				}
-				else
-				{
-					modifiedX = x - textWidth;
-				}
-				if (y < screenHeight - textHeight)
-				{
-					modifiedY = y;
-				}
-				else
-				{
-					modifiedY = y - textHeight;
-				}
-				background.MoveTo(modifiedX, modifiedY);
-				textBox.MoveTo(modifiedX + sectionWidth, modifiedY + sectionHeight);
-
-				if (delayBeforeShowing < 1.0)
-				{
-					delayBeforeShowing += frameDeltaTime;
-				}
-			}
-			else
-			{
-				delayBeforeShowing = 0;
-			}
-			return true;
-		}
-
-		public void SetShowing(bool showing)
-		{
-			this.showing = showing;
-			if (!showing)
-			{
-				delayBeforeShowing = 0;
-			}
-		}
-		public void SetText(string message)
-		{
-			textBox.SetMessage(message);
-			textHeight = textBox.GetTextBoxHeight() + (sectionHeight * 2);
-			textWidth = Math.Min(textBox.GetTextBoxWidth() + (sectionWidth * 2), WIDTH);
-			background.SetDimensions(textWidth, textHeight);
-		}
-	}
-
-	public class InfoTip : UIElement
-	{
-		#region Member Variables
-		private const int WIDTH = 250;
-
-		private StretchableImage background;
-		private Label title;
-		private List<Icon> icons;
-
-		private bool showing;
-
-		private int screenWidth;
-		private int screenHeight;
-
-		private int totalHeight;
-		private int sectionWidth;
-		private int sectionHeight;
-		#endregion
-
-		public InfoTip(string title, List<Icon> icons, Dictionary<string, object> values, List<SpriteName> backgroundImage, int sectionWidth, int sectionHeight, int screenWidth, int screenHeight, Font font)
-			: base(0, 0, WIDTH, 45)
-		{
-			this.title = new Label(title, 0, 0, font);
-			this.icons = new List<Icon>();
-
-			foreach (Icon icon in icons)
-			{
-				Icon newIcon = new Icon(icon);
-				newIcon.UpdateText(values);
-				this.icons.Add(newIcon);
-			}
-
-			totalHeight = 25 + (icons.Count * 24);
-
-			background = new StretchableImage(0, 0, WIDTH, totalHeight + sectionHeight, sectionWidth, sectionHeight, backgroundImage);
-
-			showing = false;
-
-			this.screenWidth = screenWidth;
-			this.screenHeight = screenHeight;
-
-			this.sectionWidth = sectionWidth / 2;
-			this.sectionHeight = sectionHeight / 2;
-		}
-
-		public override void Draw(DrawingManagement drawingManagement)
-		{
-			if (showing)
-			{
-				background.Draw(drawingManagement);
-				title.Draw();
-				for (int i = 0; i < icons.Count; i++)
-				{
-					icons[i].Draw(xPos + 10, yPos + (i * 24) + 20 + sectionHeight, 250, 24, drawingManagement);
-				}
-			}
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			int modifiedX = 0;
-			int modifiedY = 0;
-			if (x < screenWidth - WIDTH)
-			{
-				modifiedX = x;
-			}
-			else
-			{
-				modifiedX = x - WIDTH;
-			}
-			if (y < screenHeight - totalHeight)
-			{
-				modifiedY = y;
-			}
-			else
-			{
-				modifiedY = y - totalHeight;
-			}
-			background.MoveTo(modifiedX, modifiedY);
-			title.MoveTo(modifiedX + sectionWidth, modifiedY + sectionHeight);
-			xPos = modifiedX;
-			yPos = modifiedY;
-			return true;
-		}
-
-		public void SetShowing(bool showing)
-		{
-			this.showing = showing;
-		}
 	}
 }

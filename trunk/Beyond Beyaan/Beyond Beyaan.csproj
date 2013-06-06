@@ -14,24 +14,17 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <NoWin32Manifest>False</NoWin32Manifest>
-    <SignAssembly>False</SignAssembly>
-    <DelaySign>False</DelaySign>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <NoStdLib>False</NoStdLib>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>Full</DebugType>
-    <Optimize>False</Optimize>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -41,18 +34,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>BB.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
-    <BaseAddress>4194304</BaseAddress>
-    <RegisterForComInterop>False</RegisterForComInterop>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gorgon, Version=1.1.3638.20767, Culture=neutral, PublicKeyToken=c001d94e9acbbee7, processorArchitecture=MSIL">
@@ -67,13 +48,6 @@
     </Reference>
     <Reference Include="GorgonInput">
       <HintPath>.\GorgonInput.dll</HintPath>
-    </Reference>
-    <Reference Include="GSound">
-      <HintPath>.\GSound.dll</HintPath>
-    </Reference>
-    <Reference Include="LibNoise, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\LibNoise.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -92,99 +66,27 @@
     <Compile Include="BeyondBeyaan.Designer.cs">
       <DependentUpon>BeyondBeyaan.cs</DependentUpon>
     </Compile>
-    <Compile Include="Configuration.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration.Designer.cs">
-      <DependentUpon>Configuration.cs</DependentUpon>
-    </Compile>
     <Compile Include="Data Managers\AIManager.cs" />
     <Compile Include="Data Managers\ContactManager.cs" />
-    <Compile Include="Data Managers\EffectManager.cs" />
-    <Compile Include="Data Managers\FontManager.cs" />
-    <Compile Include="Data Managers\GameConfiguration.cs" />
-    <Compile Include="Data Managers\IconManager.cs" />
-    <Compile Include="Data Managers\ItemManager.cs" />
-    <Compile Include="Data Managers\MasterItemManager.cs" />
-    <Compile Include="Data Managers\MasterTechnologyList.cs" />
-    <Compile Include="Data Managers\ParticleManager.cs" />
-    <Compile Include="Data Managers\PlanetTypeManager.cs" />
-    <Compile Include="Data Managers\ProjectManager.cs" />
     <Compile Include="Data Managers\RaceManager.cs" />
-    <Compile Include="Data Managers\RegionTypeManager.cs" />
-    <Compile Include="Data Managers\ResourceManager.cs" />
-    <Compile Include="Data Managers\ScreenManager.cs" />
-    <Compile Include="Data Managers\SectorTypeManager.cs" />
-    <Compile Include="Data Managers\ShaderManager.cs" />
-    <Compile Include="Data Managers\ShipScriptManager.cs" />
     <Compile Include="Data Managers\SitRepManager.cs" />
-    <Compile Include="Data Managers\SpriteManager.cs" />
-    <Compile Include="Data Managers\StarSystemManager.cs" />
-    <Compile Include="Data Managers\StarTypeManager.cs" />
-    <Compile Include="Data Managers\UITypeManager.cs" />
     <Compile Include="Data Modules\AI.cs" />
     <Compile Include="Data Modules\Camera.cs" />
     <Compile Include="Data Managers\DrawingManagement.cs" />
     <Compile Include="Data Modules\CombatItems.cs" />
     <Compile Include="Data Modules\Contact.cs" />
-    <Compile Include="Data Modules\Controls.cs" />
-    <Compile Include="Data Modules\Effect.cs" />
-    <Compile Include="Data Modules\EffectScript.cs" />
     <Compile Include="Data Modules\Empire.cs" />
     <Compile Include="Data Managers\EmpireManager.cs" />
+    <Compile Include="Data Modules\Fleet.cs" />
+    <Compile Include="Data Modules\FleetGroup.cs" />
     <Compile Include="Data Managers\FleetManager.cs" />
     <Compile Include="Data Modules\Galaxy.cs" />
-    <Compile Include="Data Modules\Icon.cs" />
-    <Compile Include="Data Modules\Particle.cs" />
-    <Compile Include="Data Modules\ParticleScript.cs" />
-    <Compile Include="Data Modules\PlanetType.cs" />
-    <Compile Include="Data Modules\Project.cs" />
     <Compile Include="Data Modules\Race.cs" />
-    <Compile Include="Data Modules\Region.cs" />
-    <Compile Include="Data Modules\RegionType.cs" />
-    <Compile Include="Data Modules\Resource.cs" />
-    <Compile Include="Data Modules\Screen.cs" />
-    <Compile Include="Data Modules\Sector.cs" />
-    <Compile Include="Data Modules\SectorObject.cs" />
-    <Compile Include="Data Modules\SectorObjectType.cs" />
-    <Compile Include="Data Modules\ShipDesign.cs" />
-    <Compile Include="Data Modules\ShipInstance.cs" />
-    <Compile Include="Data Modules\ShipScript.cs" />
     <Compile Include="Data Modules\SitRepItem.cs" />
-    <Compile Include="Data Modules\Sprite.cs" />
-    <Compile Include="Data Modules\Squadron.cs" />
-    <Compile Include="Data Modules\SquadronGroup.cs" />
-    <Compile Include="Data Modules\Starlane.cs" />
-    <Compile Include="Data Modules\StarType.cs" />
-    <Compile Include="Data Modules\UIType.cs" />
     <Compile Include="GameMain.cs" />
     <Compile Include="Data Managers\InterfaceManagement.cs" />
-    <Compile Include="Screens\BackgroundStars.cs" />
-    <Compile Include="Screens\ColonizeWindow.cs" />
-    <Compile Include="Screens\ColorSelection.cs" />
     <Compile Include="Screens\CustomRaceScreen.cs" />
-    <Compile Include="Screens\GalaxySetup.cs" />
-    <Compile Include="Screens\EquipmentSelection.cs" />
-    <Compile Include="Screens\GroundCombatScreen.cs" />
-    <Compile Include="Screens\InvadeScreen.cs" />
-    <Compile Include="Screens\PlanetWindow.cs" />
-    <Compile Include="Screens\PlayerSetup.cs" />
-    <Compile Include="Screens\ProductionScreen.cs" />
-    <Compile Include="Screens\ProjectSelection.cs" />
-    <Compile Include="Screens\RaceSelection.cs" />
-    <Compile Include="Screens\SectorControl.cs" />
-    <Compile Include="Screens\SelectBattle.cs" />
-    <Compile Include="Screens\SelectResearch.cs" />
-    <Compile Include="Screens\SettleScreen.cs" />
     <Compile Include="Screens\SituationReport.cs" />
-    <Compile Include="Screens\SplitPopulation.cs" />
-    <Compile Include="Screens\SquadronListWindow.cs" />
-    <Compile Include="Screens\SystemWindow.cs" />
-    <Compile Include="Screens\TransferToPlanet.cs" />
-    <Compile Include="Screens\TransferToShipWindow.cs" />
-    <Compile Include="Screens\TutorialWindow.cs" />
-    <Compile Include="Screens\WindowInterface.cs" />
-    <Compile Include="Scripts\ShipItemScript.cs" />
     <Compile Include="Utility\NameGenerator.cs" />
     <Compile Include="Data Modules\Planet.cs" />
     <Compile Include="Data Managers\PlanetManager.cs" />
@@ -193,12 +95,14 @@
     <Compile Include="Screens\FleetListScreen.cs" />
     <Compile Include="Screens\GalaxyScreen.cs" />
     <Compile Include="Screens\InGameMenu.cs" />
+    <Compile Include="Screens\MainGameMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Screens\PlanetsScreen.cs" />
     <Compile Include="Screens\ProcessingTurnScreen.cs" />
     <Compile Include="Screens\ResearchScreen.cs" />
     <Compile Include="Screens\ScreenInterface.cs" />
+    <Compile Include="Screens\NewGame.cs" />
     <Compile Include="Screens\SpaceCombat.cs" />
     <Compile Include="Data Modules\Ship.cs" />
     <Compile Include="Data Modules\StarSystem.cs" />
@@ -208,10 +112,6 @@
     <Compile Include="Utility\Utility.cs" />
     <EmbeddedResource Include="BeyondBeyaan.resx">
       <DependentUpon>BeyondBeyaan.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Configuration.resx">
-      <DependentUpon>Configuration.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -233,9 +133,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="BB.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
