@@ -1,26 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
 	class PlanetsScreen : ScreenInterface
 	{
-		private GameMain gameMain;
+		GameMain gameMain;
 
-		private List<Planet> planetsShowing;
+		List<Planet> ownedPlanets;
+		List<Planet> neutralPlanets;
+		List<Planet> otherPlanets;
+		List<Planet> planetsShowing;
 
-		private StretchButton[] planetButtons; //So we can show in minimap where they are
-		private CheckBox[] filterButtons; //Which planets to filter out
+		Button ownedPlanetButton;
+		Button otherPlanetButton;
+		Button neutralPlanetButton;
+		Button[] planetButtons; //So we can show in minimap where they are
 
-		private Label[] planetName;
-		private Label[] population;
-		private Label[] agriculture;
-		private Label[] waste;
-		private Label[] commerce;
-		private Label[] research;
-		private Label[] construction;
+		Label planetIncome;
+		Label tradeIncome;
+		Label shipExpense;
+		Label espionageExpense;
+		Label securityExpense;
+		Label netIncome;
+		Label incomeLabel;
+		Label expenseLabel;
+		Label planetIncomeLabel;
+		Label tradeIncomeLabel;
+		Label shipExpenseLabel;
+		Label espionageExpenseLabel;
+		Label securityExpenseLabel;
+		Label netIncomeLabel;
 
-		private ScrollBar scrollBar;
+		Label[] planetName;
+		Label[] planetType;
+		Label[] population;
+		Label[] empireOwner;
+		Label[] agriculture;
+		Label[] waste;
+		Label[] commerce;
+		Label[] research;
+		Label[] construction;
+
+		ScrollBar scrollBar;
 
 		private int planetIndex;
 		private int selectedPlanet;
@@ -28,38 +53,40 @@ namespace Beyond_Beyaan.Screens
 		private StarSystem selectedSystem;
 		private StarSystem hoveringSystem;
 
-		private StretchableImage background;
-		private StretchableImage galaxyBackground;
-		private StretchableImage filterBackground;
-		private StretchableImage outputBackground;
-		private StretchableImage empireProdBackground;
-
-		private ScrollBar[] outputScrollbars;
-		private Label[] outputLabels;
-		private Button[] lockButtons;
-		private Button applyButton;
-
-		private Label totalPP;
-		private Label totalBC;
-		private Label totalRP;
-
-		private float rotation;
-		private int xPos;
-		private int yPos;
-
-		private bool modifyOutput;
-
 		public void Initialize(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
 
-			xPos = (gameMain.ScreenWidth / 2) - 420;
-			yPos = (gameMain.ScreenHeight / 2) - 320;
+			int x = (gameMain.ScreenWidth / 2) - 400;
+			int y = (gameMain.ScreenHeight / 2) - 300;
 
-			planetButtons = new StretchButton[8];
+			ownedPlanetButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Owned Planets", x + 5, y + 410, 125, 25);
+			neutralPlanetButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Neutral Planets", x + 135, y + 410, 125, 25);
+			otherPlanetButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Foreign Planets", x + 270, y + 410, 125, 25);
+
+			planetIncome = new Label(string.Empty, x + 300, y + 440);
+			planetIncomeLabel = new Label("Planets:", x + 200, y + 440);
+			tradeIncome = new Label(string.Empty, x + 300, y + 465);
+			tradeIncomeLabel = new Label("Trade:", x + 200, y + 465);
+			incomeLabel = new Label("Revenues", x + 5, y + 440);
+
+			shipExpense = new Label(string.Empty, x + 300, y + 495);
+			shipExpenseLabel = new Label("Ships:", x + 200, y + 495);
+			espionageExpense = new Label(string.Empty, x + 300, y + 520);
+			espionageExpenseLabel = new Label("Espionage:", x + 200, y + 520);
+			securityExpense = new Label(string.Empty, x + 300, y + 545);
+			securityExpenseLabel = new Label("Security:", x + 200, y + 545);
+			expenseLabel = new Label("Expenses", x + 5, y + 495);
+
+			netIncome = new Label(string.Empty, x + 300, y + 575);
+			netIncomeLabel = new Label("Net Income", x + 5, y + 575);
+
+			planetButtons = new Button[6];
 
 			planetName = new Label[planetButtons.Length];
+			planetType = new Label[planetButtons.Length];
 			population = new Label[planetButtons.Length];
+			empireOwner = new Label[planetButtons.Length];
 			agriculture = new Label[planetButtons.Length];
 			waste = new Label[planetButtons.Length];
 			commerce = new Label[planetButtons.Length];
@@ -68,79 +95,30 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < planetButtons.Length; i++)
 			{
-				planetButtons[i] = new StretchButton(DrawingManagement.BoxBorderBG, DrawingManagement.BoxBorderFG, string.Empty, xPos + 325, yPos + 25 + (i * 50), 465, 50, 30, 13, gameMain.FontManager.GetDefaultFont());
-				planetName[i] = new Label(xPos + 375, yPos + 29 + (i * 50), gameMain.FontManager.GetDefaultFont());
-				population[i] = new Label(xPos + 375, yPos + 51 + (i * 50), gameMain.FontManager.GetDefaultFont());
-				agriculture[i] = new Label(xPos + 508, yPos + 31 + (i * 50), gameMain.FontManager.GetDefaultFont());
-				waste[i] = new Label(xPos + 583, yPos + 51 + (i * 50), gameMain.FontManager.GetDefaultFont());
-				commerce[i] = new Label(xPos + 583, yPos + 31 + (i * 50), gameMain.FontManager.GetDefaultFont());
-				research[i] = new Label(xPos + 658, yPos + 31 + (i * 50), gameMain.FontManager.GetDefaultFont());
-				construction[i] = new Label(xPos + 733, yPos + 31 + (i * 50), gameMain.FontManager.GetDefaultFont());
+				planetButtons[i] = new Button(SpriteName.NormalBackgroundButton, SpriteName.NormalForegroundButton, string.Empty, x + 400, y + (i * 100), 384, 100);
+				planetName[i] = new Label(x + 403, y + 3 + (i * 100));
+				planetType[i] = new Label(x + 403, y + 28 + (i * 100));
+				population[i] = new Label(x + 403, y + 53 + (i * 100));
+				empireOwner[i] = new Label(x + 403, y + 78 + (i * 100));
+				agriculture[i] = new Label(x + 503, y + 2 + (i * 100));
+				waste[i] = new Label(x + 503, y + 21 + (i * 100));
+				commerce[i] = new Label(x + 503, y + 40 + (i * 100));
+				research[i] = new Label(x + 503, y + 59 + (i * 100));
+				construction[i] = new Label(x + 503, y + 78 + (i * 100));
 			}
 
-			scrollBar = new ScrollBar(xPos + 792, yPos + 25, 16, 368, 8, 8, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
-
-			background = new StretchableImage(xPos, yPos, 840, 640, 200, 200, DrawingManagement.ScreenBorder);
-			galaxyBackground = new StretchableImage(xPos + 25, yPos + 25, 300, 300, 60, 60, DrawingManagement.BorderBorder);
-			filterBackground = new StretchableImage(xPos + 25, yPos + 325, 300, 290, 60, 60, DrawingManagement.BorderBorder);
-			outputBackground = new StretchableImage(xPos + 325, yPos + 425, 490, 190, 60, 60, DrawingManagement.BorderBorder);
-			empireProdBackground = new StretchableImage(xPos + 340, yPos + 555, 345, 40, 30, 13, DrawingManagement.BoxBorder);
-
-			filterButtons = new CheckBox[12];
-
-			filterButtons[0] = new CheckBox(DrawingManagement.RadioButton, "Owned Planets", xPos + 40, yPos + 340, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[1] = new CheckBox(DrawingManagement.RadioButton, "Foreign Planets", xPos + 40, yPos + 361, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[2] = new CheckBox(DrawingManagement.RadioButton, "Unowned Planets", xPos + 40, yPos + 382, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[3] = new CheckBox(DrawingManagement.RadioButton, "Rich Planets", xPos + 40, yPos + 403, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[4] = new CheckBox(DrawingManagement.RadioButton, "Normal Planets", xPos + 40, yPos + 424, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[5] = new CheckBox(DrawingManagement.RadioButton, "Poor Planets", xPos + 40, yPos + 445, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[6] = new CheckBox(DrawingManagement.RadioButton, "Exotic Planets", xPos + 40, yPos + 466, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[7] = new CheckBox(DrawingManagement.RadioButton, "Mediocre Planets", xPos + 40, yPos + 487, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[8] = new CheckBox(DrawingManagement.RadioButton, "Dull Planets", xPos + 40, yPos + 508, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[9] = new CheckBox(DrawingManagement.RadioButton, "Fertile Planets", xPos + 40, yPos + 529, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[10] = new CheckBox(DrawingManagement.RadioButton, "Regular Planets", xPos + 40, yPos + 550, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-			filterButtons[11] = new CheckBox(DrawingManagement.RadioButton, "Infertile Planets", xPos + 40, yPos + 571, 280, 20, 19, false, gameMain.FontManager.GetDefaultFont());
-
-			for (int i = 0; i < filterButtons.Length; i++)
-			{
-				filterButtons[i].IsChecked = true;
-			}
-
-			outputScrollbars = new ScrollBar[5];
-			lockButtons = new Button[5];
-			outputLabels = new Label[5];
-
-			for (int i = 0; i < 5; i++)
-			{
-				outputScrollbars[i] = new ScrollBar(xPos + 360, yPos + 440 + (i * 22), 16, 268, 1, 100, true, true, DrawingManagement.HorizontalSliderBar, gameMain.FontManager.GetDefaultFont());
-				lockButtons[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, xPos + 665, yPos + 440 + (i * 22), 16, 16, gameMain.FontManager.GetDefaultFont());
-				outputLabels[i] = new Label(xPos + 685, yPos + 440 + (i * 22), gameMain.FontManager.GetDefaultFont());
-				if (i < 2)
-				{
-					//lock the agriculture and environment by default
-					outputScrollbars[i].SetEnabledState(false);
-					lockButtons[i].Selected = true;
-				}
-			}
-
-			totalPP = new Label(xPos + 368, yPos + 566, gameMain.FontManager.GetDefaultFont());
-			totalBC = new Label(xPos + 478, yPos + 566, gameMain.FontManager.GetDefaultFont());
-			totalRP = new Label(xPos + 588, yPos + 566, gameMain.FontManager.GetDefaultFont());
-
-			applyButton = new Button(SpriteName.ApplyButtonBG, SpriteName.ApplyButtonFG, string.Empty, xPos + 695, yPos + 555, 85, 40, gameMain.FontManager.GetDefaultFont());
-			applyButton.SetToolTip(DrawingManagement.BoxBorderBG, gameMain.FontManager.GetDefaultFont(), "Apply percentages to selected planets", "applyPercentagesToSelectedPlanetsToolTip", 30, 13, gameMain.ScreenWidth, gameMain.ScreenHeight);
-
-			rotation = 0;
-			modifyOutput = false;
+			scrollBar = new ScrollBar(x + 784, y, 16, 568, 6, 10, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
+				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
+				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
 			gameMain.DrawGalaxyBackground();
-			background.Draw(drawingManagement);
-			galaxyBackground.Draw(drawingManagement);
-			filterBackground.Draw(drawingManagement);
-			outputBackground.Draw(drawingManagement);
+			int x = (gameMain.ScreenWidth / 2) - 400;
+			int y = (gameMain.ScreenHeight / 2) - 300;
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, x, y, 255, 800, 600, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.Screen, x, y, 255, 399, 399, System.Drawing.Color.White);
 
 			for (int i = 0; i < planetButtons.Length; i++)
 			{
@@ -151,87 +129,55 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				GorgonLibrary.Graphics.Sprite planet = planetsShowing[i + scrollBar.TopIndex].PlanetType.Sprite;
-				planet.SetPosition(xPos + 330, yPos + 30 + (50 * i));
-				planet.Color = System.Drawing.Color.White;
-				planet.Draw();
-				drawingManagement.DrawSprite(SpriteName.AgricultureIcon, xPos + 490, yPos + 31 + (i * 50));
-				drawingManagement.DrawSprite(SpriteName.CommerceIcon, xPos + 565, yPos + 31 + (i * 50));
-				drawingManagement.DrawSprite(SpriteName.ResearchIcon, xPos + 640, yPos + 31 + (i * 50));
-				drawingManagement.DrawSprite(SpriteName.ConstructionIcon, xPos + 715, yPos + 31 + (i * 50));
-				drawingManagement.DrawSprite(SpriteName.EnvironmentIcon, xPos + 565, yPos + 51 + (i * 50));
 				planetName[i].Draw();
+				planetType[i].Draw();
 				population[i].Draw();
+				empireOwner[i].Draw();
 				agriculture[i].Draw();
 				waste[i].Draw();
 				commerce[i].Draw();
 				research[i].Draw();
 				construction[i].Draw();
-				/*if (planetsShowing[i + scrollBar.TopIndex].ConstructionBonus != PLANET_CONSTRUCTION_BONUS.AVERAGE)
-				{
-					drawingManagement.DrawSprite(Utility.PlanetConstructionBonusToSprite(planetsShowing[i + scrollBar.TopIndex].ConstructionBonus), xPos + 490, yPos + 51 + (i * 50), 255, System.Drawing.Color.White);
-				}
-				if (planetsShowing[i + scrollBar.TopIndex].EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.AVERAGE)
-				{
-					drawingManagement.DrawSprite(Utility.PlanetEnvironmentBonusToSprite(planetsShowing[i + scrollBar.TopIndex].EnvironmentBonus), xPos + 507, yPos + 51 + (i * 50), 255, System.Drawing.Color.White);
-				}
-				if (planetsShowing[i + scrollBar.TopIndex].EntertainmentBonus != PLANET_ENTERTAINMENT_BONUS.AVERAGE)
-				{
-					drawingManagement.DrawSprite(Utility.PlanetEntertainmentBonusToSprite(planetsShowing[i + scrollBar.TopIndex].EntertainmentBonus), xPos + 524, yPos + 51 + (i * 50), 255, System.Drawing.Color.White);
-				}*/
 			}
 
 			DrawGalaxyPreview(drawingManagement);
 
-			for (int i = 0; i < filterButtons.Length; i++)
-			{
-				filterButtons[i].Draw(drawingManagement);
-			}
-			for (int i = 0; i < outputScrollbars.Length; i++)
-			{
-				outputScrollbars[i].Draw(drawingManagement);
-				lockButtons[i].Draw(drawingManagement);
-				outputLabels[i].Draw();
-			}
-			drawingManagement.DrawSprite(SpriteName.AgricultureIcon, xPos + 340, yPos + 440);
-			drawingManagement.DrawSprite(SpriteName.EnvironmentIcon, xPos + 340, yPos + 462);
-			drawingManagement.DrawSprite(SpriteName.CommerceIcon, xPos + 340, yPos + 484);
-			drawingManagement.DrawSprite(SpriteName.ResearchIcon, xPos + 340, yPos + 506);
-			drawingManagement.DrawSprite(SpriteName.ConstructionIcon, xPos + 340, yPos + 528);
+			ownedPlanetButton.Draw(drawingManagement);
+			neutralPlanetButton.Draw(drawingManagement);
+			otherPlanetButton.Draw(drawingManagement);
 
-			empireProdBackground.Draw(drawingManagement);
+			planetIncome.Draw();
+			planetIncomeLabel.Draw();
+			incomeLabel.Draw();
+			tradeIncome.Draw();
+			tradeIncomeLabel.Draw();
 
-			drawingManagement.DrawSprite(SpriteName.ConstructionIcon, xPos + 350, yPos + 568);
-			drawingManagement.DrawSprite(SpriteName.CommerceIcon, xPos + 460, yPos + 568);
-			drawingManagement.DrawSprite(SpriteName.ResearchIcon, xPos + 570, yPos + 568);
+			expenseLabel.Draw();
+			shipExpenseLabel.Draw();
+			shipExpense.Draw();
+			espionageExpense.Draw();
+			espionageExpenseLabel.Draw();
+			securityExpense.Draw();
+			securityExpenseLabel.Draw();
 
-			totalPP.Draw();
-			totalBC.Draw();
-			totalRP.Draw();
+			netIncome.Draw();
+			netIncomeLabel.Draw();
 
-			applyButton.Draw(drawingManagement);
-			scrollBar.Draw(drawingManagement);
-
-			applyButton.DrawToolTip(drawingManagement);
-		}
-
-		public void UpdateBackground(float frameDeltaTime)
-		{
-			rotation -= frameDeltaTime * 100;
-			gameMain.UpdateGalaxyBackground(frameDeltaTime);
+			scrollBar.DrawScrollBar(drawingManagement);
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			UpdateBackground(frameDeltaTime);
-			gameMain.Galaxy.UpdateStars(frameDeltaTime, gameMain.Random);
+			ownedPlanetButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+			neutralPlanetButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+			otherPlanetButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 
-			if (scrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+			if (scrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 			{
 				planetIndex = scrollBar.TopIndex;
 				RefreshLabels();
 
-				foreach (StretchButton button in planetButtons)
+				foreach (Button button in planetButtons)
 				{
 					button.Selected = false;
 				}
@@ -242,68 +188,52 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 
-			for (int i = 0; i < filterButtons.Length; i++)
-			{
-				filterButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
-			}
-
 			hoveringSystem = null;
 			for (int i = 0; i < maxVisible; i++)
 			{
-				if (planetButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (planetButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
 					hoveringSystem = planetsShowing[i + planetIndex].System;
 				}
 			}
-
-			for (int i = 0; i < outputScrollbars.Length; i++)
-			{
-				if (outputScrollbars[i].MouseHover(mouseX, mouseY, frameDeltaTime))
-				{
-					RefreshOutputLabels();
-				}
-				lockButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
-			}
-			applyButton.MouseHover(mouseX, mouseY, frameDeltaTime);
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
+			ownedPlanetButton.MouseDown(x, y);
+			neutralPlanetButton.MouseDown(x, y);
+			otherPlanetButton.MouseDown(x, y);
 			scrollBar.MouseDown(x, y);
-
-			for (int i = 0; i < filterButtons.Length; i++)
-			{
-				filterButtons[i].MouseDown(x, y);
-			}
 
 			for (int i = 0; i < maxVisible; i++)
 			{
 				planetButtons[i].MouseDown(x, y);
 			}
-
-			for (int i = 0; i < outputScrollbars.Length; i++)
-			{
-				outputScrollbars[i].MouseDown(x, y);
-				lockButtons[i].MouseDown(x, y);
-			}
-			applyButton.MouseDown(x, y);
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			for (int i = 0; i < filterButtons.Length; i++)
+			if (ownedPlanetButton.MouseUp(x, y))
 			{
-				if (filterButtons[i].MouseUp(x, y))
-				{
-					RefreshShowingPlanets();
-				}
+				ownedPlanetButton.Selected = !ownedPlanetButton.Selected;
+				RefreshShowingPlanets();
+			}
+			if (neutralPlanetButton.MouseUp(x, y))
+			{
+				neutralPlanetButton.Selected = !neutralPlanetButton.Selected;
+				RefreshShowingPlanets();
+			}
+			if (otherPlanetButton.MouseUp(x, y))
+			{
+				otherPlanetButton.Selected = !otherPlanetButton.Selected;
+				RefreshShowingPlanets();
 			}
 			if (scrollBar.MouseUp(x, y))
 			{
 				planetIndex = scrollBar.TopIndex;
 				RefreshLabels();
 
-				foreach (StretchButton button in planetButtons)
+				foreach (Button button in planetButtons)
 				{
 					button.Selected = false;
 				}
@@ -318,7 +248,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (planetButtons[i].MouseUp(x, y))
 				{
-					foreach (StretchButton button in planetButtons)
+					foreach (Button button in planetButtons)
 					{
 						button.Selected = false;
 					}
@@ -326,47 +256,6 @@ namespace Beyond_Beyaan.Screens
 					selectedPlanet = i + planetIndex;
 					selectedSystem = planetsShowing[i + planetIndex].System;
 				}
-			}
-			for (int i = 0; i < outputScrollbars.Length; i++)
-			{
-				if (outputScrollbars[i].MouseUp(x, y))
-				{
-					RefreshOutputLabels();
-				}
-				if (lockButtons[i].MouseUp(x, y))
-				{
-					lockButtons[i].Selected = !lockButtons[i].Selected;
-					outputScrollbars[i].TopIndex = 0;
-					outputScrollbars[i].SetEnabledState(!lockButtons[i].Selected);
-					RefreshOutputLabels();
-				}
-			}
-			if (applyButton.MouseUp(x, y))
-			{
-				float[] percentages = new float[5];
-				float total = 0;
-				for (int i = 0; i < outputScrollbars.Length; i++)
-				{
-					total += outputScrollbars[i].TopIndex;
-				}
-				for (int i = 0; i < outputScrollbars.Length; i++)
-				{
-					if (lockButtons[i].Selected)
-					{
-						percentages[i] = -1;
-					}
-					else
-					{
-						percentages[i] = outputScrollbars[i].TopIndex / total;
-					}
-				}
-				/*foreach (Planet planet in planetsShowing)
-				{
-					planet.SetOutputs(percentages);
-				}*/
-				RefreshLabels();
-				RefreshEmpireLabels();
-				gameMain.taskBar.UpdateDisplays();
 			}
 		}
 
@@ -376,156 +265,122 @@ namespace Beyond_Beyaan.Screens
 
 		public void Resize()
 		{
-			/*int x = (gameMain.ScreenWidth / 2) - 400;
+			int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
 
-			incomeLabel.MoveTo(x + 5, y + 440);
-			planetIncome.MoveTo((x + 395) - (int)planetIncome.GetWidth(), y + 440);
-			tradeIncome.MoveTo((x + 395) - (int)tradeIncome.GetWidth(), y + 465);
+			incomeLabel.Move(x + 5, y + 440);
+			planetIncome.Move((x + 395) - (int)planetIncome.GetWidth(), y + 440);
+			tradeIncome.Move((x + 395) - (int)tradeIncome.GetWidth(), y + 465);
 
-			expenseLabel.MoveTo(x + 5, y + 495);
-			shipExpense.MoveTo((x + 395) - (int)shipExpense.GetWidth(), y + 495);
-			espionageExpense.MoveTo((x + 395) - (int)espionageExpense.GetWidth(), y + 520);
-			securityExpense.MoveTo((x + 395) - (int)securityExpense.GetWidth(), y + 545);
+			expenseLabel.Move(x + 5, y + 495);
+			shipExpense.Move((x + 395) - (int)shipExpense.GetWidth(), y + 495);
+			espionageExpense.Move((x + 395) - (int)espionageExpense.GetWidth(), y + 520);
+			securityExpense.Move((x + 395) - (int)securityExpense.GetWidth(), y + 545);
 
-			netIncomeLabel.MoveTo(x + 5, y + 575);
-			netIncome.MoveTo((x + 395) - (int)netIncome.GetWidth(), y + 575);*/
+			netIncomeLabel.Move(x + 5, y + 575);
+			netIncome.Move((x + 395) - (int)netIncome.GetWidth(), y + 575);
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(ScreenEnum.Galaxy);
+				gameMain.ChangeToScreen(Screen.Galaxy);
 			}
-			/*if (e.Key == KeyboardKeys.Space)
+			if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}*/
+			}
 		}
 
 		public void LoadScreen()
 		{
-			RefreshEmpireLabels();
+			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
+			ownedPlanets = currentEmpire.PlanetManager.Planets;
+			otherPlanets = new List<Planet>();
+			neutralPlanets = new List<Planet>();
+			
+			foreach (StarSystem system in gameMain.galaxy.GetAllStars())
+			{
+				if (system.IsThisSystemExploredByEmpire(currentEmpire))
+				{
+					foreach (Planet planet in system.Planets)
+					{
+						if (planet.Owner == null)
+						{
+							neutralPlanets.Add(planet);
+						}
+						else if (planet.Owner != currentEmpire)
+						{
+							otherPlanets.Add(planet);
+						}
+					}
+				}
+			}
+
+			ownedPlanetButton.Selected = true;
+			otherPlanetButton.Selected = true;
+			neutralPlanetButton.Selected = true;
+
+			int x = (gameMain.ScreenWidth / 2) - 400;
+			int y = (gameMain.ScreenHeight / 2) - 300;
+
+			planetIncome.SetText(currentEmpire.EmpirePlanetIncome + " BC");
+			planetIncome.Move((x + 395) - (int)planetIncome.GetWidth(), y + 440);
+			tradeIncome.SetText("0 BC");
+			tradeIncome.Move((x + 395) - (int)tradeIncome.GetWidth(), y + 465);
+
+			shipExpense.SetText(currentEmpire.ShipMaintenance + " BC");
+			shipExpense.Move((x + 395) - (int)shipExpense.GetWidth(), y + 495);
+			espionageExpense.SetText("0 BC");
+			espionageExpense.Move((x + 395) - (int)espionageExpense.GetWidth(), y + 520);
+			securityExpense.SetText("0 BC");
+			securityExpense.Move((x + 395) - (int)securityExpense.GetWidth(), y + 545);
+
+			netIncome.SetText(currentEmpire.NetIncome + " BC");
+			netIncome.Move((x + 395) - (int)netIncome.GetWidth(), y + 575);
+
 			RefreshShowingPlanets();
 		}
 
 		private void RefreshShowingPlanets()
 		{
-			bool showAllMineral = (!filterButtons[3].IsChecked && !filterButtons[4].IsChecked && !filterButtons[5].IsChecked);
-			bool showAllFertility = (!filterButtons[9].IsChecked && !filterButtons[10].IsChecked && !filterButtons[11].IsChecked);
-			bool showAllCommerce = (!filterButtons[6].IsChecked && !filterButtons[7].IsChecked && !filterButtons[8].IsChecked);
 			planetsShowing = new List<Planet>();
-			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
-			foreach (StarSystem system in gameMain.Galaxy.GetAllStars())
+			if (ownedPlanetButton.Selected)
 			{
-				if (!system.IsThisSystemExploredByEmpire(currentEmpire))
+				foreach (Planet planet in ownedPlanets)
 				{
-					//Skip unexplored systems
-					continue;
+					planetsShowing.Add(planet);
 				}
-				/*foreach (Planet planet in system.Planets)
+			}
+			if (otherPlanetButton.Selected)
+			{
+				foreach (Planet planet in otherPlanets)
 				{
-					if (!filterButtons[0].IsChecked && planet.Owner == currentEmpire)
-					{
-						//Don't want to see owned planets
-						continue;
-					}
-					if (!filterButtons[1].IsChecked && (planet.Owner != currentEmpire && planet.Owner != null))
-					{
-						//Don't want to see foreign planets
-						continue;
-					}
-					if (!filterButtons[2].IsChecked && planet.Owner == null)
-					{
-						//Don't want to see neutral planets
-						continue;
-					}
-					/*if (!showAllMineral)
-					{
-						if ((planet.ConstructionBonus == PLANET_CONSTRUCTION_BONUS.COPIOUS || planet.ConstructionBonus == PLANET_CONSTRUCTION_BONUS.RICH) && !filterButtons[3].IsChecked)
-						{
-							//Is rich, but don't want to see rich
-							continue;
-						}
-						if (planet.ConstructionBonus == PLANET_CONSTRUCTION_BONUS.AVERAGE && !filterButtons[4].IsChecked)
-						{
-							//Is normal, but don't want to see normal
-							continue;
-						}
-						if ((planet.ConstructionBonus == PLANET_CONSTRUCTION_BONUS.POOR || planet.ConstructionBonus == PLANET_CONSTRUCTION_BONUS.DEARTH) && !filterButtons[5].IsChecked)
-						{
-							//Is poor, but don't want to see poor
-							continue;
-						}
-					}
-					if (!showAllCommerce)
-					{
-						if ((planet.EntertainmentBonus == PLANET_ENTERTAINMENT_BONUS.EXCITING || planet.EntertainmentBonus == PLANET_ENTERTAINMENT_BONUS.SENSATIONAL) && !filterButtons[6].IsChecked)
-						{
-							//Is exciting, but don't want to see exciting
-							continue;
-						}
-						if (planet.EntertainmentBonus == PLANET_ENTERTAINMENT_BONUS.AVERAGE && !filterButtons[7].IsChecked)
-						{
-							//Is normal, but don't want to see normal
-							continue;
-						}
-						if ((planet.EntertainmentBonus == PLANET_ENTERTAINMENT_BONUS.DULL || planet.EntertainmentBonus == PLANET_ENTERTAINMENT_BONUS.INSIPID) && !filterButtons[8].IsChecked)
-						{
-							//Is dull, but don't want to see dull
-							continue;
-						}
-					}
-					if (!showAllFertility)
-					{
-						if ((planet.EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.FERTILE || planet.EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.LUSH) && !filterButtons[9].IsChecked)
-						{
-							//Is exciting, but don't want to see exciting
-							continue;
-						}
-						if (planet.EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE && !filterButtons[10].IsChecked)
-						{
-							//Is normal, but don't want to see normal
-							continue;
-						}
-						if ((planet.EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.INFERTILE || planet.EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.DESOLATE) && !filterButtons[11].IsChecked)
-						{
-							//Is dull, but don't want to see dull
-							continue;
-						}
-					}*/
-					//If it reaches here, it've passed all the filter conditions
-					//planetsShowing.Add(planet);
-				//}
+					planetsShowing.Add(planet);
+				}
+			}
+			if (neutralPlanetButton.Selected)
+			{
+				foreach (Planet planet in neutralPlanets)
+				{
+					planetsShowing.Add(planet);
+				}
 			}
 
-			planetsShowing.Sort((a, b) => { return string.Compare(a.Name, b.Name); });
+			planetsShowing.Sort((Planet a, Planet b) => { return string.Compare(a.Name, b.Name); });
 			planetIndex = 0;
 
 			maxVisible = planetsShowing.Count > planetButtons.Length ? planetButtons.Length : planetsShowing.Count;
 			if (maxVisible >= planetsShowing.Count)
 			{
 				scrollBar.SetEnabledState(false);
-				scrollBar.SetAmountOfItems(8);
+				scrollBar.SetAmountOfItems(10);
 			}
 			else
 			{
 				scrollBar.SetEnabledState(true);
 				scrollBar.SetAmountOfItems(planetsShowing.Count);
-			}
-
-			for (int i = 0; i < outputScrollbars.Length; i++)
-			{
-				outputScrollbars[i].TopIndex = 0;
-			}
-
-			modifyOutput = filterButtons[0].IsChecked && !filterButtons[1].IsChecked && !filterButtons[2].IsChecked;
-			applyButton.Active = modifyOutput;
-			for (int i = 0; i < outputScrollbars.Length; i++)
-			{
-				lockButtons[i].Active = modifyOutput;
-				outputScrollbars[i].SetEnabledState(!(lockButtons[i].Active && lockButtons[i].Selected) && modifyOutput);
 			}
 
 			RefreshLabels();
@@ -537,120 +392,65 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				planetName[i].SetText(planetsShowing[i + planetIndex].Name, gameMain.FontManager.GetDefaultFont());
-				/*if (planetsShowing[i + planetIndex].Owner != null)
+				planetName[i].SetText(planetsShowing[i + planetIndex].Name);
+				planetType[i].SetText(planetsShowing[i + planetIndex].PlanetTypeString);
+				if (planetsShowing[i + planetIndex].Owner != null)
 				{
-					population[i].SetText(string.Format("{0:0}%", (planetsShowing[i].SpaceUsage / (planetsShowing[i].Regions.Count * 10)) * 100.0f) + " (" + planetsShowing[i].Regions.Count + ")");
-					planetName[i].SetColor(planetsShowing[i + planetIndex].Owner.EmpireColor);
+					population[i].SetText(planetsShowing[i + planetIndex].TotalPopulation + "/" + planetsShowing[i + planetIndex].PopulationMax);
+					empireOwner[i].SetText(planetsShowing[i + planetIndex].Owner.EmpireName);
+					empireOwner[i].SetColor(planetsShowing[i + planetIndex].Owner.EmpireColor);
 				}
 				else
 				{
-					population[i].SetText("0% (" + planetsShowing[i].Regions.Count + ")");
-					planetName[i].SetColor(System.Drawing.Color.White);
-				}*/
-				//if (planetsShowing[i + planetIndex].Owner == empire)
-				{
-					/*agriculture[i].SetText(Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].AgricultureOutput));
-					waste[i].SetText(Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].EnvironmentOutput) + "/" + Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].AccumulatedWaste) + " Barrels");
-					commerce[i].SetText(Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].CommerceOutput));
-					research[i].SetText(Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].ResearchOutput));
-					construction[i].SetText(Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].ConstructionOutput));*/
+					population[i].SetText("Max Pop: " + planetsShowing[i + planetIndex].PopulationMax);
+					empireOwner[i].SetText(string.Empty);
 				}
-				/*else if (planetsShowing[i + planetIndex].Owner != null)
+				if (planetsShowing[i + planetIndex].Owner == empire)
 				{
-					agriculture[i].SetText(" ? ");
-					waste[i].SetText(" ? ");
-					commerce[i].SetText(" ? ");
-					research[i].SetText(" ? ");
-					construction[i].SetText(" ? ");
+					agriculture[i].SetText("Agriculture: " + planetsShowing[i + planetIndex].AgricultureOutput);
+					waste[i].SetText("Waste: " + planetsShowing[i + planetIndex].EnvironmentOutput);
+					commerce[i].SetText("Commerce: " + planetsShowing[i + planetIndex].CommerceOutput);
+					research[i].SetText("Research: " + planetsShowing[i + planetIndex].ResearchOutput);
+					construction[i].SetText("Construction: " + planetsShowing[i + planetIndex].ConstructionOutput);
 				}
 				else
 				{
-					agriculture[i].SetText(" - ");
-					waste[i].SetText(Utility.ConvertNumberToFourDigits(planetsShowing[i + planetIndex].AccumulatedWaste) + " Barrels");
-					commerce[i].SetText(" - ");
-					research[i].SetText(" - ");
-					construction[i].SetText(" - ");
-				}*/
-			}
-
-			RefreshOutputLabels();
-		}
-
-		private void RefreshOutputLabels()
-		{
-			if (!modifyOutput)
-			{
-				foreach (Label label in outputLabels)
-				{
-					label.SetText(string.Empty, gameMain.FontManager.GetDefaultFont());
-				}
-				return;
-			}
-			float total = 0;
-			for (int i = 0; i < outputScrollbars.Length; i++)
-			{
-				if (!lockButtons[i].Selected)
-				{
-					total += outputScrollbars[i].TopIndex;
+					agriculture[i].SetText(string.Empty);
+					waste[i].SetText(string.Empty);
+					commerce[i].SetText(string.Empty);
+					research[i].SetText(string.Empty);
+					construction[i].SetText(string.Empty);
 				}
 			}
-			applyButton.Active = total != 0;
-			for (int i = 0; i < outputScrollbars.Length; i++)
-			{
-				if (lockButtons[i].Selected)
-				{
-					outputLabels[i].SetText("Locked", gameMain.FontManager.GetDefaultFont());
-				}
-				else
-				{
-					if (total == 0)
-					{
-						outputLabels[i].SetText("0%", gameMain.FontManager.GetDefaultFont());
-						continue;
-					}
-					float percentage = outputScrollbars[i].TopIndex / total;
-					outputLabels[i].SetText(string.Format("{0:0}%", percentage * 100), gameMain.FontManager.GetDefaultFont());
-				}
-			}
-		}
-
-		private void RefreshEmpireLabels()
-		{
-			totalBC.SetText(string.Format("{0} BC", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpirePlanetIncome)), gameMain.FontManager.GetDefaultFont());
-			totalPP.SetText(string.Format("{0} PP", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpireProduction)), gameMain.FontManager.GetDefaultFont());
-			totalRP.SetText(string.Format("{0} RP", Utility.ConvertNumberToFourDigits(gameMain.empireManager.CurrentEmpire.EmpirePlanetResearch)), gameMain.FontManager.GetDefaultFont());
 		}
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
+			List<StarSystem> systems = gameMain.galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
-				int x = (gameMain.ScreenWidth / 2) - 390 + (int)(276.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 290) + (int)(276.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize));
-				GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
-				if (system.Type.Shader != null)
+				int x = (gameMain.ScreenWidth / 2) - 400 + (int)(386.0f * (system.X / (float)gameMain.galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)gameMain.galaxy.GalaxySize));
+
+				if (system.Type == StarType.BLACK_HOLE)
 				{
-					system.Type.Shader.Parameters["ShaderValue"].SetValue(system.Type.ShaderValue);
+					drawingManagement.DrawSprite(SpriteName.BlackHole, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 				}
-				system.Sprite.Draw(x, y, 0.1f, 0.1f);
-				GorgonLibrary.Gorgon.CurrentShader = null;
-			}
-			if (hoveringSystem != null)
-			{
-				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((hoveringSystem.X + (hoveringSystem.Sprite.Width / 64)) / gameMain.Galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((hoveringSystem.Y + (hoveringSystem.Sprite.Height / 64)) / gameMain.Galaxy.GalaxySize));
-				drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
-				drawingManagement.DrawSprite(SpriteName.SelectedStar, x, y, 255, hoveringSystem.Sprite.Width / 8, hoveringSystem.Sprite.Height / 8, System.Drawing.Color.White);
-			}
-			else if (selectedSystem != null)
-			{
-				int x = (gameMain.ScreenWidth / 2) - 389 + (int)(276.0f * ((selectedSystem.X + (selectedSystem.Sprite.Width / 64)) / gameMain.Galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 289) + (int)(276.0f * ((selectedSystem.Y + (selectedSystem.Sprite.Height / 64)) / gameMain.Galaxy.GalaxySize));
-				drawingManagement.GetSprite(SpriteName.SelectedStar).Rotation = rotation;
-				drawingManagement.DrawSprite(SpriteName.SelectedStar, x, y, 255, selectedSystem.Sprite.Width / 8, selectedSystem.Sprite.Height / 8, System.Drawing.Color.White);
+				else
+				{
+					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+					if (system == selectedSystem || system == hoveringSystem)
+					{
+						drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 12 * system.Size, 12 * system.Size, System.Drawing.Color.White);
+					}
+					else
+					{
+						drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
+					}
+					GorgonLibrary.Gorgon.CurrentShader = null;
+				}
 			}
 		}
 	}

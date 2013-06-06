@@ -1,4 +1,8 @@
-﻿using GorgonLibrary.InputDevices;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -9,8 +13,6 @@ namespace Beyond_Beyaan.Screens
 		void DrawScreen(DrawingManagement drawingManagement);
 
 		void Update(int mouseX, int mouseY, float frameDeltaTime);
-
-		void UpdateBackground(float frameDeltaTime);
 
 		void MouseDown(int x, int y, int whichButton);
 

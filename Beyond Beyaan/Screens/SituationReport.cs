@@ -1,4 +1,8 @@
-﻿using Beyond_Beyaan.Data_Managers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
@@ -9,27 +13,29 @@ namespace Beyond_Beyaan.Screens
 		private GameMain gameMain;
 
 		private Label title;
-		//private Button[] buttons;
+		private Button[] buttons;
 		private ScrollBar scrollBar;
 		private int topIndex;
 		private bool isVisible;
 
-		public void Initialize(GameMain gameMain)
+		public SituationReport(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
 
 			int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
 
-			/*buttons = new Button[AMOUNT_VISIBLE];
+			buttons = new Button[AMOUNT_VISIBLE];
 			for (int i = 0; i < buttons.Length; i++)
 			{
 				buttons[i] = new Button(SpriteName.NormalBackgroundButton, SpriteName.NormalForegroundButton, string.Empty, x + 5, y + 35 + (i * 40), 775, 40);
-			}*/
-			scrollBar = new ScrollBar(x + 780, y + 25, 16, 574, AMOUNT_VISIBLE, AMOUNT_VISIBLE, false, false, DrawingManagement.VerticalScrollBar, gameMain.FontManager.GetDefaultFont());
+			}
+			scrollBar = new ScrollBar(x + 780, y + 25, 16, 574, AMOUNT_VISIBLE, AMOUNT_VISIBLE, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
+				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
+				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
 			topIndex = 0;
 			isVisible = false;
-			title = new Label("Situation Report", x + 5, y + 5, gameMain.FontManager.GetDefaultFont());
+			title = new Label("Situation Report", x + 5, y + 5);
 		}
 
 		public void ResetIndex()
@@ -39,20 +45,20 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawSitRep(DrawingManagement drawingManagement)
 		{
-			//if (!isVisible)
+			if (!isVisible)
 			{
 				return;
 			}
-			/*SitRepManager sitRepManager = gameMain.empireManager.CurrentEmpire.SitRepManager;
+			SitRepManager sitRepManager = gameMain.empireManager.CurrentEmpire.SitRepManager;
 
 			int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
 
-			//drawingManagement.DrawSprite(SpriteName.Screen, x, y, 255, 800, 600, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.Screen, x, y, 255, 800, 600, System.Drawing.Color.White);
 			int maxVisible = AMOUNT_VISIBLE;
 			if (sitRepManager.Items.Count > AMOUNT_VISIBLE)
 			{
-				scrollBar.Draw(drawingManagement);
+				scrollBar.DrawScrollBar(drawingManagement);
 			}
 			else
 			{
@@ -64,7 +70,7 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				buttons[i].Draw(drawingManagement);
-			}*/
+			}
 		}
 
 		public bool Update(int mouseX, int mouseY, float frameDeltaTime)
@@ -83,7 +89,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			else
 			{
-				if (scrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (scrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
 					topIndex = scrollBar.TopIndex;
 					RefreshLabels(sitRepManager);
@@ -91,7 +97,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			for (int i = 0; i < maxVisible; i++)
 			{
-				//buttons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+				buttons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			}
 			return true;
 		}
@@ -116,7 +122,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			for (int i = 0; i < maxVisible; i++)
 			{
-				//buttons[i].MouseDown(x, y);
+				buttons[i].MouseDown(x, y);
 			}
 			return true;
 		}
@@ -145,7 +151,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			for (int i = 0; i < maxVisible; i++)
 			{
-				/*if (buttons[i].MouseUp(x, y))
+				if (buttons[i].MouseUp(x, y))
 				{
 					SitRepItem item = sitRepManager.Items[i + topIndex];
 					gameMain.ChangeToScreen(item.ScreenEventIsIn);
@@ -160,7 +166,7 @@ namespace Beyond_Beyaan.Screens
 						{
 							if (item.SystemEventOccuredAt.Planets[j] == item.PlanetEventOccuredAt)
 							{
-								item.SystemEventOccuredAt.SetPlanetSelected(gameMain.empireManager.CurrentEmpire, j);
+								gameMain.empireManager.CurrentEmpire.PlanetSelected = j;
 							}
 						}
 					}
@@ -169,7 +175,7 @@ namespace Beyond_Beyaan.Screens
 						gameMain.CenterGalaxyScreen(item.PointEventOccuredAt);
 					}
 					isVisible = false;
-				}*/
+				}
 			}
 			return true;
 		}
@@ -217,7 +223,7 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				//buttons[i].SetButtonText(sitRepManager.Items[topIndex + i].EventMessage);
+				buttons[i].SetButtonText(sitRepManager.Items[topIndex + i].EventMessage);
 			}
 		}
 	}

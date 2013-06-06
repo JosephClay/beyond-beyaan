@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Beyond_Beyaan.Data_Modules;
-using System.Globalization;
 
 namespace Beyond_Beyaan
 {
@@ -113,45 +112,6 @@ namespace Beyond_Beyaan
 			return grid;
 		}
 
-		public static bool LineRectangleIntersected(int lineX1, int lineY1, int lineX2, int lineY2, int rectX1, int rectY1, int rectX2, int rectY2)
-		{
-			//quick checks
-			if ((lineX1 >= rectX1 && lineX1 <= rectX2) &&
-				(lineX2 >= rectX1 && lineX2 <= rectX2) &&
-				(lineY1 >= rectY1 && lineY1 <= rectY2) &&
-				(lineY2 >= rectY1 && lineY2 <= rectY2))
-			{
-				return true;
-			}
-
-			if (LineLineIntersected(lineX1, lineY1, lineX2, lineY2, rectX1, rectY1, rectX1, rectY2)) return true;
-			if (LineLineIntersected(lineX1, lineY1, lineX2, lineY2, rectX1, rectY1, rectX2, rectY1)) return true;
-			if (LineLineIntersected(lineX1, lineY1, lineX2, lineY2, rectX2, rectY1, rectX2, rectY2)) return true;
-			if (LineLineIntersected(lineX1, lineY1, lineX2, lineY2, rectX1, rectY2, rectX2, rectY2)) return true;
-
-			return false;
-		}
-		public static bool LineLineIntersected(int lineAX1, int lineAY1, int lineAX2, int lineAY2, int lineBX1, int lineBY1, int lineBX2, int lineBY2)
-		{
-			float denom = ((lineBY2 - lineBY1) * (lineAX2 - lineAX1)) - ((lineBX2 - lineBX1) * (lineAY2 - lineAY1));
-			int num1 = ((lineBX2 - lineBX1) * (lineAY1 - lineBY1)) - ((lineBY2 - lineBY1) * (lineAX1 - lineBX1));
-			int num2 = ((lineAX2 - lineAX1) * (lineAY1 - lineBY1)) - ((lineAY2 - lineAY1) * (lineAX1 - lineBX1));
-
-			if (denom == 0)
-			{
-				return false;
-			}
-			if (num1 == 0 && num2 == 0)
-			{
-				return false;
-			}
-
-			float ua = num1 / denom;
-			float ub = num2 / denom;
-
-			return (ua >= 0.0f && ua <= 1.0f && ub >= 0.0f && ub <= 1.0f);
-		}
-
 		/// <summary>
 		/// Converts from a numeric value to roman numbers
 		/// </summary>
@@ -170,8 +130,8 @@ namespace Beyond_Beyaan
 			{
 				return "N";
 			}
-			int[] values = new[] { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
-			string[] numerals = new[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+			int[] values = new int[] { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+			string[] numerals = new string[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
 
 			StringBuilder result = new StringBuilder();
 
@@ -190,128 +150,52 @@ namespace Beyond_Beyaan
 			return result.ToString();
 		}
 
-		public static string ConvertNumberToFourDigits(double amount)
+		public static string PlanetTypeToString(PLANET_TYPE planetType)
 		{
-			int divisions = 0;
-			while (amount >= 1000)
+			switch (planetType)
 			{
-				amount /= 1000.0f;
-				divisions++;
+				case PLANET_TYPE.ARCTIC: return "Arctic";
+				case PLANET_TYPE.ASTEROIDS: return "Asteroids";
+				case PLANET_TYPE.BADLAND: return "Badlands";
+				case PLANET_TYPE.BARREN: return "Barren";
+				case PLANET_TYPE.DEAD: return "Dead";
+				case PLANET_TYPE.DESERT: return "Desert";
+				case PLANET_TYPE.GAS_GIANT: return "Gas Giant";
+				case PLANET_TYPE.JUNGLE: return "Jungle";
+				case PLANET_TYPE.OCEAN: return "Oceanic";
+				case PLANET_TYPE.RADIATED: return "Radiated";
+				case PLANET_TYPE.STEPPE: return "Steppe";
+				case PLANET_TYPE.TERRAN: return "Terran";
+				case PLANET_TYPE.TOXIC: return "Toxic";
+				case PLANET_TYPE.TUNDRA: return "Tundra";
+				case PLANET_TYPE.VOLCANIC: return "Volcanic";
 			}
-			string letter = string.Empty;
-			switch (divisions)
-			{
-				case 1: letter = " k";
-					break;
-				case 2: letter = " M";
-					break;
-				case 3: letter = " B";
-					break;
-			}
-			return string.Format("{0:0.0}" + letter, amount);
+			return String.Empty;
 		}
 
-		public static int GetIntValue(string value, Random r)
+		public static SpriteName PlanetTypeToSprite(PLANET_TYPE planetType)
 		{
-			//There are three possible types of "value"
-			//The first is a basic value, like "5", it is always returned
-			//The second is a range of values, like "0,5", randomly pick one inside the range
-			//The third is a weighted range of values, like "0,1,0.05" which leans toward 0 with 5% chance of picking 1
-			string[] parts = value.Split(new[] { ',' });
-			if (parts.Length == 1)
+			switch (planetType)
 			{
-				//Just return the value
-				return int.Parse(parts[0]); 
+				case PLANET_TYPE.ARCTIC: return SpriteName.Arctic;
+				case PLANET_TYPE.ASTEROIDS: return SpriteName.Asteroids;
+				case PLANET_TYPE.BADLAND: return SpriteName.Badlands;
+				case PLANET_TYPE.BARREN: return SpriteName.Barren;
+				case PLANET_TYPE.DEAD: return SpriteName.Dead;
+				case PLANET_TYPE.DESERT: return SpriteName.Desert;
+				case PLANET_TYPE.GAS_GIANT: return SpriteName.GasGiant;
+				case PLANET_TYPE.JUNGLE: return SpriteName.Jungle;
+				case PLANET_TYPE.OCEAN: return SpriteName.Ocean;
+				case PLANET_TYPE.RADIATED: return SpriteName.Radiated;
+				case PLANET_TYPE.STEPPE: return SpriteName.Steppe;
+				case PLANET_TYPE.TERRAN: return SpriteName.Terran;
+				case PLANET_TYPE.TOXIC: return SpriteName.Toxic;
+				case PLANET_TYPE.TUNDRA: return SpriteName.Tundra;
+				case PLANET_TYPE.VOLCANIC: return SpriteName.Volcanic;
 			}
-			if (parts.Length == 2)
-			{
-				//return a value in the range
-				return r.Next(int.Parse(parts[0]), int.Parse(parts[1]) + 1);
-			}
-			if (parts.Length == 3)
-			{
-				//return a value in the weighted range
-				double randVal;
-				do
-				{
-					randVal = r.NextDouble();
-				} while (randVal == 0); //Make sure it's not 0, otherwise it'd throw an exception in the next line of code
-
-				double weight = NormalCDFInverse(randVal);
-				int min = int.Parse(parts[0]);
-				int max = int.Parse(parts[1]);
-				float shift = float.Parse(parts[2], CultureInfo.InvariantCulture); //Shift moves the standard distribution left or right (does not skew it, just moves it, 0.5 is default)
-				int newValue = (int)(((min + max) * shift) + (weight * (max - min)));
-				if (newValue < min)
-				{
-					return min;
-				}
-				if (newValue > max)
-				{
-					return max;
-				}
-				return newValue;
-			}
-			throw new Exception("GetIntValue cannot parse the value of '" + value + "'");
+			return SpriteName.Terran;
 		}
-
-		//This function was obtained from http://www.johndcook.com/csharp_phi_inverse.html
-
-		//Brent here: It seems like LogOnePlusX isn't actually used, perhaps it's a faster but less accurate version of Math.Log?  To-do: Investigate.
-
-		// compute log(1+x) without losing precision for small values of x
-		private static double LogOnePlusX(double x)
-		{
-			if (x <= -1.0)
-			{
-				string msg = String.Format("Invalid input argument: {0}", x);
-				throw new ArgumentOutOfRangeException(msg);
-			}
-
-			if (Math.Abs(x) > 1e-4)
-			{
-				// x is large enough that the obvious evaluation is OK
-				return Math.Log(1.0 + x);
-			}
-
-			// Use Taylor approx. 
-			// log(1 + x) = x - x^2/2 with error roughly x^3/3
-			// Since |x| < 10^-4, |x|^3 < 10^-12, 
-			// relative error less than 10^-8
-
-			return (-0.5*x + 1.0)*x;
-		}
-
-		private static double RationalApproximation(double t)
-		{
-			// Abramowitz and Stegun formula 26.2.23.
-			// The absolute value of the error should be less than 4.5 e-4.
-			double[] c = {2.515517, 0.802853, 0.010328};
-			double[] d = {1.432788, 0.189269, 0.001308};
-			return t - ((c[2]*t + c[1])*t + c[0]) / 
-						(((d[2]*t + d[1])*t + d[0])*t + 1.0);
-		}
-
-		private static double NormalCDFInverse(double p)
-		{
-			if (p <= 0.0 || p >= 1.0)
-			{
-				string msg = String.Format("Invalid input argument: {0}.", p);
-				throw new ArgumentOutOfRangeException(msg);
-			}
-
-			// See article above for explanation of this section.
-			if (p < 0.5)
-			{
-				// F^-1(p) = - G^-1(p)
-				return -RationalApproximation( Math.Sqrt(-2.0*Math.Log(p)) );
-			}
-			// F^-1(p) = G^-1(1-p)
-			return RationalApproximation( Math.Sqrt(-2.0*Math.Log(1.0 - p)) );
-		}
-
-
-		/*public static SpriteName PlanetConstructionBonusToSprite(PLANET_CONSTRUCTION_BONUS bonus)
+		public static SpriteName PlanetConstructionBonusToSprite(PLANET_CONSTRUCTION_BONUS bonus)
 		{
 			switch (bonus)
 			{
@@ -348,62 +232,23 @@ namespace Beyond_Beyaan
 			return SpriteName.CancelBackground;
 		}
 
-		public static EquipmentType TechTypeToEquipmentType(TechType type)
+		public static string ShipSizeToString(int size)
 		{
-			switch (type)
+			switch (size)
 			{
-				case TechType.ARMOR:
-				case TechType.ARMOR_MODIFICATION:
-				case TechType.ARMOR_PLATING: return EquipmentType.ARMOR;
-
-				case TechType.BEAM:
-				case TechType.BEAM_MODIFICATION:
-				case TechType.BEAM_MOUNT: return EquipmentType.BEAM;
-
-				case TechType.BOMB:
-				case TechType.BOMB_BODY:
-				case TechType.BOMB_MODIFICATION: return EquipmentType.BOMB;
-
-				case TechType.COMPUTER:
-				case TechType.COMPUTER_MODIFICATION:
-				case TechType.COMPUTER_MOUNT: return EquipmentType.COMPUTER;
-
-				case TechType.MISSILE_BODY:
-				case TechType.MISSILE_MODIFICATION:
-				case TechType.MISSILE_WARHEAD: return EquipmentType.MISSILE;
-
-				case TechType.PROJECTILE:
-				case TechType.PROJECTILE_MODIFICATION:
-				case TechType.PROJECTILE_MOUNT: return EquipmentType.PROJECTILE;
-
-				case TechType.REACTOR:
-				case TechType.REACTOR_MODIFICATION:
-				case TechType.REACTOR_MOUNT: return EquipmentType.REACTOR;
-
-				case TechType.SHIELD:
-				case TechType.SHIELD_MODIFICATION:
-				case TechType.SHIELD_MOUNT: return EquipmentType.SHIELD;
-
-				case TechType.SHOCKWAVE:
-				case TechType.SHOCKWAVE_EMITTER:
-				case TechType.SHOCKWAVE_MODIFICATION: return EquipmentType.SHOCKWAVE;
-
-				case TechType.SPECIAL: return EquipmentType.SPECIAL;
-
-				case TechType.STELLAR_ENGINE:
-				case TechType.STELLAR_ENGINE_MOUNT:
-				case TechType.STELLAR_MODIFICATION: return EquipmentType.STELLAR_ENGINE;
-
-				case TechType.SYSTEM_ENGINE:
-				case TechType.SYSTEM_ENGINE_MOUNT:
-				case TechType.SYSTEM_MODIFICATION: return EquipmentType.SYSTEM_ENGINE;
-
-				case TechType.TORPEDO:
-				case TechType.TORPEDO_LAUNCHER:
-				case TechType.TORPEDO_MODIFICATION: return EquipmentType.TORPEDO;
+				case 1: return "Lancer";
+				case 2: return "Corvette";
+				case 3: return "Frigate";
+				case 4: return "Destroyer";
+				case 5: return "Cruiser";
+				case 6: return "Battlecruiser";
+				case 7: return "Battleship";
+				case 8: return "Behemoth";
+				case 9: return "Titan";
+				case 10: return "Leviathian";
 			}
-			throw new Exception("Invalid TechType enum called");
-		}*/
+			return string.Empty;
+		}
 
 		public static string RelationToLabel(int relation)
 		{
@@ -441,19 +286,6 @@ namespace Beyond_Beyaan
 			}
 			return "Venerate";
 		}
-
-		public static double CalculatePathCost(List<KeyValuePair<StarSystem, Starlane>> nodes)
-		{
-			double amount = 0;
-			foreach (KeyValuePair<StarSystem, Starlane> path in nodes)
-			{
-				if (path.Value != null)
-				{
-					amount += path.Value.Length;
-				}
-			}
-			return amount;
-		}
 	}
 
 	public struct Point
@@ -481,38 +313,6 @@ namespace Beyond_Beyaan
 		{
 			return base.Equals(obj);
 		}
-
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
-		}
-	}
-	public struct PointF
-	{
-		public float X;
-		public float Y;
-
-		public PointF(float x, float y)
-		{
-			X = x;
-			Y = y;
-		}
-
-		public static bool operator ==(PointF p1, PointF p2)
-		{
-			return p1.X == p2.X && p1.Y == p2.Y;
-		}
-
-		public static bool operator !=(PointF p1, PointF p2)
-		{
-			return p1.X != p2.X || p1.Y != p2.Y;
-		}
-
-		public override bool Equals(object obj)
-		{
-			return base.Equals(obj);
-		}
-
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();

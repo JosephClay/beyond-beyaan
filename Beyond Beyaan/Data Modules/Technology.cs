@@ -1,495 +1,1472 @@
-﻿using System.Collections.Generic;
-using System.Xml.Linq;
-using Beyond_Beyaan.Scripts;
-using Beyond_Beyaan.Data_Modules;
-using Beyond_Beyaan.Data_Managers;
-using GorgonLibrary.Graphics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Beyond_Beyaan
 {
-	public class TechnologyItem
+	class Technology
 	{
-		public string Name { get; private set; }
-		public int TechLevel { get; private set; }
-		public int FudgeFactor { get; private set; }
-		public bool IsRequired { get; private set; }
-		public Dictionary<Resource, int> Cost { get; private set; }
-		public string Category { get; private set; }
+		protected int baseResearchCost; //Base cost of researching an item
+		protected float increaseRate; //How much cost increases to research the next level
+		protected int levelLimit; //How many times this item can be researched, -1 means infinite
+		protected string name; //Name of technology
+		protected int startingLevel; //What level of technology this tech starts off (1 for having the tech researched, 0 for not researched, 2 or higher for base plus incremental effects)
+		protected int currentLevel;
+		protected float totalResearch; //How much points spent into researching this/next level
+		protected int requiredFieldLevel; //How high this tech field must be reached before this tech is visible
+		protected float nextLevelCost; //How much points the next level will require to achieve
 
-		#region Items that this technology unlock
-		public List<ShipMainItem> ShipMainItems { get; private set; }
-		public List<ShipModifierItem> ShipModifierItems { get; private set; }
-		public List<ShipEnhancerItem> ShipEnhancerItems { get; private set; }
-		#endregion
-
-		#region Items that this technology removes (such as obsolete items)
-		public List<ShipMainItem> ShipMainItemsRemoved { get; private set; }
-		public List<ShipModifierItem> ShipModifierItemsRemoved { get; private set; }
-		public List<ShipEnhancerItem> ShipEnhancerItemsRemoved { get; private set; }
-		#endregion
-
-		public TechnologyItem(XElement technologyToLoad, ResourceManager resourceManager, MasterItemManager masterItemManager)
+		public int GetTotalResearchPoints()
 		{
-			InitializeLists();
-
-			//Load the attributes
-			foreach (XAttribute attribute in technologyToLoad.Attributes())
-			{
-				switch (attribute.Name.LocalName.ToLower())
-				{
-					case "name": Name = attribute.Value;
-						break;
-					case "techlevel": TechLevel = int.Parse(attribute.Value);
-						break;
-					case "fudge": FudgeFactor = int.Parse(attribute.Value);
-						break;
-					case "category": Category = attribute.Value;
-						break;
-					case "isrequired": IsRequired = bool.Parse(attribute.Value);
-						break;
-					case "cost":
-						{
-							string[] parts = attribute.Value.Split(new[] { '|' });
-							foreach (string part in parts)
-							{
-								string[] cost = part.Split(new[] { ',' });
-								Cost.Add(resourceManager.GetResource(cost[0]), int.Parse(cost[1]));
-							}
-						} break;
-				}
-			}
-			foreach (XElement element in technologyToLoad.Elements())
-			{
-				var item = masterItemManager.GetItem(element.Attribute("code").Value);
-				switch (element.Name.ToString().ToLower())
-				{
-					case "shipmainitem": ShipMainItems.Add((ShipMainItem)item);
-						break;
-					case "shipmodifieritem": ShipModifierItems.Add((ShipModifierItem)item);
-						break;
-					case "shipenhanceritem": ShipEnhancerItems.Add((ShipEnhancerItem)item);
-						break;
-					case "removeshipmainitem": ShipMainItemsRemoved.Add((ShipMainItem)item);
-						break;
-					case "removeshipmodifieritem": ShipModifierItemsRemoved.Add((ShipModifierItem)item);
-						break;
-					case "removeshipenhanceritem": ShipEnhancerItemsRemoved.Add((ShipEnhancerItem)item);
-						break;
-				}
-			}
+			return (int)totalResearch;
 		}
-
-		private void InitializeLists()
+		public int GetNextLevelCost()
 		{
-			ShipMainItems = new List<ShipMainItem>();
-			ShipModifierItems = new List<ShipModifierItem>();
-			ShipEnhancerItems = new List<ShipEnhancerItem>();
-
-			ShipMainItemsRemoved = new List<ShipMainItem>();
-			ShipModifierItemsRemoved = new List<ShipModifierItem>();
-			ShipEnhancerItemsRemoved = new List<ShipEnhancerItem>();
-
-			Cost = new Dictionary<Resource, int>();
+			return (int)nextLevelCost;
 		}
-
-		public Dictionary<string, BaseItem> ItemsToAdd()
-		{
-			Dictionary<string, BaseItem> itemsToAdd = new Dictionary<string, BaseItem>();
-			foreach (ShipMainItem item in ShipMainItems)
-			{
-				itemsToAdd.Add(item.Code, item);
-			}
-			foreach (ShipModifierItem item in ShipModifierItems)
-			{
-				itemsToAdd.Add(item.Code, item);
-			}
-			foreach (ShipEnhancerItem item in ShipEnhancerItems)
-			{
-				itemsToAdd.Add(item.Code, item);
-			}
-			return itemsToAdd;
-		}
-		public Dictionary<string, BaseItem> ItemsToRemove()
-		{
-			Dictionary<string, BaseItem> itemsToRemove = new Dictionary<string, BaseItem>();
-			foreach (ShipMainItem item in ShipMainItemsRemoved)
-			{
-				itemsToRemove.Add(item.Code, item);
-			}
-			foreach (ShipModifierItem item in ShipModifierItemsRemoved)
-			{
-				itemsToRemove.Add(item.Code, item);
-			}
-			foreach (ShipEnhancerItem item in ShipEnhancerItemsRemoved)
-			{
-				itemsToRemove.Add(item.Code, item);
-			}
-			return itemsToRemove;
-		}
-	}
-
-	public class TechnologyProject
-	{
-		public TechnologyItem TechBeingResearched { get; private set; }
-		public bool Locked { get; set; }
-		public int Percentage { get; set; }
-		public Dictionary<Resource, float> Invested { get; private set; }
-
-		public TechnologyProject(TechnologyItem item)
-		{
-			TechBeingResearched = item;
-			Invested = new Dictionary<Resource, float>();
-			foreach (KeyValuePair<Resource, int> resource in TechBeingResearched.Cost)
-			{
-				Invested.Add(resource.Key, 0);
-			}
-			Percentage = 0;
-			Locked = false;
-		}
-
-		//Returns true if the project's cost is paid.
-		public bool InvestProject(Resource resource, float amount)
-		{
-			Invested[resource] += amount;
-			foreach (KeyValuePair<Resource, float> item in Invested)
-			{
-				if (TechBeingResearched.Cost[item.Key] > item.Value)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-	}
-
-	//This is an base interface that specifies the standard layout of different components in the game, such as ship items, buildings, etc
-	public class BaseItem
-	{
-		public string Code { get; private set; }
-		public string Name { get; private set; }
-		public string Description { get; private set; }
-		public Dictionary<string, object> Values { get; private set; }
-
-		public BaseItem(XElement itemToLoad)
-		{
-			Values = new Dictionary<string, object>();
-			foreach (XAttribute attribute in itemToLoad.Attributes())
-			{
-				switch (attribute.Name.LocalName.ToLower())
-				{
-					case "code": Code = attribute.Value;
-						break;
-					case "name": Name = attribute.Value;
-						break;
-					case "description": Description = attribute.Value;
-						break;
-					default: Values.Add(attribute.Name.LocalName.ToLower(), attribute.Value);
-						break;
-				}
-			}
-		}
-
-		protected void AddControls(List<BaseControl> controls, string item, Font font)
-		{
-			string[] items = item.Split(new[] { '|' });
-
-			foreach (string part in items)
-			{
-				string[] parts = part.Split(new[] { ',' });
-				switch (parts[0].ToLower())
-				{
-					case "numupdown":
-						{
-							int min = int.Parse(parts[3]);
-							int max = int.Parse(parts[4]);
-							int incr = int.Parse(parts[5]);
-							int origVal = int.Parse(parts[6]);
-							NumUpDown control = new NumUpDown(min, max, incr, origVal, parts[1], parts[2], font);
-							controls.Add(control);
-						} break;
-				}
-			}
-		}
-	}
-
-	public class ShipMainItem : BaseItem
-	{
-		public string Type { get; private set; }
-		public List<string> Modifiers { get; private set; }
-		public List<string> Enhancers { get; private set; }
-
-		public List<BaseControl> Controls { get; private set; }
-
-		public ShipItemScript Script { get; private set; }
-
-		public ShipMainItem(XElement itemToLoad, Font font) : base(itemToLoad)
-		{
-			Type = (string)Values["type"];
-			Modifiers = new List<string>();
-			Enhancers = new List<string>();
-			Controls = new List<BaseControl>();
-
-			foreach (string part in ((string)Values["modifiers"]).Split(new[] { '|' }))
-			{
-				Modifiers.Add(part);
-			}
-			foreach (string part in ((string)Values["enhancers"]).Split(new[] { '|' }))
-			{
-				Enhancers.Add(part);
-			}
-
-			if (Values.ContainsKey("controls"))
-			{
-				AddControls(Controls, (string)Values["controls"], font);
-			}
-		}
-	}
-
-	public class ShipModifierItem : BaseItem
-	{
-		public List<string> Modifiers { get; private set; }
-
-		public ShipModifierItem(XElement itemToLoad)
-			: base(itemToLoad)
-		{
-			Modifiers = new List<string>();
-			foreach (string part in ((string)Values["modifiers"]).Split(new[] { '|' }))
-			{
-				Modifiers.Add(part);
-			}
-		}
-	}
-
-	public class ShipEnhancerItem : BaseItem
-	{
-		public List<string> Enhancers { get; private set; }
-
-		public ShipEnhancerItem(XElement itemToLoad)
-			: base(itemToLoad)
-		{
-			Enhancers = new List<string>();
-			foreach (string part in ((string)Values["enhancers"]).Split(new[] { '|' }))
-			{
-				Enhancers.Add(part);
-			}
-		}
-	}
-
-	public class EquipmentInstance : Equipment
-	{
-		//This is for storing the equipment data invidiually
-		public Dictionary<string, object> Values { get; set; }
-
-		public EquipmentInstance(Equipment equipmentToCopy, int shipSize) :
-			base (equipmentToCopy)
-		{
-			Values = new Dictionary<string, object>();
-			//Values.Add("Range", Range());
-			//Values.Add("Space", GetSpaceUsage(shipSize));
-			//Values.Add("Passive", IsPassive());
-			//Values.Add("Cost", GetCost(shipSize));
-			//Values.Add("Power", GetPower(shipSize));
-			//Values.Add("Time", GetTime(shipSize));
-			//Values.Add("Name", GetName());
-			//Values.Add("GalaxySpeed", GetSpeed());
-			//Values.Add("SelectionSize", GetSelectionSize(shipSize));
-		}
-	}
-
-	public class Equipment
-	{
-		public ShipMainItem ShipMainItem { get; set; }
-		public List<ShipModifierItem> ShipModifierItems { get; private set; }
-		public List<ShipEnhancerItem> ShipEnhancerItems { get; private set; }
-
-		public List<Icon> CombatIcons { get; private set; } //For combat view and other views
-		public List<Icon> DesignIcons { get; private set; } //For ship design view
-		public List<Icon> DesignControls { get; private set; } //For ship design view that requires user to input values (such as number of mounts, amount of ammo, etc)
-
-		public List<BaseControl> Controls { get; private set; } //For storing and handling controls for main item
-
-		public Equipment()
-		{
-			ShipMainItem = null;
-			ShipModifierItems = new List<ShipModifierItem>();
-			ShipEnhancerItems = new List<ShipEnhancerItem>();
-
-			CombatIcons = new List<Icon>();
-			DesignIcons = new List<Icon>();
-			DesignControls = new List<Icon>();
-
-			Controls = new List<BaseControl>();
-		}
-		public Equipment(ShipMainItem mainItem, List<ShipModifierItem> modifierItems, List<ShipEnhancerItem> enhancerItems, IconManager iconManager, Font font)
-		{
-			ShipMainItem = mainItem;
-			ShipModifierItems = new List<ShipModifierItem>(modifierItems);
-			ShipEnhancerItems = new List<ShipEnhancerItem>(enhancerItems);
-
-			Controls = new List<BaseControl>();
-			CopyControls(mainItem.Controls, font);
-		}
-
-		public Equipment(Equipment equipmentToCopy)
-		{
-			ShipMainItem = equipmentToCopy.ShipMainItem;
-			ShipModifierItems = new List<ShipModifierItem>(equipmentToCopy.ShipModifierItems);
-			ShipEnhancerItems = new List<ShipEnhancerItem>(equipmentToCopy.ShipEnhancerItems);
-
-			CombatIcons = new List<Icon>(equipmentToCopy.CombatIcons);
-			DesignIcons = new List<Icon>(equipmentToCopy.DesignIcons);
-			DesignControls = new List<Icon>(equipmentToCopy.DesignControls);
-
-			Controls = new List<BaseControl>(equipmentToCopy.Controls);
-		}
-
-		public bool IsThisEquipmentTheSame(Equipment equipmentToCompare)
-		{
-			if (ShipMainItem != equipmentToCompare.ShipMainItem)
-			{
-				return false;
-			}
-			if (ShipModifierItems.Count != equipmentToCompare.ShipModifierItems.Count)
-			{
-				return false;
-			}
-			for (int i = 0; i < ShipModifierItems.Count; i++)
-			{
-				if (ShipModifierItems[i] != equipmentToCompare.ShipModifierItems[i])
-				{
-					return false;
-				}
-			}
-			if (ShipEnhancerItems.Count != equipmentToCompare.ShipEnhancerItems.Count)
-			{
-				return false;
-			}
-			for (int i = 0; i < ShipEnhancerItems.Count; i++)
-			{
-				if (ShipEnhancerItems[i] != equipmentToCompare.ShipEnhancerItems[i])
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
-		private void CopyControls(List<BaseControl> controls, Font font)
-		{
-			foreach (BaseControl control in controls)
-			{
-				if (control is NumUpDown)
-				{
-					var convertedControl = (NumUpDown)control;
-					NumUpDown newControl = new NumUpDown(convertedControl.MinValue, convertedControl.MaxValue, convertedControl.IncrAmount, convertedControl.Value, convertedControl.Name, convertedControl.Code, font);
-					Controls.Add(newControl);
-				}
-			}
-		}
-
-		/*public bool IsPassive()
-		{
-			if (!ItemType.IsPassive)
-			{
-				return false;
-			}
-			if (EquipmentType == Beyond_Beyaan.EquipmentType.SPECIAL)
-			{
-				return true;
-			}
-			if (!MountType.IsPassive)
-			{
-				return false;
-			}
-			foreach (TechnologyItem item in ModifierItems)
-			{
-				if (!item.IsPassive)
-				{
-					return false;
-				}
-			}
-			return true;
-		}*/
-
-		#region Name
 		public string GetName()
 		{
-			if (ShipMainItem.Script != null)
+			return name;
+		}
+		public string GetNameWithCurrentLevel()
+		{
+			if (currentLevel > 1)
 			{
-				Dictionary<string, object> values = GetEquipmentInfo(null);
-				if (values.ContainsKey("_name"))
-				{
-					return (string)values["_name"];
-				}
-			}
-			
-			string name = ShipMainItem.Name;
-			foreach (var modifier in ShipModifierItems)
-			{
-				name = string.Format(modifier.Name, name);
+				return name + " " + Utility.ConvertNumberToRomanNumberical(currentLevel);
 			}
 			return name;
 		}
-		#endregion
+		public string GetNameWithNextLevel()
+		{
+			if (currentLevel > 0 && (currentLevel < levelLimit || levelLimit < 0))
+			{
+				return name + " " + Utility.ConvertNumberToRomanNumberical(currentLevel + 1);
+			}
+			return GetNameWithCurrentLevel();
+		}
+	}
 
-		#region Script Functions
-		public Dictionary<string, object> GetEquipmentInfo(Dictionary<string, object> shipValues)
+	class Beam : Technology
+	{
+		private int baseDamage;
+		private int accuracy;
+		private int space;
+		private int cost;
+		public Beam()
 		{
-			if (ShipMainItem.Script != null)
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
 			{
-				Dictionary<string, object>[] modifierValues = new Dictionary<string, object>[ShipModifierItems.Count];
-				Dictionary<string, object>[] enhancerValues = new Dictionary<string, object>[ShipEnhancerItems.Count];
-				Dictionary<string, object> controlValues = new Dictionary<string, object>();
-				for (int i = 0; i < modifierValues.Length; i++)
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["basedamage"], out baseDamage))
+			{
+				reason = "basedamage value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["accuracy"], out accuracy))
+			{
+				reason = "accuracy value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"basedamage",
+				"accuracy",
+				"space",
+				"cost",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
 				{
-					modifierValues[i] = new Dictionary<string, object>(ShipModifierItems[i].Values);
+					reason = "Missing " + tag + " tag";
+					return false;
 				}
-				for (int i = 0; i < enhancerValues.Length; i++)
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetDamage()
+		{
+			//this will factor in tech level increase
+			return baseDamage;
+		}
+
+		public int GetAccuracy()
+		{
+			//this will factor in tech level increase
+			return accuracy;
+		}
+
+		public int GetSpace()
+		{
+			//this will factor in tech level increase
+			return space;
+		}
+		public int GetCost()
+		{
+			//this will factor in tech level increase
+			return cost;
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Particle : Technology
+	{
+		private int baseDamage;
+		private int accuracy;
+		private int space;
+		private int cost;
+		public Particle()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["basedamage"], out baseDamage))
+			{
+				reason = "basedamage value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["accuracy"], out accuracy))
+			{
+				reason = "accuracy value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"basedamage",
+				"accuracy",
+				"space",
+				"cost",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
 				{
-					enhancerValues[i] = new Dictionary<string, object>(ShipEnhancerItems[i].Values);
+					reason = "Missing " + tag + " tag";
+					return false;
 				}
-				foreach (BaseControl control in ShipMainItem.Controls)
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetDamage()
+		{
+			//this will factor in tech level increase
+			return baseDamage;
+		}
+
+		public int GetAccuracy()
+		{
+			//this will factor in tech level increase
+			return accuracy;
+		}
+
+		public int GetSpace()
+		{
+			//this will factor in tech level increase
+			return space;
+		}
+
+		public int GetCost()
+		{
+			//this will factor in tech level increase
+			return cost;
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Torpedo : Technology
+	{
+		private int baseDamage;
+		private int space;
+		private int cost;
+		public Torpedo()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["basedamage"], out baseDamage))
+			{
+				reason = "basedamage value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"basedamage",
+				"space",
+				"cost",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
 				{
-					controlValues.Add(control.Code, control.GetValue());
+					reason = "Missing " + tag + " tag";
+					return false;
 				}
-				return ShipMainItem.Script.GetEquipmentInfo(ShipMainItem.Values, modifierValues, enhancerValues, shipValues, controlValues);
 			}
-			return null;
+			reason = null;
+			return true;
 		}
-		public Dictionary<string, object> UpdateShipInfo(Dictionary<string, object> shipValues)
+
+		public int GetDamage()
 		{
-			Dictionary<string, object> values = GetEquipmentInfo(shipValues);
-			if (values != null)
-			{
-				return ShipMainItem.Script.UpdateShipInfo(shipValues, values);
-			}
-			return shipValues;
+			//this will factor in tech level increase
+			return baseDamage;
 		}
-		
-		public int GetSelectionSize(int shipSize)
+
+		public int GetSpace()
 		{
-			if (ShipMainItem.Script != null)
-			{
-				return ShipMainItem.Script.GetTargetReticle(shipSize);
-			}
-			return -1;
+			//this will factor in tech level increase
+			return space;
 		}
-		public Dictionary<string, object>[] Activate(Point gridcell, Point shipPos, Point boundary, Dictionary<string, object> equipmentValues)
+
+		public int GetCost()
 		{
-			if (ShipMainItem.Script != null)
-			{
-				return ShipMainItem.Script.Activate(shipPos.X, shipPos.Y, gridcell.X, gridcell.Y, boundary.X, boundary.Y, equipmentValues);
-			}
-			return null;
+			//this will factor in tech level increase
+			return cost;
 		}
-		public Dictionary<string, object>[] OnHit(Point impact, Point shipPos, int shipSize, Dictionary<string, object> equipmentValues, Dictionary<string, object> particleValues)
+
+		public int GetLevel()
 		{
-			if (ShipMainItem.Script != null)
-			{
-				return ShipMainItem.Script.OnHit(impact.X, impact.Y, shipPos.X, shipPos.Y, shipSize, equipmentValues, particleValues);
-			}
-			return null;
+			return currentLevel;
 		}
-		#endregion
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Missile : Technology
+	{
+		private int baseDamage;
+		private int space;
+		private int cost;
+		public Missile()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["basedamage"], out baseDamage))
+			{
+				reason = "basedamage value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"basedamage",
+				"space",
+				"cost",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
+				{
+					reason = "Missing " + tag + " tag";
+					return false;
+				}
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetDamage()
+		{
+			//this will factor in tech level increase
+			return baseDamage;
+		}
+
+		public int GetSpace()
+		{
+			//this will factor in tech level increase
+			return space;
+		}
+
+		public int GetCost()
+		{
+			//this will factor in tech level increase
+			return cost;
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Bomb : Technology
+	{
+		private int baseDamage;
+		private int space;
+		private int cost;
+		public Bomb()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["basedamage"], out baseDamage))
+			{
+				reason = "basedamage value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"basedamage",
+				"space",
+				"cost",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
+				{
+					reason = "Missing " + tag + " tag";
+					return false;
+				}
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetDamage()
+		{
+			//this will factor in tech level increase
+			return baseDamage;
+		}
+
+		public int GetSpace()
+		{
+			return space;
+		}
+
+		public int GetCost()
+		{
+			return cost;
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Armor : Technology
+	{
+		public int beamEfficiency { get; private set; }
+		public int particleEfficiency { get; private set; }
+		public int missileEfficiency { get; private set; }
+		public int torpedoEfficiency { get; private set; }
+		public int bombEfficiency { get; private set; }
+		private int space;
+		private int cost;
+		private float baseHP;
+
+		public Armor()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			int result;
+			if (!int.TryParse(items["beameff"], out result))
+			{
+				reason = "beameff value is not int";
+				return false;
+			}
+			beamEfficiency = result;
+			if (!int.TryParse(items["particleeff"], out result))
+			{
+				reason = "particleeff value is not int";
+				return false;
+			}
+			particleEfficiency = result;
+			if (!int.TryParse(items["missileeff"], out result))
+			{
+				reason = "missileeff value is not int";
+				return false;
+			}
+			missileEfficiency = result;
+			if (!int.TryParse(items["torpedoeff"], out result))
+			{
+				reason = "torpedoeff value is not int";
+				return false;
+			}
+			torpedoEfficiency = result;
+			if (!int.TryParse(items["bombeff"], out result))
+			{
+				reason = "bombeff value is not int";
+				return false;
+			}
+			bombEfficiency = result;
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not int";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["basehp"], out baseHP))
+			{
+				reason = "basehp value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"beameff",
+				"particleeff",
+				"missileeff",
+				"torpedoeff",
+				"bombeff",
+				"space",
+				"cost",
+				"basehp",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
+				{
+					reason = "Missing " + tag + " tag";
+					return false;
+				}
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetSpace(int size)
+		{
+			return (int)(size * (space / 100.0f));
+		}
+
+		public int GetCost(int size)
+		{
+			//this will factor in tech level increase
+			return (int)(size * (cost / 100.0f));
+		}
+
+		public int GetHP(int size)
+		{
+			return (int)(size * (baseHP / 100.0f));
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Shield : Technology
+	{
+		public int beamEfficiency { get; private set; }
+		public int particleEfficiency { get; private set; }
+		public int missileEfficiency { get; private set; }
+		public int torpedoEfficiency { get; private set; }
+		public int bombEfficiency { get; private set; }
+		private int space;
+		private int cost;
+		private int baseResistance;
+
+		public Shield()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			int result;
+			if (!int.TryParse(items["beameff"], out result))
+			{
+				reason = "beameff value is not int";
+				return false;
+			}
+			beamEfficiency = result;
+			if (!int.TryParse(items["particleeff"], out result))
+			{
+				reason = "particleeff value is not int";
+				return false;
+			}
+			particleEfficiency = result;
+			if (!int.TryParse(items["missileeff"], out result))
+			{
+				reason = "missileeff value is not int";
+				return false;
+			}
+			missileEfficiency = result;
+			if (!int.TryParse(items["torpedoeff"], out result))
+			{
+				reason = "torpedoeff value is not int";
+				return false;
+			}
+			torpedoEfficiency = result;
+			if (!int.TryParse(items["bombeff"], out result))
+			{
+				reason = "bombeff value is not int";
+				return false;
+			}
+			bombEfficiency = result;
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["baseresistance"], out baseResistance))
+			{
+				reason = "baseresistance value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"beameff",
+				"particleeff",
+				"missileeff",
+				"torpedoeff",
+				"bombeff",
+				"space",
+				"cost",
+				"baseresistance",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
+				{
+					reason = "Missing " + tag + " tag";
+					return false;
+				}
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetSpace(int size)
+		{
+			return (int)(size * (space / 100.0f));
+		}
+
+		public int GetCost(int size)
+		{
+			//this will factor in tech level increase
+			return (int)(size * (cost / 100.0f));
+		}
+
+		public int GetResistance()
+		{
+			return baseResistance;
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Computer : Technology
+	{
+		public int beamEfficiency { get; private set; }
+		public int particleEfficiency { get; private set; }
+		public int missileEfficiency { get; private set; }
+		public int torpedoEfficiency { get; private set; }
+		public int bombEfficiency { get; private set; }
+		private int space;
+		private int cost;
+
+		public Computer()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			int result;
+			if (!int.TryParse(items["beameff"], out result))
+			{
+				reason = "beameff value is not int";
+				return false;
+			}
+			beamEfficiency = result;
+			if (!int.TryParse(items["particleeff"], out result))
+			{
+				reason = "particleeff value is not int";
+				return false;
+			}
+			particleEfficiency = result;
+			if (!int.TryParse(items["missileeff"], out result))
+			{
+				reason = "missileeff value is not int";
+				return false;
+			}
+			missileEfficiency = result;
+			if (!int.TryParse(items["torpedoeff"], out result))
+			{
+				reason = "torpedoeff value is not int";
+				return false;
+			}
+			torpedoEfficiency = result;
+			if (!int.TryParse(items["bombeff"], out result))
+			{
+				reason = "bombeff value is not int";
+				return false;
+			}
+			bombEfficiency = result;
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not int";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"beameff",
+				"particleeff",
+				"missileeff",
+				"torpedoeff",
+				"bombeff",
+				"space",
+				"cost",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
+				{
+					reason = "Missing " + tag + " tag";
+					return false;
+				}
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetSpace(int size)
+		{
+			return (int)(size * (space / 100.0f));
+		}
+
+		public int GetCost(int size)
+		{
+			//this will factor in tech level increase
+			return (int)(size * (cost / 100.0f));
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Engine : Technology
+	{
+		private int space;
+		private int cost;
+		private int baseGalaxySpeed;
+		private int baseCombatSpeed;
+
+		public Engine()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["basegalaxyspeed"], out baseGalaxySpeed))
+			{
+				reason = "basegalaxyspeed value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["basecombatspeed"], out baseCombatSpeed))
+			{
+				reason = "basecombatspeed value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"space",
+				"cost",
+				"basegalaxyspeed",
+				"basecombatspeed",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
+				{
+					reason = "Missing " + tag + " tag";
+					return false;
+				}
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetSpace(int size)
+		{
+			return (int)(size * (space / 100.0f));
+		}
+
+		public int GetCost(int size)
+		{
+			//this will factor in tech level increase
+			return (int)(size * (cost / 100.0f));
+		}
+
+		public int GetGalaxySpeed()
+		{
+			return baseGalaxySpeed;
+		}
+
+		public int GetCombatSpeed()
+		{
+			return baseCombatSpeed;
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	class Infrastructure : Technology
+	{
+		public Infrastructure()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
+				{
+					reason = "Missing " + tag + " tag";
+					return false;
+				}
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
 	}
 }

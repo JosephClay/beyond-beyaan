@@ -1,0 +1,59 @@
+//Beam Technologies
+techtype=beam|techName=Laser Cannon|baseResearchCost=100|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|baseDamage=8|accuracy=80|space=10|cost=5
+techtype=beam|techName=Pew Pew Cannon|baseResearchCost=100|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=0|baseDamage=8|accuracy=80|space=10|cost=5
+techtype=beam|techName=Ion Cannon|baseResearchCost=100|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=3|baseDamage=8|accuracy=80|space=10|cost=5
+techtype=beam|techName=Plasma Cannon|baseResearchCost=100|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=5|baseDamage=8|accuracy=80|space=10|cost=5
+techtype=beam|techName=Vulcan Cannon|baseResearchCost=100|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=10|baseDamage=8|accuracy=80|space=10|cost=5
+techtype=beam|techName=Evisecrator|baseResearchCost=100|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=15|baseDamage=8|accuracy=80|space=10|cost=5
+techtype=beam|techName=Devastator|baseResearchCost=100|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=20|baseDamage=8|accuracy=80|space=10|cost=5
+
+//Particle Technologies
+techtype=particle|techName=Rail Gun|baseResearchCost=150|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|baseDamage=10|accuracy=60|space=7|cost=7
+techtype=particle|techName=Particle Cannon|baseResearchCost=150|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=2|baseDamage=10|accuracy=60|space=7|cost=7
+techtype=particle|techName=Gauss Autocannon|baseResearchCost=150|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=5|baseDamage=10|accuracy=60|space=7|cost=7
+techtype=particle|techName=Sledgehammer|baseResearchCost=150|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=8|baseDamage=10|accuracy=60|space=7|cost=7
+techtype=particle|techName=Nutcracker|baseResearchCost=150|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=10|baseDamage=10|accuracy=60|space=7|cost=7
+techtype=particle|techName=Holy Cannon|baseResearchCost=150|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=13|baseDamage=10|accuracy=60|space=7|cost=7
+techtype=particle|techName=Mauler Cannon|baseResearchCost=150|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=14|baseDamage=10|accuracy=60|space=7|cost=7
+
+//Missile Technologies
+techtype=missile|techName=Nuclear Missile|baseResearchCost=200|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|baseDamage=20|space=15|cost=20
+techtype=missile|techName=Hercular Missile|baseResearchCost=200|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=5|baseDamage=20|space=15|cost=20
+techtype=missile|techName=Fusion Missile|baseResearchCost=200|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=10|baseDamage=20|space=15|cost=20
+techtype=missile|techName=Penetrator Missile|baseResearchCost=200|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=0|requiredFieldLevel=15|baseDamage=20|space=15|cost=20
+
+//Torpedo Technologies
+techtype=torpedo|techName=Antimatter Torpedo|baseResearchCost=300|researchExponentIncrease=1.8|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|baseDamage=35|space=15|cost=30
+techtype=torpedo|techName=Vulcan Torpedo|baseResearchCost=300|researchExponentIncrease=1.8|techLevelLimit=-1|startLevel=0|requiredFieldLevel=3|baseDamage=35|space=15|cost=30
+techtype=torpedo|techName=Ion Torpedo|baseResearchCost=300|researchExponentIncrease=1.8|techLevelLimit=-1|startLevel=0|requiredFieldLevel=5|baseDamage=35|space=15|cost=30
+techtype=torpedo|techName=Singularity Torpedo|baseResearchCost=300|researchExponentIncrease=1.8|techLevelLimit=-1|startLevel=0|requiredFieldLevel=10|baseDamage=35|space=15|cost=30
+techtype=torpedo|techName=Proton Torpedo|baseResearchCost=300|researchExponentIncrease=1.8|techLevelLimit=-1|startLevel=0|requiredFieldLevel=20|baseDamage=35|space=15|cost=30
+
+//Bomb Technologies
+techtype=bomb|techName=Nuclear Bomb|baseResearchCost=150|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|baseDamage=30|space=15|cost=15
+
+//Armor Technologies
+//baseSpace is percentage, not amount, of space
+//baseCost is percentage, not amount, of cost
+//baseHP is percentage of size that is hp (ie 10% of 1000 size means 100 hp, can exceed 100%)
+techtype=armor|techName=Duralloy|baseResearchCost=100|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|beamEff=30|particleEff=90|missileEff=100|torpedoEff=40|bombEff=90|space=15|cost=9|baseHP=8
+
+//Shield Technologies
+//baseSpace is percentage, not amount, of space
+//baseCost is percentage, not amount, of cost
+//baseResistance is initial points it will deduct from damage, multiplied by shield's efficiency against that damage type
+techtype=shield|techName=Refractor|baseResearchCost=150|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|beamEff=100|particleEff=40|missileEff=25|torpedoEff=80|bombEff=10|space=17|cost=13|baseResistance=3
+
+//Engine Technologies
+//baseSpace is percentage, not amount, of space
+//baseCost is percentage, not amount, of cost
+techtype=engine|techName=Retro|baseResearchCost=100|researchExponentIncrease=1.75|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|space=15|cost=10|baseGalaxySpeed=5|baseCombatSpeed=3
+techtype=engine|techName=Nuclear|baseResearchCost=200|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=3|space=20|cost=13|baseGalaxySpeed=10|baseCombatSpeed=5
+
+//Computer Technologies
+//baseSpace is percentage, not amount, of space
+//baseCost is percentage, not amount, of cost
+techtype=computer|techName=Battle|baseResearchCost=100|researchExponentIncrease=1.25|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|beamEff=80|particleEff=60|missileEff=75|torpedoEff=80|bombEff=90|space=10|cost=6
+
+//Infrastructure Technologies
+techtype=infrastructure|techName=Agriculture|baseResearchCost=200|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=0

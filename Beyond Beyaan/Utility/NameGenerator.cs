@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+//using System.Linq;
 using System.Text;
 
 namespace Beyond_Beyaan
 {
-	public class NameGenerator
+	class NameGenerator
 	{
-		Random rnd;
+		Random rnd = null;
 
 		public List<StringGetter[]> Generator = null;
 
@@ -92,8 +93,7 @@ namespace Beyond_Beyaan
 			//Seed the random generator
 			rnd = new Random(Convert.ToInt32(DateTime.Now.Ticks % Int32.MaxValue));
 
-			Generator.AddRange(new[]
-				                   {
+			Generator.AddRange(new StringGetter[][] {
                 Seq(NEC, V, NEC, V, EC),
                 Seq(NEC, V, NEC, V, NEC, V, EC),
                 Seq(NEC, V, NEC, EC),

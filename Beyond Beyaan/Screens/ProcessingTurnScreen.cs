@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
@@ -18,7 +20,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			this.gameMain = gameMain;
 			camera = new Camera(gameMain.ScreenWidth, gameMain.ScreenHeight);
-			camera.InitCamera(gameMain.Galaxy.GalaxySize, 32);
+			camera.InitCamera(gameMain.galaxy.GalaxySize, 32);
 			camera.ZoomOut();
 
 			sizes = new float[4];
@@ -30,47 +32,35 @@ namespace Beyond_Beyaan.Screens
 			stillMoving = true;
 			tickCount = 0;
 			updateSection = -1;
-			updateText = new Label(string.Empty, (gameMain.ScreenWidth / 2) - 130, (gameMain.ScreenHeight / 2) - 17, gameMain.FontManager.GetDefaultFont());
+			updateText = new Label(string.Empty, (gameMain.ScreenWidth / 2) - 130, (gameMain.ScreenHeight / 2) - 17);
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
+			List<StarSystem> systems = gameMain.galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
 			foreach (StarSystem system in systems)
 			{
-				GorgonLibrary.Gorgon.CurrentShader = system.Type.Shader; //if it's null, no worries
-				if (system.Type.Shader != null)
+				if (system.Type == StarType.BLACK_HOLE)
 				{
-						system.Type.Shader.Parameters["ShaderValue"].SetValue(system.Type.ShaderValue);
-				}
-				system.Sprite.Draw(((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), ((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 0.25f, 0.25f);
-				GorgonLibrary.Gorgon.CurrentShader = null;
-			}
-			foreach (Squadron fleet in gameMain.empireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
-			{
-				/*if (fleet.HasTransports)
-				{
-					drawingManagement.DrawSprite(SpriteName.Transport, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, 32, 32, fleet.Empire.EmpireColor);
+					drawingManagement.DrawSprite(SpriteName.BlackHole, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
 				}
 				else
-				{*/
-				GorgonLibrary.Graphics.Sprite icon = fleet.Empire.EmpireRace.GetFleetIcon();
-				icon.Color = fleet.Empire.EmpireColor;
-				icon.SetScale(1, 1);
-				icon.SetPosition(((fleet.FleetLocation.X - (camera.CameraX * 32) - camera.XOffset - 16) * camera.Scale), ((fleet.FleetLocation.Y - (camera.CameraY * 32) - camera.YOffset - 16) * camera.Scale));
-				icon.Draw();
-					//drawingManagement.DrawSprite(SpriteName.Fleet, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, 32, 32, fleet.Empire.EmpireColor);
-				//}
+				{
+					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+					drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
+					GorgonLibrary.Gorgon.CurrentShader = null;
+				}
+			}
+			foreach (Fleet fleet in gameMain.empireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
+			{
+				drawingManagement.DrawSprite(SpriteName.Fleet, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, 32, 32, fleet.Empire.EmpireColor);
 			}
 			if (updateSection != -1)
 			{
-				//drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (gameMain.ScreenWidth / 2) - 150, (gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
+				drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (gameMain.ScreenWidth / 2) - 150, (gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
 				updateText.Draw();
 			}
-		}
-
-		public void UpdateBackground(float frameDeltaTime)
-		{
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
@@ -80,7 +70,7 @@ namespace Beyond_Beyaan.Screens
 				tickCount += frameDeltaTime;
 				if (tickCount > 0.50f)
 				{
-					stillMoving = gameMain.empireManager.UpdateFleetMovement();
+					stillMoving = gameMain.empireManager.UpdateFleetMovement(gameMain.galaxy.GetGridCells());
 					tickCount -= 0.50f;
 				}
 			}
@@ -91,48 +81,31 @@ namespace Beyond_Beyaan.Screens
 				switch (updateSection)
 				{
 					case 0:
-						updateText.SetText("Processing Empires", gameMain.FontManager.GetDefaultFont());
-						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
+						updateText.SetText("Processing Empires");
+						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 1:
-						Random r = new Random();
-						gameMain.empireManager.UpdateEmpires(gameMain.Galaxy, gameMain.PlanetTypeManager, r);
-						updateText.SetText("Processing Influences", gameMain.FontManager.GetDefaultFont());
-						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
+						gameMain.empireManager.UpdateEmpires(gameMain.galaxy);
+						updateText.SetText("Processing Influences");
+						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 2:
-						//gameMain.empireManager.UpdateInfluenceMaps(gameMain.galaxy);
-						updateText.SetText("Processing Migration", gameMain.FontManager.GetDefaultFont());
-						updateText.MoveTo((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
+						gameMain.empireManager.UpdateInfluenceMaps(gameMain.galaxy);
+						updateText.SetText("Processing Migration");
+						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 3:
-						gameMain.empireManager.UpdateMigration(gameMain.Galaxy);
+						gameMain.empireManager.UpdateMigration(gameMain.galaxy);
 						gameMain.empireManager.LookForCombat();
-						/*if (gameMain.empireManager.HasCombat)
+						if (gameMain.empireManager.HasCombat)
 						{
 							gameMain.ChangeToScreen(Screen.Battle);
-						}*/
+						}
 						break;
 					case 4:
-						gameMain.empireManager.CheckForColonizers(gameMain.Galaxy);
-						if (gameMain.empireManager.HasColonizers)
-						{
-							gameMain.ChangeToScreen(ScreenEnum.Colonize);
-						}
-						break;
-					case 5:
-						gameMain.empireManager.CheckForInvaders(gameMain.Galaxy);
-						if (gameMain.empireManager.HasInvaders)
-						{
-							gameMain.ChangeToScreen(ScreenEnum.Invade);
-						}
-						break;
-					case 6:
 						updateSection = -1;
-						gameMain.empireManager.ClearEmptyFleets();
-						gameMain.empireManager.CheckForDefeatedEmpires();
 						gameMain.empireManager.SetInitialEmpireTurn();
-						gameMain.ChangeToScreen(ScreenEnum.Galaxy);
+						gameMain.ChangeToScreen(Screen.Galaxy);
 						stillMoving = true;
 						break;
 				}

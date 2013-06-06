@@ -1,118 +1,60 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	public class PlanetManager
+	class PlanetManager
 	{
 		#region Variables
 		//private float totalResearch;
 		//private float totalCommerce;
-
+		private List<Planet> planets;
 		#endregion
 
 		#region Properties
-
-		public List<Planet> Planets { get; private set; }
-
+		public List<Planet> Planets
+		{
+			get { return planets; }
+		}
 		#endregion
 
 		#region Constructor
 		public PlanetManager()
 		{
-			Planets = new List<Planet>();
+			planets = new List<Planet>();
 		}
 		#endregion
 
 		#region Functions
-		/*public void PoolResources(Dictionary<Resource, float> availableResources, Dictionary<Resource, float> shortages)
-		{
-			// TODO: Update star systems' available resources and shortages for display
-
-			for (int i = 0; i < planets.Count; i++)
-			{
-				for (int j = i + 1; j < planets.Count; j++)
-				{
-					var planetA = planets[i];
-					var planetB = planets[j];
-					//quick check to see if a planet is in demand, and another have some resources
-					if (planetA.Shortages.Count > 0 && planetB.AvailableResources.Count > 0)
-					{
-						foreach (KeyValuePair<Resource, float> shortage in planetA.Shortages)
-						{
-							if (planetB.AvailableResources.ContainsKey(shortage.Key))
-							{
-								if (planetB.AvailableResources[shortage.Key] >= shortage.Value)
-								{
-									planetA.AddSuppliedResources(shortage.Key, shortage.Value);
-									planetB.AddSharedResources(shortage.Key, shortage.Value);
-									availableResources[shortage.Key] -= shortage.Value;
-									if (availableResources[shortage.Key] <= 0)
-									{
-										availableResources.Remove(shortage.Key);
-									}
-								}
-								else
-								{
-									planetA.AddSuppliedResources(shortage.Key, planetB.AvailableResources[shortage.Key]);
-									planetB.AddSharedResources(shortage.Key, planetB.AvailableResources[shortage.Key]);
-									availableResources[shortage.Key] -= planetB.AvailableResources[shortage.Key];
-									if (availableResources[shortage.Key] <= 0)
-									{
-										availableResources.Remove(shortage.Key);
-									}
-								}
-							}
-						}
-					}
-					//quick check to see if a planet is in demand, and another have some resources
-					if (planetB.Shortages.Count > 0 && planetA.AvailableResources.Count > 0)
-					{
-						foreach (KeyValuePair<Resource, float> shortage in planetB.Shortages)
-						{
-							if (planetA.AvailableResources.ContainsKey(shortage.Key))
-							{
-								if (planetA.AvailableResources[shortage.Key] >= shortage.Value)
-								{
-									planetB.AddSuppliedResources(shortage.Key, shortage.Value);
-									planetA.AddSharedResources(shortage.Key, shortage.Value);
-									availableResources[shortage.Key] -= shortage.Value;
-									if (availableResources[shortage.Key] <= 0)
-									{
-										availableResources.Remove(shortage.Key);
-									}
-								}
-								else
-								{
-									planetB.AddSuppliedResources(shortage.Key, planetA.AvailableResources[shortage.Key]);
-									planetA.AddSharedResources(shortage.Key, planetA.AvailableResources[shortage.Key]);
-									availableResources[shortage.Key] -= planetA.AvailableResources[shortage.Key];
-									if (availableResources[shortage.Key] <= 0)
-									{
-										availableResources.Remove(shortage.Key);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}*/
-
-		public void UpdatePopGrowth(Dictionary<Resource, float> foodShortages)
+		public void UpdatePopGrowth()
 		{
 			//this function calculates regular pop growth plus any bonuses or negatives
-			foreach (Planet planet in Planets)
+			List<Planet> planetsToRemove = new List<Planet>();
+			foreach (Planet planet in planets)
 			{
-				planet.UpdatePlanet(foodShortages);
+				planet.UpdatePlanet();
 				foreach (Race race in planet.Races)
 				{
-					if (planet.GetRacePopulation(race) <= 0.1f)
+					if (planet.GetRacePopulation(race) < 0.1)
 					{
 						//This race died out
 						planet.RemoveRace(race);
 					}
 				}
+				if (planet.TotalPopulation == 0.0)
+				{
+					//Planet died out
+					planet.Owner = null;
+					planetsToRemove.Add(planet);
+				}
+			}
+			foreach (Planet planet in planetsToRemove)
+			{
+				//those planets died out
+				planets.Remove(planet);
 			}
 		}
 		#endregion

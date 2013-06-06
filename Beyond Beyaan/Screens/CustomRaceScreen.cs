@@ -1,4 +1,8 @@
-﻿using GorgonLibrary.InputDevices;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -12,10 +16,6 @@ namespace Beyond_Beyaan.Screens
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
-		{
-		}
-
-		public void UpdateBackground(float frameDeltaTime)
 		{
 		}
 

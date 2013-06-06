@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.IO;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	public class AI
+	class AI
 	{
 		public string AIName { get; private set; }
 
@@ -35,6 +37,7 @@ namespace Beyond_Beyaan.Data_Modules
 					if (string.Compare(parts[0], "name", true) == 0)
 					{
 						AIName = parts[1];
+						continue;
 					}
 				}
 				else

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Beyond_Beyaan.Data_Managers;
+using System.Linq;
+using System.Text;
+using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
@@ -8,34 +10,24 @@ namespace Beyond_Beyaan
 	{
 		#region Variables
 		private List<Empire> empires;
-		//private List<CombatToProcess> combatsToProcess;
+		private List<CombatToProcess> combatsToProcess;
+		private Empire currentEmpire;
 		private int empireIter;
 		#endregion
 
 		#region Properties
-
-		public Empire CurrentEmpire { get; private set; }
-
-		/*public List<CombatToProcess> CombatsToProcess
+		public Empire CurrentEmpire
+		{
+			//Current human empire
+			get { return currentEmpire; }
+		}
+		public List<CombatToProcess> CombatsToProcess
 		{
 			get { return combatsToProcess; }
 		}
 		public bool HasCombat
 		{
 			get { return combatsToProcess.Count > 0; }
-		}*/
-		public List<SettlerToProcess> ColonizersToProcess { get; private set; }
-
-		public bool HasColonizers
-		{
-			get { return ColonizersToProcess.Count > 0; }
-		}
-
-		public List<SettlerToProcess> InvadersToProcess { get; private set; }
-
-		public bool HasInvaders
-		{
-			get { return InvadersToProcess.Count > 0; }
 		}
 		#endregion
 
@@ -44,9 +36,7 @@ namespace Beyond_Beyaan
 		{
 			empires = new List<Empire>();
 			empireIter = -1;
-			//combatsToProcess = new List<CombatToProcess>();
-			ColonizersToProcess = new List<SettlerToProcess>();
-			InvadersToProcess = new List<SettlerToProcess>();
+			combatsToProcess = new List<CombatToProcess>();
 		}
 		#endregion
 
@@ -81,7 +71,7 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					CurrentEmpire = empires[i];
+					currentEmpire = empires[i];
 					empireIter = i;
 					break;
 				}
@@ -110,21 +100,21 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					CurrentEmpire = empires[i];
+					currentEmpire = empires[i];
 					break;
 				}
 			}
 			return false;
 		}
 
-		public List<Squadron> GetFleetsWithinArea(int x, int y, int width, int height)
+		public List<Fleet> GetFleetsWithinArea(int x, int y, int width, int height)
 		{
-			List<Squadron> fleets = new List<Squadron>();
+			List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
 			{
-				foreach (Squadron fleet in empire.FleetManager.GetFleets())
+				foreach (Fleet fleet in empire.FleetManager.GetFleets())
 				{
-					if (fleet.FleetLocation.X >= x * 32 && fleet.FleetLocation.Y >= y * 32 && fleet.FleetLocation.X < (x + width) * 32 && fleet.FleetLocation.Y < (y + height) * 32)
+					if (fleet.GalaxyX >= x && fleet.GalaxyY >= y && fleet.GalaxyX < x + width && fleet.GalaxyY < y + height)
 					{
 						fleets.Add(fleet);
 					}
@@ -133,48 +123,25 @@ namespace Beyond_Beyaan
 			return fleets;
 		}
 
-		public List<Squadron> GetFleetsNextToSystem(StarSystem system)
+		public FleetGroup GetFleetsAtPoint(int x, int y)
 		{
-			List<Squadron> fleets = new List<Squadron>();
+			List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
 			{
-				foreach (Squadron fleet in empire.FleetManager.GetFleets())
-				{
-					if (fleet.System == system)
-					{
-						fleets.Add(fleet);
-					}
-				}
-			}
-			return fleets;
-		}
-
-		public SquadronGroup GetSquadronsAtPoint(StarSystem system, int x, int y)
-		{
-			List<Squadron> fleets = new List<Squadron>();
-			foreach (Empire empire in empires)
-			{
-				foreach (Squadron fleet in empire.FleetManager.ReturnFleetAtPoint(x, y))
+				foreach (Fleet fleet in empire.FleetManager.ReturnFleetAtPoint(x, y))
 				{
 					fleets.Add(fleet);
 				}
 			}
-			/*if (system != null && system.Y == y)
-			{
-				foreach (Squadron fleet in system.SystemFleets)
-				{
-					fleets.Add(fleet);
-				}
-			}*/
-			return (fleets.Count > 0 ? new SquadronGroup(fleets, CurrentEmpire, system) : null);
+			return (fleets.Count > 0 ? new FleetGroup(fleets) : null);
 		}
 
-		public bool UpdateFleetMovement()
+		public bool UpdateFleetMovement(GridCell[][] gridcells)
 		{
 			bool stillHaveMovement = false;
 			foreach (Empire empire in empires)
 			{
-				if (empire.FleetManager.MoveFleets())
+				if (empire.FleetManager.MoveFleets(gridcells))
 				{
 					stillHaveMovement = true;
 				}
@@ -182,23 +149,24 @@ namespace Beyond_Beyaan
 			return stillHaveMovement;
 		}
 
-		public void UpdateEmpires(Galaxy galaxy, PlanetTypeManager planetTypeManager, Random r)
+		public void UpdateEmpires(Galaxy galaxy)
 		{
 			foreach (Empire empire in empires)
 			{
 				empire.SitRepManager.ClearItems();
 				empire.FleetManager.ResetFleetMovements();
-				empire.ProcessTurn();
-				empire.UpdateProjects(planetTypeManager, r);
-				//empire.TechnologyManager.ProcessResearchTurn(empire.ResearchPoints, empire.ItemManager, empire.SitRepManager);
 				empire.CheckExploredSystems(galaxy);
+				empire.PlanetManager.UpdatePopGrowth();
+				empire.CheckForBuiltShips();
+				empire.UpdateResearchPoints();
+				empire.TechnologyManager.ProcessResearchTurn(empire.ResearchPoints, empire.SitRepManager);
 				empire.ContactManager.UpdateContacts(empire.SitRepManager);
 			}
 		}
 
 		public void LookForCombat()
 		{
-			/*List<Fleet> fleets = new List<Fleet>();
+			List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
 			{
 				foreach (Fleet fleet in empire.FleetManager.GetFleets())
@@ -208,96 +176,10 @@ namespace Beyond_Beyaan
 			}
 			combatsToProcess = new List<CombatToProcess>();
 			CombatToProcess combatToProcess = new CombatToProcess(0, 0, fleets);
-			combatsToProcess.Add(combatToProcess);*/
+			combatsToProcess.Add(combatToProcess);
 		}
 
-		public void CheckForColonizers(Galaxy galaxy)
-		{
-			ColonizersToProcess.Clear();
-			foreach (Empire empire in empires)
-			{
-				foreach (Squadron fleet in empire.FleetManager.GetFleets())
-				{
-					//Fleet have stopped, and has colony ships
-					if (fleet.ColonizablePlanets.Count > 0 && fleet.TravelNodes == null)
-					{
-						//StarSystem system = fleet.System;
-
-						//bool breakOut = false;
-						/*foreach (Planet planet in system.Planets)
-						{
-							if (planet.Owner != null)
-							{
-								//Already owned, skip
-								continue;
-							}
-							foreach (string colonizablePlanet in fleet.ColonizablePlanets)
-							{
-								if (string.Compare(colonizablePlanet, planet.PlanetType.InternalName) == 0)
-								{
-									//At least one planet can be colonized by at least one ship, add this to processing
-									SettlerToProcess settler = new SettlerToProcess();
-									settler.whichFleet = fleet;
-									settler.whichSystem = system;
-									colonizersToProcess.Add(settler);
-									breakOut = true;
-									break;
-								}
-							}
-							if (breakOut)
-							{
-								break;
-							}
-						}*/
-					}
-				}
-			}
-		}
-
-		public void CheckForInvaders(Galaxy galaxy)
-		{
-			InvadersToProcess.Clear();
-			foreach (Empire empire in empires)
-			{
-				foreach (Squadron fleet in empire.FleetManager.GetFleets())
-				{
-					//Fleet have stopped, and has colony ships
-					if (fleet.TotalPeopleInTransit > 0 && fleet.TravelNodes == null)
-					{
-						StarSystem system = fleet.System;
-
-						/*foreach (Planet planet in system.Planets)
-						{
-							if (planet.Owner == null)
-							{
-								//Can't land on empty planets
-								continue;
-							}
-							else
-							{
-								//At least one planet can be colonized by at least one ship, add this to processing
-								SettlerToProcess settler = new SettlerToProcess();
-								settler.whichFleet = fleet;
-								settler.whichSystem = system;
-								invadersToProcess.Add(settler);
-								break;
-							}
-						}*/
-					}
-				}
-			}
-		}
-
-		public void ClearEmptyFleets()
-		{
-			//Done after colonization/invasion, it's possible that a fleet consisted only a colony ship, and it've colonized
-			foreach (Empire empire in empires)
-			{
-				empire.FleetManager.ClearEmptyFleets();
-			}
-		}
-
-		/*public void UpdateInfluenceMaps(Galaxy galaxy)
+		public void UpdateInfluenceMaps(Galaxy galaxy)
 		{
 			GridCell[][] gridCells = galaxy.GetGridCells();
 			Dictionary<Empire, int>[][] cells = new Dictionary<Empire,int>[gridCells.Length][];
@@ -412,13 +294,13 @@ namespace Beyond_Beyaan
 					gridCells[i][j].secondaryEmpire.ContactManager.EstablishContact(gridCells[i][j].dominantEmpire, gridCells[i][j].secondaryEmpire.SitRepManager);
 				}
 			}
-			List<Squadron> allFleets = GetFleetsWithinArea(-1, -1, galaxy.GalaxySize + 2, galaxy.GalaxySize + 2);
+			List<Fleet> allFleets = GetFleetsWithinArea(-1, -1, galaxy.GalaxySize + 2, galaxy.GalaxySize + 2);
 			foreach (Empire empire in empires)
 			{
 				//empire.CreateInfluenceMapSprite(gridCells);
 
-				List<Squadron> visibleFleets = new List<Squadron>();
-				foreach (Squadron fleet in allFleets)
+				List<Fleet> visibleFleets = new List<Fleet>();
+				foreach (Fleet fleet in allFleets)
 				{
 					if (fleet.Empire == empire)
 					{
@@ -430,14 +312,14 @@ namespace Beyond_Beyaan
 					}
 				}
 
-				visibleFleets.Sort((Squadron a, Squadron b) => { return string.Compare(a.Empire.EmpireName, b.Empire.EmpireName); });
+				visibleFleets.Sort((Fleet a, Fleet b) => { return string.Compare(a.Empire.EmpireName, b.Empire.EmpireName); });
 				empire.SetVisibleFleets(visibleFleets);
 			}
-		}*/
+		}
 
 		public void UpdateMigration(Galaxy galaxy)
 		{
-			//GridCell[][] gridCells = galaxy.GetGridCells();
+			GridCell[][] gridCells = galaxy.GetGridCells();
 			foreach (Empire empire in empires)
 			{
 				empire.SystemsUnderInfluence = new List<StarSystem>();
@@ -445,7 +327,7 @@ namespace Beyond_Beyaan
 			List<StarSystem> systems = galaxy.GetAllStars();
 			foreach (StarSystem system in systems)
 			{
-				foreach (Empire empire in system.EmpiresWithSectorsInThisSystem)
+				foreach (Empire empire in system.EmpiresWithPlanetsInThisSystem)
 				{
 					empire.SystemsUnderInfluence.Add(system);
 				}
@@ -456,8 +338,8 @@ namespace Beyond_Beyaan
 				}
 				system.EmpiresWithFleetAdjacentThisTurn = new List<Empire>();
 
-				List<Squadron> fleetsAdjacentThisTurn = GetFleetsNextToSystem(system);
-				foreach (Squadron fleet in fleetsAdjacentThisTurn)
+				List<Fleet> fleetsAdjacentThisTurn = GetFleetsWithinArea(system.X - 1, system.Y - 1, system.Size + 2, system.Size + 2);
+				foreach (Fleet fleet in fleetsAdjacentThisTurn)
 				{
 					if (!system.EmpiresWithFleetAdjacentThisTurn.Contains(fleet.Empire))
 					{
@@ -481,24 +363,6 @@ namespace Beyond_Beyaan
 			foreach (StarSystem system in systems)
 			{
 				system.UpdateOwners();
-			}
-		}
-
-		public void CheckForDefeatedEmpires()
-		{
-			List<Empire> empiresToRemove = new List<Empire>();
-			foreach (Empire empire in empires)
-			{
-				if (empire.PlanetManager.Planets.Count == 0 && empire.FleetManager.GetFleets().Count == 0)
-				{
-					empiresToRemove.Add(empire);
-				}
-			}
-			foreach (Empire empire in empiresToRemove)
-			{
-				empires.Remove(empire);
-
-				//Add news event for empire downfall
 			}
 		}
 		#endregion
