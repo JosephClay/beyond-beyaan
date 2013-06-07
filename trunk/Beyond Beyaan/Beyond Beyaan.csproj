@@ -70,7 +70,9 @@
     <Compile Include="Data Managers\ContactManager.cs" />
     <Compile Include="Data Managers\RaceManager.cs" />
     <Compile Include="Data Managers\SitRepManager.cs" />
+    <Compile Include="Data Managers\SpriteManager.cs" />
     <Compile Include="Data Modules\AI.cs" />
+    <Compile Include="Data Modules\BBSprite.cs" />
     <Compile Include="Data Modules\Camera.cs" />
     <Compile Include="Data Managers\DrawingManagement.cs" />
     <Compile Include="Data Modules\CombatItems.cs" />

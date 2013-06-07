@@ -15,6 +15,7 @@ namespace Beyond_Beyaan
 	class GameMain
 	{
 		Form parentForm;
+		internal SpriteManager SpriteManager;
 		internal DrawingManagement drawingManagement;
 		private ScreenInterface screenInterface;
 		private MainGameMenu mainGameMenu;
@@ -44,7 +45,6 @@ namespace Beyond_Beyaan
 		{
 			this.parentForm = parentForm;
 
-			reason = string.Empty;
 			ScreenWidth = screenWidth;
 			ScreenHeight = screenHeight;
 
@@ -67,6 +67,13 @@ namespace Beyond_Beyaan
 			ShipShader = GorgonLibrary.Graphics.FXShader.FromFile("ColorShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			StarShader = GorgonLibrary.Graphics.FXShader.FromFile("StarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 
+			SpriteManager = new SpriteManager();
+			if (!SpriteManager.Initialize(new System.IO.DirectoryInfo(Environment.CurrentDirectory + "\\Data\\Default\\"), new System.IO.DirectoryInfo(Environment.CurrentDirectory + "\\Data\\Default\\graphics\\"), out reason))
+			{
+				return false;
+			}
+
+			reason = string.Empty;
 			return true;
 		}
 
