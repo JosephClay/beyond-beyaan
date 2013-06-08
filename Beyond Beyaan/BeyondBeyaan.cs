@@ -15,7 +15,6 @@ namespace Beyond_Beyaan
 	{
 		private Input input;
 		private Keyboard keyboard;
-		private Mouse mouse;
 
 		private GameMain gameMain;
 
@@ -46,10 +45,6 @@ namespace Beyond_Beyaan
 				keyboard.Enabled = true;
 				keyboard.Exclusive = false;
 				keyboard.KeyDown += new KeyboardInputEvent(keyboard_KeyDown);
-
-				mouse = input.Mouse;
-				mouse.Enabled = true;
-				mouse.Exclusive = false;
 
 				gameMain = new GameMain();
 
@@ -87,13 +82,7 @@ namespace Beyond_Beyaan
 			Gorgon.Screen.Clear(Drawing.Color.Black);
 			Gorgon.Screen.BeginDrawing();
 
-			if (mouse.Wheel != 0)
-			{
-				gameMain.MouseScroll(mouse.Wheel, (int)mouse.Position.X, (int)mouse.Position.Y);
-				mouse.Wheel = 0;
-			}
-
-			gameMain.ProcessGame(mouse, e.FrameDeltaTime);
+			gameMain.ProcessGame(e.FrameDeltaTime);
 
 			Gorgon.Screen.EndDrawing();
 		}
@@ -106,6 +95,27 @@ namespace Beyond_Beyaan
 		private void BeyondBeyaan_MouseUp(object sender, MouseEventArgs e)
 		{
 			gameMain.MouseUp(e);
+		}
+
+		private void BeyondBeyaan_MouseMove(object sender, MouseEventArgs e)
+		{
+			gameMain.MousePos.X = e.X;
+			gameMain.MousePos.Y = e.Y;
+		}
+
+		void BeyondBeyaan_MouseWheel(object sender, MouseEventArgs e)
+		{
+			gameMain.MouseScroll(e.Delta);
+		}
+
+		private void BeyondBeyaan_MouseLeave(object sender, EventArgs e)
+		{
+			Cursor.Show();
+		}
+
+		private void BeyondBeyaan_MouseEnter(object sender, EventArgs e)
+		{
+			Cursor.Hide();
 		}
 	}
 }

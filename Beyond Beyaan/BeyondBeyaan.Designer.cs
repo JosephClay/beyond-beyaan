@@ -40,6 +40,10 @@
 			this.Text = "Beyond Beyaan";
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.BeyondBeyaan_MouseDown);
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.BeyondBeyaan_MouseUp);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.BeyondBeyaan_MouseMove);
+			this.MouseWheel += new System.Windows.Forms.MouseEventHandler(BeyondBeyaan_MouseWheel);
+			this.MouseEnter += new System.EventHandler(this.BeyondBeyaan_MouseEnter);
+			this.MouseLeave += new System.EventHandler(this.BeyondBeyaan_MouseLeave);
 			this.ResumeLayout(false);
 
 		}

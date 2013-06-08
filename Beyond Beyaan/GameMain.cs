@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Managers;
+using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Screens;
 
 namespace Beyond_Beyaan
@@ -15,6 +16,7 @@ namespace Beyond_Beyaan
 	class GameMain
 	{
 		Form parentForm;
+		internal Random Random;
 		internal SpriteManager SpriteManager;
 		internal DrawingManagement drawingManagement;
 		private ScreenInterface screenInterface;
@@ -41,9 +43,18 @@ namespace Beyond_Beyaan
 		internal GorgonLibrary.Graphics.FXShader ShipShader;
 		internal GorgonLibrary.Graphics.FXShader StarShader;
 
+		#region Mouse Stuff
+		internal Point MousePos;
+		private BBSprite Cursor;
+		#endregion
+
 		public bool Initalize(int screenWidth, int screenHeight, Form parentForm, out string reason)
 		{
 			this.parentForm = parentForm;
+
+			Random = new Random();
+
+			MousePos = new Point();
 
 			ScreenWidth = screenWidth;
 			ScreenHeight = screenHeight;
@@ -73,6 +84,13 @@ namespace Beyond_Beyaan
 				return false;
 			}
 
+			Cursor = SpriteManager.GetSprite("Cursor", Random);
+			if (Cursor == null)
+			{
+				reason = "Cursor is not defined in sprites.xml";
+				return false;
+			}
+
 			reason = string.Empty;
 			return true;
 		}
@@ -97,7 +115,7 @@ namespace Beyond_Beyaan
 			taskBar.Resize();
 		}
 
-		public void ProcessGame(Mouse mouse, float frameDeltaTime)
+		public void ProcessGame(float frameDeltaTime)
 		{
 			bool skipUpdate = false;
 			bool handleTaskBar = false;
@@ -107,18 +125,18 @@ namespace Beyond_Beyaan
 			}
 			if (handleTaskBar)
 			{
-				if (taskBar.Update((int)mouse.Position.X, (int)mouse.Position.Y, frameDeltaTime))
+				if (taskBar.Update(MousePos.X, MousePos.Y, frameDeltaTime))
 				{
 					skipUpdate = true;
 				}
-				if (situationReport.Update((int)mouse.Position.X, (int)mouse.Position.Y, frameDeltaTime))
+				if (situationReport.Update(MousePos.X, MousePos.Y, frameDeltaTime))
 				{
 					skipUpdate = true;
 				}
 			}
 			if (!skipUpdate)
 			{
-				screenInterface.Update((int)mouse.Position.X, (int)mouse.Position.Y, frameDeltaTime);
+				screenInterface.Update(MousePos.X, MousePos.Y, frameDeltaTime);
 			}
 			screenInterface.DrawScreen(drawingManagement);
 			if (handleTaskBar)
@@ -126,6 +144,8 @@ namespace Beyond_Beyaan
 				taskBar.Draw(drawingManagement);
 				situationReport.DrawSitRep(drawingManagement);
 			}
+			Cursor.Draw(MousePos.X, MousePos.Y);
+			Cursor.Update(frameDeltaTime, Random);
 		}
 
 		public void MouseDown(MouseEventArgs e)
@@ -202,9 +222,9 @@ namespace Beyond_Beyaan
 			screenInterface.MouseUp(e.X, e.Y, whichButton);
 		}
 
-		public void MouseScroll(int direction, int mouseX, int mouseY)
+		public void MouseScroll(int delta)
 		{
-			screenInterface.MouseScroll(direction, mouseX, mouseY);
+			screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
