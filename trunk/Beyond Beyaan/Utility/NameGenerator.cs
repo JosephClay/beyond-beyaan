@@ -11,6 +11,41 @@ namespace Beyond_Beyaan
 
 		public List<StringGetter[]> Generator = null;
 
+		private List<string> StarNames = new List<string>
+		{
+			"Govik",
+			"Smeggit",
+			"Starker",
+			"Sharpe",
+			"Drakknott",
+			"Hypatia",
+			"Tyson",
+			"Jerobynn",
+			"Drused",
+			"Xin",
+			"Moby",
+			"Zandalar",
+			"Solifugus",
+			"Boundless Butterfly Galaxy of Chase",
+			"Robynseye",
+			"Arouca",
+			"Aki Ohana",
+			"Predestination",
+			"Star's End",
+			"Kar Fimbul",
+			"Firefly",
+			"Boordin",
+			"Whichammer",
+			"Dyson Alpha",
+			"Feona",
+			"Oatams",
+			"Ersilia",
+			"Sarah's Sunflower",
+			"Bylon",
+			"Rangulus",
+			"Ptolemae",
+		};
+
 		public delegate string StringGetter();
 
 		static List<string> NonEndingConsonantChunks = new List<string>(new string[]
@@ -101,6 +136,18 @@ namespace Beyond_Beyaan
                 Seq(NEC, V, S, NEC, V, NEC, V, EC),
                 Seq(NEC, V, S, NEC, V, NEC, V, NEC, V, EC)}
 				);
+		}
+
+		public string GetStarName(Random r)
+		{
+			if (StarNames.Count > 0)
+			{
+				int index = r.Next(StarNames.Count);
+				string name = StarNames[index];
+				StarNames.RemoveAt(index);
+				return name;
+			}
+			return GetName();
 		}
 
 		//Function to call to get a random name

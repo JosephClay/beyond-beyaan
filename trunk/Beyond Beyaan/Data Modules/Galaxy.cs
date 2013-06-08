@@ -36,9 +36,8 @@ namespace Beyond_Beyaan
 		/// </summary>
 		/// <param name="galaxyType"></param>
 		/// <param name="starCount"></param>
-		public void GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, int size, int minDistance)
+		public void GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, int size, int minDistance, Random r)
 		{
-			Random r = new Random();
 			bool[][] grid = null;
 			switch (galaxyType)
 			{
@@ -66,7 +65,7 @@ namespace Beyond_Beyaan
 
 			GalaxySize = grid.Length;
 
-			FillGalaxyWithStars(minDistance, minPlanets, maxPlanets, grid);
+			FillGalaxyWithStars(minDistance, minPlanets, maxPlanets, grid, r);
 
 			SetBlackHoles(10, r);
 
@@ -235,11 +234,10 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Filling Functions
-		private void FillGalaxyWithStars(int minDistance, int minPlanets, int maxPlanets, bool[][] grid)
+		private void FillGalaxyWithStars(int minDistance, int minPlanets, int maxPlanets, bool[][] grid, Random r)
 		{
 			starSystems = new List<StarSystem>();
 			NameGenerator nameGenerator = new NameGenerator();
-			Random r = new Random();
 
 			StarNode starTree = new StarNode(0, 0, grid.Length - 1, grid.Length - 1);
 
@@ -286,7 +284,7 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(nameGenerator.GetName(), x, y, starColor, newSize, minPlanets, maxPlanets, r));
+				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x, y, starColor, newSize, minPlanets, maxPlanets, r));
 
 				int adjustedMinDistance = minDistance + r.Next(9);
 
