@@ -49,7 +49,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return;
 			}
-			SitRepManager sitRepManager = gameMain.empireManager.CurrentEmpire.SitRepManager;
+			SitRepManager sitRepManager = gameMain.EmpireManager.CurrentEmpire.SitRepManager;
 
 			int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
@@ -80,7 +80,7 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
-			SitRepManager sitRepManager = gameMain.empireManager.CurrentEmpire.SitRepManager;
+			SitRepManager sitRepManager = gameMain.EmpireManager.CurrentEmpire.SitRepManager;
 			int maxVisible = AMOUNT_VISIBLE;
 
 			if (sitRepManager.Items.Count < AMOUNT_VISIBLE)
@@ -109,7 +109,7 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
-			SitRepManager sitRepManager = gameMain.empireManager.CurrentEmpire.SitRepManager;
+			SitRepManager sitRepManager = gameMain.EmpireManager.CurrentEmpire.SitRepManager;
 			int maxVisible = AMOUNT_VISIBLE;
 
 			if (sitRepManager.Items.Count < AMOUNT_VISIBLE)
@@ -134,7 +134,7 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
-			SitRepManager sitRepManager = gameMain.empireManager.CurrentEmpire.SitRepManager;
+			SitRepManager sitRepManager = gameMain.EmpireManager.CurrentEmpire.SitRepManager;
 			int maxVisible = AMOUNT_VISIBLE;
 
 			if (sitRepManager.Items.Count < AMOUNT_VISIBLE)
@@ -157,8 +157,8 @@ namespace Beyond_Beyaan.Screens
 					gameMain.ChangeToScreen(item.ScreenEventIsIn);
 					if (item.SystemEventOccuredAt != null)
 					{
-						gameMain.empireManager.CurrentEmpire.SelectedSystem = gameMain.empireManager.CurrentEmpire.SelectedSystem = item.SystemEventOccuredAt;
-						gameMain.empireManager.CurrentEmpire.SelectedFleetGroup = null;
+						gameMain.EmpireManager.CurrentEmpire.SelectedSystem = gameMain.EmpireManager.CurrentEmpire.SelectedSystem = item.SystemEventOccuredAt;
+						gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup = null;
 					}
 					if (item.PlanetEventOccuredAt != null)
 					{
@@ -166,7 +166,7 @@ namespace Beyond_Beyaan.Screens
 						{
 							if (item.SystemEventOccuredAt.Planets[j] == item.PlanetEventOccuredAt)
 							{
-								gameMain.empireManager.CurrentEmpire.PlanetSelected = j;
+								gameMain.EmpireManager.CurrentEmpire.PlanetSelected = j;
 							}
 						}
 					}
@@ -182,11 +182,11 @@ namespace Beyond_Beyaan.Screens
 
 		public void Refresh()
 		{
-			scrollBar.SetAmountOfItems(gameMain.empireManager.CurrentEmpire.SitRepManager.Items.Count);
+			scrollBar.SetAmountOfItems(gameMain.EmpireManager.CurrentEmpire.SitRepManager.Items.Count);
 			scrollBar.TopIndex = 0;
 			topIndex = 0;
-			isVisible = gameMain.empireManager.CurrentEmpire.SitRepManager.HasItems;
-			RefreshLabels(gameMain.empireManager.CurrentEmpire.SitRepManager);
+			isVisible = gameMain.EmpireManager.CurrentEmpire.SitRepManager.HasItems;
+			RefreshLabels(gameMain.EmpireManager.CurrentEmpire.SitRepManager);
 		}
 
 		public void Clear()

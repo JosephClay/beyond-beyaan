@@ -66,6 +66,12 @@
     <Compile Include="BeyondBeyaan.Designer.cs">
       <DependentUpon>BeyondBeyaan.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration.designer.cs">
+      <DependentUpon>Configuration.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data Managers\AIManager.cs" />
     <Compile Include="Data Managers\ContactManager.cs" />
     <Compile Include="Data Managers\RaceManager.cs" />
@@ -114,6 +120,9 @@
     <Compile Include="Utility\Utility.cs" />
     <EmbeddedResource Include="BeyondBeyaan.resx">
       <DependentUpon>BeyondBeyaan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration.resx">
+      <DependentUpon>Configuration.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -295,12 +295,12 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadScreen()
 		{
-			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
+			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
 			ownedPlanets = currentEmpire.PlanetManager.Planets;
 			otherPlanets = new List<Planet>();
 			neutralPlanets = new List<Planet>();
 			
-			foreach (StarSystem system in gameMain.galaxy.GetAllStars())
+			foreach (StarSystem system in gameMain.Galaxy.GetAllStars())
 			{
 				if (system.IsThisSystemExploredByEmpire(currentEmpire))
 				{
@@ -388,7 +388,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void RefreshLabels()
 		{			
-			Empire empire = gameMain.empireManager.CurrentEmpire;
+			Empire empire = gameMain.EmpireManager.CurrentEmpire;
 
 			for (int i = 0; i < maxVisible; i++)
 			{
@@ -426,12 +426,12 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.galaxy.GetAllStars();
+			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
-				int x = (gameMain.ScreenWidth / 2) - 400 + (int)(386.0f * (system.X / (float)gameMain.galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)gameMain.galaxy.GalaxySize));
+				int x = (gameMain.ScreenWidth / 2) - 400 + (int)(386.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize));
 
 				if (system.Type == StarType.BLACK_HOLE)
 				{

@@ -20,7 +20,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			this.gameMain = gameMain;
 			camera = new Camera(gameMain.ScreenWidth, gameMain.ScreenHeight);
-			camera.InitCamera(gameMain.galaxy.GalaxySize, 32);
+			camera.InitCamera(gameMain.Galaxy.GalaxySize, 32);
 			camera.ZoomOut();
 
 			sizes = new float[4];
@@ -37,7 +37,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
+			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
 			foreach (StarSystem system in systems)
 			{
 				if (system.Type == StarType.BLACK_HOLE)
@@ -52,7 +52,7 @@ namespace Beyond_Beyaan.Screens
 					GorgonLibrary.Gorgon.CurrentShader = null;
 				}
 			}
-			foreach (Fleet fleet in gameMain.empireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
+			foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
 			{
 				drawingManagement.DrawSprite(SpriteName.Fleet, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, 32, 32, fleet.Empire.EmpireColor);
 			}
@@ -70,7 +70,7 @@ namespace Beyond_Beyaan.Screens
 				tickCount += frameDeltaTime;
 				if (tickCount > 0.50f)
 				{
-					stillMoving = gameMain.empireManager.UpdateFleetMovement(gameMain.galaxy.GetGridCells());
+					stillMoving = gameMain.EmpireManager.UpdateFleetMovement(gameMain.Galaxy.GetGridCells());
 					tickCount -= 0.50f;
 				}
 			}
@@ -85,26 +85,26 @@ namespace Beyond_Beyaan.Screens
 						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 1:
-						gameMain.empireManager.UpdateEmpires(gameMain.galaxy);
+						gameMain.EmpireManager.UpdateEmpires(gameMain.Galaxy);
 						updateText.SetText("Processing Influences");
 						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 2:
-						gameMain.empireManager.UpdateInfluenceMaps(gameMain.galaxy);
+						gameMain.EmpireManager.UpdateInfluenceMaps(gameMain.Galaxy);
 						updateText.SetText("Processing Migration");
 						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 3:
-						gameMain.empireManager.UpdateMigration(gameMain.galaxy);
-						gameMain.empireManager.LookForCombat();
-						if (gameMain.empireManager.HasCombat)
+						gameMain.EmpireManager.UpdateMigration(gameMain.Galaxy);
+						gameMain.EmpireManager.LookForCombat();
+						if (gameMain.EmpireManager.HasCombat)
 						{
 							gameMain.ChangeToScreen(Screen.Battle);
 						}
 						break;
 					case 4:
 						updateSection = -1;
-						gameMain.empireManager.SetInitialEmpireTurn();
+						gameMain.EmpireManager.SetInitialEmpireTurn();
 						gameMain.ChangeToScreen(Screen.Galaxy);
 						stillMoving = true;
 						break;

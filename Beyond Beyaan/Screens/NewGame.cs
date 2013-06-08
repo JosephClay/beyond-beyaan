@@ -77,7 +77,7 @@ namespace Beyond_Beyaan.Screens
 
 			List<string> names = new List<string>();
 			names.Add("Random");
-			foreach (Race race in gameMain.raceManager.Races)
+			foreach (Race race in gameMain.RaceManager.Races)
 			{
 				names.Add(race.RaceName);
 			}
@@ -85,7 +85,7 @@ namespace Beyond_Beyaan.Screens
 
 			names = new List<string>();
 			names.Add("Random");
-			foreach (AI ai in gameMain.aiManager.AIs)
+			foreach (AI ai in gameMain.AIManager.AIs)
 			{
 				names.Add(ai.AIName);
 			}
@@ -267,22 +267,22 @@ namespace Beyond_Beyaan.Screens
 				switch (generatingGalaxy)
 				{
 					case 0:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.RANDOM, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.RANDOM, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 					case 1:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.CLUSTER, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.CLUSTER, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 					case 2:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.RING, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.RING, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 					case 3:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.DIAMOND, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.DIAMOND, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 					case 4:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.STAR, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.STAR, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 				}
-				numOfStarsLabel.SetText("Number of stars: " + gameMain.galaxy.GetAllStars().Count);
+				numOfStarsLabel.SetText("Number of stars: " + gameMain.Galaxy.GetAllStars().Count);
 				generatingGalaxy = -1;
 				generatingDrawn = false;
 			}
@@ -374,21 +374,21 @@ namespace Beyond_Beyaan.Screens
 				AI ai = null;
 				if (raceComboBox.SelectedIndex == 0)
 				{
-					race = gameMain.raceManager.Races[r.Next(gameMain.raceManager.Races.Count)];
+					race = gameMain.RaceManager.Races[r.Next(gameMain.RaceManager.Races.Count)];
 				}
 				else
 				{
-					race = gameMain.raceManager.Races[raceComboBox.SelectedIndex - 1];
+					race = gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1];
 				}
 				if (aiPlayer.Selected)
 				{
 					if (aiComboBox.SelectedIndex == 0)
 					{
-						ai = gameMain.aiManager.AIs[r.Next(gameMain.aiManager.AIs.Count)];
+						ai = gameMain.AIManager.AIs[r.Next(gameMain.AIManager.AIs.Count)];
 					}
 					else
 					{
-						ai = gameMain.aiManager.AIs[aiComboBox.SelectedIndex - 1];
+						ai = gameMain.AIManager.AIs[aiComboBox.SelectedIndex - 1];
 					}
 				}
 				int id = 0;
@@ -404,7 +404,7 @@ namespace Beyond_Beyaan.Screens
 					empireNameTextBox.SetString(race.GetRandomEmperorName());
 				}
 				Empire newEmpire = new Empire(empireNameTextBox.GetString(), id, race, humanPlayer.Selected ? PlayerType.HUMAN : PlayerType.CPU, ai, 
-					System.Drawing.Color.FromArgb(255, r.Next(201) + 55, r.Next(201) + 55, r.Next(201) + 55));
+					System.Drawing.Color.FromArgb(255, r.Next(201) + 55, r.Next(201) + 55, r.Next(201) + 55), gameMain);
 				empires.Add(newEmpire);
 				empireNames[empires.Count - 1].SetText(empireNameTextBox.GetString());
 				if (raceComboBox.SelectedIndex == 0)
@@ -422,7 +422,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (raceComboBox.SelectedIndex > 0)
 				{
-					miniAvatar = gameMain.raceManager.Races[raceComboBox.SelectedIndex - 1].GetMiniAvatar();
+					miniAvatar = gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1].GetMiniAvatar();
 					miniAvatar.SetPosition(10, 600);
 				}
 				return;
@@ -442,10 +442,10 @@ namespace Beyond_Beyaan.Screens
 							gameMain.ChangeToScreen(Screen.MainMenu);
 							break;
 						case 1:
-							if (gameMain.galaxy.GalaxySize > 0)
+							if (gameMain.Galaxy.GalaxySize > 0)
 							{
 								int habitableStars = 0;
-								foreach (StarSystem system in gameMain.galaxy.GetAllStars())
+								foreach (StarSystem system in gameMain.Galaxy.GetAllStars())
 								{
 									if (system.Type != StarType.BLACK_HOLE)
 									{
@@ -472,16 +472,16 @@ namespace Beyond_Beyaan.Screens
 								foreach (Empire empire in empires)
 								{
 									Planet homePlanet;
-									gameMain.empireManager.AddEmpire(empire);
-									StarSystem homeSystem = gameMain.galaxy.SetHomeworld(empire, out homePlanet);
+									gameMain.EmpireManager.AddEmpire(empire);
+									StarSystem homeSystem = gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
 									empire.SetHomeSystem(homeSystem, homePlanet);
 								}
-								gameMain.empireManager.SetupContacts();
-								gameMain.empireManager.UpdateInfluenceMaps(gameMain.galaxy);
-								gameMain.empireManager.SetInitialEmpireTurn();
-								//gameMain.empireManager.ProcessNextEmpire(); //This will process the AI players, then set the current empire to human controlled one
+								gameMain.EmpireManager.SetupContacts();
+								gameMain.EmpireManager.UpdateInfluenceMaps(gameMain.Galaxy);
+								gameMain.EmpireManager.SetInitialEmpireTurn();
+								//gameMain.EmpireManager.ProcessNextEmpire(); //This will process the AI players, then set the current empire to human controlled one
 								gameMain.RefreshSitRep();
-								gameMain.galaxy.ConstructQuadTree();
+								gameMain.Galaxy.ConstructQuadTree();
 								gameMain.ChangeToScreen(Screen.Galaxy);
 							}
 							break;
@@ -564,16 +564,16 @@ namespace Beyond_Beyaan.Screens
 		{
 			drawingManagement.DrawSprite(SpriteName.Screen, gameMain.ScreenWidth - 500, 0, 255, System.Drawing.Color.White);
 
-			GorgonLibrary.Graphics.Sprite nebula = gameMain.galaxy.Nebula;
+			GorgonLibrary.Graphics.Sprite nebula = gameMain.Galaxy.Nebula;
 			if (nebula != null)
 			{
 				nebula.SetPosition(gameMain.ScreenWidth - 499, 1);
-				float scale = (498.0f / (gameMain.galaxy.GalaxySize + 3));
+				float scale = (498.0f / (gameMain.Galaxy.GalaxySize + 3));
 				nebula.SetScale(scale, scale);
-				gameMain.galaxy.Nebula.Draw();
+				gameMain.Galaxy.Nebula.Draw();
 			}
 
-			List<StarSystem> systems = gameMain.galaxy.GetAllStars();
+			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
 			galaxyComboBox.Draw(drawingManagement);
 
@@ -581,8 +581,8 @@ namespace Beyond_Beyaan.Screens
 			{
 				foreach (StarSystem system in systems)
 				{
-					int x = (gameMain.ScreenWidth - 499) + (int)(480.0f * (system.X / (float)gameMain.galaxy.GalaxySize));
-					int y = (int)(480.0f * (system.Y / (float)gameMain.galaxy.GalaxySize)) + 1;
+					int x = (gameMain.ScreenWidth - 499) + (int)(480.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
+					int y = (int)(480.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize)) + 1;
 					if (system.Type == StarType.BLACK_HOLE)
 					{
 						drawingManagement.DrawSprite(SpriteName.BlackHole, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);

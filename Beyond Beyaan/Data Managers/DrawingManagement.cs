@@ -197,17 +197,6 @@ namespace Beyond_Beyaan
 		{
 			sprites = new Dictionary<SpriteName, Sprite>();
 			fonts = new Dictionary<string, Font>();
-
-			string reason;
-			if (!LoadGalaxyUISprites(out reason))
-			{
-				MessageBox.Show(reason);
-			}
-
-			if (!AddFont("Arial", "Arial", 10.0f, false, out reason))
-			{
-				MessageBox.Show(reason);
-			}
 		}
 		#endregion
 
@@ -260,111 +249,115 @@ namespace Beyond_Beyaan
 				return false;
 			}
 		}
-		
-		private bool LoadGalaxyUISprites(out string reason)
+
+		public bool LoadGraphics(string directory, out string reason)
 		{
+			if (!AddFont("Arial", "Arial", 10.0f, false, out reason))
+			{
+				MessageBox.Show(reason);
+			}
 			//Load from file
-			if (!LoadSpriteFromFile("InterfaceArt", SpriteName.Interface, Environment.CurrentDirectory + "\\Sprites\\InterfaceArt.png", true, out reason))
+			if (!LoadSpriteFromFile("InterfaceArt", SpriteName.Interface, directory + "\\InterfaceArt.png", true, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("Buttons", SpriteName.Buttons, Environment.CurrentDirectory + "\\Sprites\\buttons.png", false, out reason))
+			if (!LoadSpriteFromFile("Buttons", SpriteName.Buttons, directory + "\\buttons.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("HumanCpu", SpriteName.HumanCpu, Environment.CurrentDirectory + "\\Sprites\\human cpu.png", false, out reason))
+			if (!LoadSpriteFromFile("HumanCpu", SpriteName.HumanCpu, directory + "\\human cpu.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("ScrollNSlider", SpriteName.ScrollNSlider, Environment.CurrentDirectory + "\\Sprites\\Scroll and slider.png", false, out reason))
+			if (!LoadSpriteFromFile("ScrollNSlider", SpriteName.ScrollNSlider, directory + "\\Scroll and slider.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("Stars", SpriteName.Stars, Environment.CurrentDirectory + "\\Sprites\\Stars.png", false, out reason))
+			if (!LoadSpriteFromFile("Stars", SpriteName.Stars, directory + "\\Stars old.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("Planets", SpriteName.Planets, Environment.CurrentDirectory + "\\Sprites\\planets.png", false, out reason))
+			if (!LoadSpriteFromFile("Planets", SpriteName.Planets, directory + "\\planets.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("PlanetIcons", SpriteName.PlanetIcons, Environment.CurrentDirectory + "\\Sprites\\icon 2.png", false, out reason))
+			if (!LoadSpriteFromFile("PlanetIcons", SpriteName.PlanetIcons, directory + "\\icon 2.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("BarSlider", SpriteName.BarSlider, Environment.CurrentDirectory + "\\Sprites\\bar slider.png", false, out reason))
+			if (!LoadSpriteFromFile("BarSlider", SpriteName.BarSlider, directory + "\\bar slider.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("RelationSlider", SpriteName.RelationSlider, Environment.CurrentDirectory + "\\Sprites\\bar mark 25.png", false, out reason))
+			if (!LoadSpriteFromFile("RelationSlider", SpriteName.RelationSlider, directory + "\\bar mark 25.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("Message", SpriteName.Message, Environment.CurrentDirectory + "\\Sprites\\button message.png", false, out reason))
+			if (!LoadSpriteFromFile("Message", SpriteName.Message, directory + "\\button message.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("TitlePlanet", SpriteName.TitlePlanet, Environment.CurrentDirectory + "\\Sprites\\Title planet.png", false, out reason))
+			if (!LoadSpriteFromFile("TitlePlanet", SpriteName.TitlePlanet, directory + "\\Title planet.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("TitleName", SpriteName.TitleName, Environment.CurrentDirectory + "\\Sprites\\Title name.png", false, out reason))
+			if (!LoadSpriteFromFile("TitleName", SpriteName.TitleName, directory + "\\Title name.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("TitleNebula", SpriteName.TitleNebula, Environment.CurrentDirectory + "\\Sprites\\Title nebula.png", false, out reason))
+			if (!LoadSpriteFromFile("TitleNebula", SpriteName.TitleNebula, directory + "\\Title nebula.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("CONTINUE", SpriteName.Continue, Environment.CurrentDirectory + "\\Sprites\\bot CONTINUE.png", false, out reason))
+			if (!LoadSpriteFromFile("CONTINUE", SpriteName.Continue, directory + "\\bot CONTINUE.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("CUSTOMIZE", SpriteName.Customize, Environment.CurrentDirectory + "\\Sprites\\bot CUSTOMIZE.png", false, out reason))
+			if (!LoadSpriteFromFile("CUSTOMIZE", SpriteName.Customize, directory + "\\bot CUSTOMIZE.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("EXIT", SpriteName.Exit, Environment.CurrentDirectory + "\\Sprites\\bot EXIT.png", false, out reason))
+			if (!LoadSpriteFromFile("EXIT", SpriteName.Exit, directory + "\\bot EXIT.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("load game", SpriteName.LoadGame, Environment.CurrentDirectory + "\\Sprites\\bot load game.png", false, out reason))
+			if (!LoadSpriteFromFile("load game", SpriteName.LoadGame, directory + "\\bot load game.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("new game", SpriteName.NewGame, Environment.CurrentDirectory + "\\Sprites\\bot new game.png", false, out reason))
+			if (!LoadSpriteFromFile("new game", SpriteName.NewGame, directory + "\\bot new game.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("OPTIONS", SpriteName.Options, Environment.CurrentDirectory + "\\Sprites\\bot OPTIONS.png", false, out reason))
+			if (!LoadSpriteFromFile("OPTIONS", SpriteName.Options, directory + "\\bot OPTIONS.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("CONTINUE2", SpriteName.Continue2, Environment.CurrentDirectory + "\\Sprites\\bot CONTINUE2.png", false, out reason))
+			if (!LoadSpriteFromFile("CONTINUE2", SpriteName.Continue2, directory + "\\bot CONTINUE2.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("CUSTOMIZE2", SpriteName.Customize2, Environment.CurrentDirectory + "\\Sprites\\bot CUSTOMIZE2.png", false, out reason))
+			if (!LoadSpriteFromFile("CUSTOMIZE2", SpriteName.Customize2, directory + "\\bot CUSTOMIZE2.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("EXIT2", SpriteName.Exit2, Environment.CurrentDirectory + "\\Sprites\\bot EXIT2.png", false, out reason))
+			if (!LoadSpriteFromFile("EXIT2", SpriteName.Exit2, directory + "\\bot EXIT2.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("load game2", SpriteName.LoadGame2, Environment.CurrentDirectory + "\\Sprites\\bot load game2.png", false, out reason))
+			if (!LoadSpriteFromFile("load game2", SpriteName.LoadGame2, directory + "\\bot load game2.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("new game2", SpriteName.NewGame2, Environment.CurrentDirectory + "\\Sprites\\bot new game2.png", false, out reason))
+			if (!LoadSpriteFromFile("new game2", SpriteName.NewGame2, directory + "\\bot new game2.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("OPTIONS2", SpriteName.Options2, Environment.CurrentDirectory + "\\Sprites\\bot OPTIONS2.png", false, out reason))
+			if (!LoadSpriteFromFile("OPTIONS2", SpriteName.Options2, directory + "\\bot OPTIONS2.png", false, out reason))
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("BattleItems", SpriteName.BattleItems, Environment.CurrentDirectory + "\\Sprites\\battleItems.png", true, out reason))
+			if (!LoadSpriteFromFile("BattleItems", SpriteName.BattleItems, directory + "\\battleItems.png", true, out reason))
 			{
 				return false;
 			}
@@ -414,7 +407,7 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("Screen", SpriteName.Screen, Environment.CurrentDirectory + "\\Sprites\\Screen.png", false, out reason))
+			if (!LoadSpriteFromFile("Screen", SpriteName.Screen, directory + "\\Screen.png", false, out reason))
 			{
 				return false;
 			}
