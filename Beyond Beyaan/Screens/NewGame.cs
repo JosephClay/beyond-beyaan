@@ -261,25 +261,25 @@ namespace Beyond_Beyaan.Screens
 				removeButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 				handicapComboBoxes[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			}
-
+			
 			if (generatingGalaxy != -1 && generatingDrawn)
 			{
 				switch (generatingGalaxy)
 				{
 					case 0:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.RANDOM, minPlanets, maxPlanets, galaxySize, 4);
+						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.RANDOM, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 					case 1:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.CLUSTER, minPlanets, maxPlanets, galaxySize, 4);
+						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.CLUSTER, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 					case 2:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.RING, minPlanets, maxPlanets, galaxySize, 4);
+						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.RING, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 					case 3:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.DIAMOND, minPlanets, maxPlanets, galaxySize, 4);
+						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.DIAMOND, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 					case 4:
-						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.STAR, minPlanets, maxPlanets, galaxySize, 4);
+						gameMain.galaxy.GenerateGalaxy(GALAXYTYPE.STAR, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
 						break;
 				}
 				numOfStarsLabel.SetText("Number of stars: " + gameMain.galaxy.GetAllStars().Count);
