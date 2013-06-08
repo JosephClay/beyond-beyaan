@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using Beyond_Beyaan.Data_Modules;
 
@@ -14,12 +12,13 @@ namespace Beyond_Beyaan.Data_Managers
 		public AIManager()
 		{
 			AIs = new List<AI>();
+		}
+
+		public bool Initialize(DirectoryInfo directory, out string reason)
+		{
 			try
 			{
-				string directory = Path.Combine(Environment.CurrentDirectory, "data");
-				directory = Path.Combine(directory, "default");
-				directory = Path.Combine(directory, "ai");
-				DirectoryInfo di = new DirectoryInfo(directory);
+				DirectoryInfo di = new DirectoryInfo(Path.Combine(directory.FullName, "ai"));
 				if (!di.Exists)
 				{
 					//If it don't exist, create one so users can add races
@@ -33,10 +32,13 @@ namespace Beyond_Beyaan.Data_Managers
 						AIs.Add(ai);
 					}
 				}
+				reason = null;
+				return true;
 			}
-			catch
+			catch (Exception e)
 			{
-				//Do nothing, not much we can do at this point
+				reason = e.Message;
+				return false;
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Drawing;
@@ -202,7 +203,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public Empire(string emperorName, int empireID, Race race, PlayerType type, AI ai, Color color)
+		public Empire(string emperorName, int empireID, Race race, PlayerType type, AI ai, Color color, GameMain gameMain)
 		{
 			this.empireName = emperorName;
 			this.empireID = empireID;
@@ -211,7 +212,7 @@ namespace Beyond_Beyaan
 			technologyManager = new TechnologyManager();
 			try
 			{
-				string techPath = Environment.CurrentDirectory + "\\Data\\Default\\technologies.txt";
+				string techPath = Path.Combine(gameMain.GameDataSet.FullName, "technologies.txt");
 				technologyManager.LoadTechnologies(techPath);
 			}
 			catch (Exception e)

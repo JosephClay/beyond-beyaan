@@ -120,7 +120,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			combatIter = 0;
 			whichEmpireTurn = 0;
-			SetupBattle(gameMain.empireManager.CombatsToProcess[combatIter].fleetsInCombat, null);
+			SetupBattle(gameMain.EmpireManager.CombatsToProcess[combatIter].fleetsInCombat, null);
 		}
 
 		public void ResetScreen()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -15,42 +16,49 @@ namespace Beyond_Beyaan
 
 	class GameMain
 	{
-		Form parentForm;
-		internal Random Random;
-		internal SpriteManager SpriteManager;
-		internal DrawingManagement drawingManagement;
-		private ScreenInterface screenInterface;
-		private MainGameMenu mainGameMenu;
-		private NewGame newGame;
-		private GalaxyScreen galaxyScreen;
-		private InGameMenu inGameMenu;
-		private DiplomacyScreen diplomacyScreen;
-		private FleetListScreen fleetListScreen;
-		private DesignScreen designScreen;
-		private PlanetsScreen planetsScreen;
-		private ResearchScreen researchScreen;
-		private ProcessingTurnScreen processingTurnScreen;
-		private SpaceCombat spaceCombat;
-		private TaskBar taskBar;
-		private SituationReport situationReport;
-		private Screen currentScreen;
-		internal Galaxy galaxy;
-		internal EmpireManager empireManager;
-		internal RaceManager raceManager;
-		internal AIManager aiManager;
-		internal int ScreenWidth;
-		internal int ScreenHeight;
-		internal GorgonLibrary.Graphics.FXShader ShipShader;
-		internal GorgonLibrary.Graphics.FXShader StarShader;
+		#region Screens
+		private ScreenInterface _screenInterface;
+		private MainGameMenu _mainGameMenu;
+		private NewGame _newGame;
+		private GalaxyScreen _galaxyScreen;
+		private InGameMenu _inGameMenu;
+		private DiplomacyScreen _diplomacyScreen;
+		private FleetListScreen _fleetListScreen;
+		private DesignScreen _designScreen;
+		private PlanetsScreen _planetsScreen;
+		private ResearchScreen _researchScreen;
+		private ProcessingTurnScreen _processingTurnScreen;
+		private SpaceCombat _spaceCombat;
+		private TaskBar _taskBar;
+		private SituationReport _situationReport;
+		private Screen _currentScreen;
+		#endregion
+
+		private Form _parentForm;
+
+		#region Properties
+		internal Random Random { get; private set; }
+		internal SpriteManager SpriteManager { get; private set; }
+		internal DrawingManagement DrawingManagement { get; private set; }
+		internal Galaxy Galaxy { get; private set; }
+		internal EmpireManager EmpireManager { get; private set; }
+		internal RaceManager RaceManager { get; private set; }
+		internal AIManager AIManager { get; private set; }
+		internal int ScreenWidth { get; private set; }
+		internal int ScreenHeight { get; private set; }
+		internal GorgonLibrary.Graphics.FXShader ShipShader { get; private set; }
+		internal GorgonLibrary.Graphics.FXShader StarShader { get; private set; }
+		internal DirectoryInfo GameDataSet { get; private set; }
+		#endregion
 
 		#region Mouse Stuff
 		internal Point MousePos;
 		private BBSprite Cursor;
 		#endregion
 
-		public bool Initalize(int screenWidth, int screenHeight, Form parentForm, out string reason)
+		public bool Initalize(int screenWidth, int screenHeight, DirectoryInfo dataSet, bool showTutorial, Form parentForm, out string reason)
 		{
-			this.parentForm = parentForm;
+			_parentForm = parentForm;
 
 			Random = new Random();
 
@@ -58,31 +66,43 @@ namespace Beyond_Beyaan
 
 			ScreenWidth = screenWidth;
 			ScreenHeight = screenHeight;
+			GameDataSet = dataSet;
 
-			drawingManagement = new DrawingManagement();
-			galaxy = new Galaxy();
-			empireManager = new EmpireManager();
-
-			mainGameMenu = new MainGameMenu();
-			mainGameMenu.Initialize(this);
-
-			screenInterface = mainGameMenu;
-			currentScreen = Screen.MainMenu;
-
-			taskBar = new TaskBar(this);
-			situationReport = new SituationReport(this);
-
-			raceManager = new RaceManager();
-			aiManager = new AIManager();
+			Galaxy = new Galaxy();
+			EmpireManager = new EmpireManager();
 
 			ShipShader = GorgonLibrary.Graphics.FXShader.FromFile("ColorShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			StarShader = GorgonLibrary.Graphics.FXShader.FromFile("StarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 
 			SpriteManager = new SpriteManager();
-			if (!SpriteManager.Initialize(new System.IO.DirectoryInfo(Environment.CurrentDirectory + "\\Data\\Default\\"), new System.IO.DirectoryInfo(Environment.CurrentDirectory + "\\Data\\Default\\graphics\\"), out reason))
+			if (!SpriteManager.Initialize(GameDataSet, out reason))
 			{
 				return false;
 			}
+			DrawingManagement = new DrawingManagement();
+			if (!DrawingManagement.LoadGraphics(Path.Combine(GameDataSet.FullName, "graphics"), out reason))
+			{
+				return false;
+			}
+			RaceManager = new RaceManager();
+			if (!RaceManager.Initialize(GameDataSet, out reason))
+			{
+				return false;
+			}
+			AIManager = new AIManager();
+			if (!AIManager.Initialize(GameDataSet, out reason))
+			{
+				return false;
+			}
+
+			_mainGameMenu = new MainGameMenu();
+			_mainGameMenu.Initialize(this);
+
+			_screenInterface = _mainGameMenu;
+			_currentScreen = Screen.MainMenu;
+
+			_taskBar = new TaskBar(this);
+			_situationReport = new SituationReport(this);
 
 			Cursor = SpriteManager.GetSprite("Cursor", Random);
 			if (Cursor == null)
@@ -98,12 +118,12 @@ namespace Beyond_Beyaan
 		public void ClearAll()
 		{
 			//Used when exiting out of current game (new game for example)
-			taskBar.SetToScreen(Screen.MainMenu);
-			empireManager = new EmpireManager();
-			aiManager = new AIManager();
-			raceManager = new RaceManager();
-			situationReport.Clear();
-			newGame.Clear();
+			_taskBar.SetToScreen(Screen.MainMenu);
+			EmpireManager = new EmpireManager();
+			AIManager = new AIManager();
+			RaceManager = new RaceManager();
+			_situationReport.Clear();
+			_newGame.Clear();
 		}
 
 		public void Resize(int screenWidth, int screenHeight)
@@ -111,38 +131,38 @@ namespace Beyond_Beyaan
 			ScreenWidth = screenWidth;
 			ScreenHeight = screenHeight;
 
-			screenInterface.Resize();
-			taskBar.Resize();
+			_screenInterface.Resize();
+			_taskBar.Resize();
 		}
 
 		public void ProcessGame(float frameDeltaTime)
 		{
 			bool skipUpdate = false;
 			bool handleTaskBar = false;
-			if (currentScreen != Screen.MainMenu && currentScreen != Screen.NewGame && currentScreen != Screen.Battle)
+			if (_currentScreen != Screen.MainMenu && _currentScreen != Screen.NewGame && _currentScreen != Screen.Battle)
 			{
 				handleTaskBar = true;
 			}
 			if (handleTaskBar)
 			{
-				if (taskBar.Update(MousePos.X, MousePos.Y, frameDeltaTime))
+				if (_taskBar.Update(MousePos.X, MousePos.Y, frameDeltaTime))
 				{
 					skipUpdate = true;
 				}
-				if (situationReport.Update(MousePos.X, MousePos.Y, frameDeltaTime))
+				if (_situationReport.Update(MousePos.X, MousePos.Y, frameDeltaTime))
 				{
 					skipUpdate = true;
 				}
 			}
 			if (!skipUpdate)
 			{
-				screenInterface.Update(MousePos.X, MousePos.Y, frameDeltaTime);
+				_screenInterface.Update(MousePos.X, MousePos.Y, frameDeltaTime);
 			}
-			screenInterface.DrawScreen(drawingManagement);
+			_screenInterface.DrawScreen(DrawingManagement);
 			if (handleTaskBar)
 			{
-				taskBar.Draw(drawingManagement);
-				situationReport.DrawSitRep(drawingManagement);
+				_taskBar.Draw(DrawingManagement);
+				_situationReport.DrawSitRep(DrawingManagement);
 			}
 			Cursor.Draw(MousePos.X, MousePos.Y);
 			Cursor.Update(frameDeltaTime, Random);
@@ -167,22 +187,22 @@ namespace Beyond_Beyaan
 					} break;
 			}
 			bool handleTaskBar = false;
-			if (currentScreen != Screen.MainMenu && currentScreen != Screen.NewGame && currentScreen != Screen.Battle)
+			if (_currentScreen != Screen.MainMenu && _currentScreen != Screen.NewGame && _currentScreen != Screen.Battle)
 			{
 				handleTaskBar = true;
 			}
 			if (handleTaskBar)
 			{
-				if (taskBar.MouseDown(e.X, e.Y, whichButton))
+				if (_taskBar.MouseDown(e.X, e.Y, whichButton))
 				{
 					return;
 				}
-				if (situationReport.MouseDown(e.X, e.Y))
+				if (_situationReport.MouseDown(e.X, e.Y))
 				{
 					return;
 				}
 			}
-			screenInterface.MouseDown(e.X, e.Y, whichButton);
+			_screenInterface.MouseDown(e.X, e.Y, whichButton);
 		}
 
 		public void MouseUp(MouseEventArgs e)
@@ -204,37 +224,37 @@ namespace Beyond_Beyaan
 					} break;
 			}
 			bool handleTaskBar = false;
-			if (currentScreen != Screen.MainMenu && currentScreen != Screen.NewGame && currentScreen != Screen.Battle)
+			if (_currentScreen != Screen.MainMenu && _currentScreen != Screen.NewGame && _currentScreen != Screen.Battle)
 			{
 				handleTaskBar = true;
 			}
 			if (handleTaskBar)
 			{
-				if (taskBar.MouseUp(e.X, e.Y, whichButton))
+				if (_taskBar.MouseUp(e.X, e.Y, whichButton))
 				{
 					return;
 				}
-				if (situationReport.MouseUp(e.X, e.Y))
+				if (_situationReport.MouseUp(e.X, e.Y))
 				{
 					return;
 				}
 			}
-			screenInterface.MouseUp(e.X, e.Y, whichButton);
+			_screenInterface.MouseUp(e.X, e.Y, whichButton);
 		}
 
 		public void MouseScroll(int delta)
 		{
-			screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
+			_screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-			screenInterface.KeyDown(e);
+			_screenInterface.KeyDown(e);
 		}
 
 		public void ToggleSitRep()
 		{
-			situationReport.ToggleVisibility();
+			_situationReport.ToggleVisibility();
 		}
 
 		public void ChangeToScreen(Screen whichScreen)
@@ -242,145 +262,145 @@ namespace Beyond_Beyaan
 			switch (whichScreen)
 			{
 				case Screen.MainMenu:
-					if (mainGameMenu == null)
+					if (_mainGameMenu == null)
 					{
-						mainGameMenu = new MainGameMenu();
-						mainGameMenu.Initialize(this);
+						_mainGameMenu = new MainGameMenu();
+						_mainGameMenu.Initialize(this);
 					}
-					screenInterface = mainGameMenu;
+					_screenInterface = _mainGameMenu;
 					break;
 				case Screen.NewGame:
-					if (newGame == null)
+					if (_newGame == null)
 					{
-						newGame = new NewGame();
-						newGame.Initialize(this);
+						_newGame = new NewGame();
+						_newGame.Initialize(this);
 					}
-					screenInterface = newGame;
+					_screenInterface = _newGame;
 					break;
 				case Screen.Galaxy:
-					if (galaxyScreen == null)
+					if (_galaxyScreen == null)
 					{
-						galaxyScreen = new GalaxyScreen();
-						galaxyScreen.Initialize(this);
+						_galaxyScreen = new GalaxyScreen();
+						_galaxyScreen.Initialize(this);
 					}
-					taskBar.Hide = false;
-					galaxyScreen.CenterScreen();
-					screenInterface = galaxyScreen;
-					taskBar.SetToScreen(Screen.Galaxy);
+					_taskBar.Hide = false;
+					_galaxyScreen.CenterScreen();
+					_screenInterface = _galaxyScreen;
+					_taskBar.SetToScreen(Screen.Galaxy);
 					break;
 				case Screen.InGameMenu:
-					if (inGameMenu == null)
+					if (_inGameMenu == null)
 					{
-						inGameMenu = new InGameMenu();
-						inGameMenu.Initialize(this);
+						_inGameMenu = new InGameMenu();
+						_inGameMenu.Initialize(this);
 					}
-					screenInterface = inGameMenu;
-					taskBar.SetToScreen(Screen.InGameMenu);
+					_screenInterface = _inGameMenu;
+					_taskBar.SetToScreen(Screen.InGameMenu);
 					break;
 				case Screen.Diplomacy:
-					if (diplomacyScreen == null)
+					if (_diplomacyScreen == null)
 					{
-						diplomacyScreen = new DiplomacyScreen();
-						diplomacyScreen.Initialize(this);
+						_diplomacyScreen = new DiplomacyScreen();
+						_diplomacyScreen.Initialize(this);
 					}
-					diplomacyScreen.SetupScreen();
-					screenInterface = diplomacyScreen;
-					taskBar.SetToScreen(Screen.Diplomacy);
+					_diplomacyScreen.SetupScreen();
+					_screenInterface = _diplomacyScreen;
+					_taskBar.SetToScreen(Screen.Diplomacy);
 					break;
 				case Screen.FleetList:
-					if (fleetListScreen == null)
+					if (_fleetListScreen == null)
 					{
-						fleetListScreen = new FleetListScreen();
-						fleetListScreen.Initialize(this);
+						_fleetListScreen = new FleetListScreen();
+						_fleetListScreen.Initialize(this);
 					}
-					fleetListScreen.LoadScreen();
-					screenInterface = fleetListScreen;
-					taskBar.SetToScreen(Screen.FleetList);
+					_fleetListScreen.LoadScreen();
+					_screenInterface = _fleetListScreen;
+					_taskBar.SetToScreen(Screen.FleetList);
 					break;
 				case Screen.Design:
-					if (designScreen == null)
+					if (_designScreen == null)
 					{
-						designScreen = new DesignScreen();
-						designScreen.Initialize(this);
+						_designScreen = new DesignScreen();
+						_designScreen.Initialize(this);
 					}
-					screenInterface = designScreen;
-					designScreen.LoadScreen();
-					taskBar.SetToScreen(Screen.Design);
+					_screenInterface = _designScreen;
+					_designScreen.LoadScreen();
+					_taskBar.SetToScreen(Screen.Design);
 					break;
 				case Screen.Planets:
-					if (planetsScreen == null)
+					if (_planetsScreen == null)
 					{
-						planetsScreen = new PlanetsScreen();
-						planetsScreen.Initialize(this);
+						_planetsScreen = new PlanetsScreen();
+						_planetsScreen.Initialize(this);
 					}
-					screenInterface = planetsScreen;
-					planetsScreen.LoadScreen();
-					taskBar.SetToScreen(Screen.Planets);
+					_screenInterface = _planetsScreen;
+					_planetsScreen.LoadScreen();
+					_taskBar.SetToScreen(Screen.Planets);
 					break;
 				case Screen.Research:
-					empireManager.CurrentEmpire.UpdateResearchPoints();
-					if (researchScreen == null)
+					EmpireManager.CurrentEmpire.UpdateResearchPoints();
+					if (_researchScreen == null)
 					{
-						researchScreen = new ResearchScreen();
-						researchScreen.Initialize(this);
+						_researchScreen = new ResearchScreen();
+						_researchScreen.Initialize(this);
 					}
-					researchScreen.LoadPoints(empireManager.CurrentEmpire.ResearchPoints);
-					screenInterface = researchScreen;
-					taskBar.SetToScreen(Screen.Research);
+					_researchScreen.LoadPoints(EmpireManager.CurrentEmpire.ResearchPoints);
+					_screenInterface = _researchScreen;
+					_taskBar.SetToScreen(Screen.Research);
 					break;
 				case Screen.ProcessTurn:
-					empireManager.CurrentEmpire.ClearTurnData();
-					if (processingTurnScreen == null)
+					EmpireManager.CurrentEmpire.ClearTurnData();
+					if (_processingTurnScreen == null)
 					{
-						processingTurnScreen = new ProcessingTurnScreen();
-						processingTurnScreen.Initialize(this);
+						_processingTurnScreen = new ProcessingTurnScreen();
+						_processingTurnScreen.Initialize(this);
 					}
-					if (!empireManager.ProcessNextEmpire())
+					if (!EmpireManager.ProcessNextEmpire())
 					{
-						situationReport.Refresh();
+						_situationReport.Refresh();
 						ChangeToScreen(Screen.Galaxy);
 						break;
 					}
-					taskBar.SetToScreen(Screen.ProcessTurn);
-					screenInterface = processingTurnScreen;
-					taskBar.Hide = true;
+					_taskBar.SetToScreen(Screen.ProcessTurn);
+					_screenInterface = _processingTurnScreen;
+					_taskBar.Hide = true;
 					break;
 				case Screen.Battle:
-					if (spaceCombat == null)
+					if (_spaceCombat == null)
 					{
-						spaceCombat = new SpaceCombat();
-						spaceCombat.Initialize(this);
+						_spaceCombat = new SpaceCombat();
+						_spaceCombat.Initialize(this);
 					}
-					spaceCombat.SetupScreen();
-					screenInterface = spaceCombat;
+					_spaceCombat.SetupScreen();
+					_screenInterface = _spaceCombat;
 					break;
 			}
-			currentScreen = whichScreen;
+			_currentScreen = whichScreen;
 		}
 
 		public void CenterGalaxyScreen(Point point)
 		{
-			galaxyScreen.CenterScreenToPoint(point);
+			_galaxyScreen.CenterScreenToPoint(point);
 		}
 
 		public void DrawGalaxyBackground()
 		{
-			galaxyScreen.DrawGalaxyBackground(drawingManagement);
+			_galaxyScreen.DrawGalaxyBackground(DrawingManagement);
 		}
 
 		public void RefreshSitRep()
 		{
-			situationReport.Refresh();
+			_situationReport.Refresh();
 		}
 		public void HideSitRep()
 		{
-			situationReport.Hide();
+			_situationReport.Hide();
 		}
 
 		public void ExitGame()
 		{
 			//dispose of any resources in use
-			parentForm.Close();
+			_parentForm.Close();
 		}
 	}
 }

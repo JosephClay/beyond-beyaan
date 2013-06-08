@@ -158,7 +158,7 @@ namespace Beyond_Beyaan.Screens
 				gameMain.ShipShader.Parameters["EmpireColor"].SetValue(whichFleets[selectedFleet].Empire.ConvertedColor);
 				shipSprite.Draw();
 				GorgonLibrary.Gorgon.CurrentShader = null;
-				//drawingManagement.DrawSprite(SpriteName.Corvette, (gameMain.ScreenWidth / 2) - 398, (gameMain.ScreenHeight / 2) + 98, 255, 180, 180, System.Drawing.Color.White);
+				//DrawingManagement.DrawSprite(SpriteName.Corvette, (gameMain.ScreenWidth / 2) - 398, (gameMain.ScreenHeight / 2) + 98, 255, 180, 180, System.Drawing.Color.White);
 
 				nameText.Draw(drawingManagement);
 				sizeText.Draw(drawingManagement);
@@ -303,7 +303,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadScreen()
 		{
-			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
+			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
 			ownedFleets = currentEmpire.FleetManager.GetFleets();
 			otherFleets = currentEmpire.VisibleFleets;
 			allFleets = new List<Fleet>();
@@ -434,12 +434,12 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.galaxy.GetAllStars();
+			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
-				int x = (gameMain.ScreenWidth / 2) + (int)(386.0f * (system.X / (float)gameMain.galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)gameMain.galaxy.GalaxySize));
+				int x = (gameMain.ScreenWidth / 2) + (int)(386.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize));
 
 				if (system.Type == StarType.BLACK_HOLE)
 				{
@@ -456,8 +456,8 @@ namespace Beyond_Beyaan.Screens
 
 			foreach (Fleet fleet in whichFleets)
 			{
-				int x = (gameMain.ScreenWidth / 2) + (int)(386.0f * (fleet.GalaxyX / (float)gameMain.galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (fleet.GalaxyY / (float)gameMain.galaxy.GalaxySize));
+				int x = (gameMain.ScreenWidth / 2) + (int)(386.0f * (fleet.GalaxyX / (float)gameMain.Galaxy.GalaxySize));
+				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (fleet.GalaxyY / (float)gameMain.Galaxy.GalaxySize));
 
 				if (fleet == fleetSelected || fleet == hoveringFleet)
 				{

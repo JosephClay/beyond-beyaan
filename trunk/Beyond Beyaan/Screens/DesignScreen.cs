@@ -142,7 +142,7 @@ namespace Beyond_Beyaan.Screens
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 497, 255, 285, 102, System.Drawing.Color.White);
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 599, 255, 285, 1, System.Drawing.Color.White);
 			GorgonLibrary.Gorgon.CurrentShader = gameMain.ShipShader;
-			gameMain.ShipShader.Parameters["EmpireColor"].SetValue(gameMain.empireManager.CurrentEmpire.ConvertedColor);
+			gameMain.ShipShader.Parameters["EmpireColor"].SetValue(gameMain.EmpireManager.CurrentEmpire.ConvertedColor);
 			shipSprite.Draw();
 			GorgonLibrary.Gorgon.CurrentShader = null;
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x + 285, y - 1, 255, 515, 75, System.Drawing.Color.White);
@@ -156,7 +156,7 @@ namespace Beyond_Beyaan.Screens
 			drawingManagement.DrawText("Arial", "Armor:", x + 23, y + 401, System.Drawing.Color.White);
 			drawingManagement.DrawText("Arial", "Shield:", x + 20, y + 501, System.Drawing.Color.White);
 			nameTextBox.Draw(drawingManagement);
-			//drawingManagement.DrawText("Arial", shipName, x + 75, y + 6, System.Drawing.Color.White);
+			//DrawingManagement.DrawText("Arial", shipName, x + 75, y + 6, System.Drawing.Color.White);
 
 			drawingManagement.DrawText("Arial", "Weapon Name", x + 290, y + 55, System.Drawing.Color.White);
 			drawingManagement.DrawText("Arial", "Damage", x + 415, y + 55, System.Drawing.Color.White);
@@ -296,7 +296,7 @@ namespace Beyond_Beyaan.Screens
 			if (displayingTechOption != NONE)
 			{
 				drawingManagement.DrawSprite(SpriteName.ControlBackground, x + 130, y, 255, 540, 570, System.Drawing.Color.White);
-				//drawingManagement.DrawText("Arial", "Name", x + 160, y + 20, System.Drawing.Color.White);
+				//DrawingManagement.DrawText("Arial", "Name", x + 160, y + 20, System.Drawing.Color.White);
 				techScrollBar.DrawScrollBar(drawingManagement);
 				foreach (Label label in techLabels)
 				{
@@ -542,7 +542,7 @@ namespace Beyond_Beyaan.Screens
 						{
 							shipDesign.Size = sizeComboBox.SelectedIndex + 1;
 							UpdateSpaceUsageAndCost();
-							shipSprite = gameMain.empireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
+							shipSprite = gameMain.EmpireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
 							shipSprite.SetPosition((gameMain.ScreenWidth / 2) - 305, (gameMain.ScreenHeight / 2) - 205);
 							shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
 							return;
@@ -554,7 +554,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								shipDesign.WhichStyle = 5;
 							}
-							shipSprite = gameMain.empireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
+							shipSprite = gameMain.EmpireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
 							shipSprite.SetPosition((gameMain.ScreenWidth / 2) - 305, (gameMain.ScreenHeight / 2) - 205);
 							shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
 							return;
@@ -566,7 +566,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								shipDesign.WhichStyle = 0;
 							}
-							shipSprite = gameMain.empireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
+							shipSprite = gameMain.EmpireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
 							shipSprite.SetPosition((gameMain.ScreenWidth / 2) - 305, (gameMain.ScreenHeight / 2) - 205);
 							shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
 							return;
@@ -617,7 +617,7 @@ namespace Beyond_Beyaan.Screens
 						if (confirm.MouseUp(x, y))
 						{
 							shipDesign.Name = nameTextBox.GetString();
-							gameMain.empireManager.CurrentEmpire.FleetManager.AddShipDesign(shipDesign);
+							gameMain.EmpireManager.CurrentEmpire.FleetManager.AddShipDesign(shipDesign);
 							NameGenerator generator = new NameGenerator();
 							shipDesign.Name = generator.GetName();
 							nameTextBox.SetString(shipDesign.Name);
@@ -797,8 +797,8 @@ namespace Beyond_Beyaan.Screens
 			x = gameMain.ScreenWidth / 2 - 400;
 			y = gameMain.ScreenHeight / 2 - 300;
 
-			shipDesign = gameMain.empireManager.CurrentEmpire.FleetManager.LastShipDesign;
-			shipSprite = gameMain.empireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
+			shipDesign = gameMain.EmpireManager.CurrentEmpire.FleetManager.LastShipDesign;
+			shipSprite = gameMain.EmpireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
 			shipSprite.SetPosition(x + 95, y + 95);
 			shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
 
@@ -816,7 +816,7 @@ namespace Beyond_Beyaan.Screens
 			shipDesign.Name = shipName;
 			nameTextBox.SetString(shipName);
 
-			TechnologyManager techManager = gameMain.empireManager.CurrentEmpire.TechnologyManager;
+			TechnologyManager techManager = gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
 
 			availableEngines = new List<Engine>();
 			foreach (Engine engine in techManager.VisibleEngines)

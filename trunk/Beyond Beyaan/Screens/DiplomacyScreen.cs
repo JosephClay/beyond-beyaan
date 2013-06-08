@@ -446,7 +446,7 @@ namespace Beyond_Beyaan.Screens
 		public void SetupScreen()
 		{
 			empiresInContact = new List<Contact>();
-			Empire currentEmpire = gameMain.empireManager.CurrentEmpire;
+			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
 			foreach (Contact contact in currentEmpire.ContactManager.Contacts)
 			{
 				if (contact.Contacted)
