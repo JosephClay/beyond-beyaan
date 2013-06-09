@@ -101,7 +101,11 @@ namespace Beyond_Beyaan
 			_screenInterface = _mainGameMenu;
 			_currentScreen = Screen.MainMenu;
 
-			_taskBar = new TaskBar(this);
+			_taskBar = new TaskBar();
+			if (!_taskBar.Initialize(this, out reason))
+			{
+				return false;
+			}
 			_situationReport = new SituationReport(this);
 
 			Cursor = SpriteManager.GetSprite("Cursor", Random);
@@ -161,7 +165,7 @@ namespace Beyond_Beyaan
 			_screenInterface.DrawScreen(DrawingManagement);
 			if (handleTaskBar)
 			{
-				_taskBar.Draw(DrawingManagement);
+				_taskBar.Draw();
 				_situationReport.DrawSitRep(DrawingManagement);
 			}
 			Cursor.Draw(MousePos.X, MousePos.Y);
