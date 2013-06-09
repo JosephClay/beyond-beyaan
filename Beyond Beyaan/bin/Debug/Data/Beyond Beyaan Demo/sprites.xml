@@ -161,6 +161,62 @@
     <Frame x="528" y="80" width="16" height="16" />
   </Sprite>
   
+  <!--Taskbar buttons-->
+  <Sprite name="GameMenuBG" file="main.png">
+    <Frame x="0" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="GalaxyBG" file="main.png">
+    <Frame x="40" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="DiplomacyBG" file="main.png">
+    <Frame x="80" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="FleetListBG" file="main.png">
+    <Frame x="120" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="PlanetsListBG" file="main.png">
+    <Frame x="160" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="DesignBG" file="main.png">
+    <Frame x="200" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="ResearchBG" file="main.png">
+    <Frame x="240" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="ProductionBG" file="main.png">
+    <Frame x="280" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="EndTurnBG" file="main.png">
+    <Frame x="320" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="GameMenuFG" file="main.png">
+    <Frame x="0" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="GalaxyFG" file="main.png">
+    <Frame x="40" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="DiplomacyFG" file="main.png">
+    <Frame x="80" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="FleetListFG" file="main.png">
+    <Frame x="120" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="PlanetsListFG" file="main.png">
+    <Frame x="160" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="DesignFG" file="main.png">
+    <Frame x="200" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="ResearchFG" file="main.png">
+    <Frame x="240" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="ProductionFG" file="main.png">
+    <Frame x="280" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="EndTurnFG" file="main.png">
+    <Frame x="320" y="0" width="40" height="40" />
+  </Sprite>
+  
   <!--Background Images-->
   <Sprite name="ThickBorderBGTL" file="main.png">
     <Frame x="621" y="176" width="200" height="200" />

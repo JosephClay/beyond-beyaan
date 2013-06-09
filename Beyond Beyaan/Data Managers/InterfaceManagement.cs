@@ -2,10 +2,186 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Beyond_Beyaan.Data_Modules;
+using Beyond_Beyaan.Data_Managers;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan
 {
+	public class BBButton
+	{
+		#region Member Variables
+		private BBSprite backgroundSprite;
+		private BBSprite foregroundSprite;
+		private int xPos;
+		private int yPos;
+		private int width;
+		private int height;
+		private Label label;
+		#endregion
+
+		//Button state information
+		private bool pressed;
+		private float pulse;
+		private bool direction;
+
+		#region Properties
+		public bool Active { get; set; }
+		public bool Selected { get; set; }
+		#endregion
+
+		#region Constructors
+		public bool Initialize(string backgroundSprite, string foregroundSprite, string buttonText, int xPos, int yPos, int width, int height, SpriteManager spriteManager, Random r, out string reason)
+		{
+			this.backgroundSprite = spriteManager.GetSprite(backgroundSprite, r);
+			this.foregroundSprite = spriteManager.GetSprite(foregroundSprite, r);
+			if (backgroundSprite == null || foregroundSprite == null)
+			{
+				reason = string.Format("One of those sprites does not exist in sprites.xml: \"{0}\" or \"{1}\"", backgroundSprite, foregroundSprite);
+				return false;
+			}
+			this.xPos = xPos;
+			this.yPos = yPos;
+			this.width = width;
+			this.height = height;
+
+			label = new Label(buttonText, xPos + 2, yPos + 2);
+
+			Reset();
+			reason = null;
+			return true;
+		}
+		#endregion
+
+		#region Functions
+		public void Reset()
+		{
+			pulse = 0;
+			direction = false;
+			Active = true;
+			pressed = false;
+			Selected = false;
+		}
+
+		public void SetButtonText(string text)
+		{
+			label.SetText(text);
+		}
+
+		public void MoveButton(int x, int y)
+		{
+			xPos = x;
+			yPos = y;
+			label.Move(x, y);
+		}
+
+		public void ResizeButton(int width, int height)
+		{
+			this.width = width;
+			this.height = height;
+		}
+
+		public bool UpdateHovering(int x, int y, float frameDeltaTime)
+		{
+			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+			{
+				if (pulse < 0.6f)
+				{
+					pulse = 0.9f;
+				}
+				if (Active)
+				{
+					if (direction)
+					{
+						pulse += frameDeltaTime / 2;
+						if (pulse > 0.9f)
+						{
+							direction = !direction;
+							pulse = 0.9f;
+						}
+					}
+					else
+					{
+						pulse -= frameDeltaTime / 2;
+						if (pulse < 0.6f)
+						{
+							direction = !direction;
+							pulse = 0.6f;
+						}
+					}
+				}
+				return true;
+			}
+			else if (pulse > 0)
+			{
+				pulse -= frameDeltaTime * 2;
+				if (pulse < 0)
+				{
+					pulse = 0;
+				}
+			}
+			return false;
+		}
+
+		public bool MouseDown(int x, int y)
+		{
+			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+			{
+				if (Active)
+				{
+					pressed = true;
+				}
+				return true;
+			}
+			return false;
+		}
+
+		public bool MouseUp(int x, int y)
+		{
+			if (Active && pressed)
+			{
+				pressed = false;
+				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public void Draw()
+		{
+			if (Active)
+			{
+				if (pressed || Selected)
+				{
+					foregroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height);
+				}
+				else if (!Selected)
+				{
+					backgroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height);
+					if (pulse > 0)
+					{
+						foregroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height, (byte)(255 * pulse));
+					}
+				}
+			}
+			else
+			{
+				backgroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height, System.Drawing.Color.Tan);
+				if (Selected)
+				{
+					foregroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height, System.Drawing.Color.Tan);
+				}
+			}
+			if (label.Text.Length > 0)
+			{
+				label.Draw();
+			}
+		}
+		#endregion
+	}
+
 	class Button
 	{
 		#region Member Variables

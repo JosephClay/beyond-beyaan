@@ -8,7 +8,7 @@ namespace Beyond_Beyaan
 	class TaskBar
 	{
 		GameMain gameMain;
-		Button[] TaskButtons;
+		BBButton[] TaskButtons;
 
 		private int left;
 		private int top;
@@ -20,37 +20,77 @@ namespace Beyond_Beyaan
 			set { hide = value; }
 		}
 
-		public TaskBar(GameMain gameMain)
+		#region Constructors
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
-			TaskButtons = new Button[9];
+			TaskButtons = new BBButton[9];
 
 			left = (gameMain.ScreenWidth / 2) - 180;
 			top = gameMain.ScreenHeight - 40;
 
-			TaskButtons[0] = new Button(SpriteName.GameMenu, SpriteName.HighlightedGameMenu, "", left, top, 40, 40);
-			TaskButtons[1] = new Button(SpriteName.Galaxy, SpriteName.HighlightedGalaxy, "", left + 40, top, 40, 40);
-			TaskButtons[2] = new Button(SpriteName.Diplomacy, SpriteName.HighlightedDiplomacy, "", left + 80, top, 40, 40);
-			TaskButtons[3] = new Button(SpriteName.FleetList, SpriteName.HighlightedFleetList, "", left + 120, top, 40, 40);
-			TaskButtons[4] = new Button(SpriteName.Design, SpriteName.HighlightedDesign, "", left + 160, top, 40, 40);
-			TaskButtons[5] = new Button(SpriteName.DesignList, SpriteName.HighlightedDesignList, "", left + 200, top, 40, 40);
-			TaskButtons[6] = new Button(SpriteName.PlanetsList, SpriteName.HighlightedPlanetsList, "", left + 240, top, 40, 40);
-			TaskButtons[7] = new Button(SpriteName.Research, SpriteName.HighlightedResearch, "", left + 280, top, 40, 40);
-			TaskButtons[8] = new Button(SpriteName.EOT, SpriteName.HighlightedEOT, "", left + 320, top, 40, 40);
+			TaskButtons[0] = new BBButton();
+			if (!TaskButtons[0].Initialize("GameMenuBG", "GameMenuFG", string.Empty, left, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			TaskButtons[1] = new BBButton();
+			if (!TaskButtons[1].Initialize("GalaxyBG", "GalaxyFG", string.Empty, left + 40, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			TaskButtons[2] = new BBButton();
+			if (!TaskButtons[2].Initialize("DiplomacyBG", "DiplomacyFG", string.Empty, left + 80, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			TaskButtons[3] = new BBButton();
+			if (!TaskButtons[3].Initialize("FleetListBG", "FleetListFG", string.Empty, left + 120, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			TaskButtons[4] = new BBButton();
+			if (!TaskButtons[4].Initialize("DesignBG", "DesignFG", string.Empty, left + 160, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			TaskButtons[5] = new BBButton();
+			if (!TaskButtons[5].Initialize("FleetListBG", "FleetListFG", string.Empty, left + 200, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			TaskButtons[6] = new BBButton();
+			if (!TaskButtons[6].Initialize("PlanetsListBG", "PlanetsListFG", string.Empty, left + 240, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			TaskButtons[7] = new BBButton();
+			if (!TaskButtons[7].Initialize("ResearchBG", "ResearchFG", string.Empty, left + 280, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			TaskButtons[8] = new BBButton();
+			if (!TaskButtons[8].Initialize("EndTurnBG", "EndTurnFG", string.Empty, left + 320, top, 40, 40, gameMain.SpriteManager, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
 			TaskButtons[1].Selected = true;
 			hide = false;
+			reason = null;
+			return true;
 		}
+		#endregion
 
-		public void Draw(DrawingManagement drawingManagement)
+		public void Draw()
 		{
 			if (hide)
 			{
 				return;
 			}
-			foreach (Button button in TaskButtons)
+			foreach (BBButton button in TaskButtons)
 			{
-				button.Draw(drawingManagement);
+				button.Draw();
 			}
 		}
 
@@ -60,7 +100,7 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			foreach (Button button in TaskButtons)
+			foreach (BBButton button in TaskButtons)
 			{
 				button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			}
@@ -81,7 +121,7 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			foreach (Button button in TaskButtons)
+			foreach (BBButton button in TaskButtons)
 			{
 				if (button.MouseDown(mouseX, mouseY))
 				{
@@ -133,7 +173,7 @@ namespace Beyond_Beyaan
 
 		public void SetToScreen(Screen whichScreen)
 		{
-			foreach (Button button in TaskButtons)
+			foreach (BBButton button in TaskButtons)
 			{
 				button.Selected = false;
 			}
