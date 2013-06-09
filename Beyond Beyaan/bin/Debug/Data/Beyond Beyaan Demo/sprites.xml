@@ -301,6 +301,18 @@
   </Sprite>
   
   <!--Slider and Scrollbar images-->
+  <Sprite name="ScrollUpBGButton" file="main.png">
+    <Frame x="528" y="48" width="16" height="16" />
+  </Sprite>
+  <Sprite name="ScrollUpFGButton" file="main.png">
+    <Frame x="544" y="48" width="16" height="16" />
+  </Sprite>
+  <Sprite name="ScrollDownBGButton" file="main.png">
+    <Frame x="528" y="80" width="16" height="16" />
+  </Sprite>
+  <Sprite name="ScrollDownBGButton" file="main.png">
+    <Frame x="544" y="80" width="16" height="16" />
+  </Sprite>
   <Sprite name="ScrollLeftBGButton" file="main.png">
     <Frame x="560" y="48" width="16" height="16" />
   </Sprite>
@@ -319,10 +331,64 @@
   <Sprite name="SliderFGBar" file="main.png">
     <Frame x="560" y="112" width="16" height="16" />
   </Sprite>
-  <Sprite name="SliderBGButton" file="main.png">
-    <Frame x="576" y="112" width="16" height="16" />
+  <Sprite name="ScrollVerticalBar" file="main.png">
+    <Frame x="528" y="64" width="16" height="16" />
   </Sprite>
-  <Sprite name="SliderFGButton" file="main.png">
-    <Frame x="592" y="112" width="16" height="16" />
+  <Sprite name="ScrollHorizontalBar" file="main.png">
+    <Frame x="560" y="64" width="16" height="16" />
+  </Sprite>
+  <Sprite name="ScrollVerticalBGButton1" file="main.png">
+    <Frame x="528" y="96" width="16" height="7" />
+  </Sprite>
+  <Sprite name="ScrollVerticalBGButton2" file="main.png">
+    <Frame x="528" y="103" width="16" height="2" />
+  </Sprite>
+  <Sprite name="ScrollVerticalBGButton3" file="main.png">
+    <Frame x="528" y="105" width="16" height="7" />
+  </Sprite>
+  <Sprite name="ScrollVerticalFGButton1" file="main.png">
+    <Frame x="544" y="96" width="16" height="7" />
+  </Sprite>
+  <Sprite name="ScrollVerticalFGButton2" file="main.png">
+    <Frame x="544" y="103" width="16" height="2" />
+  </Sprite>
+  <Sprite name="ScrollVerticalFGButton3" file="main.png">
+    <Frame x="544" y="105" width="16" height="7" />
+  </Sprite>
+  <Sprite name="ScrollHorizontalBGButton1" file="main.png">
+    <Frame x="560" y="96" width="7" height="16" />
+  </Sprite>
+  <Sprite name="ScrollHorizontalBGButton2" file="main.png">
+    <Frame x="567" y="96" width="2" height="16" />
+  </Sprite>
+  <Sprite name="ScrollHorizontalBGButton3" file="main.png">
+    <Frame x="569" y="96" width="7" height="16" />
+  </Sprite>
+  <Sprite name="ScrollHorizontalFGButton1" file="main.png">
+    <Frame x="576" y="96" width="7" height="16" />
+  </Sprite>
+  <Sprite name="ScrollHorizontalFGButton2" file="main.png">
+    <Frame x="583" y="96" width="2" height="16" />
+  </Sprite>
+  <Sprite name="ScrollHorizontalFGButton3" file="main.png">
+    <Frame x="585" y="96" width="7" height="16" />
+  </Sprite>
+  <Sprite name="SliderHorizontalBGButton1" file="main.png">
+    <Frame x="576" y="112" width="7" height="16" />
+  </Sprite>
+  <Sprite name="SliderHorizontalBGButton2" file="main.png">
+    <Frame x="583" y="112" width="2" height="16" />
+  </Sprite>
+  <Sprite name="SliderHorizontalBGButton3" file="main.png">
+    <Frame x="585" y="112" width="7" height="16" />
+  </Sprite>
+  <Sprite name="SliderHorizontalFGButton1" file="main.png">
+    <Frame x="592" y="112" width="7" height="16" />
+  </Sprite>
+  <Sprite name="SliderHorizontalFGButton2" file="main.png">
+    <Frame x="599" y="112" width="2" height="16" />
+  </Sprite>
+  <Sprite name="SliderHorizontalFGButton3" file="main.png">
+    <Frame x="601" y="112" width="7" height="16" />
   </Sprite>
 </Sprites>
