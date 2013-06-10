@@ -33,6 +33,7 @@ namespace Beyond_Beyaan.Screens
 		private ScrollBar[] shipScrollBars;
 		private GorgonLibrary.Graphics.RenderTarget oldTarget;
 		private GorgonLibrary.Graphics.RenderImage starName;
+		private SystemView systemView;
 
 		private float[] sizes;
 		private bool pressedInWindow;
@@ -107,6 +108,10 @@ namespace Beyond_Beyaan.Screens
 					SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
 				amountPopTransferLabel[i] = new Label(gameMain.ScreenWidth / 2 - 160, (gameMain.ScreenHeight / 2 - 120) + (i * 40));
 			}
+
+			string reason;
+			systemView = new SystemView();
+			systemView.Initialize(gameMain, gameMain.SpriteManager, gameMain.Random, out reason);
 		}
 
 		public void CenterScreen()
@@ -470,6 +475,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					drawingManagement.DrawText("Arial", "Unexplored", gameMain.ScreenWidth - 450, 10, System.Drawing.Color.White);
 				}
+				systemView.Draw();
 			}
 			if (showingTransferUI)
 			{
@@ -496,7 +502,7 @@ namespace Beyond_Beyaan.Screens
 				return;
 			}
 			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
-			if (currentEmpire.SelectedSystem != null && currentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && currentEmpire.PlanetSelected >= 0)
+			if (currentEmpire.SelectedSystem != null && currentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && currentEmpire.PlanetSelected >= 0 && !systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
 			{
 				if (currentEmpire.SelectedSystem.Planets.Count > 6 && systemScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
@@ -626,7 +632,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					return;
 				}
-				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && gameMain.EmpireManager.CurrentEmpire.PlanetSelected >= 0)
+				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && gameMain.EmpireManager.CurrentEmpire.PlanetSelected >= 0 && !systemView.MouseDown(x, y))
 				{
 					if (x >= gameMain.ScreenWidth - 207 && y < 650)
 					{
@@ -735,7 +741,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					return;
 				}
-				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && gameMain.EmpireManager.CurrentEmpire.PlanetSelected >= 0)
+				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && gameMain.EmpireManager.CurrentEmpire.PlanetSelected >= 0 && !systemView.MouseUp(x, y))
 				{
 					if (systemScrollBar.MouseUp(x, y))
 					{
