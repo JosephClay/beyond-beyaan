@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
+using GorgonLibrary.Graphics;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan
@@ -354,6 +355,194 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
+	public class BBUniStretchButton
+	{
+		#region Member Variables
+		private BBUniStretchableImage backgroundImage;
+		private BBUniStretchableImage foregroundImage;
+		private Label label;
+
+		//Button state information
+		private bool pressed;
+		private float pulse;
+		private bool direction;
+
+		private int xPos;
+		private int yPos;
+		private int width;
+		private int height;
+		#endregion
+
+		#region Properties
+		public bool Active { get; set; }
+		public bool Selected { get; set; }
+		#endregion
+
+		#region Constructors
+		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, int xPos, int yPos, int width, int height, SpriteManager spriteManager, Random r, out string reason)
+		{
+			this.xPos = xPos;
+			this.yPos = yPos;
+			this.width = width;
+			this.height = height;
+
+			backgroundImage = new BBUniStretchableImage();
+			foregroundImage = new BBUniStretchableImage();
+
+			if (!backgroundImage.Initialize(xPos, yPos, width, height, 7, 2, isHorizontal, backgroundSections, spriteManager, r, out reason))
+			{
+				return false;
+			}
+			if (!foregroundImage.Initialize(xPos, yPos, width, height, 7, 2, isHorizontal, foregroundSections, spriteManager, r, out reason))
+			{
+				return false;
+			}
+
+			label = new Label(0, 0);
+			SetButtonText(buttonText);
+			label.SetColor(System.Drawing.Color.DarkBlue);
+
+			Reset();
+
+			reason = null;
+			return true;
+		}
+		#endregion
+
+		#region Functions
+		public void Reset()
+		{
+			pulse = 0;
+			direction = false;
+			Active = true;
+			pressed = false;
+			Selected = false;
+		}
+
+		public void SetButtonText(string text)
+		{
+			label.SetText(text);
+			label.Move((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
+		}
+
+		public void MoveTo(int x, int y)
+		{
+			this.xPos = x;
+			this.yPos = y;
+			label.Move((int)((width / 2) - (label.GetWidth() / 2) + x), (int)((height / 2) - (label.GetHeight() / 2) + y));
+			backgroundImage.MoveTo(x, y);
+			foregroundImage.MoveTo(x, y);
+		}
+
+		public void ResizeButton(int width, int height)
+		{
+			this.width = width;
+			this.height = height;
+			backgroundImage.Resize(width, height);
+			foregroundImage.Resize(width, height);
+		}
+
+		public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+			{
+				if (pulse < 0.6f)
+				{
+					pulse = 0.9f;
+				}
+				if (Active)
+				{
+					if (direction)
+					{
+						pulse += frameDeltaTime / 2;
+						if (pulse > 0.9f)
+						{
+							direction = !direction;
+							pulse = 0.9f;
+						}
+					}
+					else
+					{
+						pulse -= frameDeltaTime / 2;
+						if (pulse < 0.6f)
+						{
+							direction = !direction;
+							pulse = 0.6f;
+						}
+					}
+				}
+				return true;
+			}
+			if (pulse > 0)
+			{
+				pulse -= frameDeltaTime * 2;
+				if (pulse < 0)
+				{
+					pulse = 0;
+				}
+			}
+			return false;
+		}
+
+		public bool MouseDown(int x, int y)
+		{
+			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+			{
+				if (Active)
+				{
+					pressed = true;
+				}
+				return true;
+			}
+			return false;
+		}
+
+		public bool MouseUp(int x, int y)
+		{
+			if (Active && pressed)
+			{
+				pressed = false;
+				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public void Draw()
+		{
+			if (Active)
+			{
+				if (pressed || Selected)
+				{
+					foregroundImage.Draw();
+				}
+				else if (!Selected)
+				{
+					backgroundImage.Draw();
+					if (pulse > 0)
+					{
+						foregroundImage.Draw((byte)(255 * pulse));
+					}
+				}
+			}
+			else
+			{
+				backgroundImage.Draw(System.Drawing.Color.Tan, 255);
+				if (Selected)
+				{
+					foregroundImage.Draw(System.Drawing.Color.Tan, 255);
+				}
+			}
+			if (label.Text.Length > 0)
+			{
+				label.Draw();
+			}
+		}
+		#endregion
+	}
+
 	class ComboBox
 	{
 		#region Member Variables
@@ -544,6 +733,392 @@ namespace Beyond_Beyaan
 			}
 			dropped = false;
 			return false;
+		}
+		#endregion
+	}
+
+	class BBScrollBar
+	{
+		#region Member Variables
+		//Variables that are defined in constructor
+		private int xPos;
+		private int yPos;
+		private BBButton Up;
+		private BBButton Down;
+		private BBUniStretchButton Scroll;
+		private BBSprite scrollBar;
+		private BBSprite highlightedScrollBar;
+		private int amountOfItems;
+		private int amountVisible;
+		private int scrollBarLength;
+
+		private int topIndex; //Which topmost item is visible
+		private int scrollPos;
+		private bool scrollSelected; //is the scroll button selected? if so, drag it
+		private int initialMousePos;
+		private int initialScrollPos;
+		private bool isHorizontal;
+		private bool isSlider; //Is the scroll bar's behavior like a scroll bar or a slider?
+		private bool isEnabled;
+
+		//Variables that are calculated from the values passed into the constructor
+		private int scrollButtonLength;
+
+		#endregion
+
+		#region Properties
+		public int TopIndex
+		{
+			get { return topIndex; }
+			set
+			{
+				topIndex = value;
+				SetScrollButtonPosition();
+			}
+		}
+		#endregion
+
+		#region Constructors
+		public bool Initialize(int xPos, int yPos, int length, int amountOfVisibleItems, int amountOfItems, bool isHorizontal, bool isSlider, SpriteManager spriteManager, Random r, out string reason)
+		{
+			this.xPos = xPos;
+			this.yPos = yPos;
+			Up = new BBButton();
+			Down = new BBButton();
+			Scroll = new BBUniStretchButton();
+			
+			this.amountOfItems = amountOfItems;
+			this.amountVisible = amountOfVisibleItems;
+			this.isSlider = isSlider;
+			this.isHorizontal = isHorizontal;
+
+			scrollBarLength = length - 32;
+
+			if (!isSlider)
+			{
+				scrollButtonLength = (int)(((float)amountOfVisibleItems / amountOfItems) * scrollBarLength);
+				if (!isHorizontal)
+				{
+					if (!Up.Initialize("ScrollUpBGButton", "ScrollUpFGButton", "", xPos, yPos, 16, 16, spriteManager, r, out reason))
+					{
+						return false;
+					}
+					if (!Down.Initialize("ScrollDownBGButton", "ScrollDownFGButton", "", xPos, yPos + length - 32, 16, 16, spriteManager, r, out reason))
+					{
+						return false;
+					}
+					if (!Scroll.Initialize(new List<string> { "ScrollVerticalBGButton1", "ScrollVerticalBGButton2", "ScrollVerticalBGButton3" }, 
+										   new List<string> { "ScrollVerticalFGButton1", "ScrollVerticalFGButton2", "ScrollVerticalFGButton3" },
+										   false, "", xPos, yPos + 16, 16, scrollButtonLength, spriteManager, r, out reason))
+					{
+						return false;
+					}
+					scrollBar = spriteManager.GetSprite("ScrollVerticalBar", r);
+					if (scrollBar == null)
+					{
+						reason = "\"ScrollVerticalBar\" sprite does not exist";
+						return false;
+					}
+				}
+				else
+				{
+					if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", xPos, yPos, 16, 16, spriteManager, r, out reason))
+					{
+						return false;
+					}
+					if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 32, yPos, 16, 16, spriteManager, r, out reason))
+					{
+						return false;
+					}
+					if (!Scroll.Initialize(new List<string> { "ScrollHorizontalBGButton1", "ScrollHorizontalBGButton2", "ScrollHorizontalBGButton3" },
+										   new List<string> { "ScrollHorizontalFGButton1", "ScrollHorizontalFGButton2", "ScrollHorizontalFGButton3" },
+										   false, "", xPos + 16, yPos, 16, scrollButtonLength, spriteManager, r, out reason))
+					{
+						return false;
+					}
+					scrollBar = spriteManager.GetSprite("ScrollHorizontalBar", r);
+					if (scrollBar == null)
+					{
+						reason = "\"ScrollHorizontalBar\" sprite does not exist";
+						return false;
+					}
+				}
+			}
+			else
+			{
+				scrollButtonLength = 16;
+				if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", xPos, yPos, 16, 16, spriteManager, r, out reason))
+				{
+					return false;
+				}
+				if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 32, yPos, 16, 16, spriteManager, r, out reason))
+				{
+					return false;
+				}
+				if (!Scroll.Initialize(new List<string> { "SliderHorizontalBGButton1", "SliderHorizontalBGButton2", "SliderHorizontalBGButton3" },
+									   new List<string> { "SliderHorizontalFGButton1", "SliderHorizontalFGButton2", "SliderHorizontalFGButton3" },
+									   false, "", xPos + 16, yPos, 16, scrollButtonLength, spriteManager, r, out reason))
+				{
+					return false;
+				}
+				scrollBar = spriteManager.GetSprite("SliderBGBar", r);
+				if (scrollBar == null)
+				{
+					reason = "\"SliderBGBar\" sprite does not exist";
+					return false;
+				}
+				highlightedScrollBar = spriteManager.GetSprite("SliderFGBar", r);
+				if (highlightedScrollBar == null)
+				{
+					reason = "\"SliderFGBar\" sprite does not exist";
+					return false;
+				}
+			}
+
+			topIndex = 0;
+			scrollPos = 0; //relative to the scrollbar itself
+			scrollSelected = false;
+			isEnabled = true;
+			reason = null;
+			return true;
+		}
+		#endregion
+
+		#region Private Functions
+		private void SetScrollButtonPosition()
+		{
+			scrollPos = (int)(((float)topIndex / (amountOfItems - amountVisible)) * (scrollBarLength - scrollButtonLength));
+			if (scrollPos < 0)
+			{
+				scrollPos = 0;
+			}
+			else if (scrollPos > (scrollBarLength - scrollButtonLength))
+			{
+				scrollPos = scrollBarLength - scrollButtonLength;
+			}
+			if (isHorizontal)
+			{
+				Scroll.MoveTo(xPos + 16 + scrollPos, yPos);
+			}
+			else
+			{
+				Scroll.MoveTo(xPos, yPos + 16 + scrollPos);
+			}
+		}
+		#endregion
+
+		#region Public Functions
+		public void Draw()
+		{
+			System.Drawing.Color enabledColor = isEnabled ? System.Drawing.Color.White : System.Drawing.Color.Tan;
+			if (!isSlider)
+			{
+				if (!isHorizontal)
+				{
+					scrollBar.Draw(xPos, yPos + 16, 1, scrollBarLength / scrollBar.Height, enabledColor);
+				}
+				else
+				{
+					scrollBar.Draw(xPos + 16, yPos, scrollBarLength / scrollBar.Width, 1, enabledColor);
+				}
+			}
+			else
+			{
+				scrollBar.Draw(xPos + 16, yPos, scrollBarLength / scrollBar.Width, 1, enabledColor);
+				highlightedScrollBar.Draw(xPos + 16, yPos, scrollPos / highlightedScrollBar.Width, 1, enabledColor);
+			}
+			Up.Draw();
+			Down.Draw();
+			Scroll.Draw();
+		}
+
+		public bool MouseDown(int x, int y)
+		{
+			if (isEnabled)
+			{
+				if (Up.MouseDown(x, y))
+				{
+					return true;
+				}
+				if (Down.MouseDown(x, y))
+				{
+					return true;
+				}
+				if (!isSlider && Scroll.MouseDown(x, y))
+				{
+					scrollSelected = true;
+					if (isHorizontal)
+					{
+						initialMousePos = x;
+					}
+					else
+					{
+						initialMousePos = y;
+					}
+					initialScrollPos = scrollPos;
+					return true;
+				}
+				//at this point, only the scroll bar itself is left
+				if ((isHorizontal && (x >= xPos + 16 && x < xPos + 16 + scrollBarLength && yPos <= y && y < yPos + 16))
+					|| (!isHorizontal && (x >= xPos && x < xPos + 16 && yPos + 16 <= y && y < yPos + 16 + scrollBarLength)))
+				{
+					if (!isSlider)
+					{
+						//clicked on the bar itself, jump up one page
+						if ((!isHorizontal && y < yPos + 16 + scrollPos) || (isHorizontal && x < xPos + 16 + scrollPos))
+						{
+							topIndex -= amountVisible;
+							if (topIndex < 0)
+							{
+								topIndex = 0;
+							}
+						}
+						else
+						{
+							//since up is checked already, jump down one page
+							topIndex += amountVisible;
+							if (topIndex > (amountOfItems - amountVisible))
+							{
+								topIndex = (amountOfItems - amountVisible);
+							}
+						}
+						SetScrollButtonPosition();
+					}
+					else
+					{
+						scrollSelected = true;
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool MouseUp(int x, int y)
+		{
+			if (isEnabled)
+			{
+				bool changed = false;
+				if (Up.MouseUp(x, y))
+				{
+					if (TopIndex > 0)
+					{
+						TopIndex--;
+					}
+					changed = true;
+				}
+				else if (Down.MouseUp(x, y))
+				{
+					if (TopIndex < amountOfItems - amountVisible)
+					{
+						TopIndex++;
+					}
+					changed = true;
+				}
+				if (changed || scrollSelected)
+				{
+					scrollSelected = false;
+					if (!isSlider)
+					{
+						SetScrollButtonPosition();
+						Scroll.MouseUp(x, y);
+					}
+					return true;
+				}
+				if (x >= xPos && x < xPos + 16 + (isHorizontal ? scrollBarLength : 0) && yPos + 16 <= y && y < yPos + 16 + (isHorizontal ? 0 : scrollBarLength))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			if (isEnabled)
+			{
+				Scroll.MouseHover(x, y, frameDeltaTime);
+				if (scrollSelected)
+				{
+					int newPosition = 0;
+					if (isHorizontal)
+					{
+						newPosition = initialScrollPos + (x - (isSlider ? (xPos + 16 + (scrollButtonLength / 2)) : initialMousePos));
+					}
+					else
+					{
+						newPosition = initialScrollPos + (y - (isSlider ? (yPos + 16 + (scrollButtonLength / 2)) : initialMousePos));
+					}
+					if (newPosition < 0)
+					{
+						newPosition = 0;
+					}
+					else if (newPosition > (scrollBarLength - scrollButtonLength))
+					{
+						newPosition = scrollBarLength - scrollButtonLength;
+					}
+					float itemsPerIncrement = ((float)(amountOfItems - amountVisible) / (float)(scrollBarLength - scrollButtonLength));
+					int oldIndex = topIndex;
+					topIndex = (int)((itemsPerIncrement * newPosition) + 0.5f);
+					SetScrollButtonPosition();
+					return !(oldIndex == topIndex);
+				}
+				else
+				{
+					Up.UpdateHovering(x, y, frameDeltaTime);
+					Down.UpdateHovering(x, y, frameDeltaTime);
+					return false;
+				}
+			}
+			return false;
+		}
+
+		public void MoveScrollBar(int x, int y)
+		{
+			Up.MoveButton(x, y);
+			if (isHorizontal)
+			{
+				Down.MoveButton(x + scrollBarLength + 16, y);
+				Scroll.MoveTo(x + 16 + scrollPos, y);
+			}
+			else
+			{
+				Down.MoveButton(x, y + scrollBarLength + 16);
+				Scroll.MoveTo(x, y + 16 + scrollPos);
+			}
+			xPos = x;
+			yPos = y;
+		}
+
+		public void SetAmountOfItems(int amount)
+		{
+			topIndex = 0;
+			amountOfItems = amount;
+			if (!isSlider)
+			{
+				scrollButtonLength = (int)(((float)amountVisible / amountOfItems) * scrollBarLength);
+				if (scrollButtonLength < 8)
+				{
+					scrollButtonLength = 8;
+				}
+				if (isHorizontal)
+				{
+					Scroll.ResizeButton(scrollButtonLength, 16);
+				}
+				else
+				{
+					Scroll.ResizeButton(16, scrollButtonLength);
+				}
+			}
+			SetScrollButtonPosition();
+		}
+
+		public void SetEnabledState(bool enabled)
+		{
+			Up.Active = enabled;
+			Down.Active = enabled;
+			Scroll.Active = enabled;
+			isEnabled = enabled;
 		}
 		#endregion
 	}
@@ -991,6 +1566,412 @@ namespace Beyond_Beyaan
 		public void SetColor(System.Drawing.Color color)
 		{
 			this.color = color;
+		}
+		#endregion
+	}
+
+	public enum StretchableImageType
+	{
+		ThickBorder,
+		MediumBorder,
+		ThinBorder
+	}
+	public class BBStretchableImage
+	{
+		#region Member Variables
+		private int xPos;
+		private int yPos;
+		private int width;
+		private int height;
+		private int sectionWidth;
+		private int sectionHeight;
+		private int horizontalStretchLength;
+		private int verticalStretchLength;
+		private List<BBSprite> sections;
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region Constructor
+		public bool Initialize(int x, int y, int width, int height, StretchableImageType type, SpriteManager spriteManager, Random r, out string reason)
+		{
+			xPos = x;
+			yPos = y;
+
+			switch (type)
+			{
+				case StretchableImageType.ThinBorder:
+				{
+					sectionWidth = 30;
+					sectionHeight = 13;
+					sections = new List<BBSprite>();
+					var tempSprite = spriteManager.GetSprite("ThinBorderBGTL", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGTL\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+					tempSprite = spriteManager.GetSprite("ThinBorderBGTC", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGTC\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+					tempSprite = spriteManager.GetSprite("ThinBorderBGTR", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGTR\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+					tempSprite = spriteManager.GetSprite("ThinBorderBGCL", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGCL\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+					tempSprite = spriteManager.GetSprite("ThinBorderBGCC", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGCC\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+					tempSprite = spriteManager.GetSprite("ThinBorderBGCR", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGCR\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+					tempSprite = spriteManager.GetSprite("ThinBorderBGBL", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGBL\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+					tempSprite = spriteManager.GetSprite("ThinBorderBGBC", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGBC\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+					tempSprite = spriteManager.GetSprite("ThinBorderBGBR", r);
+					if (tempSprite == null)
+					{
+						reason = "Failed to get \"ThinBorderBGBR\" from sprites.xml.";
+						return false;
+					}
+					sections.Add(tempSprite);
+				} break;
+				case StretchableImageType.MediumBorder:
+					{
+						sectionWidth = 60;
+						sectionHeight = 60;
+						sections = new List<BBSprite>();
+						var tempSprite = spriteManager.GetSprite("MediumBorderBGTL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGTL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("MediumBorderBGTC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGTC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("MediumBorderBGTR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGTR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("MediumBorderBGCL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGCL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("MediumBorderBGCC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGCC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("MediumBorderBGCR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGCR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("MediumBorderBGBL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGBL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("MediumBorderBGBC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGBC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("MediumBorderBGBR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"MediumBorderBGBR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+					} break;
+				case StretchableImageType.ThickBorder:
+					{
+						sectionWidth = 200;
+						sectionHeight = 200;
+						sections = new List<BBSprite>();
+						var tempSprite = spriteManager.GetSprite("ThickBorderBGTL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGTL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("ThickBorderBGTC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGTC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("ThickBorderBGTR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGTR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("ThickBorderBGCL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGCL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("ThickBorderBGCC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGCC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("ThickBorderBGCR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGCR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("ThickBorderBGBL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGBL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("ThickBorderBGBC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGBC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = spriteManager.GetSprite("ThickBorderBGBR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThickBorderBGBR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+					}
+					break;
+			}
+			
+			horizontalStretchLength = (width - (sectionWidth * 2));
+			verticalStretchLength = (height - (sectionHeight * 2));
+
+			if (horizontalStretchLength < 0)
+			{
+				horizontalStretchLength = 0;
+			}
+			if (verticalStretchLength < 0)
+			{
+				verticalStretchLength = 0;
+			}
+
+			reason = null;
+			return true;
+		}
+		#endregion
+
+		#region Functions
+		public void Draw()
+		{
+			Draw(System.Drawing.Color.White, 255);
+		}
+
+		public void Draw(byte alpha)
+		{
+			Draw(System.Drawing.Color.White, alpha);
+		}
+
+		public void Draw(System.Drawing.Color color, byte alpha)
+		{
+			sections[0].Draw(xPos, yPos, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
+			sections[1].Draw(xPos + sectionWidth, yPos, horizontalStretchLength / sections[1].Width, 1, System.Drawing.Color.FromArgb(alpha, color));
+			sections[2].Draw(xPos + sectionWidth + horizontalStretchLength, yPos, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
+			sections[3].Draw(xPos, yPos + sectionHeight, 1, verticalStretchLength / sections[3].Height, System.Drawing.Color.FromArgb(alpha, color));
+			sections[4].Draw(xPos + sectionWidth, yPos + sectionHeight, horizontalStretchLength / sections[4].Width, verticalStretchLength / sections[4].Height, System.Drawing.Color.FromArgb(alpha, color));
+			sections[5].Draw(xPos + sectionWidth + horizontalStretchLength, yPos + sectionHeight, 1, verticalStretchLength / sections[5].Height, System.Drawing.Color.FromArgb(alpha, color));
+			sections[6].Draw(xPos, yPos + sectionHeight + verticalStretchLength, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
+			sections[7].Draw(xPos + sectionWidth, yPos + sectionHeight + verticalStretchLength, horizontalStretchLength / sections[7].Width, 1, System.Drawing.Color.FromArgb(alpha, color));
+			sections[8].Draw(xPos + sectionWidth + horizontalStretchLength, yPos + sectionHeight + verticalStretchLength, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
+		}
+		public void SetDimensions(int width, int height)
+		{
+			this.width = width;
+			this.height = height;
+			horizontalStretchLength = (width - (sectionWidth * 2));
+			verticalStretchLength = (height - (sectionHeight * 2));
+		}
+		public void MoveTo(int x, int y)
+		{
+			xPos = x;
+			yPos = y;
+		}
+		#endregion
+	}
+
+	public class BBUniStretchableImage
+	{
+		#region Member Variables
+		private int x;
+		private int y;
+		private int width;
+		private int height;
+		private int mainLength;
+		private int stretchLength;
+		private int stretchAmount;
+		private List<BBSprite> sections;
+		private bool isHorizontal;
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region Constructor
+		public bool Initialize(int x, int y, int width, int height, int mainLength, int stretchLength, bool isHorizontal, List<string> sections, SpriteManager spriteManager, Random r, out string reason)
+		{
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			this.mainLength = mainLength;
+			this.stretchLength = stretchLength;
+			this.sections = new List<BBSprite>();
+			foreach (string spriteName in sections)
+			{
+				BBSprite sprite = spriteManager.GetSprite(spriteName, r);
+				if (sprite == null)
+				{
+					reason = string.Format("Can't find sprite \"{0}\".", spriteName);
+					return false;
+				}
+				this.sections.Add(sprite);
+			}
+			this.isHorizontal = isHorizontal;
+			if (isHorizontal)
+			{
+				stretchAmount = (width - (mainLength * 2));
+			}
+			else
+			{
+				stretchAmount = (height - (mainLength * 2));
+			}
+
+			if (stretchAmount < 0)
+			{
+				stretchAmount = 0;
+			}
+
+			reason = null;
+			return true;
+		}
+		#endregion
+
+		#region Functions
+		public void Draw()
+		{
+			Draw(System.Drawing.Color.White, 255);
+		}
+
+		public void Draw(byte alpha)
+		{
+			Draw(System.Drawing.Color.White, alpha);
+		}
+
+		public void Draw(System.Drawing.Color color, byte alpha)
+		{
+			sections[0].Draw(x, y, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
+			if (isHorizontal)
+			{
+				sections[1].Draw(x + mainLength, y, stretchAmount / sections[1].Width, 1, System.Drawing.Color.FromArgb(alpha, color));
+				sections[2].Draw(x + mainLength + stretchAmount, y, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
+			}
+			else
+			{
+				sections[1].Draw(x, y + mainLength, 1, stretchAmount / sections[1].Height, System.Drawing.Color.FromArgb(alpha, color));
+				sections[2].Draw(x, y + mainLength + stretchAmount, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
+			}
+		}
+
+		public void Resize(int width, int height)
+		{
+			this.width = width;
+			this.height = height;
+			if (isHorizontal)
+			{
+				stretchAmount = (width - (mainLength * 2));
+			}
+			else
+			{
+				stretchAmount = (height - (mainLength * 2));
+			}
+
+			if (stretchAmount < 0)
+			{
+				stretchAmount = 0;
+			}
+		}
+
+		public void MoveTo(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
 		}
 		#endregion
 	}

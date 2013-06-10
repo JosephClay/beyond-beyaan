@@ -12,9 +12,9 @@ using Beyond_Beyaan.Screens;
 
 namespace Beyond_Beyaan
 {
-	enum Screen { MainMenu, NewGame, Galaxy, InGameMenu, Diplomacy, FleetList, Design, Planets, Research, ProcessTurn, Battle };
+	public enum Screen { MainMenu, NewGame, Galaxy, InGameMenu, Diplomacy, FleetList, Design, Planets, Research, ProcessTurn, Battle };
 
-	class GameMain
+	public class GameMain
 	{
 		#region Screens
 		private ScreenInterface _screenInterface;

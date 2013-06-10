@@ -267,19 +267,19 @@ namespace Beyond_Beyaan.Screens
 				switch (generatingGalaxy)
 				{
 					case 0:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.RANDOM, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.RANDOM, 1, 1, galaxySize, 4, gameMain.Random);
 						break;
 					case 1:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.CLUSTER, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.CLUSTER, 1, 1, galaxySize, 4, gameMain.Random);
 						break;
 					case 2:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.RING, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.RING, 1, 1, galaxySize, 4, gameMain.Random);
 						break;
 					case 3:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.DIAMOND, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.DIAMOND, 1, 1, galaxySize, 4, gameMain.Random);
 						break;
 					case 4:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.STAR, minPlanets, maxPlanets, galaxySize, 4, gameMain.Random);
+						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.STAR, 1, 1, galaxySize, 4, gameMain.Random);
 						break;
 				}
 				numOfStarsLabel.SetText("Number of stars: " + gameMain.Galaxy.GetAllStars().Count);
