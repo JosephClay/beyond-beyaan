@@ -11,9 +11,9 @@ namespace Beyond_Beyaan.Screens
 	class GalaxyScreen : ScreenInterface
 	{
 		#region Constants
-		private const int AGRICULTURE = 0;
+		private const int INFRASTRUCTURE = 0;
 		private const int WASTE = 1;
-		private const int COMMERCE = 2;
+		private const int DEFENSE = 2;
 		private const int RESEARCH = 3;
 		private const int CONSTRUCTION = 4;
 		#endregion
@@ -45,10 +45,10 @@ namespace Beyond_Beyaan.Screens
 		private Button transferCancelButton;
 		private ScrollBar[] popTransferSliders;
 		private Label[] amountPopTransferLabel;
-		private List<TransportShip> tempTransportShips;
+		//private List<TransportShip> tempTransportShips;
 		//private ScrollBar listOfPopTransferSlier;
 		private bool showingTransferUI;
-		private int maxVisible;
+		//private int maxVisible;
 
 		public void Initialize(GameMain gameMain)
 		{
@@ -121,6 +121,7 @@ namespace Beyond_Beyaan.Screens
 				gameMain.EmpireManager.CurrentEmpire.SelectedSystem = gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem;
 				camera.CenterCamera(gameMain.EmpireManager.CurrentEmpire.SelectedSystem.X + 2, gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Y + 2);
 				LoadSystemInfoIntoUI(gameMain.EmpireManager.CurrentEmpire.SelectedSystem);
+				systemView.LoadSystem();
 			}
 		}
 
@@ -387,7 +388,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (selectedSystem != null && selectedSystem.Type != StarType.BLACK_HOLE)
 			{
-				drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 500, 0, 255, 500, 400, System.Drawing.Color.White);
+				/*drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 500, 0, 255, 500, 400, System.Drawing.Color.White);
 				drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 497, 4, 255, 244, 294, System.Drawing.Color.DarkGray);
 				if (selectedSystem.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
 				{
@@ -474,7 +475,7 @@ namespace Beyond_Beyaan.Screens
 						systemButtons[i].Draw(drawingManagement);
 					}
 					drawingManagement.DrawText("Arial", "Unexplored", gameMain.ScreenWidth - 450, 10, System.Drawing.Color.White);
-				}
+				}*/
 				systemView.Draw();
 			}
 			if (showingTransferUI)
@@ -482,10 +483,10 @@ namespace Beyond_Beyaan.Screens
 				drawingManagement.DrawSprite(SpriteName.ControlBackground, (gameMain.ScreenWidth / 2) - 170, (gameMain.ScreenHeight / 2) - 130, 255, 340, 250, System.Drawing.Color.White);
 				transferOKButton.Draw(drawingManagement);
 				transferCancelButton.Draw(drawingManagement);
-				for (int i = 0; i < maxVisible; i++)
+				/*for (int i = 0; i < maxVisible; i++)
 				{
 					popTransferSliders[i].DrawScrollBar(drawingManagement);
-				}
+				}*/
 			}
 		}
 
@@ -495,16 +496,16 @@ namespace Beyond_Beyaan.Screens
 			{
 				transferCancelButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 				transferOKButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-				for (int i = 0; i < maxVisible; i++)
+				/*for (int i = 0; i < maxVisible; i++)
 				{
 					popTransferSliders[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
-				}
+				}*/
 				return;
 			}
 			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
-			if (currentEmpire.SelectedSystem != null && currentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && currentEmpire.PlanetSelected >= 0 && !systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
+			if (currentEmpire.SelectedSystem != null && currentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && !systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
 			{
-				if (currentEmpire.SelectedSystem.Planets.Count > 6 && systemScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+				/*if (currentEmpire.SelectedSystem.Planets.Count > 6 && systemScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
 					for (int i = 0; i < (currentEmpire.SelectedSystem.Planets.Count <= 6 ? currentEmpire.SelectedSystem.Planets.Count : 6); i++)
 					{
@@ -563,7 +564,7 @@ namespace Beyond_Beyaan.Screens
 				if ((mouseX >= gameMain.ScreenWidth - 207 && mouseX < gameMain.ScreenWidth - 1) && (mouseY < 650 && mouseY > 0))
 				{
 					return;
-				}
+				}*/
 			}
 			if (currentEmpire.SelectedFleetGroup != null)
 			{
@@ -626,15 +627,15 @@ namespace Beyond_Beyaan.Screens
 				{
 					transferCancelButton.MouseDown(x, y);
 					transferOKButton.MouseDown(x, y);
-					for (int i = 0; i < maxVisible; i++)
+					/*for (int i = 0; i < maxVisible; i++)
 					{
 						popTransferSliders[i].MouseDown(x, y);
-					}
+					}*/
 					return;
 				}
-				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && gameMain.EmpireManager.CurrentEmpire.PlanetSelected >= 0 && !systemView.MouseDown(x, y))
+				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && !systemView.MouseDown(x, y))
 				{
-					if (x >= gameMain.ScreenWidth - 207 && y < 650)
+					/*if (x >= gameMain.ScreenWidth - 207 && y < 650)
 					{
 						pressedInWindow = true;
 					}
@@ -684,7 +685,7 @@ namespace Beyond_Beyaan.Screens
 						prevShip.MouseDown(x, y);
 						nextShip.MouseDown(x, y);
 						transferButton.MouseDown(x, y);
-					}
+					}*/
 				}
 				else if (gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{
@@ -741,9 +742,17 @@ namespace Beyond_Beyaan.Screens
 					}
 					return;
 				}
-				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && gameMain.EmpireManager.CurrentEmpire.PlanetSelected >= 0 && !systemView.MouseUp(x, y))
+				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE)
 				{
-					if (systemScrollBar.MouseUp(x, y))
+					if (systemView.MouseUp(x, y))
+					{
+						return;
+					}
+					else
+					{
+						pressedInWindow = false;
+					}
+					/*if (systemScrollBar.MouseUp(x, y))
 					{
 						for (int i = 0; i < (gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets.Count <= 6 ? gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets.Count : 6); i++)
 						{
@@ -863,7 +872,7 @@ namespace Beyond_Beyaan.Screens
 					{
 						pressedInWindow = false;
 						return;
-					}
+					}*/
 				}
 				if (gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{
@@ -939,6 +948,7 @@ namespace Beyond_Beyaan.Screens
 					gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem = selectedSystem;
 					gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup = null;
 					LoadSystemInfoIntoUI(selectedSystem);
+					systemView.LoadSystem();
 					return;
 				}
 
@@ -1030,9 +1040,9 @@ namespace Beyond_Beyaan.Screens
 
 					if (system.Planets[0].Owner == gameMain.EmpireManager.CurrentEmpire)
 					{
-						planetScrollBars[AGRICULTURE].TopIndex = system.Planets[gameMain.EmpireManager.CurrentEmpire.PlanetSelected].AgricultureAmount;
+						planetScrollBars[INFRASTRUCTURE].TopIndex = system.Planets[gameMain.EmpireManager.CurrentEmpire.PlanetSelected].InfrastructureAmount;
 						planetScrollBars[WASTE].TopIndex = system.Planets[gameMain.EmpireManager.CurrentEmpire.PlanetSelected].EnvironmentAmount;
-						planetScrollBars[COMMERCE].TopIndex = system.Planets[gameMain.EmpireManager.CurrentEmpire.PlanetSelected].CommerceAmount;
+						planetScrollBars[DEFENSE].TopIndex = system.Planets[gameMain.EmpireManager.CurrentEmpire.PlanetSelected].DefenseAmount;
 						planetScrollBars[RESEARCH].TopIndex = system.Planets[gameMain.EmpireManager.CurrentEmpire.PlanetSelected].ResearchAmount;
 						planetScrollBars[CONSTRUCTION].TopIndex = system.Planets[gameMain.EmpireManager.CurrentEmpire.PlanetSelected].ConstructionAmount;
 						LoadShipSprite(system.Planets[0]);

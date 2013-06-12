@@ -256,13 +256,12 @@ namespace Beyond_Beyaan
 			switch (planetType)
 			{
 				case PLANET_TYPE.ARCTIC: return "Arctic";
-				case PLANET_TYPE.ASTEROIDS: return "Asteroids";
 				case PLANET_TYPE.BADLAND: return "Badlands";
 				case PLANET_TYPE.BARREN: return "Barren";
 				case PLANET_TYPE.DEAD: return "Dead";
 				case PLANET_TYPE.DESERT: return "Desert";
-				case PLANET_TYPE.GAS_GIANT: return "Gas Giant";
 				case PLANET_TYPE.JUNGLE: return "Jungle";
+				case PLANET_TYPE.NONE: return "None";
 				case PLANET_TYPE.OCEAN: return "Oceanic";
 				case PLANET_TYPE.RADIATED: return "Radiated";
 				case PLANET_TYPE.STEPPE: return "Steppe";
@@ -279,12 +278,11 @@ namespace Beyond_Beyaan
 			switch (planetType)
 			{
 				case PLANET_TYPE.ARCTIC: return SpriteName.Arctic;
-				case PLANET_TYPE.ASTEROIDS: return SpriteName.Asteroids;
+				case PLANET_TYPE.NONE: return SpriteName.Asteroids;
 				case PLANET_TYPE.BADLAND: return SpriteName.Badlands;
 				case PLANET_TYPE.BARREN: return SpriteName.Barren;
 				case PLANET_TYPE.DEAD: return SpriteName.Dead;
 				case PLANET_TYPE.DESERT: return SpriteName.Desert;
-				case PLANET_TYPE.GAS_GIANT: return SpriteName.GasGiant;
 				case PLANET_TYPE.JUNGLE: return SpriteName.Jungle;
 				case PLANET_TYPE.OCEAN: return SpriteName.Ocean;
 				case PLANET_TYPE.RADIATED: return SpriteName.Radiated;
@@ -312,7 +310,6 @@ namespace Beyond_Beyaan
 		{
 			switch (bonus)
 			{
-				case PLANET_ENVIRONMENT_BONUS.DESOLATE: return SpriteName.PlanetEnvironmentBonus1;
 				case PLANET_ENVIRONMENT_BONUS.INFERTILE: return SpriteName.PlanetEnvironmentBonus2;
 				case PLANET_ENVIRONMENT_BONUS.FERTILE: return SpriteName.PlanetEnvironmentBonus3;
 				case PLANET_ENVIRONMENT_BONUS.LUSH: return SpriteName.PlanetEnvironmentBonus4;
@@ -320,14 +317,12 @@ namespace Beyond_Beyaan
 			//If it reaches here, something went wrong
 			return SpriteName.CancelBackground;
 		}
-		public static SpriteName PlanetEntertainmentBonusToSprite(PLANET_ENTERTAINMENT_BONUS bonus)
+		public static SpriteName PlanetEntertainmentBonusToSprite(PLANET_RESEARCH_BONUS bonus)
 		{
 			switch (bonus)
 			{
-				case PLANET_ENTERTAINMENT_BONUS.INSIPID: return SpriteName.PlanetEntertainmentBonus1;
-				case PLANET_ENTERTAINMENT_BONUS.DULL: return SpriteName.PlanetEntertainmentBonus2;
-				case PLANET_ENTERTAINMENT_BONUS.SENSATIONAL: return SpriteName.PlanetEntertainmentBonus3;
-				case PLANET_ENTERTAINMENT_BONUS.EXCITING: return SpriteName.PlanetEntertainmentBonus4;
+				case PLANET_RESEARCH_BONUS.SENSATIONAL: return SpriteName.PlanetEntertainmentBonus3;
+				case PLANET_RESEARCH_BONUS.EXCITING: return SpriteName.PlanetEntertainmentBonus4;
 			}
 			//If it reaches here, something went wrong
 			return SpriteName.CancelBackground;

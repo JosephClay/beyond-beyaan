@@ -2594,6 +2594,11 @@ namespace Beyond_Beyaan
 			this.text.SetText(text);
 		}
 
+		public void SetReadOnly(bool readOnly)
+		{
+			isReadOnly = readOnly;
+		}
+
 		#region Keys
 		public bool KeyDown(KeyboardInputEventArgs e)
 		{

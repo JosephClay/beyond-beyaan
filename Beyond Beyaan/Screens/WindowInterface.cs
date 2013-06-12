@@ -28,7 +28,7 @@ namespace Beyond_Beyaan.Screens
 			xPos = x;
 			yPos = y;
 			windowWidth = width;
-			windowHeight = height + 20;
+			windowHeight = height;
 			this.moveable = moveable;
 
 			moving = false;

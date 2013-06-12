@@ -20,7 +20,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			_name = new BBSingleLineTextBox();
-			if (!_name.Initialize(string.Empty, xPos + 15, yPos + 15, 250, 35, true, spriteManager, r, out reason))
+			if (!_name.Initialize(string.Empty, xPos + 20, yPos + 20, 260, 35, false, spriteManager, r, out reason))
 			{
 				return false;
 			}
@@ -32,7 +32,22 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadSystem()
 		{
-			_name.SetString(gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Name);
+			if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
+			{
+				_name.SetString(gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Name);
+			}
+			else
+			{
+				_name.SetString("Unexplored");
+			}
+			if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[0].Owner == gameMain.EmpireManager.CurrentEmpire)
+			{
+				_name.SetReadOnly(false);
+			}
+			else
+			{
+				_name.SetReadOnly(true);
+			}
 		}
 
 		public override void Draw()
@@ -44,7 +59,25 @@ namespace Beyond_Beyaan.Screens
 		public override void MoveWindow()
 		{
 			base.MoveWindow();
-			_name.MoveTo(xPos + 15, yPos + 15);
+			_name.MoveTo(xPos + 20, yPos + 20);
+		}
+
+		public override bool MouseDown(int x, int y)
+		{
+			bool result = _name.MouseDown(x, y);
+			return result || base.MouseDown(x, y);
+		}
+
+		public override bool MouseUp(int x, int y)
+		{
+			bool result = _name.MouseUp(x, y);
+			return result || base.MouseUp(x, y);
+		}
+
+		public override bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			_name.Update(frameDeltaTime);
+			return base.MouseHover(x, y, frameDeltaTime);
 		}
 	}
 }
