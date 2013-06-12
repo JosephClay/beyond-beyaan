@@ -407,9 +407,9 @@ namespace Beyond_Beyaan.Screens
 				}
 				if (planetsShowing[i + planetIndex].Owner == empire)
 				{
-					agriculture[i].SetText("Agriculture: " + planetsShowing[i + planetIndex].AgricultureOutput);
+					agriculture[i].SetText("Infrastructure: " + planetsShowing[i + planetIndex].InfrastructureOutput);
 					waste[i].SetText("Waste: " + planetsShowing[i + planetIndex].EnvironmentOutput);
-					commerce[i].SetText("Commerce: " + planetsShowing[i + planetIndex].CommerceOutput);
+					commerce[i].SetText("Defense: " + planetsShowing[i + planetIndex].DefenseOutput);
 					research[i].SetText("Research: " + planetsShowing[i + planetIndex].ResearchOutput);
 					construction[i].SetText("Construction: " + planetsShowing[i + planetIndex].ConstructionOutput);
 				}

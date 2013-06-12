@@ -40,10 +40,12 @@ namespace Beyond_Beyaan
 					}
 					foreach (var directory in di.GetDirectories())
 					{
-						if (!Directory.Exists(Path.Combine(target.FullName, directory.Name)))
+						//To-do - Devise a mechanism where it detects modified files and update to the newer files
+						if (Directory.Exists(Path.Combine(target.FullName, directory.Name)))
 						{
-							CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
+							Directory.Delete(Path.Combine(target.FullName, directory.Name), true);
 						}
+						CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
 					}
 					//Get list of available datasets from general application data folder
 					foreach (var directory in target.GetDirectories())

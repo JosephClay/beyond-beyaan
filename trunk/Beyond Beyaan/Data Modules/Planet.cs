@@ -6,11 +6,11 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	enum PLANET_TYPE { TERRAN = 0, JUNGLE, OCEAN, BADLAND, STEPPE, DESERT, ARCTIC, BARREN, TUNDRA, DEAD, VOLCANIC, TOXIC, RADIATED, ASTEROIDS, GAS_GIANT }
-	enum OUTPUT_TYPE { RESEARCH, COMMERCE, AGRICULTURE, ENVIRONMENT, CONSTRUCTION }
+	enum PLANET_TYPE { TERRAN = 0, JUNGLE, OCEAN, BADLAND, STEPPE, DESERT, ARCTIC, BARREN, TUNDRA, DEAD, VOLCANIC, TOXIC, RADIATED, NONE }
+	enum OUTPUT_TYPE { RESEARCH, DEFENSE, INFRASTRUCTURE, ENVIRONMENT, CONSTRUCTION }
 	enum PLANET_CONSTRUCTION_BONUS { DEARTH, POOR, AVERAGE, COPIOUS, RICH }
-	enum PLANET_ENVIRONMENT_BONUS { DESOLATE, INFERTILE, AVERAGE, FERTILE, LUSH }
-	enum PLANET_ENTERTAINMENT_BONUS { INSIPID, DULL, AVERAGE, SENSATIONAL, EXCITING }
+	enum PLANET_ENVIRONMENT_BONUS { INFERTILE, AVERAGE, FERTILE, LUSH }
+	enum PLANET_RESEARCH_BONUS { AVERAGE, SENSATIONAL, EXCITING }
 	class Planet
 	{
 		#region Member Variables
@@ -99,12 +99,12 @@ namespace Beyond_Beyaan
 			get;
 			private set;
 		}
-		public float AgricultureOutput
+		public float InfrastructureOutput
 		{
 			get;
 			private set;
 		}
-		public float CommerceOutput
+		public float DefenseOutput
 		{
 			get;
 			private set;
@@ -129,7 +129,7 @@ namespace Beyond_Beyaan
 			get;
 			private set;
 		}
-		public PLANET_ENTERTAINMENT_BONUS EntertainmentBonus
+		public PLANET_RESEARCH_BONUS ResearchBonus
 		{
 			get;
 			private set;
@@ -200,15 +200,15 @@ namespace Beyond_Beyaan
 		}
 
 		public int ResearchAmount { get; private set; }
-		public int CommerceAmount { get; private set; }
-		public int AgricultureAmount { get; private set; }
+		public int DefenseAmount { get; private set; }
+		public int InfrastructureAmount { get; private set; }
 		public int EnvironmentAmount { get; private set; }
 		public int ConstructionAmount { get; private set; }
 
-		public bool AgricultureLocked { get; set; }
+		public bool InfrastructureLocked { get; set; }
 		public bool EnvironmentLocked { get; set; }
 		public bool ResearchLocked { get; set; }
-		public bool CommerceLocked { get; set; }
+		public bool DefenseLocked { get; set; }
 		public bool ConstructionLocked { get; set; }
 		#endregion
 
@@ -227,61 +227,59 @@ namespace Beyond_Beyaan
 
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
 			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
-			EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.AVERAGE;
+			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 
 			try //So I can use finally block
 			{
-				if (populationMax <= -15)
-				{
-					planetType = PLANET_TYPE.GAS_GIANT;
-					populationMax = 0;
-					return;
-				}
+				int industryBonusAdjustment = 0;
+				int fertilityBonusAdjustment = 0;
 				if (populationMax < 5)
 				{
-					planetType = PLANET_TYPE.ASTEROIDS;
+					planetType = PLANET_TYPE.NONE;
 					populationMax = 0;
-					return;
 				}
-				if (populationMax <= 10)
+				else if (populationMax <= 10)
 				{
 					planetType = PLANET_TYPE.RADIATED;
-					return;
+					industryBonusAdjustment = 500;
 				}
-				if (populationMax <= 15)
+				else if (populationMax <= 15)
 				{
 					planetType = PLANET_TYPE.TOXIC;
-					return;
+					industryBonusAdjustment = 300;
 				}
-				if (populationMax <= 20)
+				else if (populationMax <= 20)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.ARCTIC : PLANET_TYPE.VOLCANIC;
-					return;
+					industryBonusAdjustment = 200;
 				}
-				if (populationMax <= 30)
+				else if (populationMax <= 30)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.DEAD : PLANET_TYPE.BARREN;
-					return;
+					industryBonusAdjustment = 100;
 				}
-				if (populationMax <= 40)
+				else if (populationMax <= 40)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.TUNDRA : PLANET_TYPE.BADLAND;
-					return;
 				}
-				if (populationMax <= 70)
+				else if (populationMax <= 70)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.OCEAN : PLANET_TYPE.DESERT;
-					return;
+					fertilityBonusAdjustment = 200;
 				}
-				if (populationMax <= 90)
+				else if (populationMax <= 90)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.JUNGLE : PLANET_TYPE.STEPPE;
-					return;
+					fertilityBonusAdjustment = 300;
 				}
-				planetType = PLANET_TYPE.TERRAN;
+				else
+				{
+					planetType = PLANET_TYPE.TERRAN;
+					fertilityBonusAdjustment = 500;
+				}
 
 				//Get the construction bonus
-				int number = r.Next(1000);
+				int number = r.Next(1000) + industryBonusAdjustment;
 				if (!isWetClimate)
 				{
 					number += 25;
@@ -304,16 +302,12 @@ namespace Beyond_Beyaan
 				}
 
 				//Get the environment bonus
-				number = r.Next(1000);
+				number = r.Next(1000) + fertilityBonusAdjustment;
 				if (isWetClimate)
 				{
 					number += 25;
 				}
-				if (number < 50)
-				{
-					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.DESOLATE;
-				}
-				else if (number < 200)
+				if (number < 200)
 				{
 					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.INFERTILE;
 				}
@@ -326,23 +320,15 @@ namespace Beyond_Beyaan
 					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
 				}
 
-				//Get the entertainment bonus
+				//Get the research bonus
 				number = r.Next(1000);
-				if (number < 50)
+				if (number >= 950)
 				{
-					EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.INSIPID;
-				}
-				else if (number < 200)
-				{
-					EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.DULL;
-				}
-				else if (number >= 950)
-				{
-					EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.EXCITING;
+					ResearchBonus = PLANET_RESEARCH_BONUS.EXCITING;
 				}
 				else if (number >= 800)
 				{
-					EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.SENSATIONAL;
+					ResearchBonus = PLANET_RESEARCH_BONUS.SENSATIONAL;
 				}
 			}
 			finally
@@ -361,13 +347,13 @@ namespace Beyond_Beyaan
 			races.Add(owner.EmpireRace);
 			racePopulations.Add(owner.EmpireRace, 50.0f);
 			SetMinimumFoodAndWaste();
-			AgricultureLocked = true;
+			InfrastructureLocked = true;
 			EnvironmentLocked = true;
-			SetOutputAmount(OUTPUT_TYPE.COMMERCE, 15);
-			SetOutputAmount(OUTPUT_TYPE.RESEARCH, 15);
-			AgricultureLocked = false;
+			SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, 15);
+			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 15);
+			InfrastructureLocked = false;
 			EnvironmentLocked = false;
-			EntertainmentBonus = PLANET_ENTERTAINMENT_BONUS.AVERAGE;
+			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
 			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
 		}
@@ -375,17 +361,17 @@ namespace Beyond_Beyaan
 		public void SetOutputAmount(OUTPUT_TYPE outputType, int amount)
 		{
 			int remainingPercentile = 100;
-			if (AgricultureLocked)
+			if (InfrastructureLocked)
 			{
-				remainingPercentile -= AgricultureAmount;
+				remainingPercentile -= InfrastructureAmount;
 			}
 			if (EnvironmentLocked)
 			{
 				remainingPercentile -= EnvironmentAmount;
 			}
-			if (CommerceLocked)
+			if (DefenseLocked)
 			{
-				remainingPercentile -= CommerceAmount;
+				remainingPercentile -= DefenseAmount;
 			}
 			if (ConstructionLocked)
 			{
@@ -400,17 +386,17 @@ namespace Beyond_Beyaan
 			if (amount >= remainingPercentile)
 			{
 				//set all sliders to 0, and change amount to remainingPercentile
-				if (!AgricultureLocked)
+				if (!InfrastructureLocked)
 				{
-					AgricultureAmount = 0;
+					InfrastructureAmount = 0;
 				}
 				if (!EnvironmentLocked)
 				{
 					EnvironmentAmount = 0;
 				}
-				if (!CommerceLocked)
+				if (!DefenseLocked)
 				{
-					CommerceAmount = 0;
+					DefenseAmount = 0;
 				}
 				if (!ResearchLocked)
 				{
@@ -427,46 +413,46 @@ namespace Beyond_Beyaan
 			int totalPointsExcludingSelectedType = 0;
 			switch (outputType)
 			{
-				case OUTPUT_TYPE.AGRICULTURE:
+				case OUTPUT_TYPE.INFRASTRUCTURE:
 					{
-						AgricultureAmount = amount;
-						remainingPercentile -= AgricultureAmount;
-						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + CommerceAmount + EnvironmentAmount;
+						InfrastructureAmount = amount;
+						remainingPercentile -= InfrastructureAmount;
+						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + DefenseAmount + EnvironmentAmount;
 					} break;
 				case OUTPUT_TYPE.ENVIRONMENT:
 					{
 						EnvironmentAmount = amount;
 						remainingPercentile -= EnvironmentAmount;
-						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + CommerceAmount + AgricultureAmount;
+						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + DefenseAmount + InfrastructureAmount;
 					} break;
-				case OUTPUT_TYPE.COMMERCE:
+				case OUTPUT_TYPE.DEFENSE:
 					{
-						CommerceAmount = amount;
-						remainingPercentile -= CommerceAmount;
-						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + AgricultureAmount + EnvironmentAmount;
+						DefenseAmount = amount;
+						remainingPercentile -= DefenseAmount;
+						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + InfrastructureAmount + EnvironmentAmount;
 					} break;
 				case OUTPUT_TYPE.CONSTRUCTION:
 					{
 						ConstructionAmount = amount;
 						remainingPercentile -= ConstructionAmount;
-						totalPointsExcludingSelectedType = CommerceAmount + ResearchAmount + AgricultureAmount + EnvironmentAmount;
+						totalPointsExcludingSelectedType = DefenseAmount + ResearchAmount + InfrastructureAmount + EnvironmentAmount;
 					} break;
 				case OUTPUT_TYPE.RESEARCH:
 					{
 						ResearchAmount = amount;
 						remainingPercentile -= ResearchAmount;
-						totalPointsExcludingSelectedType = ConstructionAmount + CommerceAmount + AgricultureAmount + EnvironmentAmount;
+						totalPointsExcludingSelectedType = ConstructionAmount + DefenseAmount + InfrastructureAmount + EnvironmentAmount;
 					} break;
 			}
 			if (remainingPercentile < totalPointsExcludingSelectedType)
 			{
 				int amountToDeduct = totalPointsExcludingSelectedType - remainingPercentile;
 				int prevValue;
-				if (!AgricultureLocked && outputType != OUTPUT_TYPE.AGRICULTURE)
+				if (!InfrastructureLocked && outputType != OUTPUT_TYPE.INFRASTRUCTURE)
 				{
-					prevValue = AgricultureAmount;
-					AgricultureAmount -= (AgricultureAmount >= amountToDeduct ? amountToDeduct : AgricultureAmount);
-					amountToDeduct -= (prevValue - AgricultureAmount);
+					prevValue = InfrastructureAmount;
+					InfrastructureAmount -= (InfrastructureAmount >= amountToDeduct ? amountToDeduct : InfrastructureAmount);
+					amountToDeduct -= (prevValue - InfrastructureAmount);
 				}
 				if (amountToDeduct > 0)
 				{
@@ -479,11 +465,11 @@ namespace Beyond_Beyaan
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!CommerceLocked && outputType != OUTPUT_TYPE.COMMERCE)
+					if (!DefenseLocked && outputType != OUTPUT_TYPE.DEFENSE)
 					{
-						prevValue = CommerceAmount;
-						CommerceAmount -= (CommerceAmount >= amountToDeduct ? amountToDeduct : CommerceAmount);
-						amountToDeduct -= (prevValue - CommerceAmount);
+						prevValue = DefenseAmount;
+						DefenseAmount -= (DefenseAmount >= amountToDeduct ? amountToDeduct : DefenseAmount);
+						amountToDeduct -= (prevValue - DefenseAmount);
 					}
 				}
 				if (amountToDeduct > 0)
@@ -508,9 +494,9 @@ namespace Beyond_Beyaan
 			if (remainingPercentile > totalPointsExcludingSelectedType) //excess points needed to allocate
 			{
 				int amountToAdd = remainingPercentile - totalPointsExcludingSelectedType;
-				if (!AgricultureLocked && outputType != OUTPUT_TYPE.AGRICULTURE)
+				if (!InfrastructureLocked && outputType != OUTPUT_TYPE.INFRASTRUCTURE)
 				{
-					AgricultureAmount += amountToAdd;
+					InfrastructureAmount += amountToAdd;
 					amountToAdd = 0;
 				}
 				if (amountToAdd > 0)
@@ -523,9 +509,9 @@ namespace Beyond_Beyaan
 				}
 				if (amountToAdd > 0)
 				{
-					if (!CommerceLocked && outputType != OUTPUT_TYPE.COMMERCE)
+					if (!DefenseLocked && outputType != OUTPUT_TYPE.DEFENSE)
 					{
-						CommerceAmount += amountToAdd;
+						DefenseAmount += amountToAdd;
 						amountToAdd = 0;
 					}
 				}
@@ -553,14 +539,14 @@ namespace Beyond_Beyaan
 		{
 			while (CalculateTotalPopGrowth() < 0)
 			{
-				SetOutputAmount(OUTPUT_TYPE.AGRICULTURE, AgricultureAmount + 1);
+				SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, InfrastructureAmount + 1);
 			}
-			AgricultureLocked = true;
+			InfrastructureLocked = true;
 			while (CalculateMaxPopGrowth() < 0)
 			{
 				SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, EnvironmentAmount + 1);
 			}
-			AgricultureLocked = false;
+			InfrastructureLocked = false;
 			/*
 			//Waste Processing uses the formula: Waste Processing Percentage must be greater than or equal to 1 / (3 + tech improvements + racial bonuses/negatives)
 			amount = (1.0f / (3.0f)) * 100.0f; //add tech improvements and racial bonuses/negatives inside (3.0f)
@@ -676,8 +662,8 @@ namespace Beyond_Beyaan
 		private void UpdateOutput()
 		{
 			EnvironmentOutput = (((float)(EnvironmentAmount) / 100.0f) * TotalPopulation) * 4;
-			AgricultureOutput = (((float)(AgricultureAmount) / 100.0f) * TotalPopulation) * 4;
-			CommerceOutput = ((float)(CommerceAmount) / 100.0f) * TotalPopulation;
+			InfrastructureOutput = (((float)(InfrastructureAmount) / 100.0f) * TotalPopulation) * 4;
+			DefenseOutput = ((float)(DefenseAmount) / 100.0f) * TotalPopulation;
 			ResearchOutput = ((float)(ResearchAmount) / 100.0f) * TotalPopulation;
 			ConstructionOutput = ((float)(ConstructionAmount) / 100.0f) * TotalPopulation;
 		}
@@ -691,7 +677,7 @@ namespace Beyond_Beyaan
 				constructionTotal += ConstructionOutput;
 			}
 
-			float foodModifier = (AgricultureOutput - TotalPopulation) / TotalPopulation;
+			float foodModifier = (InfrastructureOutput - TotalPopulation) / TotalPopulation;
 
 			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
 			foreach (Race race in races)
@@ -722,14 +708,11 @@ namespace Beyond_Beyaan
 
 		private float CalculateTotalPopGrowth()
 		{
-			//Factor in food surplus/starvation
-			float foodModifier = (AgricultureOutput - TotalPopulation) / TotalPopulation;
-
 			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
 			float popGrowth = 0;
 			foreach (Race race in races)
 			{
-				popGrowth += (racePopulations[race] * (0.05f)) * (foodModifier - (TotalPopulation / (PopulationMax + CalculateMaxPopGrowth())));
+				popGrowth += (racePopulations[race] * (0.05f)) * (1 - (TotalPopulation / (PopulationMax + CalculateMaxPopGrowth())));
 			}
 
 			return popGrowth;
@@ -751,7 +734,7 @@ namespace Beyond_Beyaan
 
 		private float CalculateOptimalCleanEffort()
 		{
-			return (AgricultureOutput + ConstructionOutput + CommerceOutput + ResearchOutput) / 2;
+			return TotalPopulation / 2;
 		}
 
 		public float GetRacePopulation(Race whichRace)

@@ -164,25 +164,25 @@
     <Frame x="828" y="109" width="30" height="13" />
   </Sprite>
   <Sprite name="TextTC" file="main.png">
-    <Frame x="859" y="109" width="30" height="13" />
+    <Frame x="859" y="109" width="1" height="13" />
   </Sprite>
   <Sprite name="TextTR" file="main.png">
     <Frame x="861" y="109" width="30" height="13" />
   </Sprite>
   <Sprite name="TextCL" file="main.png">
-    <Frame x="828" y="123" width="30" height="13" />
+    <Frame x="828" y="123" width="30" height="1" />
   </Sprite>
   <Sprite name="TextCC" file="main.png">
-    <Frame x="859" y="123" width="30" height="13" />
+    <Frame x="859" y="123" width="1" height="1" />
   </Sprite>
   <Sprite name="TextCR" file="main.png">
-    <Frame x="861" y="123" width="30" height="13" />
+    <Frame x="861" y="123" width="30" height="1" />
   </Sprite>
   <Sprite name="TextBL" file="main.png">
     <Frame x="828" y="125" width="30" height="13" />
   </Sprite>
   <Sprite name="TextBC" file="main.png">
-    <Frame x="859" y="125" width="30" height="13" />
+    <Frame x="859" y="125" width="1" height="13" />
   </Sprite>
   <Sprite name="TextBR" file="main.png">
     <Frame x="861" y="125" width="30" height="13" />

@@ -157,7 +157,7 @@ namespace Beyond_Beyaan
 					planetIncome = 0;
 					foreach (Planet planet in PlanetManager.Planets)
 					{
-						planetIncome += planet.CommerceOutput;
+						planetIncome += planet.TotalPopulation;
 					}
 					UpdateNetIncome();
 					Refresh = false;
