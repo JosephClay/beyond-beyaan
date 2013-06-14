@@ -444,14 +444,7 @@ namespace Beyond_Beyaan.Screens
 						case 1:
 							if (gameMain.Galaxy.GalaxySize > 0)
 							{
-								int habitableStars = 0;
-								foreach (StarSystem system in gameMain.Galaxy.GetAllStars())
-								{
-									if (system.Type != StarType.BLACK_HOLE)
-									{
-										habitableStars++;
-									}
-								}
+								int habitableStars = gameMain.Galaxy.GetAllStars().Count;
 								if (empires.Count > habitableStars || empires.Count < 2)
 								{
 									return;
@@ -583,17 +576,10 @@ namespace Beyond_Beyaan.Screens
 				{
 					int x = (gameMain.ScreenWidth - 499) + (int)(480.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
 					int y = (int)(480.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize)) + 1;
-					if (system.Type == StarType.BLACK_HOLE)
-					{
-						drawingManagement.DrawSprite(SpriteName.BlackHole, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
-					}
-					else
-					{
-						GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-						gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-						drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
-						GorgonLibrary.Gorgon.CurrentShader = null;
-					}
+					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+					drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
+					GorgonLibrary.Gorgon.CurrentShader = null;
 				}
 
 				numOfStarsLabel.Draw();

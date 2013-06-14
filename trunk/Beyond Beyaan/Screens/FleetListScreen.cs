@@ -441,17 +441,10 @@ namespace Beyond_Beyaan.Screens
 				int x = (gameMain.ScreenWidth / 2) + (int)(386.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
 				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize));
 
-				if (system.Type == StarType.BLACK_HOLE)
-				{
-					drawingManagement.DrawSprite(SpriteName.BlackHole, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
-				}
-				else
-				{
-					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-					drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
-					GorgonLibrary.Gorgon.CurrentShader = null;
-				}
+				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+				drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
+				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
 
 			foreach (Fleet fleet in whichFleets)

@@ -40,17 +40,10 @@ namespace Beyond_Beyaan.Screens
 			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
 			foreach (StarSystem system in systems)
 			{
-				if (system.Type == StarType.BLACK_HOLE)
-				{
-					drawingManagement.DrawSprite(SpriteName.BlackHole, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
-				}
-				else
-				{
-					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-					drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
-					GorgonLibrary.Gorgon.CurrentShader = null;
-				}
+				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+				drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
+				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
 			foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
 			{

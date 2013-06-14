@@ -162,18 +162,12 @@ namespace Beyond_Beyaan.Screens
 
 			foreach (StarSystem system in systems)
 			{
-				if (system.Type == StarType.BLACK_HOLE)
-				{
-					drawingManagement.DrawSprite(SpriteName.BlackHole, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
-				}
-				else
-				{
-					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-					drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
-					GorgonLibrary.Gorgon.CurrentShader = null;
-				}
-				if (displayName && (gameMain.EmpireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire)) && system.Type == StarType.NORMAL)
+				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+				drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
+				GorgonLibrary.Gorgon.CurrentShader = null;
+
+				if (displayName && (gameMain.EmpireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire)))
 				{
 					int x = (int)(((((float)(system.X - camera.CameraX) + (system.Size / 2.0f)) * 32) - camera.XOffset) * camera.Scale);
 					x -= (int)(system.StarName.GetWidth() / 2);
@@ -256,22 +250,16 @@ namespace Beyond_Beyaan.Screens
 
 			foreach (StarSystem system in systems)
 			{
-				if (system.Type == StarType.BLACK_HOLE)
-				{
-					drawingManagement.DrawSprite(SpriteName.BlackHole, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
-				}
-				else
-				{
-					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-					drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
-					GorgonLibrary.Gorgon.CurrentShader = null;
-				}
+				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
+				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+				drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
+				GorgonLibrary.Gorgon.CurrentShader = null;
+
 				if (currentEmpire != null && system == currentEmpire.SelectedSystem)
 				{
 					drawingManagement.DrawSprite(SpriteName.SelectedStar, (int)(((((system.X - 1) - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((system.Y - 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size + 2], sizes[system.Size + 2], System.Drawing.Color.White);
 				}
-				if (displayName && (gameMain.EmpireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire)) && system.Type == StarType.NORMAL)
+				if (displayName && (gameMain.EmpireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire)))
 				{
 					int x = (int)(((((float)(system.X - camera.CameraX) + (system.Size / 2.0f)) * 32) - camera.XOffset) * camera.Scale);
 					x -= (int)(system.StarName.GetWidth() / 2);
@@ -386,7 +374,7 @@ namespace Beyond_Beyaan.Screens
 					drawingManagement.DrawText("Arial", selectedFleetGroup.GetShipsForDisplay()[i].Name + " x " +  selectedFleetGroup.FleetToSplit.Ships[selectedFleetGroup.GetShipsForDisplay()[i]], x, 130 + i * 40, System.Drawing.Color.White);
 				}
 			}
-			if (selectedSystem != null && selectedSystem.Type != StarType.BLACK_HOLE)
+			if (selectedSystem != null)
 			{
 				/*drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 500, 0, 255, 500, 400, System.Drawing.Color.White);
 				drawingManagement.DrawSprite(SpriteName.ControlBackground, gameMain.ScreenWidth - 497, 4, 255, 244, 294, System.Drawing.Color.DarkGray);
@@ -503,7 +491,7 @@ namespace Beyond_Beyaan.Screens
 				return;
 			}
 			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
-			if (currentEmpire.SelectedSystem != null && currentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && !systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
+			if (currentEmpire.SelectedSystem != null && !systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
 			{
 				/*if (currentEmpire.SelectedSystem.Planets.Count > 6 && systemScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
@@ -633,7 +621,7 @@ namespace Beyond_Beyaan.Screens
 					}*/
 					return;
 				}
-				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE && !systemView.MouseDown(x, y))
+				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && !systemView.MouseDown(x, y))
 				{
 					/*if (x >= gameMain.ScreenWidth - 207 && y < 650)
 					{
@@ -742,7 +730,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					return;
 				}
-				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Type != StarType.BLACK_HOLE)
+				if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null)
 				{
 					if (systemView.MouseUp(x, y))
 					{
@@ -1012,10 +1000,6 @@ namespace Beyond_Beyaan.Screens
 
 		private void LoadSystemInfoIntoUI(StarSystem system)
 		{
-			if (system.Type == StarType.BLACK_HOLE)
-			{
-				return;
-			}
 			if (system.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
 			{
 				int maxVisible = (system.Planets.Count < 6 ? system.Planets.Count : 6);

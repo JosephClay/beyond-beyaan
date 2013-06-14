@@ -9,6 +9,9 @@ namespace Beyond_Beyaan.Screens
 	public class SystemView : WindowInterface
 	{
 		BBSingleLineTextBox _name;
+		BBStretchableImage _systemBackground;
+		BBStretchableImage _productionBackground;
+		BBStretchableImage _shipBackground;
 
 		#region Constructor
 		public bool Initialize(GameMain gameMain, SpriteManager spriteManager, Random r, out string reason)
@@ -21,6 +24,22 @@ namespace Beyond_Beyaan.Screens
 
 			_name = new BBSingleLineTextBox();
 			if (!_name.Initialize(string.Empty, xPos + 20, yPos + 20, 260, 35, false, spriteManager, r, out reason))
+			{
+				return false;
+			}
+			_systemBackground = new BBStretchableImage();
+			_productionBackground = new BBStretchableImage();
+			_shipBackground = new BBStretchableImage();
+
+			if (!_systemBackground.Initialize(xPos + 20, yPos + 60, 260, 120, StretchableImageType.ThinBorder, spriteManager, r, out reason))
+			{
+				return false;
+			}
+			if (!_productionBackground.Initialize(xPos + 20, yPos + 180, 260, 200, StretchableImageType.ThinBorder, spriteManager, r, out reason))
+			{
+				return false;
+			}
+			if (!_shipBackground.Initialize(xPos + 20, yPos + 380, 260, 200, StretchableImageType.ThinBorder, spriteManager, r, out reason))
 			{
 				return false;
 			}
@@ -54,6 +73,9 @@ namespace Beyond_Beyaan.Screens
 		{
 			base.Draw();
 			_name.Draw();
+			_systemBackground.Draw();
+			_productionBackground.Draw();
+			_shipBackground.Draw();
 		}
 
 		public override void MoveWindow()
