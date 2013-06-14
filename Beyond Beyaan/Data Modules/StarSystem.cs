@@ -7,12 +7,12 @@ using System.Text;
 namespace Beyond_Beyaan
 {
 	public enum StarColor { RED, ORANGE, GREEN, PURPLE, BLUE, BROWN, WHITE, YELLOW }
-	public enum StarType { NORMAL, BLACK_HOLE }
+	//public enum StarType { NORMAL, BLACK_HOLE }
 
 	class StarSystem
 	{
 		#region Member Variables
-		StarType type;
+		//StarType type;
 		private int x;
 		private int y;
 		private int size;
@@ -51,10 +51,10 @@ namespace Beyond_Beyaan
 		{
 			get { return planets; }
 		}
-		public StarType Type
+		/*public StarType Type
 		{
 			get { return type; }
-		}
+		}*/
 		public Label StarName { get; set; }
 		public Empire DominantEmpire { get; private set; }
 
@@ -83,7 +83,7 @@ namespace Beyond_Beyaan
 
 			exploredBy = new List<Empire>();
 
-			type = StarType.NORMAL;
+			//type = StarType.NORMAL;
 
 			int amountOfPlanets = r.Next(maxPlanets - minPlanets) + minPlanets;
 			planets = new List<Planet>();
@@ -104,13 +104,6 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Public Functions
-		public void SetBlackHole()
-		{
-			planets = new List<Planet>(); //nothing
-			type = StarType.BLACK_HOLE;
-			name = "Black Hole";
-		}
-
 		public void SetHomeworld(Empire empire, out Planet homePlanet, Random r)
 		{
 			if (planets.Count == 0)

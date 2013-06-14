@@ -67,7 +67,7 @@ namespace Beyond_Beyaan
 
 			FillGalaxyWithStars(minDistance, minPlanets, maxPlanets, grid, r);
 
-			SetBlackHoles(10, r);
+			//SetBlackHoles(10, r);
 
 			GenerateNebulaField(r);
 
@@ -305,7 +305,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Enhancements
-		public void SetBlackHoles(int percentage, Random r)
+		/*public void SetBlackHoles(int percentage, Random r)
 		{
 			int amountToChange = (int)(starSystems.Count * (percentage / 100.0f));
 
@@ -323,7 +323,7 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-		}
+		}*/
 
 		public void GenerateNebulaField(Random r)
 		{
@@ -356,15 +356,15 @@ namespace Beyond_Beyaan
 				{
 					case 2:
 						{
-							density = starSystem.Type == StarType.BLACK_HOLE ? 70 : 30;
+							density = 30; //starSystem.Type == 30; StarType.BLACK_HOLE ? 70 : 30;
 						} break;
 					case 3:
 						{
-							density = starSystem.Type == StarType.BLACK_HOLE ? 85 : 15;
+							density = 15; //starSystem.Type == 15StarType.BLACK_HOLE ? 85 : 15;
 						} break;
 					case 4:
 						{
-							density = starSystem.Type == StarType.BLACK_HOLE ? 100 : 5;
+							density = 5; //starSystem.Type == StarType.BLACK_HOLE ? 100 : 5;
 						} break;
 				}
 				for (int i = 0; i < starSystem.Size; i++)
@@ -642,7 +642,7 @@ namespace Beyond_Beyaan
 			while (!placed)
 			{
 				int starIter = r.Next(starSystems.Count);
-				if (starSystems[starIter].Type != StarType.BLACK_HOLE && starSystems[starIter].EmpiresWithPlanetsInThisSystem.Count == 0)
+				if (starSystems[starIter].EmpiresWithPlanetsInThisSystem.Count == 0)
 				{
 					starSystems[starIter].SetHomeworld(empire, out homePlanet, r);
 					return starSystems[starIter];
