@@ -130,15 +130,6 @@ namespace Beyond_Beyaan
 			_newGame.Clear();
 		}
 
-		public void Resize(int screenWidth, int screenHeight)
-		{
-			ScreenWidth = screenWidth;
-			ScreenHeight = screenHeight;
-
-			_screenInterface.Resize();
-			_taskBar.Resize();
-		}
-
 		public void ProcessGame(float frameDeltaTime)
 		{
 			bool skipUpdate = false;
@@ -389,7 +380,7 @@ namespace Beyond_Beyaan
 
 		public void DrawGalaxyBackground()
 		{
-			_galaxyScreen.DrawGalaxyBackground(DrawingManagement);
+			_galaxyScreen.DrawGalaxy(DrawingManagement);
 		}
 
 		public void RefreshSitRep()

@@ -263,24 +263,6 @@ namespace Beyond_Beyaan.Screens
 		{
 		}
 
-		public void Resize()
-		{
-			int x = (gameMain.ScreenWidth / 2) - 400;
-			int y = (gameMain.ScreenHeight / 2) - 300;
-
-			incomeLabel.Move(x + 5, y + 440);
-			planetIncome.Move((x + 395) - (int)planetIncome.GetWidth(), y + 440);
-			tradeIncome.Move((x + 395) - (int)tradeIncome.GetWidth(), y + 465);
-
-			expenseLabel.Move(x + 5, y + 495);
-			shipExpense.Move((x + 395) - (int)shipExpense.GetWidth(), y + 495);
-			espionageExpense.Move((x + 395) - (int)espionageExpense.GetWidth(), y + 520);
-			securityExpense.Move((x + 395) - (int)securityExpense.GetWidth(), y + 545);
-
-			netIncomeLabel.Move(x + 5, y + 575);
-			netIncome.Move((x + 395) - (int)netIncome.GetWidth(), y + 575);
-		}
-
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
 			if (e.Key == KeyboardKeys.Escape)

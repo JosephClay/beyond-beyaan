@@ -107,17 +107,18 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public List<Fleet> GetFleetsWithinArea(int x, int y, int width, int height)
+		public List<Fleet> GetFleetsWithinArea(float left, float top, float width, float height)
 		{
 			List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
 			{
 				foreach (Fleet fleet in empire.FleetManager.GetFleets())
 				{
-					if (fleet.GalaxyX >= x && fleet.GalaxyY >= y && fleet.GalaxyX < x + width && fleet.GalaxyY < y + height)
+					if (fleet.GalaxyX * 32 + 32 < left || fleet.GalaxyY * 32 + 32 < top || fleet.GalaxyX * 32 > left + width || fleet.GalaxyY * 32 > top + height)
 					{
-						fleets.Add(fleet);
+						continue;
 					}
+					fleets.Add(fleet);
 				}
 			}
 			return fleets;

@@ -6,99 +6,69 @@ namespace Beyond_Beyaan
 	class Camera
 	{
 		#region Member Variables
-		private int gridSize;
-		private int screenWidth;
-		private int screenHeight;
+		GameMain gameMain;
+
+		private int width;
+		private int height;
 
 		private float xVel; //for camera movement
 		private float yVel; //for camera movement
 
-		private float xOffset;
-		private float yOffset;
+		private float cameraX, cameraY; //The position where the player is looking at
+		private float zoomDistance; //The distance from the galaxy "plane" the player is looking from
 
-		private int cameraX, cameraY; //The position where the player is looking at
-		private int zoomDistance; //The distance from the galaxy "plane" the player is looking from
-		private int gridCells; //size of area in terms of gridCells (ie 10x10 is 10)
-
-		private List<Point> gridSizes;
-		private int maxZoom;
-		private List<float> scales;
+		private float maxZoom;
 		#endregion
 
 		#region Auto Properties
-		public int CameraX { get { return cameraX; } }
-		public int CameraY { get { return cameraY; } }
+		public int Width { get { return width; } }
+		public int Height { get { return height; } }
 
-		public int XOffset { get { return (int)xOffset; } }
-		public int YOffset { get { return (int)yOffset; } }
+		public float CameraX { get { return cameraX; } }
+		public float CameraY { get { return cameraY; } }
 
-		public int ZoomDistance { get { return zoomDistance; } }
-		public float Scale { get { return scales[zoomDistance]; } }
+		public float ZoomDistance { get { return zoomDistance; } }
+		public float MaxZoom { get { return maxZoom; } }
 		#endregion
 
 		#region Constructors
-		public Camera(int screenWidth, int screenHeight)
+		public Camera(int width, int height, GameMain gameMain)
 		{
-			this.screenWidth = screenWidth;
-			this.screenHeight = screenHeight;
+			this.gameMain = gameMain;
+
+			this.width = width;
+			this.height = height;
+
+			maxZoom = 1.0f;
+			while (true)
+			{
+				maxZoom -= 0.05f;
+				if (width * maxZoom < gameMain.ScreenWidth && height * maxZoom < gameMain.ScreenHeight)
+				{
+					break;
+				}
+				if (maxZoom <= 0)
+				{
+					maxZoom = 0.05f;
+					break;
+				}
+			}
+
+			zoomDistance = 1.0f;
 		}
 		#endregion
 
 		#region Functions
-		public void InitCamera(int gridCells, int gridSize)
+		public void CenterCamera(int x, int y, float zoomDis)
 		{
-			this.gridCells = gridCells;
-			this.gridSize = gridSize;
-
-			CalculateZoom();
-		}
-
-		public void ResizeScreen(int screenWidth, int screenHeight)
-		{
-			this.screenWidth = screenWidth;
-			this.screenHeight = screenHeight;
-
-			CalculateZoom();
-		}
-
-		public Point GetViewSize()
-		{
-			return gridSizes[zoomDistance];
-		}
-
-		private void CalculateZoom()
-		{
-			if (gridCells == 0)
+			zoomDistance = zoomDis;
+			if (zoomDistance < maxZoom)
 			{
-				return;
-			}
-			//calculate the rows/columns for each zoom distance
-			float scale = 1;
-			int increment = 1;
-			gridSizes = new List<Point>();
-			scales = new List<float>();
-			while (true)
-			{
-				float size = gridSize * scale;
-				Point scaledGridSize = new Point((int)(screenWidth / size), (int)(screenHeight / size));
-				gridSizes.Add(scaledGridSize);
-				scales.Add(scale);
-				if (scaledGridSize.Y >= gridCells)
-				{
-					maxZoom = increment;
-					break;
-				}
-				scale *= 0.75f;
-				increment++;
+				zoomDistance = maxZoom;
 			}
 
-			CheckPosition();
-		}
-
-		public void CenterCamera(int x, int y)
-		{
-			cameraX = x - (gridSizes[zoomDistance].X / 2);
-			cameraY = y - (gridSizes[zoomDistance].Y / 2);
+			cameraX = x - (gameMain.ScreenWidth / zoomDistance) / 2;
+			cameraX = y - (gameMain.ScreenHeight / zoomDistance) / 2;
 
 			CheckPosition();
 		}
@@ -107,165 +77,95 @@ namespace Beyond_Beyaan
 		{
 			xVel = 0;
 			yVel = 0;
-			if (mouseY < 40 && cameraY > -10)
+			if (mouseY < 40 && cameraY > ((gameMain.ScreenHeight / zoomDistance) / -2))
 			{
 				int y = mouseY - 40;
 				y = y * (-y);
 				yVel = (y / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			else if (mouseY >= screenHeight - 40 && cameraY < (gridCells - gridSizes[zoomDistance].Y) + 10)
+			else if (mouseY >= gameMain.ScreenHeight - 40 && cameraY < (height - (gameMain.ScreenHeight / zoomDistance) / 2))
 			{
-				int y = 40 - (screenHeight - mouseY);
+				int y = 40 - (gameMain.ScreenHeight - mouseY);
 				y = y * y;
 				yVel = (y / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			if (mouseX < 40 && cameraX > -10)
+			if (mouseX < 40 && cameraX > ((gameMain.ScreenWidth / zoomDistance) / -2))
 			{
 				int x = mouseX - 40;
 				x = x * (-x);
 				xVel = (x / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			else if (mouseX >= screenWidth - 40 && cameraX < (gridCells - gridSizes[zoomDistance].X) + 10)
+			else if (mouseX >= gameMain.ScreenWidth - 40 && cameraX < (width - (gameMain.ScreenWidth / zoomDistance) / 2))
 			{
-				int x = 40 - (screenWidth - mouseX);
+				int x = 40 - (gameMain.ScreenWidth - mouseX);
 				x = x * x;
 				xVel = (x / 10000.0f) * (5000 * frameDeltaTime);
 			}
 
 			if (xVel != 0 || yVel != 0)
 			{
-				MoveCamera();
+				cameraX += xVel;
+				cameraY += yVel;
+
+				CheckPosition();
 			}
 		}
 
 		public void MouseWheel(int direction, int mouseX, int mouseY)
 		{
-			ChangeZoom(direction > 0, mouseX, mouseY, screenWidth, screenHeight);
-		}
-
-		public void ZoomOut()
-		{
-			zoomDistance = maxZoom - 1;
-
-			cameraX = 0;
-			cameraY = 0;
-
-			//Redundant, but in case I change the above values, this is a safety catch.
-			CheckPosition();
-		}
-
-		public void ZoomIn(int x, int y)
-		{
-			zoomDistance = 0;
-
-			CenterCamera(x, y);
-		}
-
-		private void ChangeZoom(bool direction, int mouseX, int mouseY, int screenWidth, int screenHeight)
-		{
-			if (direction == false && zoomDistance < maxZoom - 1)
+			if (direction > 0)
 			{
-				int xMove = gridSizes[zoomDistance + 1].X - gridSizes[zoomDistance].X;
-				int yMove = gridSizes[zoomDistance + 1].Y - gridSizes[zoomDistance].Y;
+				if (zoomDistance < 1)
+				{
+					float oldScale = zoomDistance;
+					zoomDistance += 0.05f;
+					if (zoomDistance >= 1)
+					{
+						zoomDistance = 1;
+					}
 
-				cameraX -= (xMove / 2);
-				cameraY -= (yMove / 2);
+					float xScale = (mouseX - cameraX) / (float)width;
+					float yScale = (mouseY - cameraY) / (float)height;
 
-				zoomDistance++;
+					cameraX -= ((width / zoomDistance) - (width / (oldScale))) * xScale;
+					cameraY -= ((height / zoomDistance) - (height / (oldScale))) * yScale;
+				}
 			}
-			else if (direction && zoomDistance > 0)
+			else
 			{
-				//find the grid cell the mouse is hovering above
-				float size = gridSize * scales[zoomDistance];
-				int gridX = (int)(mouseX / size);
-				int gridY = (int)(mouseY / size);
+				if (zoomDistance > maxZoom)
+				{
+					float oldScale = zoomDistance;
+					zoomDistance -= 0.05f;
+					if (zoomDistance < maxZoom)
+					{
+						zoomDistance = maxZoom;
+					}
 
-				float xPer = (float)gridX / (float)gridSizes[zoomDistance].X;
-				float yPer = (float)gridY / (float)gridSizes[zoomDistance].Y;
-
-				int xMove = (int)((gridSizes[zoomDistance].X - gridSizes[zoomDistance - 1].X) * xPer);
-				int yMove = (int)((gridSizes[zoomDistance].Y - gridSizes[zoomDistance - 1].Y) * yPer);
-
-				cameraX += xMove;
-				cameraY += yMove;
-
-				zoomDistance--;
+					cameraX -= ((width / zoomDistance) - (width / (oldScale))) / 2;
+					cameraY -= ((height / zoomDistance) - (height / (oldScale))) / 2;
+				}
 			}
-
 			CheckPosition();
 		}
 
 		private void CheckPosition()
 		{
-			if (cameraX > (gridCells - gridSizes[zoomDistance].X) + 10)
+			if (cameraX > (width - (gameMain.ScreenWidth / zoomDistance) / 2))
 			{
-				cameraX = (gridCells - gridSizes[zoomDistance].X) + 10;
+				cameraX = (width - (gameMain.ScreenWidth / zoomDistance) / 2);
 			}
-			if (cameraX < -10)
+			if (cameraX < ((gameMain.ScreenWidth / zoomDistance) / -2))
 			{
-				cameraX = -10;
+				cameraX = ((gameMain.ScreenWidth / zoomDistance) / -2);
 			}
-			if (cameraY > (gridCells - gridSizes[zoomDistance].Y) + 10)
+			if (cameraY > (height - (gameMain.ScreenHeight / zoomDistance) / 2))
 			{
-				cameraY = (gridCells - gridSizes[zoomDistance].Y) + 10;
+				cameraY = (height - (gameMain.ScreenHeight / zoomDistance) / 2);
 			}
-			if (cameraY < -10)
+			if (cameraY < ((gameMain.ScreenHeight / zoomDistance) / -2))
 			{
-				cameraY = -10;
-			}
-		}
-
-		private void MoveCamera()
-		{
-			xOffset += xVel;
-			while (xOffset < 0)
-			{
-				xOffset += gridSize;
-				cameraX--;
-				if (cameraX < -10)
-				{
-					cameraX = -10;
-					xVel = 0;
-					xOffset = 0;
-					break;
-				}
-			}
-			while (xOffset >= gridSize)
-			{
-				xOffset -= gridSize;
-				cameraX++;
-				if (cameraX > (gridCells - gridSizes[zoomDistance].X) + 10)
-				{
-					cameraX = (gridCells - gridSizes[zoomDistance].X) + 10;
-					xVel = 0;
-					xOffset = 0;
-					break;
-				}
-			}
-			yOffset += yVel;
-			while (yOffset < 0)
-			{
-				yOffset += gridSize;
-				cameraY--;
-				if (cameraY < -10)
-				{
-					cameraY = -10;
-					yVel = 0;
-					yOffset = 0;
-					break;
-				}
-			}
-			while (yOffset >= gridSize)
-			{
-				yOffset -= gridSize;
-				cameraY++;
-				if (cameraY > (gridCells - gridSizes[zoomDistance].Y) + 10)
-				{
-					cameraY = (gridCells - gridSizes[zoomDistance].Y) + 10;
-					yVel = 0;
-					yOffset = 0;
-					break;
-				}
+				cameraY = ((gameMain.ScreenHeight / zoomDistance) / -2);
 			}
 		}
 		#endregion

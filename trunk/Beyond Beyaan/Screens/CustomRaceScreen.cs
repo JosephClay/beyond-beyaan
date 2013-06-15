@@ -38,9 +38,5 @@ namespace Beyond_Beyaan.Screens
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
 		}
-
-		public void Resize()
-		{
-		}
 	}
 }

@@ -87,10 +87,18 @@ namespace Beyond_Beyaan
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <param name="bottom"></param>
-		public List<StarSystem> GetStarsInArea(int left, int top, int width, int height)
+		public List<StarSystem> GetStarsInArea(float left, float top, float width, float height)
 		{
 			List<StarSystem> starsInArea = new List<StarSystem>();
-			ParentNode.GetStarsInArea(left, top, width + 4, height + 4, starsInArea);
+			//ParentNode.GetStarsInArea(left, top, width + 4, height + 4, starsInArea);
+			foreach (StarSystem star in starSystems)
+			{
+				if (star.X * 32 + (star.Size * 32) < left || star.Y * 32 + (star.Size * 32) < top || star.X * 32 > left + width || star.Y * 32 > top + height)
+				{
+					continue;
+				}
+				starsInArea.Add(star);
+			}
 			return starsInArea;
 		}
 

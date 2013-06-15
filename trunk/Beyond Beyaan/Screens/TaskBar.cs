@@ -205,16 +205,5 @@ namespace Beyond_Beyaan
 					break;
 			}
 		}
-
-		public void Resize()
-		{
-			int left = (gameMain.ScreenWidth / 2) - 140;
-			int top = gameMain.ScreenHeight - 40;
-
-			for (int i = 0; i < TaskButtons.Length; i++)
-			{
-				TaskButtons[i].MoveButton(left + (i * 40), top);
-			}
-		}
 	}
 }
