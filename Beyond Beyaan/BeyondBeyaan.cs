@@ -95,7 +95,6 @@ namespace Beyond_Beyaan
 				Gorgon.SetMode(this, videoMode.Width, videoMode.Height, BackBufferFormats.BufferRGB888, !fullScreen);
 				
 				Gorgon.Idle += new FrameEventHandler(Gorgon_Idle);
-				Gorgon.DeviceReset += new EventHandler(Gorgon_DeviceReset);
 				Gorgon.FastResize = false;
 
 				//Gorgon.FrameStatsVisible = true;
@@ -150,11 +149,6 @@ namespace Beyond_Beyaan
 				Gorgon.Screen.Windowed = !Gorgon.Screen.Windowed;
 			}
 			gameMain.KeyDown(e);
-		}
-
-		void Gorgon_DeviceReset(object sender, EventArgs e)
-		{
-			gameMain.Resize(Gorgon.Screen.Width, Gorgon.Screen.Height);
 		}
 
 		void Gorgon_Idle(object sender, FrameEventArgs e)

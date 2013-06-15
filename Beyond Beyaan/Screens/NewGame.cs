@@ -524,27 +524,6 @@ namespace Beyond_Beyaan.Screens
 		{
 		}
 
-		public void Resize()
-		{
-			galaxyComboBox.MoveComboBox(gameMain.ScreenWidth - 500, 596);
-			buttons[0].MoveButton(10, gameMain.ScreenHeight - 35);
-			buttons[1].MoveButton(gameMain.ScreenWidth - 185, gameMain.ScreenHeight - 35);
-			buttons[2].MoveButton(gameMain.ScreenWidth - 185, 596);
-			buttons[3].MoveButton(gameMain.ScreenWidth - 316, 600);
-			buttons[4].MoveButton(gameMain.ScreenWidth - 210, 600);
-			buttons[5].MoveButton(gameMain.ScreenWidth - 260, 524);
-			buttons[6].MoveButton(gameMain.ScreenWidth - 210, 524);
-			buttons[7].MoveButton(gameMain.ScreenWidth - 260, 560);
-			buttons[8].MoveButton(gameMain.ScreenWidth - 210, 560);
-
-			galaxySizeLabel.Move(gameMain.ScreenWidth - 290, 600);
-			minPlanetsPerSystemLabel.Move(gameMain.ScreenWidth - 500, 524);
-			maxPlanetsPerSystemLabel.Move(gameMain.ScreenWidth - 500, 560);
-			minPlanetLabel.Move(gameMain.ScreenWidth - 240, 524);
-			maxPlanetLabel.Move(gameMain.ScreenWidth - 240, 560);
-			numOfStarsLabel.Move(gameMain.ScreenWidth - 185, 624);
-		}
-
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
 			if (empireNameTextBox.KeyDown(e))

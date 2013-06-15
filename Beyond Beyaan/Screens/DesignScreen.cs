@@ -772,26 +772,6 @@ namespace Beyond_Beyaan.Screens
 		{
 		}
 
-		public void Resize()
-		{
-			x = gameMain.ScreenWidth / 2 - 400;
-			y = gameMain.ScreenHeight / 2 - 300;
-
-			sizeComboBox.MoveComboBox(x + 75, y + 40);
-			engineButton.MoveButton(x + 75, y + 230);
-			computerButton.MoveButton(x + 75, y + 300);
-			armorButton.MoveButton(x + 75, y + 400);
-			shieldButton.MoveButton(x + 75, y + 500);
-
-			prevShip.MoveButton(x + 75, y + 135);
-			nextShip.MoveButton(x + 251, y + 135);
-
-			for (int i = 0; i < techButtons.Length; i++)
-			{
-				techButtons[i].MoveButton(x + 150, y + 50 + (i * 35));
-			}
-		}
-
 		public void LoadScreen()
 		{
 			x = gameMain.ScreenWidth / 2 - 400;

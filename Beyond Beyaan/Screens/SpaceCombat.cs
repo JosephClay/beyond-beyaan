@@ -13,17 +13,17 @@ namespace Beyond_Beyaan.Screens
 
 		//bool loaded;
 		GameMain gameMain;
-		Camera camera;
-		StarSystem system;
+		//Camera camera;
+		//StarSystem system;
 		//List<Fleet> originalFleets;
-		List<CombatFleet> fleetsInCombat;
+		//List<CombatFleet> fleetsInCombat;
 		private int combatIter;
-		private int whichEmpireTurn;
-		private int selectedShipIter;
+		//private int whichEmpireTurn;
+		//private int selectedShipIter;
 		private Button[] actionButtons;
 		private List<CombatShip> retreatingShips;
-		private bool processRetreating;
-		private float retreatProcess;
+		//private bool processRetreating;
+		//private float retreatProcess;
 		private CombatShip selectedShip;
 		private Label shipNameLabel;
 		private Label engineLabel;
@@ -85,7 +85,7 @@ namespace Beyond_Beyaan.Screens
 		public void Initialize(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
-			camera = new Camera(this.gameMain.ScreenWidth, this.gameMain.ScreenHeight);
+			//camera = new Camera(this.gameMain.ScreenWidth, this.gameMain.ScreenHeight);
 			retreatingShips = new List<CombatShip>();
 
 			x = (gameMain.ScreenWidth / 2) - 140;
@@ -119,18 +119,18 @@ namespace Beyond_Beyaan.Screens
 		public void SetupScreen()
 		{
 			combatIter = 0;
-			whichEmpireTurn = 0;
+			//whichEmpireTurn = 0;
 			SetupBattle(gameMain.EmpireManager.CombatsToProcess[combatIter].fleetsInCombat, null);
 		}
 
 		public void ResetScreen()
 		{
-			whichEmpireTurn = 0;
+			//whichEmpireTurn = 0;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			GorgonLibrary.Graphics.Sprite shipSprite;
+			/*GorgonLibrary.Graphics.Sprite shipSprite;
 
 			foreach (CombatFleet fleet in fleetsInCombat)
 			{
@@ -226,12 +226,12 @@ namespace Beyond_Beyaan.Screens
 					weaponButtons[i].Draw(drawingManagement);
 				}
 				weaponScrollBar.DrawScrollBar(drawingManagement);
-			}
+			}*/
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			if (processRetreating)
+			/*if (processRetreating)
 			{
 				if (retreatProcess <= 0) //This ship has finished retreating
 				{
@@ -272,7 +272,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return;
 			}
-			camera.HandleUpdate(mouseX, mouseY, frameDeltaTime);
+			camera.HandleUpdate(mouseX, mouseY, frameDeltaTime);*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
@@ -285,7 +285,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			for (int i = 0; i < actionButtons.Length; i++)
+			/*for (int i = 0; i < actionButtons.Length; i++)
 			{
 				if (actionButtons[i].MouseUp(x, y))
 				{
@@ -412,20 +412,15 @@ namespace Beyond_Beyaan.Screens
 					return;
 				}
 			}
-			IsClickOnShip(x, y);
-		}
-
-		public void Resize()
-		{
-			camera.ResizeScreen(gameMain.ScreenWidth, gameMain.ScreenHeight);
+			IsClickOnShip(x, y);*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
 		{
-			if (!processRetreating)
+			/*if (!processRetreating)
 			{
 				camera.MouseWheel(direction, x, y);
-			}
+			}*/
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
@@ -434,7 +429,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void IsClickOnShip(int x, int y)
 		{
-			int X = (int)(((x / camera.Scale) + camera.XOffset) / 16) + camera.CameraX;
+			/*int X = (int)(((x / camera.Scale) + camera.XOffset) / 16) + camera.CameraX;
 			int Y = (int)(((y / camera.Scale) + camera.YOffset) / 16) + camera.CameraY;
 
 			foreach (CombatFleet fleet in fleetsInCombat)
@@ -456,12 +451,12 @@ namespace Beyond_Beyaan.Screens
 						return;
 					}
 				}
-			}
+			}*/
 		}
 
 		public void SetupBattle(List<Fleet> fleets, StarSystem system)
 		{
-			fleetsInCombat = new List<CombatFleet>();
+			/*fleetsInCombat = new List<CombatFleet>();
 			
 			int totalCircumferenceNeeded = 0;
 
@@ -497,12 +492,12 @@ namespace Beyond_Beyaan.Screens
 
 			selectedShipIter = 0;
 			SelectedShip = fleetsInCombat[0].combatShips[selectedShipIter];
-			camera.CenterCamera(SelectedShip.X, SelectedShip.Y);
+			camera.CenterCamera(SelectedShip.X, SelectedShip.Y);*/
 		}
 
 		private void MoveToNextEmpireTurn()
 		{
-			whichEmpireTurn++;
+			/*whichEmpireTurn++;
 			if (whichEmpireTurn >= fleetsInCombat.Count)
 			{
 				whichEmpireTurn = 0;
@@ -533,7 +528,7 @@ namespace Beyond_Beyaan.Screens
 				retreatProcess = 1.0f;
 				selectedShip = retreatingShips[0];
 				camera.CenterCamera(selectedShip.X, selectedShip.Y);
-			}
+			}*/
 		}
 	}
 }

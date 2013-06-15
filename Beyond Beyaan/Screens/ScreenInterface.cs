@@ -21,7 +21,5 @@ namespace Beyond_Beyaan.Screens
 		void MouseScroll(int direction, int x, int y);
 
 		void KeyDown(KeyboardInputEventArgs e);
-
-		void Resize();
 	}
 }

@@ -12,22 +12,14 @@ namespace Beyond_Beyaan.Screens
 		Camera camera;
 		bool stillMoving;
 		float tickCount;
-		float[] sizes;
 		int updateSection;
 		Label updateText;
 
 		public void Initialize(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
-			camera = new Camera(gameMain.ScreenWidth, gameMain.ScreenHeight);
-			camera.InitCamera(gameMain.Galaxy.GalaxySize, 32);
-			camera.ZoomOut();
-
-			sizes = new float[4];
-			sizes[0] = 32 * camera.Scale;
-			sizes[1] = 2 * 32 * camera.Scale;
-			sizes[2] = 3 * 32 * camera.Scale;
-			sizes[3] = 4 * 32 * camera.Scale;
+			camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, gameMain);
+			camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
 
 			stillMoving = true;
 			tickCount = 0;
@@ -37,17 +29,17 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX - 4, camera.CameraY - 4, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2);
+			List<StarSystem> systems = gameMain.Galaxy.GetStarsInArea(camera.CameraX, camera.CameraY, gameMain.ScreenWidth / camera.ZoomDistance, gameMain.ScreenHeight / camera.ZoomDistance);
 			foreach (StarSystem system in systems)
 			{
 				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
 				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-				drawingManagement.DrawSprite(SpriteName.Star, (int)((((system.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((system.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[system.Size - 1], sizes[system.Size - 1], System.Drawing.Color.White);
+				drawingManagement.DrawSprite(SpriteName.Star, (int)(((system.X * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((system.Y * 32) - camera.CameraY) * camera.ZoomDistance), 255, system.Size * 32 * camera.ZoomDistance, system.Size * 32 * camera.ZoomDistance, System.Drawing.Color.White);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
-			foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, camera.GetViewSize().X + 2, camera.GetViewSize().Y + 2))
+			foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, gameMain.ScreenWidth / camera.ZoomDistance, gameMain.ScreenHeight / camera.ZoomDistance))
 			{
-				drawingManagement.DrawSprite(SpriteName.Fleet, (int)((((fleet.GalaxyX - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((fleet.GalaxyY - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, 32, 32, fleet.Empire.EmpireColor);
+				drawingManagement.DrawSprite(SpriteName.Fleet, (int)(((fleet.GalaxyX * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((fleet.GalaxyY * 32) - camera.CameraY) * camera.ZoomDistance), 255, 32, 32, fleet.Empire.EmpireColor);
 			}
 			if (updateSection != -1)
 			{
@@ -119,16 +111,6 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-		}
-
-		public void Resize()
-		{
-			camera.ResizeScreen(gameMain.ScreenWidth, gameMain.ScreenHeight);
-			sizes = new float[4];
-			sizes[0] = 32 * camera.Scale;
-			sizes[1] = 2 * 32 * camera.Scale;
-			sizes[2] = 3 * 32 * camera.Scale;
-			sizes[3] = 4 * 32 * camera.Scale;
 		}
 	}
 }

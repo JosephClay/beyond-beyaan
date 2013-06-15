@@ -439,10 +439,6 @@ namespace Beyond_Beyaan.Screens
 		{
 		}
 
-		public void Resize()
-		{
-		}
-
 		public void SetupScreen()
 		{
 			empiresInContact = new List<Contact>();
