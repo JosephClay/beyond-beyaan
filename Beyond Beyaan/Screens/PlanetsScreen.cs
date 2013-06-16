@@ -140,7 +140,7 @@ namespace Beyond_Beyaan.Screens
 				construction[i].Draw();
 			}
 
-			DrawGalaxyPreview(drawingManagement);
+			DrawGalaxyPreview();
 
 			ownedPlanetButton.Draw(drawingManagement);
 			neutralPlanetButton.Draw(drawingManagement);
@@ -406,7 +406,7 @@ namespace Beyond_Beyaan.Screens
 			}
 		}
 
-		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
+		private void DrawGalaxyPreview()
 		{
 			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
@@ -419,11 +419,13 @@ namespace Beyond_Beyaan.Screens
 				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
 				if (system == selectedSystem || system == hoveringSystem)
 				{
-					drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 12 * system.Size, 12 * system.Size, System.Drawing.Color.White);
+					system.Sprite.Draw(x, y, 0.6f, 0.6f);
+					//drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 12 * system.Size, 12 * system.Size, System.Drawing.Color.White);
 				}
 				else
 				{
-					drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
+					system.Sprite.Draw(x, y, 0.4f, 0.4f);
+					//drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 				}
 				GorgonLibrary.Gorgon.CurrentShader = null;
 			}

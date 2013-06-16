@@ -124,8 +124,8 @@ namespace Beyond_Beyaan
 						zoomDistance = 1;
 					}
 
-					float xScale = (mouseX - cameraX) / (float)width;
-					float yScale = (mouseY - cameraY) / (float)height;
+					float xScale = (mouseX - cameraX) / (float)gameMain.ScreenWidth;
+					float yScale = (mouseY - cameraY) / (float)gameMain.ScreenHeight;
 
 					cameraX -= ((width / zoomDistance) - (width / (oldScale))) * xScale;
 					cameraY -= ((height / zoomDistance) - (height / (oldScale))) * yScale;
