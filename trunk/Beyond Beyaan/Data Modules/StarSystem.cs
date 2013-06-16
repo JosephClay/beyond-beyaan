@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 //using System.Linq;
 using System.Text;
+using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	public enum StarColor { RED, ORANGE, GREEN, PURPLE, BLUE, BROWN, WHITE, YELLOW }
+	//public enum StarColor { RED, ORANGE, GREEN, PURPLE, BLUE, BROWN, WHITE, YELLOW }
 	//public enum StarType { NORMAL, BLACK_HOLE }
 
 	class StarSystem
@@ -39,6 +40,11 @@ namespace Beyond_Beyaan
 		{
 			get { return name; }
 		}
+		public BBSprite Sprite
+		{
+			get;
+			private set;
+		}
 		public float[] StarColor
 		{
 			get { return color; }
@@ -66,12 +72,13 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int x, int y, System.Drawing.Color color, int size, int minPlanets, int maxPlanets, Random r)
+		public StarSystem(string name, int x, int y, System.Drawing.Color color, BBSprite sprite, int minPlanets, int maxPlanets, Random r)
 		{
+			this.Sprite = sprite;
 			this.name = name;
 			this.x = x;
 			this.y = y;
-			this.size = size;
+			this.size = 1;
 
 			this.color = new float[]
 				{

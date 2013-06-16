@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
 using System.Text;
+using Beyond_Beyaan.Data_Managers;
+using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
@@ -36,7 +38,7 @@ namespace Beyond_Beyaan
 		/// </summary>
 		/// <param name="galaxyType"></param>
 		/// <param name="starCount"></param>
-		public void GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, int size, int minDistance, Random r)
+		public bool GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, int size, int minDistance, SpriteManager spriteManager, Random r, out string reason)
 		{
 			bool[][] grid = null;
 			switch (galaxyType)
@@ -65,13 +67,19 @@ namespace Beyond_Beyaan
 
 			GalaxySize = grid.Length;
 
-			FillGalaxyWithStars(minDistance, minPlanets, maxPlanets, grid, r);
+			if (!FillGalaxyWithStars(minDistance, minPlanets, maxPlanets, grid, spriteManager, r, out reason))
+			{
+				return false;
+			}
 
 			//SetBlackHoles(10, r);
 
 			GenerateNebulaField(r);
 
 			ConvertNebulaToSprite();
+
+			reason = null;
+			return true;
 		}
 
 		public void ConstructQuadTree()
@@ -242,8 +250,15 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Filling Functions
-		private void FillGalaxyWithStars(int minDistance, int minPlanets, int maxPlanets, bool[][] grid, Random r)
+		private bool FillGalaxyWithStars(int minDistance, int minPlanets, int maxPlanets, bool[][] grid, SpriteManager spriteManager, Random r, out string reason)
 		{
+			BBSprite sprite = spriteManager.GetSprite("Star", r);
+			if (sprite == null)
+			{
+				reason = "Star sprite don't exist in sprites.xml";
+				return false;
+			}
+
 			starSystems = new List<StarSystem>();
 			NameGenerator nameGenerator = new NameGenerator();
 
@@ -292,7 +307,7 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x, y, starColor, newSize, minPlanets, maxPlanets, r));
+				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x, y, starColor, sprite, minPlanets, maxPlanets, r));
 
 				int adjustedMinDistance = minDistance + r.Next(9);
 
@@ -309,6 +324,8 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+			reason = null;
+			return true;
 		}
 		#endregion
 

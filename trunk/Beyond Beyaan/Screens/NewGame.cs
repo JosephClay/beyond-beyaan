@@ -262,26 +262,29 @@ namespace Beyond_Beyaan.Screens
 				handicapComboBoxes[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			}
 			
+			GALAXYTYPE type = GALAXYTYPE.RANDOM;
 			if (generatingGalaxy != -1 && generatingDrawn)
 			{
+				string reason;
 				switch (generatingGalaxy)
 				{
 					case 0:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.RANDOM, 1, 1, galaxySize, 4, gameMain.Random);
+						type = GALAXYTYPE.RANDOM;
 						break;
 					case 1:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.CLUSTER, 1, 1, galaxySize, 4, gameMain.Random);
+						type = GALAXYTYPE.CLUSTER;
 						break;
 					case 2:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.RING, 1, 1, galaxySize, 4, gameMain.Random);
+						type = GALAXYTYPE.RING;
 						break;
 					case 3:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.DIAMOND, 1, 1, galaxySize, 4, gameMain.Random);
+						type = GALAXYTYPE.DIAMOND;
 						break;
 					case 4:
-						gameMain.Galaxy.GenerateGalaxy(GALAXYTYPE.STAR, 1, 1, galaxySize, 4, gameMain.Random);
+						type = GALAXYTYPE.STAR;
 						break;
 				}
+				gameMain.Galaxy.GenerateGalaxy(type, 1, 1, galaxySize, 4, gameMain.SpriteManager, gameMain.Random, out reason);
 				numOfStarsLabel.SetText("Number of stars: " + gameMain.Galaxy.GetAllStars().Count);
 				generatingGalaxy = -1;
 				generatingDrawn = false;
@@ -557,7 +560,8 @@ namespace Beyond_Beyaan.Screens
 					int y = (int)(480.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize)) + 1;
 					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
 					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-					drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
+					system.Sprite.Draw(x, y, 0.4f, 0.4f);
+					//drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 					GorgonLibrary.Gorgon.CurrentShader = null;
 				}
 
