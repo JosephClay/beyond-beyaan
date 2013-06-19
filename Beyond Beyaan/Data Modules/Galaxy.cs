@@ -14,17 +14,17 @@ namespace Beyond_Beyaan
 	{
 		private GridCell[][] gridCells;
 		private List<StarSystem> starSystems = new List<StarSystem>();
-		QuadNode ParentNode;
+		//QuadNode ParentNode;
 		GorgonLibrary.Graphics.Sprite nebula;
 
-		#region Pathfinding values
+		/*#region Pathfinding values
 		private int Open_Value = 0;
 		private int Closed_Value = 1;
 		private int Current_Value = 0;
 
 		int originalX = -1;
 		int originalY = -1;
-		#endregion
+		#endregion*/
 
 		public int GalaxySize { get; private set; }
 
@@ -37,7 +37,13 @@ namespace Beyond_Beyaan
 		/// Set up the galaxy
 		/// </summary>
 		/// <param name="galaxyType"></param>
-		/// <param name="starCount"></param>
+		/// <param name="minPlanets"></param>
+		/// <param name="maxPlanets"></param>
+		/// <param name="size"></param>
+		/// <param name="minDistance"></param>
+		/// <param name="spriteManager"></param>
+		/// <param name="r"></param>
+		/// <param name="reason"></param>
 		public bool GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, int size, int minDistance, SpriteManager spriteManager, Random r, out string reason)
 		{
 			bool[][] grid = null;
@@ -74,18 +80,18 @@ namespace Beyond_Beyaan
 
 			//SetBlackHoles(10, r);
 
-			GenerateNebulaField(r);
+			//GenerateNebulaField(r);
 
-			ConvertNebulaToSprite();
+			//ConvertNebulaToSprite();
 
 			reason = null;
 			return true;
 		}
 
-		public void ConstructQuadTree()
+		/*public void ConstructQuadTree()
 		{
 			ParentNode = new QuadNode(0, 0, GalaxySize, starSystems);
-		}
+		}*/
 
 		#region Star Retrieval Functions
 		/// <summary>
@@ -93,15 +99,15 @@ namespace Beyond_Beyaan
 		/// </summary>
 		/// <param name="top"></param>
 		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <param name="bottom"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
 		public List<StarSystem> GetStarsInArea(float left, float top, float width, float height)
 		{
 			List<StarSystem> starsInArea = new List<StarSystem>();
 			//ParentNode.GetStarsInArea(left, top, width + 4, height + 4, starsInArea);
 			foreach (StarSystem star in starSystems)
 			{
-				if (star.X * 32 + (star.Size * 32) < left || star.Y * 32 + (star.Size * 32) < top || star.X * 32 > left + width || star.Y * 32 > top + height)
+				if (star.X + (star.Size * 16) < left || star.Y + (star.Size * 16) < top || star.X - (star.Size * 16) > left + width || star.Y - (star.Size * 16) > top + height)
 				{
 					continue;
 				}
@@ -124,7 +130,7 @@ namespace Beyond_Beyaan
 		{
 			foreach (StarSystem starSystem in starSystems)
 			{
-				if (starSystem.X <= point.X && starSystem.X + starSystem.Size > point.X && starSystem.Y <= point.Y && starSystem.Y + starSystem.Size > point.Y)
+				if (starSystem.X - starSystem.Size * 16 <= point.X && starSystem.X + starSystem.Size * 16 > point.X && starSystem.Y - starSystem.Size * 16 <= point.Y && starSystem.Y + starSystem.Size * 16 > point.Y)
 				{
 					return starSystem;
 				}
@@ -283,7 +289,7 @@ namespace Beyond_Beyaan
 
 				starTree.GetRandomStarPosition(r, out x, out y);
 
-				int newSize = r.Next(3) + 2;
+				//int newSize = r.Next(3) + 2;
 
 				Color starColor = Color.White;
 
@@ -307,11 +313,11 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x, y, starColor, sprite, minPlanets, maxPlanets, r));
+				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * 32 + (r.Next(32)), y * 32 + (r.Next(32)), starColor, sprite, minPlanets, maxPlanets, r));
 
-				int adjustedMinDistance = minDistance + r.Next(9);
+				int adjustedMinDistance = minDistance + r.Next(4);
 
-				bool[][] invalidatedArea = Utility.CalculateDisc(adjustedMinDistance, newSize);
+				bool[][] invalidatedArea = Utility.CalculateDisc(adjustedMinDistance, 1);
 
 				for (int i = 0; i < invalidatedArea.Length; i++)
 				{
@@ -682,7 +688,8 @@ namespace Beyond_Beyaan
 
 		public List<Point> GetPath(int startX, int startY, int endX, int endY, Empire limitToEmpireInfluence)
 		{
-			if (startX == endX && startY == endY)
+			return null;
+			/*if (startX == endX && startY == endY)
 			{
 				//if destination is same as origin, don't bother.
 				return null;
@@ -848,7 +855,7 @@ namespace Beyond_Beyaan
 			}
 
 			path.Reverse();
-			return path;
+			return path;*/
 		}
 
 		private int CheckPath(int startX, int startY, int endX, int endY, int travelLength, Empire whichEmpire, ref List<Point> currentPath)
@@ -892,13 +899,13 @@ namespace Beyond_Beyaan
 		internal int diagonalMovementCost;
 		internal bool passable;
 
-		internal Point parent;
+		/*internal Point parent;
 		internal int status;
 		internal int F;
 		internal int G;
 
 		internal Empire dominantEmpire;
-		internal Empire secondaryEmpire;
+		internal Empire secondaryEmpire;*/
 	}
 	#endregion
 

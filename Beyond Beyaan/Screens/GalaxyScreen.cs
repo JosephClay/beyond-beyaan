@@ -20,7 +20,7 @@ namespace Beyond_Beyaan.Screens
 
 		private GameMain gameMain;
 		private Camera camera;
-		private GorgonLibrary.Graphics.Sprite shipSprite;
+		//private GorgonLibrary.Graphics.Sprite shipSprite;
 		private Button[] systemButtons;
 		private Button[] fleetButtons;
 		private ScrollBar systemScrollBar;
@@ -53,7 +53,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			this.gameMain = gameMain;
 
-			camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, gameMain);
+			camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, gameMain.ScreenWidth, gameMain.ScreenHeight);
 
 			systemButtons = new Button[6];
 			for (int i = 0; i < systemButtons.Length; i++)
@@ -115,7 +115,7 @@ namespace Beyond_Beyaan.Screens
 			if (gameMain.EmpireManager.CurrentEmpire != null && gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem != null)
 			{
 				gameMain.EmpireManager.CurrentEmpire.SelectedSystem = gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem;
-				camera.CenterCamera(gameMain.EmpireManager.CurrentEmpire.SelectedSystem.X * 32, gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Y * 32, camera.ZoomDistance);
+				camera.CenterCamera(gameMain.EmpireManager.CurrentEmpire.SelectedSystem.X, gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Y, camera.ZoomDistance);
 				LoadSystemInfoIntoUI(gameMain.EmpireManager.CurrentEmpire.SelectedSystem);
 				systemView.LoadSystem();
 			}
@@ -161,14 +161,14 @@ namespace Beyond_Beyaan.Screens
 				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
 				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
 				//drawingManagement.DrawSprite(SpriteName.Star, (int)(((system.X * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((system.Y * 32) - camera.CameraY) * camera.ZoomDistance), 255, system.Size * 32 * camera.ZoomDistance, system.Size * 32 * camera.ZoomDistance, System.Drawing.Color.White);
-				system.Sprite.Draw((int)(((system.X * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((system.Y * 32) - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance);
+				system.Sprite.Draw((int)((system.X - camera.CameraX) * camera.ZoomDistance), (int)((system.Y - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 
 				if (displayName && (gameMain.EmpireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire)))
 				{
-					float x = ((system.X * 32 + (system.Size * 32) / 2) - camera.CameraX) * camera.ZoomDistance;
+					float x = (system.X - camera.CameraX) * camera.ZoomDistance;
 					x -= (system.StarName.GetWidth() / 2);
-					float y = (((system.Y + system.Size) * 32) - camera.CameraY) * camera.ZoomDistance;
+					float y = ((system.Y + (system.Size * 16)) - camera.CameraY) * camera.ZoomDistance;
 					system.StarName.Move((int)x, (int)y);
 					if (system.DominantEmpire != null)
 					{
@@ -198,7 +198,7 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 
-			foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, gameMain.ScreenWidth / camera.ZoomDistance, gameMain.ScreenHeight / camera.ZoomDistance))
+			/*foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, gameMain.ScreenWidth / camera.ZoomDistance, gameMain.ScreenHeight / camera.ZoomDistance))
 			{
 				bool visible = false;
 				if (fleet.Empire == gameMain.EmpireManager.CurrentEmpire)
@@ -213,7 +213,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					drawingManagement.DrawSprite(SpriteName.Fleet, (int)(((fleet.GalaxyX * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((fleet.GalaxyY * 32) - camera.CameraY) * camera.ZoomDistance), 255, 32 * camera.ZoomDistance, 32 * camera.ZoomDistance, fleet.Empire.EmpireColor);
 				}
-			}
+			}*/
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
@@ -222,7 +222,7 @@ namespace Beyond_Beyaan.Screens
 
 			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
-			FleetGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
+			//FleetGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
 
 			/*if (selectedFleetGroup != null)
 			{
@@ -833,12 +833,12 @@ namespace Beyond_Beyaan.Screens
 					pressedInWindow = false;
 					return;
 				}
-				Point whichGridCellClicked = new Point();
+				Point pointClicked = new Point();
 
-				whichGridCellClicked.X = (int)(((x * camera.ZoomDistance) + camera.CameraX) / 32);
-				whichGridCellClicked.Y = (int)(((y / camera.ZoomDistance) + camera.CameraY) / 32);
+				pointClicked.X = (int)((x * camera.ZoomDistance) + camera.CameraX);
+				pointClicked.Y = (int)((y * camera.ZoomDistance) + camera.CameraY);
 
-				StarSystem selectedSystem = gameMain.Galaxy.GetStarAtPoint(whichGridCellClicked);
+				StarSystem selectedSystem = gameMain.Galaxy.GetStarAtPoint(pointClicked);
 				if (selectedSystem != null && selectedSystem == gameMain.EmpireManager.CurrentEmpire.SelectedSystem)
 				{
 					return;
@@ -854,7 +854,7 @@ namespace Beyond_Beyaan.Screens
 					return;
 				}
 
-				FleetGroup selectedFleetGroup = gameMain.EmpireManager.GetFleetsAtPoint(whichGridCellClicked.X, whichGridCellClicked.Y);
+				/*FleetGroup selectedFleetGroup = gameMain.EmpireManager.GetFleetsAtPoint(whichGridCellClicked.X, whichGridCellClicked.Y);
 				gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup = selectedFleetGroup;
 
 				if (selectedFleetGroup != null)
@@ -862,8 +862,8 @@ namespace Beyond_Beyaan.Screens
 					selectedFleetGroup.ShipIndex = 0;
 					LoadFleetInfoIntoUI(selectedFleetGroup);
 					return;
-				}
-				camera.CenterCamera(whichGridCellClicked.X * 32, whichGridCellClicked.Y * 32, camera.ZoomDistance);
+				}*/
+				camera.CenterCamera(pointClicked.X, pointClicked.Y, camera.ZoomDistance);
 			}
 			else if (whichButton == 2)
 			{
@@ -1038,7 +1038,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void LoadShipSprite(Planet planet)
 		{
-			if (planet.Owner == null || planet.Owner != gameMain.EmpireManager.CurrentEmpire)
+			/*if (planet.Owner == null || planet.Owner != gameMain.EmpireManager.CurrentEmpire)
 			{
 				return;
 			}
@@ -1056,7 +1056,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				shipSprite.SetScale((shipSprite.Width - 16) / shipSprite.Width, (shipSprite.Height - 16) / shipSprite.Height);
 				shipSprite.SetPosition(gameMain.ScreenWidth - 117 - (shipSprite.Width / 2), 283 - (shipSprite.Height / 2));
-			}
+			}*/
 		}
 	}
 }

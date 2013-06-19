@@ -18,11 +18,11 @@ namespace Beyond_Beyaan.Screens
 		#region Variables
 		private List<SpriteName> spriteNames;
 		private GameMain gameMain;
-		private Ship shipDesign;
-		private GorgonLibrary.Graphics.Sprite shipSprite;
+		//private Ship shipDesign;
+		/*private GorgonLibrary.Graphics.Sprite shipSprite;
 		private int totalSpace;
 		private int usedSpace;
-		private int totalCost;
+		private int totalCost;*/
 		private int x;
 		private int y;
 		Button[] removeButtons;
@@ -41,14 +41,14 @@ namespace Beyond_Beyaan.Screens
 		Button armorButton;
 		Button shieldButton;
 		ProgressBar spaceUsage;
-		List<Engine> availableEngines;
+		/*List<Engine> availableEngines;
 		List<Armor> availableArmors;
 		List<Shield> availableShields;
 		List<Computer> availableComputers;
-		List<Weapon> availableWeapons;
+		List<Weapon> availableWeapons;*/
 		Button[] techButtons;
-		int displayingTechOption;
-		int shipWeaponIndex;
+		//int displayingTechOption;
+		//int shipWeaponIndex;
 		SingleLineTextBox nameTextBox;
 		Label[] techLabels;
 		ScrollBar techScrollBar;
@@ -94,8 +94,8 @@ namespace Beyond_Beyaan.Screens
 			spaceUsage = new ProgressBar(x + 295, y + 575, 300, 16, 300, 0, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
 
 
-			displayingTechOption = NONE;
-			shipWeaponIndex = 0;
+			//displayingTechOption = NONE;
+			//shipWeaponIndex = 0;
 
 			techButtons = new Button[15];
 			for (int i = 0; i < techButtons.Length; i++)
@@ -135,7 +135,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			gameMain.DrawGalaxyBackground();
 
-			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y - 1, 255, 285, 228, System.Drawing.Color.White);
+			/*drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y - 1, 255, 285, 228, System.Drawing.Color.White);
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 226, 255, 285, 67, System.Drawing.Color.White);
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 293, 255, 285, 102, System.Drawing.Color.White);
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 395, 255, 285, 102, System.Drawing.Color.White);
@@ -336,12 +336,12 @@ namespace Beyond_Beyaan.Screens
 							}
 						} break;
 				}
-			}
+			}*/
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			switch (displayingTechOption)
+			/*switch (displayingTechOption)
 			{
 				case NONE:
 					{
@@ -437,12 +437,12 @@ namespace Beyond_Beyaan.Screens
 							techButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 						}
 					} break;
-			}
+			}*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			switch (displayingTechOption)
+			/*switch (displayingTechOption)
 			{
 				case NONE:
 					{
@@ -525,12 +525,12 @@ namespace Beyond_Beyaan.Screens
 							techButtons[i].MouseDown(x, y);
 						}
 					} break;
-			}
+			}*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			switch (displayingTechOption)
+			/*switch (displayingTechOption)
 			{
 				case NONE:
 					{
@@ -617,7 +617,7 @@ namespace Beyond_Beyaan.Screens
 						if (confirm.MouseUp(x, y))
 						{
 							shipDesign.Name = nameTextBox.GetString();
-							gameMain.EmpireManager.CurrentEmpire.FleetManager.AddShipDesign(shipDesign);
+							//gameMain.EmpireManager.CurrentEmpire.FleetManager.AddShipDesign(shipDesign);
 							NameGenerator generator = new NameGenerator();
 							shipDesign.Name = generator.GetName();
 							nameTextBox.SetString(shipDesign.Name);
@@ -765,7 +765,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					displayingTechOption = NONE;
 				}
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -774,10 +774,10 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadScreen()
 		{
-			x = gameMain.ScreenWidth / 2 - 400;
+			/*x = gameMain.ScreenWidth / 2 - 400;
 			y = gameMain.ScreenHeight / 2 - 300;
 
-			shipDesign = gameMain.EmpireManager.CurrentEmpire.FleetManager.LastShipDesign;
+			//shipDesign = gameMain.EmpireManager.CurrentEmpire.FleetManager.LastShipDesign;
 			shipSprite = gameMain.EmpireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
 			shipSprite.SetPosition(x + 95, y + 95);
 			shipSprite.SetScale(100.0f / shipSprite.Width, 100.0f / shipSprite.Height);
@@ -866,7 +866,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					availableWeapons.Add(new Weapon(bomb));
 				}
-			}
+			}*/
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
@@ -887,7 +887,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void UpdateSpaceUsageAndCost()
 		{
-			totalSpace = shipDesign.TotalSpace;
+			/*totalSpace = shipDesign.TotalSpace;
 			usedSpace = 0;
 			usedSpace += shipDesign.engine.GetSpace(totalSpace);
 			usedSpace += shipDesign.armor.GetSpace(totalSpace);
@@ -931,12 +931,12 @@ namespace Beyond_Beyaan.Screens
 				spaceUsage.SetColor(System.Drawing.Color.Red);
 			}
 
-			shipDesign.Cost = totalCost;
+			shipDesign.Cost = totalCost;*/
 		}
 
 		public void LoadTechOptions()
 		{
-			techScrollBar.TopIndex = 0;
+			/*techScrollBar.TopIndex = 0;
 			switch (displayingTechOption)
 			{
 				case ENGINE:
@@ -1040,11 +1040,11 @@ namespace Beyond_Beyaan.Screens
 						techLabels[1].SetText("Damage");
 						techLabels[2].SetText("Accuracy");
 					} break;
-			}
+			}*/
 		}
 		private void RefreshTechOptions()
 		{
-			//This is when the tech scrollbar is moved
+			/*//This is when the tech scrollbar is moved
 			switch (displayingTechOption)
 			{
 				case ENGINE:
@@ -1082,7 +1082,7 @@ namespace Beyond_Beyaan.Screens
 							techButtons[i].SetButtonText(availableWeapons[i + techScrollBar.TopIndex].GetName());
 						}
 					} break;
-			}
+			}*/
 		}
 	}
 }

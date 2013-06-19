@@ -6,10 +6,11 @@ namespace Beyond_Beyaan
 	class Camera
 	{
 		#region Member Variables
-		GameMain gameMain;
-
 		private int width;
 		private int height;
+
+		private int windowWidth;
+		private int windowHeight;
 
 		private float xVel; //for camera movement
 		private float yVel; //for camera movement
@@ -32,18 +33,19 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public Camera(int width, int height, GameMain gameMain)
+		public Camera(int width, int height, int windowWidth, int windowHeight)
 		{
-			this.gameMain = gameMain;
-
 			this.width = width;
 			this.height = height;
+
+			this.windowWidth = windowWidth;
+			this.windowHeight = windowHeight;
 
 			maxZoom = 1.0f;
 			while (true)
 			{
 				maxZoom -= 0.05f;
-				if (width * maxZoom < gameMain.ScreenWidth && height * maxZoom < gameMain.ScreenHeight)
+				if (width * maxZoom < windowWidth && height * maxZoom < windowHeight)
 				{
 					break;
 				}
@@ -67,8 +69,8 @@ namespace Beyond_Beyaan
 				zoomDistance = maxZoom;
 			}
 
-			cameraX = x - (gameMain.ScreenWidth / zoomDistance) / 2;
-			cameraX = y - (gameMain.ScreenHeight / zoomDistance) / 2;
+			cameraX = x - (windowWidth / zoomDistance) / 2;
+			cameraY = y - (windowHeight / zoomDistance) / 2;
 
 			CheckPosition();
 		}
@@ -77,27 +79,27 @@ namespace Beyond_Beyaan
 		{
 			xVel = 0;
 			yVel = 0;
-			if (mouseY < 40 && cameraY > ((gameMain.ScreenHeight / zoomDistance) / -2))
+			if (mouseY < 40 && cameraY > ((windowHeight / zoomDistance) / -2))
 			{
 				int y = mouseY - 40;
 				y = y * (-y);
 				yVel = (y / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			else if (mouseY >= gameMain.ScreenHeight - 40 && cameraY < (height - (gameMain.ScreenHeight / zoomDistance) / 2))
+			else if (mouseY >= windowHeight - 40 && cameraY < (height - (windowHeight / zoomDistance) / 2))
 			{
-				int y = 40 - (gameMain.ScreenHeight - mouseY);
+				int y = 40 - (windowHeight - mouseY);
 				y = y * y;
 				yVel = (y / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			if (mouseX < 40 && cameraX > ((gameMain.ScreenWidth / zoomDistance) / -2))
+			if (mouseX < 40 && cameraX > ((windowWidth / zoomDistance) / -2))
 			{
 				int x = mouseX - 40;
 				x = x * (-x);
 				xVel = (x / 10000.0f) * (5000 * frameDeltaTime);
 			}
-			else if (mouseX >= gameMain.ScreenWidth - 40 && cameraX < (width - (gameMain.ScreenWidth / zoomDistance) / 2))
+			else if (mouseX >= windowWidth - 40 && cameraX < (width - (windowWidth / zoomDistance) / 2))
 			{
-				int x = 40 - (gameMain.ScreenWidth - mouseX);
+				int x = 40 - (windowWidth - mouseX);
 				x = x * x;
 				xVel = (x / 10000.0f) * (5000 * frameDeltaTime);
 			}
@@ -124,8 +126,8 @@ namespace Beyond_Beyaan
 						zoomDistance = 1;
 					}
 
-					float xScale = (mouseX - cameraX) / (float)gameMain.ScreenWidth;
-					float yScale = (mouseY - cameraY) / (float)gameMain.ScreenHeight;
+					float xScale = (mouseX - cameraX) / windowWidth;
+					float yScale = (mouseY - cameraY) / windowHeight;
 
 					cameraX -= ((width / zoomDistance) - (width / (oldScale))) * xScale;
 					cameraY -= ((height / zoomDistance) - (height / (oldScale))) * yScale;
@@ -151,21 +153,21 @@ namespace Beyond_Beyaan
 
 		private void CheckPosition()
 		{
-			if (cameraX > (width - (gameMain.ScreenWidth / zoomDistance) / 2))
+			if (cameraX > (width - (windowWidth / zoomDistance) / 2))
 			{
-				cameraX = (width - (gameMain.ScreenWidth / zoomDistance) / 2);
+				cameraX = (width - (windowWidth / zoomDistance) / 2);
 			}
-			if (cameraX < ((gameMain.ScreenWidth / zoomDistance) / -2))
+			if (cameraX < ((windowWidth / zoomDistance) / -2))
 			{
-				cameraX = ((gameMain.ScreenWidth / zoomDistance) / -2);
+				cameraX = ((windowWidth / zoomDistance) / -2);
 			}
-			if (cameraY > (height - (gameMain.ScreenHeight / zoomDistance) / 2))
+			if (cameraY > (height - (windowHeight / zoomDistance) / 2))
 			{
-				cameraY = (height - (gameMain.ScreenHeight / zoomDistance) / 2);
+				cameraY = (height - (windowHeight / zoomDistance) / 2);
 			}
-			if (cameraY < ((gameMain.ScreenHeight / zoomDistance) / -2))
+			if (cameraY < ((windowHeight / zoomDistance) / -2))
 			{
-				cameraY = ((gameMain.ScreenHeight / zoomDistance) / -2);
+				cameraY = ((windowHeight / zoomDistance) / -2);
 			}
 		}
 		#endregion
