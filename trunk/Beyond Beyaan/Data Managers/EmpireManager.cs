@@ -107,7 +107,7 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public List<Fleet> GetFleetsWithinArea(float left, float top, float width, float height)
+		/*public List<Fleet> GetFleetsWithinArea(float left, float top, float width, float height)
 		{
 			List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
@@ -148,14 +148,14 @@ namespace Beyond_Beyaan
 				}
 			}
 			return stillHaveMovement;
-		}
+		}*/
 
 		public void UpdateEmpires(Galaxy galaxy)
 		{
 			foreach (Empire empire in empires)
 			{
 				empire.SitRepManager.ClearItems();
-				empire.FleetManager.ResetFleetMovements();
+				//empire.FleetManager.ResetFleetMovements();
 				empire.CheckExploredSystems(galaxy);
 				empire.PlanetManager.UpdatePopGrowth();
 				empire.CheckForBuiltShips();
@@ -165,7 +165,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void LookForCombat()
+		/*public void LookForCombat()
 		{
 			List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
@@ -316,9 +316,9 @@ namespace Beyond_Beyaan
 				visibleFleets.Sort((Fleet a, Fleet b) => { return string.Compare(a.Empire.EmpireName, b.Empire.EmpireName); });
 				empire.SetVisibleFleets(visibleFleets);
 			}
-		}
+		}*/
 
-		public void UpdateMigration(Galaxy galaxy)
+		/*public void UpdateMigration(Galaxy galaxy)
 		{
 			GridCell[][] gridCells = galaxy.GetGridCells();
 			foreach (Empire empire in empires)
@@ -356,16 +356,16 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-			/*foreach (Empire empire in empires)
+			foreach (Empire empire in empires)
 			{
 				//Now that we know which systems are claimed by which empires, time to process the actual migration
 				empire.UpdateMigration(galaxy);
-			}*/
+			}
 			foreach (StarSystem system in systems)
 			{
 				system.UpdateOwners();
 			}
-		}
+		}*/
 		#endregion
 	}
 }

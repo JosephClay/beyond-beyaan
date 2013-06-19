@@ -18,7 +18,7 @@ namespace Beyond_Beyaan.Screens
 		public void Initialize(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
-			camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, gameMain);
+			camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, gameMain.ScreenWidth, gameMain.ScreenHeight);
 			camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
 
 			stillMoving = true;
@@ -34,13 +34,13 @@ namespace Beyond_Beyaan.Screens
 			{
 				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
 				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-				drawingManagement.DrawSprite(SpriteName.Star, (int)(((system.X * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((system.Y * 32) - camera.CameraY) * camera.ZoomDistance), 255, system.Size * 32 * camera.ZoomDistance, system.Size * 32 * camera.ZoomDistance, System.Drawing.Color.White);
+				drawingManagement.DrawSprite(SpriteName.Star, (int)((system.X - camera.CameraX) * camera.ZoomDistance), (int)((system.Y - camera.CameraY) * camera.ZoomDistance), 255, system.Size * 32 * camera.ZoomDistance, system.Size * 32 * camera.ZoomDistance, System.Drawing.Color.White);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 			}
-			foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, gameMain.ScreenWidth / camera.ZoomDistance, gameMain.ScreenHeight / camera.ZoomDistance))
+			/*foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, gameMain.ScreenWidth / camera.ZoomDistance, gameMain.ScreenHeight / camera.ZoomDistance))
 			{
 				drawingManagement.DrawSprite(SpriteName.Fleet, (int)(((fleet.GalaxyX * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((fleet.GalaxyY * 32) - camera.CameraY) * camera.ZoomDistance), 255, 32, 32, fleet.Empire.EmpireColor);
-			}
+			}*/
 			if (updateSection != -1)
 			{
 				drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (gameMain.ScreenWidth / 2) - 150, (gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
@@ -55,7 +55,7 @@ namespace Beyond_Beyaan.Screens
 				tickCount += frameDeltaTime;
 				if (tickCount > 0.50f)
 				{
-					stillMoving = gameMain.EmpireManager.UpdateFleetMovement(gameMain.Galaxy.GetGridCells());
+					stillMoving = false;//gameMain.EmpireManager.UpdateFleetMovement(gameMain.Galaxy.GetGridCells());
 					tickCount -= 0.50f;
 				}
 			}
@@ -75,13 +75,13 @@ namespace Beyond_Beyaan.Screens
 						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 2:
-						gameMain.EmpireManager.UpdateInfluenceMaps(gameMain.Galaxy);
+						//gameMain.EmpireManager.UpdateInfluenceMaps(gameMain.Galaxy);
 						updateText.SetText("Processing Migration");
 						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 3:
-						gameMain.EmpireManager.UpdateMigration(gameMain.Galaxy);
-						gameMain.EmpireManager.LookForCombat();
+						//gameMain.EmpireManager.UpdateMigration(gameMain.Galaxy);
+						//gameMain.EmpireManager.LookForCombat();
 						if (gameMain.EmpireManager.HasCombat)
 						{
 							gameMain.ChangeToScreen(Screen.Battle);

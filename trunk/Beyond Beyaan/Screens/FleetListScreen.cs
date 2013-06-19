@@ -30,10 +30,10 @@ namespace Beyond_Beyaan.Screens
 		Button showOurFleets;
 		Button showOtherFleets;
 
-		List<Fleet> ownedFleets;
+		/*List<Fleet> ownedFleets;
 		List<Fleet> otherFleets;
 		List<Fleet> allFleets;
-		List<Fleet> whichFleets;
+		List<Fleet> whichFleets;*/
 
 		SingleLineTextBox nameText;
 		SingleLineTextBox sizeText;
@@ -45,7 +45,7 @@ namespace Beyond_Beyaan.Screens
 		SingleLineTextBox[] mountsTexts;
 		SingleLineTextBox[] shotsTexts;
 
-		int weaponIndex;
+		/*int weaponIndex;
 		int fleetIndex;
 		int shipIndex;
 		int selectedFleet;
@@ -54,7 +54,7 @@ namespace Beyond_Beyaan.Screens
 		Fleet fleetSelected;
 		Fleet hoveringFleet;
 
-		Ship shipSelected;
+		Ship shipSelected;*/
 		GorgonLibrary.Graphics.Sprite shipSprite;
 
 		public void Initialize(GameMain gameMain)
@@ -114,7 +114,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			gameMain.DrawGalaxyBackground();
 
-			drawingManagement.DrawSprite(SpriteName.ControlBackground, (gameMain.ScreenWidth / 2) - 400, (gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
+			/*drawingManagement.DrawSprite(SpriteName.ControlBackground, (gameMain.ScreenWidth / 2) - 400, (gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
 			drawingManagement.DrawSprite(SpriteName.Screen, (gameMain.ScreenWidth / 2), (gameMain.ScreenHeight / 2) - 300, 255, 399, 399, System.Drawing.Color.White);
 
 			DrawGalaxyPreview(drawingManagement);
@@ -175,12 +175,12 @@ namespace Beyond_Beyaan.Screens
 					mountsTexts[i].Draw(drawingManagement);
 					shotsTexts[i].Draw(drawingManagement);
 				}
-			}
+			}*/
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
+			/*int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			hoveringFleet = null;
 			for (int i = 0; i < maxVisible; i++)
 			{
@@ -200,12 +200,12 @@ namespace Beyond_Beyaan.Screens
 			scrapFleet.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			scrapShip.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			showOtherFleets.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			showOurFleets.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+			showOurFleets.UpdateHovering(mouseX, mouseY, frameDeltaTime);*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
+			/*int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			for (int i = 0; i < maxVisible; i++)
 			{
 				fleetButtons[i].MouseDown(x, y);
@@ -221,12 +221,12 @@ namespace Beyond_Beyaan.Screens
 			scrapFleet.MouseDown(x, y);
 			scrapShip.MouseDown(x, y);
 			showOtherFleets.MouseDown(x, y);
-			showOurFleets.MouseDown(x, y);
+			showOurFleets.MouseDown(x, y);*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
+			/*int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			for (int i = 0; i < maxVisible; i++)
 			{
 				if (fleetButtons[i].MouseUp(x, y))
@@ -278,7 +278,7 @@ namespace Beyond_Beyaan.Screens
 				showOurFleets.Selected = !showOurFleets.Selected;
 				UpdateList();
 				UpdateLabels();
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -299,7 +299,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadScreen()
 		{
-			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
+			/*Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
 			ownedFleets = currentEmpire.FleetManager.GetFleets();
 			otherFleets = currentEmpire.VisibleFleets;
 			allFleets = new List<Fleet>();
@@ -321,12 +321,12 @@ namespace Beyond_Beyaan.Screens
 			fleetSelected = null;
 
 			UpdateList();
-			UpdateLabels();
+			UpdateLabels();*/
 		}
 
 		public void UpdateLabels()
 		{
-			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
+			/*int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			for (int i = 0; i < maxVisible; i++)
 			{
 				fleetButtons[i].SetButtonText(whichFleets[i + fleetIndex].Empire.EmpireName);
@@ -354,12 +354,12 @@ namespace Beyond_Beyaan.Screens
 					}
 					i++;
 				}
-			}
+			}*/
 		}
 
 		public void UpdateList()
 		{
-			fleetSelected = null;
+			/*fleetSelected = null;
 			selectedFleet = -1;
 			selectedShip = -1;
 			fleetIndex = 0;
@@ -388,12 +388,12 @@ namespace Beyond_Beyaan.Screens
 			else
 			{
 				whichFleets = new List<Fleet>();
-			}
+			}*/
 		}
 
 		public void UpdateShipSpecs()
 		{
-			if (selectedFleet != -1)
+			/*if (selectedFleet != -1)
 			{
 				int i = 0;
 				foreach (KeyValuePair<Ship, int> ship in whichFleets[selectedFleet - fleetIndex].Ships)
@@ -413,24 +413,24 @@ namespace Beyond_Beyaan.Screens
 						break;
 					}
 				}
-			}
+			}*/
 		}
 
 		public void UpdateWeaponSpecs()
 		{
-			int maxVisible = shipSelected.weapons.Count > weaponTexts.Length ? weaponTexts.Length : shipSelected.weapons.Count;
+			/*int maxVisible = shipSelected.weapons.Count > weaponTexts.Length ? weaponTexts.Length : shipSelected.weapons.Count;
 
 			for (int i = 0; i < maxVisible; i++)
 			{
 				weaponTexts[i].SetString(shipSelected.weapons[i + weaponIndex].GetName());
 				mountsTexts[i].SetString(shipSelected.weapons[i + weaponIndex].Mounts.ToString());
 				shotsTexts[i].SetString(shipSelected.weapons[i + weaponIndex].Ammo.ToString());
-			}
+			}*/
 		}
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
+			/*List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
@@ -457,7 +457,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					drawingManagement.DrawSprite(SpriteName.Fleet, x, y, 255, 16, 16, fleet.Empire.EmpireColor);
 				}
-			}
+			}*/
 		}
 
 		private void LoadShipSprite(Empire empire, Ship ship)

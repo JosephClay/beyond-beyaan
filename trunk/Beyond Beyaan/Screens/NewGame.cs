@@ -37,6 +37,8 @@ namespace Beyond_Beyaan.Screens
 		Label raceLabel;
 		Label handicapLabel;
 
+		private Camera camera;
+
 		int galaxySize;
 		int minPlanets;
 		int maxPlanets;
@@ -284,7 +286,9 @@ namespace Beyond_Beyaan.Screens
 						type = GALAXYTYPE.STAR;
 						break;
 				}
-				gameMain.Galaxy.GenerateGalaxy(type, 1, 1, galaxySize, 4, gameMain.SpriteManager, gameMain.Random, out reason);
+				gameMain.Galaxy.GenerateGalaxy(type, 1, 1, galaxySize, 2, gameMain.SpriteManager, gameMain.Random, out reason);
+				camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, 500, 500);
+				camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
 				numOfStarsLabel.SetText("Number of stars: " + gameMain.Galaxy.GetAllStars().Count);
 				generatingGalaxy = -1;
 				generatingDrawn = false;
@@ -473,11 +477,11 @@ namespace Beyond_Beyaan.Screens
 									empire.SetHomeSystem(homeSystem, homePlanet);
 								}
 								gameMain.EmpireManager.SetupContacts();
-								gameMain.EmpireManager.UpdateInfluenceMaps(gameMain.Galaxy);
+								//gameMain.EmpireManager.UpdateInfluenceMaps(gameMain.Galaxy);
 								gameMain.EmpireManager.SetInitialEmpireTurn();
 								//gameMain.EmpireManager.ProcessNextEmpire(); //This will process the AI players, then set the current empire to human controlled one
 								gameMain.RefreshSitRep();
-								gameMain.Galaxy.ConstructQuadTree();
+								//gameMain.Galaxy.ConstructQuadTree();
 								gameMain.ChangeToScreen(Screen.Galaxy);
 							}
 							break;
@@ -539,14 +543,14 @@ namespace Beyond_Beyaan.Screens
 		{
 			drawingManagement.DrawSprite(SpriteName.Screen, gameMain.ScreenWidth - 500, 0, 255, System.Drawing.Color.White);
 
-			GorgonLibrary.Graphics.Sprite nebula = gameMain.Galaxy.Nebula;
+			/*GorgonLibrary.Graphics.Sprite nebula = gameMain.Galaxy.Nebula;
 			if (nebula != null)
 			{
 				nebula.SetPosition(gameMain.ScreenWidth - 499, 1);
 				float scale = (498.0f / (gameMain.Galaxy.GalaxySize + 3));
 				nebula.SetScale(scale, scale);
 				gameMain.Galaxy.Nebula.Draw();
-			}
+			}*/
 
 			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
@@ -556,8 +560,8 @@ namespace Beyond_Beyaan.Screens
 			{
 				foreach (StarSystem system in systems)
 				{
-					int x = (gameMain.ScreenWidth - 499) + (int)(480.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
-					int y = (int)(480.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize)) + 1;
+					int x = (gameMain.ScreenWidth - 499) + (int)((system.X - camera.CameraX) * camera.ZoomDistance);
+					int y = (int)((system.Y - camera.CameraY) * camera.ZoomDistance) + 1;
 					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
 					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
 					system.Sprite.Draw(x, y, 0.4f, 0.4f);

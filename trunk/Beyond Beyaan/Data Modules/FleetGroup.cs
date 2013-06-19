@@ -127,7 +127,7 @@ namespace Beyond_Beyaan
 			}
 			selectedFleet.ClearEmptyShips();
 			fleet.ClearEmptyShips();
-			if (selectedFleet.Ships.Count == 0)
+			/*if (selectedFleet.Ships.Count == 0)
 			{
 				fleets.Remove(selectedFleet);
 				empire.FleetManager.RemoveFleet(selectedFleet);
@@ -137,7 +137,7 @@ namespace Beyond_Beyaan
 				fleets.Add(fleet);
 				empire.FleetManager.AddFleet(fleet);
 			}
-			fleet.RefreshPath(gridCells);
+			fleet.RefreshPath(gridCells);*/
 		}
 
 		public List<Ship> GetShipsForDisplay()

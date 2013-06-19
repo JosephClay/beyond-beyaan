@@ -408,7 +408,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview()
 		{
-			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
+			/*List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
@@ -428,7 +428,7 @@ namespace Beyond_Beyaan.Screens
 					//drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 				}
 				GorgonLibrary.Gorgon.CurrentShader = null;
-			}
+			}*/
 		}
 	}
 }
