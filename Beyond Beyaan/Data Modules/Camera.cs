@@ -113,7 +113,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void MouseWheel(int direction, int mouseX, int mouseY)
+		public void MouseWheel(int direction, float mouseX, float mouseY)
 		{
 			if (direction > 0)
 			{
@@ -126,11 +126,11 @@ namespace Beyond_Beyaan
 						zoomDistance = 1;
 					}
 
-					float xScale = (mouseX - cameraX) / windowWidth;
-					float yScale = (mouseY - cameraY) / windowHeight;
+					float xScale = mouseX / windowWidth;
+					float yScale = mouseY / windowHeight;
 
-					cameraX -= ((width / zoomDistance) - (width / (oldScale))) * xScale;
-					cameraY -= ((height / zoomDistance) - (height / (oldScale))) * yScale;
+					cameraX += ((windowWidth / oldScale) - (windowWidth / zoomDistance)) * xScale;
+					cameraY += ((windowHeight / oldScale) - (windowHeight / zoomDistance)) * yScale;
 				}
 			}
 			else
@@ -144,8 +144,8 @@ namespace Beyond_Beyaan
 						zoomDistance = maxZoom;
 					}
 
-					cameraX -= ((width / zoomDistance) - (width / (oldScale))) / 2;
-					cameraY -= ((height / zoomDistance) - (height / (oldScale))) / 2;
+					cameraX -= ((windowWidth / zoomDistance) - (windowWidth / oldScale)) / 2;
+					cameraY -= ((windowHeight / zoomDistance) - (windowHeight / oldScale)) / 2;
 				}
 			}
 			CheckPosition();
