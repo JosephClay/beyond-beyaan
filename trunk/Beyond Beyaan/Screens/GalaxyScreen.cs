@@ -835,8 +835,8 @@ namespace Beyond_Beyaan.Screens
 				}
 				Point pointClicked = new Point();
 
-				pointClicked.X = (int)((x * camera.ZoomDistance) + camera.CameraX);
-				pointClicked.Y = (int)((y * camera.ZoomDistance) + camera.CameraY);
+				pointClicked.X = (int)((x / camera.ZoomDistance) + camera.CameraX);
+				pointClicked.Y = (int)((y / camera.ZoomDistance) + camera.CameraY);
 
 				StarSystem selectedSystem = gameMain.Galaxy.GetStarAtPoint(pointClicked);
 				if (selectedSystem != null && selectedSystem == gameMain.EmpireManager.CurrentEmpire.SelectedSystem)

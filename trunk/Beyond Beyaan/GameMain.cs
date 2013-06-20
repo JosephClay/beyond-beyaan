@@ -239,7 +239,7 @@ namespace Beyond_Beyaan
 
 		public void MouseScroll(int delta)
 		{
-			_screenInterface.MouseScroll(delta, MousePos.X, MousePos.X);
+			_screenInterface.MouseScroll(delta, MousePos.X, MousePos.Y);
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
