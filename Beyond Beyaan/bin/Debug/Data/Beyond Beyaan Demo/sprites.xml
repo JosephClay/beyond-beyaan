@@ -418,4 +418,490 @@
   <Sprite name="SliderHorizontalFGButton3" file="main.png">
     <Frame x="601" y="112" width="7" height="16" />
   </Sprite>
+  
+  <!--Race Sprites-->
+  <!--Humans-->
+  <Sprite name="HumanTinyShip1" file="humans.png">
+    <Frame x="0" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanTinyShip2" file="humans.png">
+    <Frame x="32" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanTinyShip3" file="humans.png">
+    <Frame x="64" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanTinyShip4" file="humans.png">
+    <Frame x="96" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanTinyShip5" file="humans.png">
+    <Frame x="128" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanTinyShip6" file="humans.png">
+    <Frame x="160" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanSmallShip1" file="humans.png">
+    <Frame x="0" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="HumanSmallShip2" file="humans.png">
+    <Frame x="64" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="HumanSmallShip3" file="humans.png">
+    <Frame x="128" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="HumanSmallShip4" file="humans.png">
+    <Frame x="192" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="HumanSmallShip5" file="humans.png">
+    <Frame x="256" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="HumanSmallShip6" file="humans.png">
+    <Frame x="320" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="HumanMediumShip1" file="humans.png">
+    <Frame x="0" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="HumanMediumShip2" file="humans.png">
+    <Frame x="96" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="HumanMediumShip3" file="humans.png">
+    <Frame x="192" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="HumanMediumShip4" file="humans.png">
+    <Frame x="288" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="HumanMediumShip5" file="humans.png">
+    <Frame x="384" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="HumanMediumShip6" file="humans.png">
+    <Frame x="480" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="HumanLargeShip1" file="humans.png">
+    <Frame x="0" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="HumanLargeShip2" file="humans.png">
+    <Frame x="128" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="HumanLargeShip3" file="humans.png">
+    <Frame x="256" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="HumanLargeShip4" file="humans.png">
+    <Frame x="384" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="HumanLargeShip5" file="humans.png">
+    <Frame x="512" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="HumanLargeShip6" file="humans.png">
+    <Frame x="640" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="HumanHugeShip1" file="humans.png">
+    <Frame x="0" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="HumanHugeShip2" file="humans.png">
+    <Frame x="160" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="HumanHugeShip3" file="humans.png">
+    <Frame x="320" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="HumanHugeShip4" file="humans.png">
+    <Frame x="480" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="HumanHugeShip5" file="humans.png">
+    <Frame x="640" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="HumanHugeShip6" file="humans.png">
+    <Frame x="800" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="HumanTitanShip" file="humans.png">
+    <Frame x="768" y="64" width="256" height="256" />
+  </Sprite>
+  <Sprite name="HumanFleetIcon" file="humans.png">
+    <Frame x="224" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanGroundTroop" file="humans.png">
+    <Frame x="192" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanDyingTroop" file="humans.png">
+    <Frame x="256" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="HumanNeutralPortrait" file="humans.png">
+    <Frame x="0" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="HumanHappyPortrait" file="humans.png">
+    <Frame x="300" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="HumanAngryPortrait" file="humans.png">
+    <Frame x="600" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="HumanThumbnail" file="humans.png">
+    <Frame x="0" y="780" width="128" height="128" />
+  </Sprite>
+  <Sprite name="HumanCity" file="humans.png">
+    <Frame x="128" y="780" width="300" height="200" />
+  </Sprite>
+  <Sprite name="HumanLandingShip" file="humans.png">
+    <Frame x="428" y="780" width="300" height="200" />
+  </Sprite>
+  <!--Salix Cybornia-->
+  <Sprite name="SalixCyborniaTinyShip1" file="salix_cybornia.png">
+    <Frame x="0" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaTinyShip2" file="salix_cybornia.png">
+    <Frame x="32" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaTinyShip3" file="salix_cybornia.png">
+    <Frame x="64" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaTinyShip4" file="salix_cybornia.png">
+    <Frame x="96" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaTinyShip5" file="salix_cybornia.png">
+    <Frame x="128" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaTinyShip6" file="salix_cybornia.png">
+    <Frame x="160" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaSmallShip1" file="salix_cybornia.png">
+    <Frame x="0" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SalixCyborniaSmallShip2" file="salix_cybornia.png">
+    <Frame x="64" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SalixCyborniaSmallShip3" file="salix_cybornia.png">
+    <Frame x="128" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SalixCyborniaSmallShip4" file="salix_cybornia.png">
+    <Frame x="192" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SalixCyborniaSmallShip5" file="salix_cybornia.png">
+    <Frame x="256" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SalixCyborniaSmallShip6" file="salix_cybornia.png">
+    <Frame x="320" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SalixCyborniaMediumShip1" file="salix_cybornia.png">
+    <Frame x="0" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SalixCyborniaMediumShip2" file="salix_cybornia.png">
+    <Frame x="96" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SalixCyborniaMediumShip3" file="salix_cybornia.png">
+    <Frame x="192" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SalixCyborniaMediumShip4" file="salix_cybornia.png">
+    <Frame x="288" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SalixCyborniaMediumShip5" file="salix_cybornia.png">
+    <Frame x="384" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SalixCyborniaMediumShip6" file="salix_cybornia.png">
+    <Frame x="480" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SalixCyborniaLargeShip1" file="salix_cybornia.png">
+    <Frame x="0" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SalixCyborniaLargeShip2" file="salix_cybornia.png">
+    <Frame x="128" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SalixCyborniaLargeShip3" file="salix_cybornia.png">
+    <Frame x="256" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SalixCyborniaLargeShip4" file="salix_cybornia.png">
+    <Frame x="384" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SalixCyborniaLargeShip5" file="salix_cybornia.png">
+    <Frame x="512" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SalixCyborniaLargeShip6" file="salix_cybornia.png">
+    <Frame x="640" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SalixCyborniaHugeShip1" file="salix_cybornia.png">
+    <Frame x="0" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SalixCyborniaHugeShip2" file="salix_cybornia.png">
+    <Frame x="160" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SalixCyborniaHugeShip3" file="salix_cybornia.png">
+    <Frame x="320" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SalixCyborniaHugeShip4" file="salix_cybornia.png">
+    <Frame x="480" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SalixCyborniaHugeShip5" file="salix_cybornia.png">
+    <Frame x="640" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SalixCyborniaHugeShip6" file="salix_cybornia.png">
+    <Frame x="800" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SalixCyborniaTitanShip" file="salix_cybornia.png">
+    <Frame x="768" y="64" width="256" height="256" />
+  </Sprite>
+  <Sprite name="SalixCyborniaFleetIcon" file="salix_cybornia.png">
+    <Frame x="224" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaGroundTroop" file="salix_cybornia.png">
+    <Frame x="192" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaDyingTroop" file="salix_cybornia.png">
+    <Frame x="256" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SalixCyborniaNeutralPortrait" file="salix_cybornia.png">
+    <Frame x="0" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="SalixCyborniaHappyPortrait" file="salix_cybornia.png">
+    <Frame x="300" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="SalixCyborniaAngryPortrait" file="salix_cybornia.png">
+    <Frame x="600" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="SalixCyborniaThumbnail" file="salix_cybornia.png">
+    <Frame x="0" y="780" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SalixCyborniaCity" file="salix_cybornia.png">
+    <Frame x="128" y="780" width="300" height="200" />
+  </Sprite>
+  <Sprite name="SalixCyborniaLandingShip" file="salix_cybornia.png">
+    <Frame x="428" y="780" width="300" height="200" />
+  </Sprite>
+  <!--Space Hamsters-->
+  <Sprite name="SpaceHamsterTinyShip1" file="space_hamsters.png">
+    <Frame x="0" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterTinyShip2" file="space_hamsters.png">
+    <Frame x="32" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterTinyShip3" file="space_hamsters.png">
+    <Frame x="64" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterTinyShip4" file="space_hamsters.png">
+    <Frame x="96" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterTinyShip5" file="space_hamsters.png">
+    <Frame x="128" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterTinyShip6" file="space_hamsters.png">
+    <Frame x="160" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterSmallShip1" file="space_hamsters.png">
+    <Frame x="0" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SpaceHamsterSmallShip2" file="space_hamsters.png">
+    <Frame x="64" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SpaceHamsterSmallShip3" file="space_hamsters.png">
+    <Frame x="128" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SpaceHamsterSmallShip4" file="space_hamsters.png">
+    <Frame x="192" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SpaceHamsterSmallShip5" file="space_hamsters.png">
+    <Frame x="256" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SpaceHamsterSmallShip6" file="space_hamsters.png">
+    <Frame x="320" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="SpaceHamsterMediumShip1" file="space_hamsters.png">
+    <Frame x="0" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SpaceHamsterMediumShip2" file="space_hamsters.png">
+    <Frame x="96" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SpaceHamsterMediumShip3" file="space_hamsters.png">
+    <Frame x="192" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SpaceHamsterMediumShip4" file="space_hamsters.png">
+    <Frame x="288" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SpaceHamsterMediumShip5" file="space_hamsters.png">
+    <Frame x="384" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SpaceHamsterMediumShip6" file="space_hamsters.png">
+    <Frame x="480" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="SpaceHamsterLargeShip1" file="space_hamsters.png">
+    <Frame x="0" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SpaceHamsterLargeShip2" file="space_hamsters.png">
+    <Frame x="128" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SpaceHamsterLargeShip3" file="space_hamsters.png">
+    <Frame x="256" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SpaceHamsterLargeShip4" file="space_hamsters.png">
+    <Frame x="384" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SpaceHamsterLargeShip5" file="space_hamsters.png">
+    <Frame x="512" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SpaceHamsterLargeShip6" file="space_hamsters.png">
+    <Frame x="640" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SpaceHamsterHugeShip1" file="space_hamsters.png">
+    <Frame x="0" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SpaceHamsterHugeShip2" file="space_hamsters.png">
+    <Frame x="160" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SpaceHamsterHugeShip3" file="space_hamsters.png">
+    <Frame x="320" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SpaceHamsterHugeShip4" file="space_hamsters.png">
+    <Frame x="480" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SpaceHamsterHugeShip5" file="space_hamsters.png">
+    <Frame x="640" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SpaceHamsterHugeShip6" file="space_hamsters.png">
+    <Frame x="800" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="SpaceHamsterTitanShip" file="space_hamsters.png">
+    <Frame x="768" y="64" width="256" height="256" />
+  </Sprite>
+  <Sprite name="SpaceHamsterFleetIcon" file="space_hamsters.png">
+    <Frame x="224" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterGroundTroop" file="space_hamsters.png">
+    <Frame x="192" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterDyingTroop" file="space_hamsters.png">
+    <Frame x="256" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="SpaceHamsterNeutralPortrait" file="space_hamsters.png">
+    <Frame x="0" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="SpaceHamsterHappyPortrait" file="space_hamsters.png">
+    <Frame x="300" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="SpaceHamsterAngryPortrait" file="space_hamsters.png">
+    <Frame x="600" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="SpaceHamsterThumbnail" file="space_hamsters.png">
+    <Frame x="0" y="780" width="128" height="128" />
+  </Sprite>
+  <Sprite name="SpaceHamsterCity" file="space_hamsters.png">
+    <Frame x="128" y="780" width="300" height="200" />
+  </Sprite>
+  <Sprite name="SpaceHamsterLandingShip" file="space_hamsters.png">
+    <Frame x="428" y="780" width="300" height="200" />
+  </Sprite>
+  <!--Zero People-->
+  <Sprite name="ZeroPeopleTinyShip1" file="zero_people.png">
+    <Frame x="0" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleTinyShip2" file="zero_people.png">
+    <Frame x="32" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleTinyShip3" file="zero_people.png">
+    <Frame x="64" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleTinyShip4" file="zero_people.png">
+    <Frame x="96" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleTinyShip5" file="zero_people.png">
+    <Frame x="128" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleTinyShip6" file="zero_people.png">
+    <Frame x="160" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleSmallShip1" file="zero_people.png">
+    <Frame x="0" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="ZeroPeopleSmallShip2" file="zero_people.png">
+    <Frame x="64" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="ZeroPeopleSmallShip3" file="zero_people.png">
+    <Frame x="128" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="ZeroPeopleSmallShip4" file="zero_people.png">
+    <Frame x="192" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="ZeroPeopleSmallShip5" file="zero_people.png">
+    <Frame x="256" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="ZeroPeopleSmallShip6" file="zero_people.png">
+    <Frame x="320" y="32" width="64" height="64" />
+  </Sprite>
+  <Sprite name="ZeroPeopleMediumShip1" file="zero_people.png">
+    <Frame x="0" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="ZeroPeopleMediumShip2" file="zero_people.png">
+    <Frame x="96" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="ZeroPeopleMediumShip3" file="zero_people.png">
+    <Frame x="192" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="ZeroPeopleMediumShip4" file="zero_people.png">
+    <Frame x="288" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="ZeroPeopleMediumShip5" file="zero_people.png">
+    <Frame x="384" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="ZeroPeopleMediumShip6" file="zero_people.png">
+    <Frame x="480" y="96" width="96" height="96" />
+  </Sprite>
+  <Sprite name="ZeroPeopleLargeShip1" file="zero_people.png">
+    <Frame x="0" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="ZeroPeopleLargeShip2" file="zero_people.png">
+    <Frame x="128" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="ZeroPeopleLargeShip3" file="zero_people.png">
+    <Frame x="256" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="ZeroPeopleLargeShip4" file="zero_people.png">
+    <Frame x="384" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="ZeroPeopleLargeShip5" file="zero_people.png">
+    <Frame x="512" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="ZeroPeopleLargeShip6" file="zero_people.png">
+    <Frame x="640" y="192" width="128" height="128" />
+  </Sprite>
+  <Sprite name="ZeroPeopleHugeShip1" file="zero_people.png">
+    <Frame x="0" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="ZeroPeopleHugeShip2" file="zero_people.png">
+    <Frame x="160" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="ZeroPeopleHugeShip3" file="zero_people.png">
+    <Frame x="320" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="ZeroPeopleHugeShip4" file="zero_people.png">
+    <Frame x="480" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="ZeroPeopleHugeShip5" file="zero_people.png">
+    <Frame x="640" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="ZeroPeopleHugeShip6" file="zero_people.png">
+    <Frame x="800" y="320" width="160" height="160" />
+  </Sprite>
+  <Sprite name="ZeroPeopleTitanShip" file="zero_people.png">
+    <Frame x="768" y="64" width="256" height="256" />
+  </Sprite>
+  <Sprite name="ZeroPeopleFleetIcon" file="zero_people.png">
+    <Frame x="224" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleGroundTroop" file="zero_people.png">
+    <Frame x="192" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleDyingTroop" file="zero_people.png">
+    <Frame x="256" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZeroPeopleNeutralPortrait" file="zero_people.png">
+    <Frame x="0" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="ZeroPeopleHappyPortrait" file="zero_people.png">
+    <Frame x="300" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="ZeroPeopleAngryPortrait" file="zero_people.png">
+    <Frame x="600" y="480" width="300" height="300" />
+  </Sprite>
+  <Sprite name="ZeroPeopleThumbnail" file="zero_people.png">
+    <Frame x="0" y="780" width="128" height="128" />
+  </Sprite>
+  <Sprite name="ZeroPeopleCity" file="zero_people.png">
+    <Frame x="128" y="780" width="300" height="200" />
+  </Sprite>
+  <Sprite name="ZeroPeopleLandingShip" file="zero_people.png">
+    <Frame x="428" y="780" width="300" height="200" />
+  </Sprite>
 </Sprites>
