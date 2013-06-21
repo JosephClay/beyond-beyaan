@@ -2047,7 +2047,7 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
-	class Label
+	public class Label
 	{
 		#region Member Variables
 		private string label;
@@ -2146,7 +2146,7 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
-	class SingleLineTextBox
+	public class SingleLineTextBox
 	{
 		#region Member Variables
 		private Label text;

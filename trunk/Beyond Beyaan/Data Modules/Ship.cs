@@ -6,7 +6,7 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	class Ship
+	public class Ship
 	{
 		#region Properties
 		public string Name { get; set; }
@@ -49,14 +49,14 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
-	class TransportShip
+	public class TransportShip
 	{
 		public Race raceOnShip;
 		public int amount;
 	}
 
-	enum WeaponType { BEAM, PARTICLE, MISSILE, TORPEDO, BOMB, UNKNOWN }
-	class Weapon
+	public enum WeaponType { BEAM, PARTICLE, MISSILE, TORPEDO, BOMB, UNKNOWN }
+	public class Weapon
 	{
 		//This class wraps the five different weapon types, allowing for easier management
 

@@ -6,7 +6,7 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Data_Managers
 {
-	class SitRepManager
+	public class SitRepManager
 	{
 		public List<SitRepItem> Items { get; private set; }
 

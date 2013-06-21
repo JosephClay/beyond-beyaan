@@ -6,7 +6,7 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	class PlanetManager
+	public class PlanetManager
 	{
 		#region Variables
 		//private float totalResearch;

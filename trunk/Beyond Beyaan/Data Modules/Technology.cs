@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Beyond_Beyaan
 {
-	class Technology
+	public class Technology
 	{
 		protected int baseResearchCost; //Base cost of researching an item
 		protected float increaseRate; //How much cost increases to research the next level
@@ -47,7 +47,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Beam : Technology
+	public class Beam : Technology
 	{
 		private int baseDamage;
 		private int accuracy;
@@ -191,7 +191,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Particle : Technology
+	public class Particle : Technology
 	{
 		private int baseDamage;
 		private int accuracy;
@@ -336,7 +336,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Torpedo : Technology
+	public class Torpedo : Technology
 	{
 		private int baseDamage;
 		private int space;
@@ -468,7 +468,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Missile : Technology
+	public class Missile : Technology
 	{
 		private int baseDamage;
 		private int space;
@@ -600,7 +600,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Bomb : Technology
+	public class Bomb : Technology
 	{
 		private int baseDamage;
 		private int space;
@@ -730,7 +730,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Armor : Technology
+	public class Armor : Technology
 	{
 		public int beamEfficiency { get; private set; }
 		public int particleEfficiency { get; private set; }
@@ -902,7 +902,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Shield : Technology
+	public class Shield : Technology
 	{
 		public int beamEfficiency { get; private set; }
 		public int particleEfficiency { get; private set; }
@@ -1074,7 +1074,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Computer : Technology
+	public class Computer : Technology
 	{
 		public int beamEfficiency { get; private set; }
 		public int particleEfficiency { get; private set; }
@@ -1234,7 +1234,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Engine : Technology
+	public class Engine : Technology
 	{
 		private int space;
 		private int cost;
@@ -1377,7 +1377,7 @@ namespace Beyond_Beyaan
 		}
 	}
 
-	class Infrastructure : Technology
+	public class Infrastructure : Technology
 	{
 		public Infrastructure()
 		{

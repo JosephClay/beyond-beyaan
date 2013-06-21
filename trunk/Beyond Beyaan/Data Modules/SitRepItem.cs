@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	class SitRepItem
+	public class SitRepItem
 	{
 		public Screen ScreenEventIsIn { get; private set; }
 		public StarSystem SystemEventOccuredAt { get; private set; }

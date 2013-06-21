@@ -11,8 +11,8 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	enum PlayerType { HUMAN, CPU }
-	class Empire
+	public enum PlayerType { HUMAN, CPU }
+	public class Empire
 	{
 		#region Member Variables
 		private string empireName;
@@ -27,7 +27,7 @@ namespace Beyond_Beyaan
 		private int planetSelected;
 		private int fleetSelected;
 		private PlanetManager planetManager;
-		//private FleetManager fleetManager;
+		private FleetManager fleetManager;
 		private TechnologyManager technologyManager;
 		private ContactManager contactManager;
 		private FleetGroup selectedFleetGroup;
@@ -112,10 +112,10 @@ namespace Beyond_Beyaan
 			get { return planetManager; }
 		}
 
-		/*public FleetManager FleetManager
+		public FleetManager FleetManager
 		{
 			get { return fleetManager; }
-		}*/
+		}
 
 		public TechnologyManager TechnologyManager
 		{
@@ -219,7 +219,7 @@ namespace Beyond_Beyaan
 			{
 				MessageBox.Show(e.Message);
 			}
-			//fleetManager = new FleetManager(this);
+			fleetManager = new FleetManager(this);
 			planetManager = new PlanetManager();
 			sitRepManager = new SitRepManager();
 			//reserves = 0;
@@ -238,9 +238,9 @@ namespace Beyond_Beyaan
 			selectedSystem = homeSystem;
 			lastSelectedSystem = homeSystem;
 			planetManager.Planets.Add(homePlanet);
-			//fleetManager.SetupStarterFleet(homeSystem.X + homeSystem.Size, homeSystem.Y);
-			//homePlanet.ShipBeingBuilt = fleetManager.CurrentDesigns[0];
-			//ShipMaintenance = fleetManager.GetExpenses();
+			fleetManager.SetupStarterFleet(homeSystem.X, homeSystem.Y);
+			homePlanet.ShipBeingBuilt = fleetManager.CurrentDesigns[0];
+			ShipMaintenance = fleetManager.GetExpenses();
 			UpdateNetIncome();
 		}
 
@@ -258,36 +258,18 @@ namespace Beyond_Beyaan
 
 		public void CheckExploredSystems(Galaxy galaxy)
 		{
-			/*foreach (Fleet fleet in fleetManager.GetFleets())
+			foreach (Fleet fleet in fleetManager.GetFleets())
 			{
 				if (fleet.TravelNodes == null || fleet.TravelNodes.Count == 0)
 				{
-					StarSystem systemExplored = galaxy.GetStarAtPoint(new Point(fleet.GalaxyX - 1, fleet.GalaxyY));
-					if (systemExplored != null && !systemExplored.IsThisSystemExploredByEmpire(this))
-					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
-						systemExplored.AddEmpireExplored(this);
-					}
-					systemExplored = galaxy.GetStarAtPoint(new Point(fleet.GalaxyX + 1, fleet.GalaxyY));
-					if (systemExplored != null && !systemExplored.IsThisSystemExploredByEmpire(this))
-					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
-						systemExplored.AddEmpireExplored(this);
-					}
-					systemExplored = galaxy.GetStarAtPoint(new Point(fleet.GalaxyX, fleet.GalaxyY - 1));
-					if (systemExplored != null && !systemExplored.IsThisSystemExploredByEmpire(this))
-					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
-						systemExplored.AddEmpireExplored(this);
-					}
-					systemExplored = galaxy.GetStarAtPoint(new Point(fleet.GalaxyX, fleet.GalaxyY + 1));
+					StarSystem systemExplored = fleet.AdjacentSystem;
 					if (systemExplored != null && !systemExplored.IsThisSystemExploredByEmpire(this))
 					{
 						sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
 						systemExplored.AddEmpireExplored(this);
 					}
 				}
-			}*/
+			}
 		}
 
 		/*public void CreateInfluenceMapSprite(GridCell[][] gridCells)
@@ -401,7 +383,7 @@ namespace Beyond_Beyaan
 
 		public void CheckForBuiltShips()
 		{
-			/*foreach (Planet planet in planetManager.Planets)
+			foreach (Planet planet in planetManager.Planets)
 			{
 				int amount;
 				Ship result = planet.CheckIfShipBuilt(out amount);
@@ -418,7 +400,7 @@ namespace Beyond_Beyaan
 			}
 			fleetManager.MergeIdleFleets();
 			ShipMaintenance = fleetManager.GetExpenses();
-			UpdateNetIncome();*/
+			UpdateNetIncome();
 		}
 
 		public void SetVisibleFleets(List<Fleet> fleets)

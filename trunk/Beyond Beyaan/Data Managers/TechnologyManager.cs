@@ -9,9 +9,9 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	enum TechField { COMPUTER, ENGINE, SHIELD, ARMOR, INFRASTRUCTURE, BEAM, PARTICLE, MISSILE, TORPEDO, BOMB }
+	public enum TechField { COMPUTER, ENGINE, SHIELD, ARMOR, INFRASTRUCTURE, BEAM, PARTICLE, MISSILE, TORPEDO, BOMB }
 
-	class TechnologyManager
+	public class TechnologyManager
 	{
 		#region Properties
 		private List<Shield> Shields { get; set; }
