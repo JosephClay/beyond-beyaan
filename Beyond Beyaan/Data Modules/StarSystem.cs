@@ -10,7 +10,7 @@ namespace Beyond_Beyaan
 	//public enum StarColor { RED, ORANGE, GREEN, PURPLE, BLUE, BROWN, WHITE, YELLOW }
 	//public enum StarType { NORMAL, BLACK_HOLE }
 
-	class StarSystem
+	public class StarSystem
 	{
 		#region Member Variables
 		//StarType type;

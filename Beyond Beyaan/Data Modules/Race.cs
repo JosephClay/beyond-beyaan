@@ -8,7 +8,7 @@ using GorgonLibrary.Graphics;
 namespace Beyond_Beyaan.Data_Modules
 {
 	public enum Expression { PLEASED, NEUTRAL, ANNOYED }
-	class Race
+	public class Race
 	{
 		public float AgricultureMultipler { get; private set; }
 		public float WasteMultipler { get; private set; }

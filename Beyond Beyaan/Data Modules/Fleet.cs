@@ -6,35 +6,41 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	class Fleet
+	public class TravelNode
+	{
+		public StarSystem StarSystem { get; set; }
+
+		//For drawing
+		public float Length { get; set; }
+		public float Angle { get; set; }
+	}
+
+	public class Fleet
 	{
 		#region Member Variables
-		private int galaxyX;
-		private int galaxyY;
+		private float galaxyX;
+		private float galaxyY;
 
 		private Empire empire;
-		private List<Point> travelNodes;
-		private List<Point> tentativeNodes;
+		private List<TravelNode> travelNodes;
+		private List<TravelNode> tentativeNodes;
 		private Dictionary<Ship, int> ships;
 		private List<Ship> orderedShips; //For reference uses
 		private List<TransportShip> transportShips;
+		private StarSystem adjacentSystem;
 
 		private int maxSpeed;
-		private int remainingMoves;
-		private int nodeRemainingMoves;
-		private int remainingAmount;
-		private int tentativeAmount;
-		private bool finishedMovingThisTurn;
+		private float remainingMoves;
 		#endregion
 
 		#region Properties
-		public int GalaxyX
+		public float GalaxyX
 		{
 			get { return galaxyX; }
 			set { galaxyX = value; }
 		}
 
-		public int GalaxyY
+		public float GalaxyY
 		{
 			get { return galaxyY; }
 			set { galaxyY = value; }
@@ -46,32 +52,54 @@ namespace Beyond_Beyaan
 			set { empire = value; }
 		}
 
-		public List<Point> TravelNodes
+		public List<TravelNode> TravelNodes
 		{
 			get { return travelNodes; }
 			set { travelNodes = value; }
 		}
 
-		public List<Point> TentativeNodes
+		public List<TravelNode> TentativeNodes
 		{
 			get { return tentativeNodes; }
 			set { tentativeNodes = value; }
 		}
 
+		public StarSystem AdjacentSystem
+		{
+			get { return adjacentSystem; }
+			set { adjacentSystem = value; }
+		}
+
 		public int ETA
 		{
-			get { return (remainingAmount / maxSpeed) + ((remainingAmount % maxSpeed > 0) ? 1 : 0); }
+			get
+			{
+				float amount = 0;
+				if (travelNodes != null)
+				{
+					for (int i = 0; i < travelNodes.Count; i++)
+					{
+						amount += travelNodes[i].Length;
+					}
+				}
+				return (int)((amount / maxSpeed) + ((amount % maxSpeed > 0) ? 1 : 0));
+			}
 		}
 
 		public int TentativeETA
 		{
-			get { return (tentativeAmount / maxSpeed) + ((tentativeAmount % maxSpeed > 0) ? 1 : 0); }
-		}
-
-		public int RemainingMovement
-		{
-			get { return remainingAmount; }
-			set { remainingAmount = value; }
+			get
+			{
+				float amount = 0;
+				if (tentativeNodes != null)
+				{
+					for (int i = 0; i < tentativeNodes.Count; i++)
+					{
+						amount += tentativeNodes[i].Length;
+					}
+				}
+				return (int)((amount / maxSpeed) + ((amount % maxSpeed > 0) ? 1 : 0));
+			}
 		}
 
 		public Dictionary<Ship, int> Ships
@@ -105,7 +133,6 @@ namespace Beyond_Beyaan
 			orderedShips = new List<Ship>();
 			transportShips = new List<TransportShip>();
 			remainingMoves = maxSpeed;
-			finishedMovingThisTurn = false;
 		}
 		#endregion
 
@@ -127,42 +154,42 @@ namespace Beyond_Beyaan
 			remainingMoves = maxSpeed;
 		}
 
-		public void SetTentativePath(int x, int y, Galaxy galaxy)
+		public void SetTentativePath(StarSystem destination, Galaxy galaxy)
 		{
-			if (galaxyX == x && galaxyY == y)
+			if (destination == adjacentSystem)
 			{
 				//if destination is same as origin, don't bother.
-				tentativeAmount = 0;
 				tentativeNodes = null;
 				return;
 			}
-			if (travelNodes != null && x == travelNodes[travelNodes.Count - 1].X && y == travelNodes[travelNodes.Count - 1].Y)
+			if (travelNodes != null && travelNodes[travelNodes.Count - 1].StarSystem == destination)
 			{
 				//Same path as current path
-				tentativeAmount = 0;
 				tentativeNodes = null;
 				return;
 			}
-			if (tentativeNodes != null && x == tentativeNodes[tentativeNodes.Count - 1].X && y == tentativeNodes[tentativeNodes.Count - 1].Y)
+			if (tentativeNodes != null && tentativeNodes[tentativeNodes.Count - 1].StarSystem == destination)
 			{
 				// Existing tentative path
 				return;
 			}
 
-			List<Point> path = galaxy.GetPath(galaxyX, galaxyY, x, y, null);
+			StarSystem currentDestination = null;
+			if (adjacentSystem == null) //Has left a system
+			{
+				currentDestination = travelNodes[0].StarSystem;
+			}
+			List<TravelNode> path = galaxy.GetPath(galaxyX, galaxyY, currentDestination, destination, empire);
 			if (path == null)
 			{
-				tentativeAmount = 0;
 				tentativeNodes = null;
 				return;
 			}
 
-			tentativeAmount = CalculatePathCost(galaxy.GetGridCells(), path);
 			tentativeNodes = path;
 			if (tentativeNodes.Count == 0)
 			{
 				tentativeNodes = null;
-				tentativeAmount = 0;
 			}
 		}
 
@@ -170,79 +197,34 @@ namespace Beyond_Beyaan
 		{
 			if (tentativeNodes != null)
 			{
-				Point[] nodes = new Point[tentativeNodes.Count];
+				TravelNode[] nodes = new TravelNode[tentativeNodes.Count];
 				tentativeNodes.CopyTo(nodes);
 				tentativeNodes = null;
 
-				remainingAmount = tentativeAmount;
-				tentativeAmount = 0;
-				travelNodes = new List<Point>(nodes);
+				travelNodes = new List<TravelNode>(nodes);
 			}
 		}
 
-		public void RefreshPath(GridCell[][] gridCells)
+		private float CalculatePathCost(List<TravelNode> nodes)
 		{
-			remainingAmount = CalculatePathCost(gridCells, travelNodes);
-			if (travelNodes.Count > 0)
-			{
-				nodeRemainingMoves = GetNodeMovementCost(gridCells, travelNodes[0]);
-			}
-		}
-
-		private int CalculatePathCost(GridCell[][] gridCells, List<Point> nodes)
-		{
-			int amount = 0;
+			float amount = 0;
 			for (int i = 0; i < nodes.Count; i++)
 			{
-				if (gridCells[nodes[i].X][nodes[i].Y].passable)
+				float x;
+				float y;
+				if (i == 0)
 				{
-					if (i > 0)
-					{
-						if (nodes[i].X == nodes[i - 1].X || nodes[i].Y == nodes[i - 1].Y)
-						{
-							//vertical/horizontal movement
-							amount += gridCells[nodes[i].X][nodes[i].Y].movementCost;
-						}
-						else
-						{
-							//diagonal movement
-							amount += gridCells[nodes[i].X][nodes[i].Y].diagonalMovementCost;
-						}
-					}
-					else
-					{
-						if (nodes[i].X == galaxyX || nodes[i].Y == galaxyY)
-						{
-							//vertical/horizontal movement
-							amount += gridCells[nodes[i].X][nodes[i].Y].movementCost;
-						}
-						else
-						{
-							//diagonal movement
-							amount += gridCells[nodes[i].X][nodes[i].Y].diagonalMovementCost;
-						}
-					}
-				}
-			}
-			return amount;
-		}
-
-		private int GetNodeMovementCost(GridCell[][] gridCells, Point node)
-		{
-			if (gridCells[node.X][node.Y].passable)
-			{
-				if (node.X == galaxyX || node.Y == galaxyY)
-				{
-					//vertical/horizontal movement
-					return gridCells[node.X][node.Y].movementCost;
+					x = (galaxyX - nodes[i].StarSystem.X);
+					y = (galaxyY - nodes[i].StarSystem.Y);
 				}
 				else
 				{
-					//diagonal movement
-					return gridCells[node.X][node.Y].diagonalMovementCost;
+					x = nodes[i - 1].StarSystem.X - nodes[i].StarSystem.X;
+					y = nodes[i - 1].StarSystem.Y - nodes[i].StarSystem.Y;
 				}
+				amount += (float)Math.Sqrt(x * x + y * y);
 			}
-			return -1;
+			return amount;
 		}
 
 		public void AddShips(Ship ship, int amount)
@@ -327,46 +309,50 @@ namespace Beyond_Beyaan
 
 		public void ResetMove()
 		{
-			finishedMovingThisTurn = false;
 			UpdateSpeed();
 			remainingMoves = maxSpeed;
 		}
 
-		public bool Move(GridCell[][] gridCells)
+		public bool Move(float frameDeltaTime)
 		{
-			if (!finishedMovingThisTurn)
+			if (remainingMoves > 0)
 			{
-				if (remainingMoves > 0 && nodeRemainingMoves > 0)
+				float amountToMove = frameDeltaTime * maxSpeed;
+				if (amountToMove > remainingMoves)
 				{
-					remainingMoves--;
-					nodeRemainingMoves--;
-					if (nodeRemainingMoves <= 0)
-					{
-						galaxyX = travelNodes[0].X;
-						galaxyY = travelNodes[0].Y;
-						travelNodes.Remove(travelNodes[0]);
-						if (travelNodes.Count > 0)
-						{
-							nodeRemainingMoves = GetNodeMovementCost(gridCells, travelNodes[0]);
-							if (nodeRemainingMoves < 0)
-							{
-								//can't travel into star or something else
-								travelNodes = null;
-								nodeRemainingMoves = 0;
-							}
-						}
-						else
-						{
-							//either it ends inside a star or finished moving.  In either case, clear the path
-							travelNodes = null;
-							nodeRemainingMoves = 0;
-						}
-					}
-					return remainingMoves > 0 && nodeRemainingMoves > 0;
+					amountToMove = remainingMoves;
 				}
-				finishedMovingThisTurn = true;
+				remainingMoves -= amountToMove;
+
+				float xMov = (float)(Math.Cos(travelNodes[0].Angle) * amountToMove);
+				float yMov = (float)(Math.Sin(travelNodes[0].Angle) * amountToMove);
+
+				bool isLeftOfNode = galaxyX <= travelNodes[0].StarSystem.X;
+				bool isTopOfNode = galaxyY <= travelNodes[0].StarSystem.Y;
+
+				galaxyX += xMov;
+				galaxyY += yMov;
+
+				if ((galaxyX > travelNodes[0].StarSystem.X && isLeftOfNode) ||
+					(galaxyX <= travelNodes[0].StarSystem.X && !isLeftOfNode) ||
+					(galaxyY > travelNodes[0].StarSystem.Y && isTopOfNode) ||
+					(galaxyY <= travelNodes[0].StarSystem.Y && !isTopOfNode))
+				{
+					//TODO: Carry over excess movement to next node
+
+					//It has arrived at destination
+					galaxyX = travelNodes[0].StarSystem.X;
+					galaxyY = travelNodes[0].StarSystem.Y;
+					adjacentSystem = travelNodes[0].StarSystem;
+					travelNodes.RemoveAt(0);
+					if (travelNodes.Count == 0)
+					{
+						travelNodes = null;
+						remainingMoves = 0;
+					}
+				}
 			}
-			return false;
+			return remainingMoves > 0;
 		}
 
 		public float GetExpenses()

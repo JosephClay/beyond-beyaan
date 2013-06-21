@@ -185,7 +185,7 @@ namespace Beyond_Beyaan
 		NextShipForeground,
 	};
 
-	class DrawingManagement
+	public class DrawingManagement
 	{
 		#region Member Variables
 		private Dictionary<SpriteName, Sprite> sprites;

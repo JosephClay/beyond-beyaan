@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Beyond_Beyaan
 {
-	class FleetManager
+	public class FleetManager
 	{
 		#region Variables
 		private List<Ship> currentShipDesigns;
@@ -98,8 +98,8 @@ namespace Beyond_Beyaan
 		public void SetupStarterFleet(int galaxyX, int galaxyY)
 		{
 			Fleet starterFleet = new Fleet();
-			starterFleet.GalaxyX = 0;//galaxyX;
-			starterFleet.GalaxyY = 0;// galaxyY;
+			starterFleet.GalaxyX = galaxyX + 32;
+			starterFleet.GalaxyY = galaxyY;
 			starterFleet.Empire = empire;
 			starterFleet.AddShips(currentShipDesigns[0], 2);
 			starterFleet.AddShips(currentShipDesigns[1], 5);
@@ -118,9 +118,29 @@ namespace Beyond_Beyaan
 			List<Fleet> listOfFleets = new List<Fleet>();
 			foreach (Fleet fleet in fleets)
 			{
-				if (fleet.GalaxyX == x && fleet.GalaxyY == y)
+				if (fleet.AdjacentSystem != null)
 				{
-					listOfFleets.Add(fleet);
+					if (fleet.TravelNodes != null && fleet.TravelNodes.Count > 0)
+					{
+						if (x >= fleet.AdjacentSystem.X - 48 && x < fleet.AdjacentSystem.X - 16 && y >= fleet.GalaxyY - 16 && y < fleet.GalaxyY + 16)
+						{
+							listOfFleets.Add(fleet);
+						}
+					}
+					else
+					{
+						if (x >= fleet.AdjacentSystem.X + 16 && x < fleet.AdjacentSystem.X + 48 && y >= fleet.GalaxyY - 16 && y < fleet.GalaxyY + 16)
+						{
+							listOfFleets.Add(fleet);
+						}
+					}
+				}
+				else
+				{
+					if (x >= fleet.GalaxyX - 16 && x < fleet.GalaxyX - 16 && y >= fleet.GalaxyY - 16 && y < fleet.GalaxyY + 16)
+					{
+						listOfFleets.Add(fleet);
+					}
 				}
 			}
 			return listOfFleets.ToArray();
@@ -148,13 +168,13 @@ namespace Beyond_Beyaan
 			obsoleteShipDesigns.Add(shipToObsolete);
 		}
 
-		public bool MoveFleets(GridCell[][] gridCells)
+		public bool MoveFleets(float frameDeltaTime)
 		{
 			bool stillHaveMovement = false;
 			//This is called during end of turn processing
 			foreach (Fleet fleet in fleets)
 			{
-				if (fleet.Move(gridCells))
+				if (fleet.Move(frameDeltaTime))
 				{
 					stillHaveMovement = true;
 				}

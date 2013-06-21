@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	class AI
+	public class AI
 	{
 		public string AIName { get; private set; }
 

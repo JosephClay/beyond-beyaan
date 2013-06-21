@@ -107,14 +107,14 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		/*public List<Fleet> GetFleetsWithinArea(float left, float top, float width, float height)
+		public List<Fleet> GetFleetsWithinArea(float left, float top, float width, float height)
 		{
 			List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
 			{
 				foreach (Fleet fleet in empire.FleetManager.GetFleets())
 				{
-					if (fleet.GalaxyX * 32 + 32 < left || fleet.GalaxyY * 32 + 32 < top || fleet.GalaxyX * 32 > left + width || fleet.GalaxyY * 32 > top + height)
+					if (fleet.GalaxyX + 16 < left || fleet.GalaxyY + 16 < top || fleet.GalaxyX - 16 > left + width || fleet.GalaxyY - 16 > top + height)
 					{
 						continue;
 					}
@@ -137,18 +137,26 @@ namespace Beyond_Beyaan
 			return (fleets.Count > 0 ? new FleetGroup(fleets) : null);
 		}
 
-		public bool UpdateFleetMovement(GridCell[][] gridcells)
+		public void ResetFleetMovement()
+		{
+			foreach (Empire empire in empires)
+			{
+				empire.FleetManager.ResetFleetMovements();
+			}
+		}
+
+		public bool UpdateFleetMovement(float frameDeltaTime)
 		{
 			bool stillHaveMovement = false;
 			foreach (Empire empire in empires)
 			{
-				if (empire.FleetManager.MoveFleets(gridcells))
+				if (empire.FleetManager.MoveFleets(frameDeltaTime))
 				{
 					stillHaveMovement = true;
 				}
 			}
 			return stillHaveMovement;
-		}*/
+		}
 
 		public void UpdateEmpires(Galaxy galaxy)
 		{
@@ -165,7 +173,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		/*public void LookForCombat()
+		public void LookForCombat()
 		{
 			List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
@@ -180,7 +188,7 @@ namespace Beyond_Beyaan
 			combatsToProcess.Add(combatToProcess);
 		}
 
-		public void UpdateInfluenceMaps(Galaxy galaxy)
+		/*public void UpdateInfluenceMaps(Galaxy galaxy)
 		{
 			GridCell[][] gridCells = galaxy.GetGridCells();
 			Dictionary<Empire, int>[][] cells = new Dictionary<Empire,int>[gridCells.Length][];

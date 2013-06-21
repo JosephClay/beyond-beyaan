@@ -6,7 +6,7 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Data_Managers
 {
-	class ContactManager
+	public class ContactManager
 	{
 		private List<Contact> contacts;
 		private Empire thisEmpire;

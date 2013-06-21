@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Beyond_Beyaan
 {
-	class FleetGroup
+	public class FleetGroup
 	{
 		#region Member Variables
 		private List<Fleet> fleets;
@@ -108,14 +108,13 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void SplitFleet(Empire empire, GridCell[][] gridCells)
+		public void SplitFleet(Empire empire)
 		{
 			Fleet fleet = new Fleet();
 			fleet.Empire = fleetToSplit.Empire;
 			fleet.GalaxyX = fleetToSplit.GalaxyX;
 			fleet.GalaxyY = fleetToSplit.GalaxyY;
 			fleet.TravelNodes = fleetToSplit.TravelNodes;
-			fleet.RemainingMovement = fleetToSplit.RemainingMovement;
 
 			foreach (KeyValuePair<Ship, int> ship in fleetToSplit.Ships)
 			{
@@ -127,7 +126,7 @@ namespace Beyond_Beyaan
 			}
 			selectedFleet.ClearEmptyShips();
 			fleet.ClearEmptyShips();
-			/*if (selectedFleet.Ships.Count == 0)
+			if (selectedFleet.Ships.Count == 0)
 			{
 				fleets.Remove(selectedFleet);
 				empire.FleetManager.RemoveFleet(selectedFleet);
@@ -137,7 +136,6 @@ namespace Beyond_Beyaan
 				fleets.Add(fleet);
 				empire.FleetManager.AddFleet(fleet);
 			}
-			fleet.RefreshPath(gridCells);*/
 		}
 
 		public List<Ship> GetShipsForDisplay()
