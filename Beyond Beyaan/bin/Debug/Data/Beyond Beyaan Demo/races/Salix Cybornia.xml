@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Race name="Salix Cybornia" 
+      neutralPortrait="SalixCyborniaNeutralPortrait" 
+      happyPortrait="SalixCyborniaHappyPortrait" 
+      angryPortrait="SalixCyborniaAngryPortrait" 
+      thumbnail="SalixCyborniaThumbnail"
+      city="SalixCyborniaCity"
+      landingShip="SalixCyborniaLandingShip"
+      groundTroop="SalixCyborniaGroundTroop"
+      dyingTroop="SalixCyborniaDyingTroop"
+      fleetIcon="SalixCyborniaFleetIcon"
+      transportIcon="SalixCyborniaFleetIcon"
+      >
+  <ShipTypes>
+    <Ship name="Small" space="40" width="32" height="32" >
+      <Body sprite="SalixCyborniaTinyShip1" />
+      <Body sprite="SalixCyborniaTinyShip2" />
+      <Body sprite="SalixCyborniaTinyShip3" />
+      <Body sprite="SalixCyborniaTinyShip4" />
+      <Body sprite="SalixCyborniaTinyShip5" />
+      <Body sprite="SalixCyborniaTinyShip6" />
+    </Ship>
+    <Ship name="Medium" space="204" width="64" height="64" >
+      <Body sprite="SalixCyborniaSmallShip1" />
+      <Body sprite="SalixCyborniaSmallShip2" />
+      <Body sprite="SalixCyborniaSmallShip3" />
+      <Body sprite="SalixCyborniaSmallShip4" />
+      <Body sprite="SalixCyborniaSmallShip5" />
+      <Body sprite="SalixCyborniaSmallShip6" />
+    </Ship>
+    <Ship name="Large" space="1020" width="96" height="96" >
+      <Body sprite="SalixCyborniaMediumShip1" />
+      <Body sprite="SalixCyborniaMediumShip2" />
+      <Body sprite="SalixCyborniaMediumShip3" />
+      <Body sprite="SalixCyborniaMediumShip4" />
+      <Body sprite="SalixCyborniaMediumShip5" />
+      <Body sprite="SalixCyborniaMediumShip6" />
+    </Ship>
+    <Ship name="Huge" space="5100" width="128" height="128" >
+      <Body sprite="SalixCyborniaLargeShip1" />
+      <Body sprite="SalixCyborniaLargeShip2" />
+      <Body sprite="SalixCyborniaLargeShip3" />
+      <Body sprite="SalixCyborniaLargeShip4" />
+      <Body sprite="SalixCyborniaLargeShip5" />
+      <Body sprite="SalixCyborniaLargeShip6" />
+    </Ship>
+  </ShipTypes>
+</Race>

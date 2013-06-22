@@ -14,7 +14,7 @@ namespace Beyond_Beyaan.Data_Managers
 			Races = new List<Race>();
 		}
 
-		public bool Initialize(DirectoryInfo directory, out string reason)
+		public bool Initialize(DirectoryInfo directory, SpriteManager spriteManager, Random r, out string reason)
 		{
 			try
 			{
@@ -25,13 +25,14 @@ namespace Beyond_Beyaan.Data_Managers
 					//If it don't exist, create one so users can add races
 					di.Create();
 				}
-				foreach (FileInfo fi in di.GetFiles("*.txt"))
+				foreach (FileInfo fi in di.GetFiles("*.xml"))
 				{
 					Race race = new Race();
-					if (race.Initialize(fi))
+					if (!race.Initialize(fi, spriteManager, r, out reason))
 					{
-						Races.Add(race);
+						return false;
 					}
+					Races.Add(race);
 				}
 				reason = null;
 				return true;

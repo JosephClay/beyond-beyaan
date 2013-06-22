@@ -85,7 +85,7 @@ namespace Beyond_Beyaan
 				return false;
 			}
 			RaceManager = new RaceManager();
-			if (!RaceManager.Initialize(GameDataSet, out reason))
+			if (!RaceManager.Initialize(GameDataSet, SpriteManager, Random, out reason))
 			{
 				return false;
 			}

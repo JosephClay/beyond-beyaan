@@ -1,8 +1,0 @@
-name|Space Hamsters
-shipnames|Destroyer,Annihilator,Crusher,Death Star,Blah
-graphic|space_hamsters.png
-agriculture|1.3
-waste|0.9
-commerce|1.1
-spydefense|0.5
-research|1.2

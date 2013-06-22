@@ -32,8 +32,8 @@ namespace Beyond_Beyaan.Screens
 		Button[] empireButtons;
 		Label[] relationLabels;
 		Label[] empireNameLabels;
-		GorgonLibrary.Graphics.Sprite[] avatars;
-		GorgonLibrary.Graphics.Sprite profile;
+		BBSprite[] avatars;
+		BBSprite profile;
 		int whichContactSelected;
 		Button[] messageOptions;
 		ComboBox listOfEmpires;
@@ -114,8 +114,7 @@ namespace Beyond_Beyaan.Screens
 				spyDefenseScrollbars[i].DrawScrollBar(drawingManagement);
 				drawingManagement.DrawSprite(SpriteName.RelationBar, x + 145, y + 124 + (150 * i), 255, System.Drawing.Color.White);
 				drawingManagement.DrawSprite(SpriteName.RelationSlider, x + 135 + empiresInContact[i + empireScrollBar.TopIndex].RelationshipStatus, y + 122 + (150 * i), 255, System.Drawing.Color.White);
-				avatars[i].SetPosition(x + 10, y + 10 + (150 * i));
-				avatars[i].Draw();
+				avatars[i].Draw(x + 10, y + 10 + (150 * i));
 				drawingManagement.DrawSprite(SpriteName.Spy, x + 145, y + 24 + (150 * i), 255, System.Drawing.Color.White);
 				drawingManagement.DrawSprite(SpriteName.Security, x + 145, y + 64 + (150 * i), 255, System.Drawing.Color.White);
 				drawingManagement.DrawSprite(SpriteName.Relation, x + 145, y + 104 + (150 * i), 255, System.Drawing.Color.White);
@@ -133,7 +132,7 @@ namespace Beyond_Beyaan.Screens
 			empireScrollBar.DrawScrollBar(drawingManagement);
 			if (whichContactSelected >= 0)
 			{
-				profile.Draw();
+				profile.Draw(x + 450, y + 10);
 				if (!isViewingReceivedMessage)
 				{
 					for (int i = 0; i < 8; i++)
@@ -452,7 +451,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			maxVisible = empiresInContact.Count > 4 ? 4 : empiresInContact.Count;
-			avatars = new GorgonLibrary.Graphics.Sprite[maxVisible];
+			avatars = new BBSprite[maxVisible];
 			relationLabels = new Label[maxVisible];
 			empireNameLabels = new Label[maxVisible];
 			if (empiresInContact.Count > 4)
@@ -506,14 +505,13 @@ namespace Beyond_Beyaan.Screens
 			Expression whichExpression = Expression.NEUTRAL;
 			if (contact.RelationshipStatus < 70)
 			{
-				whichExpression = Expression.ANNOYED;
+				whichExpression = Expression.ANGRY;
 			}
 			else if (contact.RelationshipStatus > 130)
 			{
-				whichExpression = Expression.PLEASED;
+				whichExpression = Expression.HAPPY;
 			}
 			profile = contact.EmpireInContact.EmpireRace.GetAvatar(whichExpression);
-			profile.SetPosition(x + 450, y + 10);
 			if (contact.AtWar)
 			{
 				messageOptions[TRADE].Active = false;
@@ -645,14 +643,13 @@ namespace Beyond_Beyaan.Screens
 			Expression whichExpression = Expression.NEUTRAL;
 			if (contact.RelationshipStatus < 70)
 			{
-				whichExpression = Expression.ANNOYED;
+				whichExpression = Expression.ANGRY;
 			}
 			else if (contact.RelationshipStatus > 130)
 			{
-				whichExpression = Expression.PLEASED;
+				whichExpression = Expression.HAPPY;
 			}
 			profile = contact.EmpireInContact.EmpireRace.GetAvatar(whichExpression);
-			profile.SetPosition(x + 450, y + 10);
 			MessageType whichMessage = empiresInContact[whichContactSelected].IncomingMessage;
 			switch (contact.IncomingMessage)
 			{
