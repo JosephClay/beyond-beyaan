@@ -20,7 +20,7 @@ namespace Beyond_Beyaan.Screens
 
 		private GameMain gameMain;
 		private Camera camera;
-		private GorgonLibrary.Graphics.Sprite shipSprite;
+		private BBSprite shipSprite;
 		private Button[] systemButtons;
 		private Button[] fleetButtons;
 		private ScrollBar systemScrollBar;
@@ -207,17 +207,17 @@ namespace Beyond_Beyaan.Screens
 						if (fleet.TravelNodes != null && fleet.TravelNodes.Count > 0)
 						{
 							//Adjacent to a system, but is heading to another system
-							drawingManagement.DrawSprite(SpriteName.Fleet, (int)(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), 255, 32 * camera.ZoomDistance, 32 * camera.ZoomDistance, fleet.Empire.EmpireColor);
+							fleet.Empire.EmpireRace.FleetIcon.Draw((int)(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 						}
 						else
 						{
 							//Adjacent to a system, just chilling
-							drawingManagement.DrawSprite(SpriteName.Fleet, (int)(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), 255, 32 * camera.ZoomDistance, 32 * camera.ZoomDistance, fleet.Empire.EmpireColor);
+							fleet.Empire.EmpireRace.FleetIcon.Draw((int)(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 						}
 					}
 					else
 					{
-						drawingManagement.DrawSprite(SpriteName.Fleet, (int)((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), 255, 32 * camera.ZoomDistance, 32 * camera.ZoomDistance, fleet.Empire.EmpireColor);
+						fleet.Empire.EmpireRace.FleetIcon.Draw((int)((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 					}
 				}
 			}
@@ -1057,19 +1057,9 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (planet.ShipBeingBuilt == null)
 			{
-				shipSprite = gameMain.DrawingManagement.GetSprite(SpriteName.CancelBackground);
+				shipSprite = null; //gameMain.DrawingManagement.GetSprite(SpriteName.CancelBackground);
 			}
 			shipSprite = planet.Owner.EmpireRace.GetShip(planet.ShipBeingBuilt.Size, planet.ShipBeingBuilt.WhichStyle);
-			if (planet.ShipBeingBuilt.Size % 2 == 0)
-			{
-				shipSprite.SetScale(1.0f, 1.0f);
-				shipSprite.SetPosition(gameMain.ScreenWidth - 125 - (shipSprite.Width / 2), 275 - (shipSprite.Height / 2));
-			}
-			else
-			{
-				shipSprite.SetScale((shipSprite.Width - 16) / shipSprite.Width, (shipSprite.Height - 16) / shipSprite.Height);
-				shipSprite.SetPosition(gameMain.ScreenWidth - 117 - (shipSprite.Width / 2), 283 - (shipSprite.Height / 2));
-			}
 		}
 	}
 }

@@ -51,7 +51,7 @@ namespace Beyond_Beyaan.Screens
 		private ComboBox[] handicapComboBoxes;
 		private Button[] removeButtons;
 
-		private GorgonLibrary.Graphics.Sprite miniAvatar;
+		private BBSprite miniAvatar;
 
 		public void Initialize(GameMain gameMain)
 		{
@@ -233,7 +233,7 @@ namespace Beyond_Beyaan.Screens
 
 			if (raceComboBox.SelectedIndex > 0)
 			{
-				miniAvatar.Draw();
+				miniAvatar.Draw(10, 600);
 			}
 			else
 			{
@@ -430,7 +430,6 @@ namespace Beyond_Beyaan.Screens
 				if (raceComboBox.SelectedIndex > 0)
 				{
 					miniAvatar = gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1].GetMiniAvatar();
-					miniAvatar.SetPosition(10, 600);
 				}
 				return;
 			}

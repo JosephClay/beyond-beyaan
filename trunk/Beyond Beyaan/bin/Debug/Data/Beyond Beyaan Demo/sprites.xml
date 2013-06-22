@@ -515,7 +515,7 @@
     <Frame x="768" y="64" width="256" height="256" />
   </Sprite>
   <Sprite name="HumanFleetIcon" file="humans.png">
-    <Frame x="224" y="0" width="32" height="32" />
+    <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
   <Sprite name="HumanGroundTroop" file="humans.png">
     <Frame x="192" y="0" width="32" height="32" />
@@ -636,7 +636,7 @@
     <Frame x="768" y="64" width="256" height="256" />
   </Sprite>
   <Sprite name="SalixCyborniaFleetIcon" file="salix_cybornia.png">
-    <Frame x="224" y="0" width="32" height="32" />
+    <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
   <Sprite name="SalixCyborniaGroundTroop" file="salix_cybornia.png">
     <Frame x="192" y="0" width="32" height="32" />
@@ -757,7 +757,7 @@
     <Frame x="768" y="64" width="256" height="256" />
   </Sprite>
   <Sprite name="SpaceHamsterFleetIcon" file="space_hamsters.png">
-    <Frame x="224" y="0" width="32" height="32" />
+    <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
   <Sprite name="SpaceHamsterGroundTroop" file="space_hamsters.png">
     <Frame x="192" y="0" width="32" height="32" />
@@ -878,7 +878,7 @@
     <Frame x="768" y="64" width="256" height="256" />
   </Sprite>
   <Sprite name="ZeroPeopleFleetIcon" file="zero_people.png">
-    <Frame x="224" y="0" width="32" height="32" />
+    <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
   <Sprite name="ZeroPeopleGroundTroop" file="zero_people.png">
     <Frame x="192" y="0" width="32" height="32" />

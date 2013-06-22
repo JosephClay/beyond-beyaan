@@ -3,11 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Xml.Linq;
 using GorgonLibrary.Graphics;
+using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	public enum Expression { PLEASED, NEUTRAL, ANNOYED }
+	public enum Expression { HAPPY, NEUTRAL, ANGRY }
+	public class RaceShipType
+	{
+		public string TypeName { get; set; }
+		public int Space { get; set; }
+		public int Width { get; set; }
+		public int Height { get; set; }
+		public List<BBSprite> Bodies { get; set; }
+	}
 	public class Race
 	{
 		public float AgricultureMultipler { get; private set; }
@@ -33,182 +43,67 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public string RaceName { get; private set; }
 
-		private List<string> shipNames;
-		private Sprite raceGraphic;
-		private Sprite neutralAvatar;
-		private Sprite annoyedAvatar;
-		private Sprite pleasedAvatar;
-		private Sprite miniAvatar;
-		private Sprite[][] ships;
+		public BBSprite NeutralAvatar { get; private set; }
+		public BBSprite AngryAvatar { get; private set; }
+		public BBSprite HappyAvatar { get; private set; }
+		public BBSprite MiniAvatar { get; private set; }
+		public List<RaceShipType> ShipTypes { get; private set; }
+		public BBSprite GroundTroop { get; private set; }
+		public BBSprite DyingTroop { get; private set; }
+		public BBSprite FleetIcon { get; private set; }
+		public BBSprite TransportIcon { get; private set; }
+		public BBSprite City { get; private set; }
+		public BBSprite LandingShip { get; private set; }
 
-		public bool Initialize(FileInfo file)
+		public bool Initialize(FileInfo file, SpriteManager spriteManager, Random r, out string reason)
 		{
-			List<string> errors = new List<string>();
-			shipNames = new List<string>();
-			string[] lines;
+			XDocument doc = XDocument.Load(file.FullName);
+			XElement root = doc.Element("Race");
 
-			try
+			SetBaseDefaults();
+
+			RaceName = root.Attribute("name").Value;
+			NeutralAvatar = spriteManager.GetSprite(root.Attribute("neutralPortrait").Value, r);
+			HappyAvatar = spriteManager.GetSprite(root.Attribute("happyPortrait").Value, r);
+			AngryAvatar = spriteManager.GetSprite(root.Attribute("angryPortrait").Value, r);
+			MiniAvatar = spriteManager.GetSprite(root.Attribute("thumbnail").Value, r);
+			GroundTroop = spriteManager.GetSprite(root.Attribute("groundTroop").Value, r);
+			DyingTroop = spriteManager.GetSprite(root.Attribute("dyingTroop").Value, r);
+			FleetIcon = spriteManager.GetSprite(root.Attribute("fleetIcon").Value, r);
+			TransportIcon = spriteManager.GetSprite(root.Attribute("transportIcon").Value, r);
+			City = spriteManager.GetSprite(root.Attribute("city").Value, r);
+			LandingShip = spriteManager.GetSprite(root.Attribute("landingShip").Value, r);
+			
+			XElement shipTypes = root.Element("ShipTypes");
+			if (shipTypes == null)
 			{
-				lines = File.ReadAllLines(file.FullName);
-			}
-			catch (Exception e)
-			{
-				errors.Add("Exception occured: " + e.Message);
+				reason = "ShipTypes not found in " + RaceName + " race";
 				return false;
 			}
 
-			SetBaseDefault();
-
-			//A simple checksum
-			int iter = 0;
-			float total = 0;
-
-			foreach (string line in lines)
+			ShipTypes = new List<RaceShipType>();
+			foreach (XElement shipType in shipTypes.Elements())
 			{
-				if (string.IsNullOrEmpty(line) || line.StartsWith("//"))
+				RaceShipType newType = new RaceShipType();
+				newType.TypeName = shipType.Attribute("name").Value;
+				newType.Space = int.Parse(shipType.Attribute("space").Value);
+				newType.Width = int.Parse(shipType.Attribute("width").Value);
+				newType.Height = int.Parse(shipType.Attribute("height").Value);
+				newType.Bodies = new List<BBSprite>();
+				foreach (XElement body in shipType.Elements())
 				{
-					continue;
+					newType.Bodies.Add(spriteManager.GetSprite(body.Attribute("sprite").Value, r));
 				}
-				string[] parts = line.Split(new[] { '|' });
-				if (parts.Length == 2)
-				{
-					if (string.Compare(parts[0], "name", true) == 0)
-					{
-						RaceName = parts[1];
-						continue;
-					}
-					if (string.Compare(parts[0], "shipnames") == 0)
-					{
-						string[] names = parts[1].Split(new[] { ',' });
-						foreach (string name in names)
-						{
-							shipNames.Add(name);
-						}
-						continue;
-					}
-					if (string.Compare(parts[0], "graphic") == 0)
-					{
-						string graphic = Path.Combine(file.DirectoryName, parts[1]);
-						if (!File.Exists(graphic))
-						{
-							errors.Add("Graphic file " + parts[1] + " does not exist");
-							break;
-						}
-						if (string.IsNullOrEmpty(RaceName))
-						{
-							errors.Add("Race name must be listed before graphic file");
-							break;
-						}
-						if (ImageCache.Images.Contains(RaceName))
-						{
-							errors.Add("Duplicate race name: " + RaceName);
-							break;
-						}
-						raceGraphic = new Sprite(RaceName, GorgonLibrary.Graphics.Image.FromFile(graphic));
-						if (raceGraphic.Width != 1024 || raceGraphic.Height != 1024)
-						{
-							errors.Add("Graphic file " + parts[1] + " is not 1024x1024 pixels");
-							break;
-						}
-						continue;
-					}
+				ShipTypes.Add(newType);
+			}
+			//Order ships based on space
+			ShipTypes.Sort((a, b) => { return a.Space.CompareTo(b.Space); });
 
-					float value = 1.0f;
-					if (!float.TryParse(parts[1], out value))
-					{
-						errors.Add("Trying to parse " + parts[0] + " failed because " + parts[1] + " is not a valid float value");
-						break;
-					}
-					
-					iter++;
-					total += value;
-					
-					switch (parts[0].ToLower())
-					{
-						case "agriculture":
-							AgricultureMultipler = value;
-							break;
-						case "waste":
-							WasteMultipler = value;
-							break;
-						case "commerce":
-							CommerceMultipler = value;
-							break;
-						case "research":
-							ResearchMultipler = value;
-							break;
-						case "construction":
-							ConstructionMultipler = value;
-							break;
-						case "engine":
-							EngineMultipler = value;
-							break;
-						case "armor":
-							ArmorMultipler = value;
-							break;
-						case "shield":
-							ShieldMultipler = value;
-							break;
-						case "beam":
-							BeamMultipler = value;
-							break;
-						case "particle":
-							ParticleMultipler = value;
-							break;
-						case "missile":
-							MissileMultipler = value;
-							break;
-						case "torpedo":
-							TorpedoMultipler = value;
-							break;
-						case "bomb":
-							BombMultipler = value;
-							break;
-						case "growth":
-							GrowthMultipler = value;
-							break;
-						case "spy":
-							SpyMultipler = value;
-							break;
-						case "spydefense":
-							SpyDefenseMultipler = value;
-							break;
-						case "accuracy":
-							AccuracyMultipler = value;
-							break;
-						case "charisma":
-							CharismaMultipler = value;
-							break;
-					}
-				}
-				else
-				{
-					errors.Add("\"" + line + "\" is not a valid line.  Must have two values, separated by |");
-					break;
-				}
-			}
-			//We need to remove the floating rounding errors
-			total *= 10;
-			total += 0.5f; //round up
-			iter *= 10;
-			if ((int)total - iter != 0)
-			{
-				errors.Add("Race is not balanced, ensure that all values add up to the same amount of values.  If 5 values are modified, they must add up to 5.0");
-			}
-			if (string.IsNullOrEmpty(RaceName))
-			{
-				errors.Add("Race name cannot be blank");
-			}
-			string reason;
-			if (!LoadSpritesFromGraphic(out reason))
-			{
-				errors.Add(reason);
-			}
-
-			return errors.Count == 0;
+			reason = null;
+			return true;
 		}
 
-		private void SetBaseDefault()
+		private void SetBaseDefaults()
 		{
 			AgricultureMultipler = 1.0f;
 			WasteMultipler = 1.0f;
@@ -232,79 +127,43 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public string GetRandomShipName()
 		{
-			//This attempts to get a random name from list of ship names.  If no such list exists, it uses a random generator
-			if (shipNames.Count > 0)
-			{
-				Random r = new Random();
-				return shipNames[r.Next(shipNames.Count)];
-			}
-
+			// TODO: Add ship names to races
 			NameGenerator nameGenerator = new NameGenerator();
 			return nameGenerator.GetName();
 		}
 
-		private bool LoadSpritesFromGraphic(out string reason)
+		public BBSprite GetShip(int type, int whichBody)
 		{
-			try
+			if (type < ShipTypes.Count)
 			{
-				miniAvatar = new Sprite(RaceName + "miniAvatar", raceGraphic.Image, 0, 781, 128, 128);
-				neutralAvatar = new Sprite(RaceName + "neutralAvatar", raceGraphic.Image, 0, 481, 300, 300);
-				pleasedAvatar = new Sprite(RaceName + "pleasedAvatar", raceGraphic.Image, 300, 481, 300, 300);
-				annoyedAvatar = new Sprite(RaceName + "annoyedAvatar", raceGraphic.Image, 600, 481, 300, 300);
-
-				ships = new Sprite[5][];
-				for (int i = 0; i < ships.Length; i++)
+				if (whichBody < ShipTypes[type].Bodies.Count)
 				{
-					ships[i] = new Sprite[6];
-					int y = 0;
-					int iter = 0;
-					int size = (i + 1) * 32;
-					while (iter <= i)
-					{
-						y += (32 * iter);
-						iter++;
-					}
-					for (int j = 0; j < ships[i].Length; j++)
-					{
-						int x = j * size;
-						ships[i][j] = new Sprite(RaceName + "ship" + i.ToString() + j.ToString(), raceGraphic.Image, x, y, size, size);
-					}
+					return ShipTypes[type].Bodies[whichBody];
 				}
 			}
-			catch (Exception exception)
-			{
-				reason = "Exception in loading sprite from another sprite. Reason: " + exception.Message;
-				return false;
-			}
-			reason = null;
-			return true;
+			return null;
 		}
 
-		public Sprite GetShip(int size, int whichStyle)
+		public BBSprite GetMiniAvatar()
 		{
-			return ships[(size - 1) / 2][whichStyle];
+			return MiniAvatar;
 		}
 
-		public Sprite GetMiniAvatar()
-		{
-			return miniAvatar;
-		}
-
-		public Sprite GetAvatar(Expression whichExpression)
+		public BBSprite GetAvatar(Expression whichExpression)
 		{
 			switch (whichExpression)
 			{
-				case Expression.ANNOYED:
-					return annoyedAvatar;
-				case Expression.PLEASED:
-					return pleasedAvatar;
+				case Expression.ANGRY:
+					return AngryAvatar;
+				case Expression.HAPPY:
+					return HappyAvatar;
 			}
-			return neutralAvatar;
+			return NeutralAvatar;
 		}
 
 		public string GetRandomEmperorName()
 		{
-			//There will be a list of emperor names, or unique name generator, but for now, just use random name generator
+			// TODO: Add potential emperor names
 			NameGenerator nameGenerator = new NameGenerator();
 			return nameGenerator.GetName();
 		}

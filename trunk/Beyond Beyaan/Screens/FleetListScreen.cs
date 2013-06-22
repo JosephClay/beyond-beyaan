@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GorgonLibrary.InputDevices;
+using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -55,7 +56,7 @@ namespace Beyond_Beyaan.Screens
 		Fleet hoveringFleet;
 
 		Ship shipSelected;
-		GorgonLibrary.Graphics.Sprite shipSprite;
+		private BBSprite shipSprite;
 
 		public void Initialize(GameMain gameMain)
 		{
@@ -156,7 +157,7 @@ namespace Beyond_Beyaan.Screens
 
 				GorgonLibrary.Gorgon.CurrentShader = gameMain.ShipShader;
 				gameMain.ShipShader.Parameters["EmpireColor"].SetValue(whichFleets[selectedFleet].Empire.ConvertedColor);
-				shipSprite.Draw();
+				shipSprite.Draw((gameMain.ScreenWidth / 2) - 398, (gameMain.ScreenHeight / 2) + 98, (180.0f / shipSprite.Width), (180.0f / shipSprite.Height));
 				GorgonLibrary.Gorgon.CurrentShader = null;
 				//DrawingManagement.DrawSprite(SpriteName.Corvette, (gameMain.ScreenWidth / 2) - 398, (gameMain.ScreenHeight / 2) + 98, 255, 180, 180, System.Drawing.Color.White);
 
@@ -463,8 +464,6 @@ namespace Beyond_Beyaan.Screens
 		private void LoadShipSprite(Empire empire, Ship ship)
 		{
 			shipSprite = empire.EmpireRace.GetShip(ship.Size, ship.WhichStyle);
-			shipSprite.SetPosition((gameMain.ScreenWidth / 2) - 398, (gameMain.ScreenHeight / 2) + 98);
-			shipSprite.SetScale((180.0f / shipSprite.Width), (180.0f / shipSprite.Height));
 		}
 	}
 }
