@@ -12,7 +12,6 @@ namespace Beyond_Beyaan.Screens
 		Camera camera;
 		bool stillMoving;
 		private bool resetted;
-		float tickCount;
 		int updateSection;
 		Label updateText;
 
@@ -23,7 +22,6 @@ namespace Beyond_Beyaan.Screens
 			camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
 
 			stillMoving = true;
-			tickCount = 0;
 			updateSection = -1;
 			updateText = new Label(string.Empty, (gameMain.ScreenWidth / 2) - 130, (gameMain.ScreenHeight / 2) - 17);
 			resetted = false;
@@ -41,7 +39,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			foreach (Fleet fleet in gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, gameMain.ScreenWidth / camera.ZoomDistance, gameMain.ScreenHeight / camera.ZoomDistance))
 			{
-				drawingManagement.DrawSprite(SpriteName.Fleet, (int)((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), 255, 32, 32, fleet.Empire.EmpireColor);
+				fleet.Empire.EmpireRace.FleetIcon.Draw(((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance), ((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), 1, 1, fleet.Empire.EmpireColor);
 			}
 			if (updateSection != -1)
 			{
@@ -59,16 +57,10 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (stillMoving)
 			{
-				tickCount += frameDeltaTime;
-				if (tickCount > 0.50f)
-				{
-					stillMoving = gameMain.EmpireManager.UpdateFleetMovement(frameDeltaTime);
-					tickCount -= 0.50f;
-				}
+				stillMoving = gameMain.EmpireManager.UpdateFleetMovement(frameDeltaTime);
 			}
 			else
 			{
-				tickCount = 0;
 				updateSection++;
 				switch (updateSection)
 				{

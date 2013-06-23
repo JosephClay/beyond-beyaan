@@ -47,8 +47,8 @@ techtype=shield|techName=Refractor|baseResearchCost=150|researchExponentIncrease
 //Engine Technologies
 //baseSpace is percentage, not amount, of space
 //baseCost is percentage, not amount, of cost
-techtype=engine|techName=Retro|baseResearchCost=100|researchExponentIncrease=1.75|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|space=15|cost=10|baseGalaxySpeed=5|baseCombatSpeed=3
-techtype=engine|techName=Nuclear|baseResearchCost=200|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=3|space=20|cost=13|baseGalaxySpeed=10|baseCombatSpeed=5
+techtype=engine|techName=Retro|baseResearchCost=100|researchExponentIncrease=1.75|techLevelLimit=-1|startLevel=1|requiredFieldLevel=0|space=15|cost=10|baseGalaxySpeed=50|baseCombatSpeed=3
+techtype=engine|techName=Nuclear|baseResearchCost=200|researchExponentIncrease=1.5|techLevelLimit=-1|startLevel=0|requiredFieldLevel=3|space=20|cost=13|baseGalaxySpeed=100|baseCombatSpeed=5
 
 //Computer Technologies
 //baseSpace is percentage, not amount, of space
