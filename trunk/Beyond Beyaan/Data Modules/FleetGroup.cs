@@ -95,15 +95,16 @@ namespace Beyond_Beyaan
 				selectedFleet = fleets[whichFleet];
 
 				fleetToSplit = new Fleet();
+				fleetToSplit.Empire = selectedFleet.Empire;
+				fleetToSplit.TravelNodes = selectedFleet.TravelNodes;
+				fleetToSplit.TentativeNodes = selectedFleet.TentativeNodes;
+				fleetToSplit.AdjacentSystem = selectedFleet.AdjacentSystem;
+				fleetToSplit.GalaxyX = selectedFleet.GalaxyX;
+				fleetToSplit.GalaxyY = selectedFleet.GalaxyY;
 				foreach (KeyValuePair<Ship, int> ship in selectedFleet.Ships)
 				{
 					fleetToSplit.AddShips(ship.Key, ship.Value);
 				}
-				fleetToSplit.Empire = selectedFleet.Empire;
-				fleetToSplit.TravelNodes = selectedFleet.TravelNodes;
-				fleetToSplit.TentativeNodes = selectedFleet.TentativeNodes;
-				fleetToSplit.GalaxyX = selectedFleet.GalaxyX;
-				fleetToSplit.GalaxyY = selectedFleet.GalaxyY;
 				ShipIndex = 0;
 			}
 		}
@@ -115,6 +116,7 @@ namespace Beyond_Beyaan
 			fleet.GalaxyX = fleetToSplit.GalaxyX;
 			fleet.GalaxyY = fleetToSplit.GalaxyY;
 			fleet.TravelNodes = fleetToSplit.TravelNodes;
+			fleet.AdjacentSystem = fleetToSplit.AdjacentSystem;
 
 			foreach (KeyValuePair<Ship, int> ship in fleetToSplit.Ships)
 			{

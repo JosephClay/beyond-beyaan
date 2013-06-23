@@ -238,7 +238,7 @@ namespace Beyond_Beyaan
 			selectedSystem = homeSystem;
 			lastSelectedSystem = homeSystem;
 			planetManager.Planets.Add(homePlanet);
-			fleetManager.SetupStarterFleet(homeSystem.X, homeSystem.Y);
+			fleetManager.SetupStarterFleet(homeSystem);
 			homePlanet.ShipBeingBuilt = fleetManager.CurrentDesigns[0];
 			ShipMaintenance = fleetManager.GetExpenses();
 			UpdateNetIncome();

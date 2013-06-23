@@ -363,9 +363,32 @@ namespace Beyond_Beyaan
 			List<TravelNode> nodes = new List<TravelNode>();
 			if (currentDestination != null)
 			{
-				nodes.Add(new TravelNode {StarSystem = currentDestination});
+				TravelNode newNode = new TravelNode();
+				newNode.StarSystem = currentDestination;
+				float x = currentDestination.X - currentX;
+				float y = currentDestination.Y - currentY;
+				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
+				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				nodes.Add(newNode);
+				newNode = new TravelNode();
+				newNode.StarSystem = newDestination;
+				x = newDestination.X - currentDestination.X;
+				y = newDestination.Y - currentDestination.Y;
+				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
+				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				nodes.Add(newNode);
 			}
-			nodes.Add(new TravelNode { StarSystem = newDestination });
+			else
+			{
+				TravelNode newNode = new TravelNode();
+				newNode.StarSystem = newDestination;
+				float x = newDestination.X - currentX;
+				float y = newDestination.Y - currentY;
+				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
+				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				nodes.Add(newNode);
+			}
+			
 			return nodes;
 		}
 		#endregion

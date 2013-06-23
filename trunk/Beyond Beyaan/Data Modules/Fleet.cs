@@ -315,8 +315,13 @@ namespace Beyond_Beyaan
 
 		public bool Move(float frameDeltaTime)
 		{
+			if (travelNodes == null)
+			{
+				return false;
+			}
 			if (remainingMoves > 0)
 			{
+				adjacentSystem = null; //Left the system
 				float amountToMove = frameDeltaTime * maxSpeed;
 				if (amountToMove > remainingMoves)
 				{
@@ -324,8 +329,8 @@ namespace Beyond_Beyaan
 				}
 				remainingMoves -= amountToMove;
 
-				float xMov = (float)(Math.Cos(travelNodes[0].Angle) * amountToMove);
-				float yMov = (float)(Math.Sin(travelNodes[0].Angle) * amountToMove);
+				float xMov = (float)(Math.Cos(travelNodes[0].Angle * (Math.PI / 180)) * amountToMove);
+				float yMov = (float)(Math.Sin(travelNodes[0].Angle * (Math.PI / 180)) * amountToMove);
 
 				bool isLeftOfNode = galaxyX <= travelNodes[0].StarSystem.X;
 				bool isTopOfNode = galaxyY <= travelNodes[0].StarSystem.Y;
@@ -350,6 +355,13 @@ namespace Beyond_Beyaan
 						travelNodes = null;
 						remainingMoves = 0;
 					}
+				}
+				else
+				{
+					float x = travelNodes[0].StarSystem.X - galaxyX;
+					float y = travelNodes[0].StarSystem.Y - galaxyY;
+					travelNodes[0].Length = (float)Math.Sqrt((x * x) + (y * y));
+					travelNodes[0].Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
 				}
 			}
 			return remainingMoves > 0;

@@ -95,11 +95,12 @@ namespace Beyond_Beyaan
 			LastShipDesign = new Ship(scout); //Make a copy so we don't accidentally modify the original ship
 		}
 
-		public void SetupStarterFleet(int galaxyX, int galaxyY)
+		public void SetupStarterFleet(StarSystem homeSystem)
 		{
 			Fleet starterFleet = new Fleet();
-			starterFleet.GalaxyX = galaxyX + 32;
-			starterFleet.GalaxyY = galaxyY;
+			starterFleet.GalaxyX = homeSystem.X;
+			starterFleet.GalaxyY = homeSystem.Y;
+			starterFleet.AdjacentSystem = homeSystem;
 			starterFleet.Empire = empire;
 			starterFleet.AddShips(currentShipDesigns[0], 2);
 			starterFleet.AddShips(currentShipDesigns[1], 5);
@@ -137,7 +138,7 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					if (x >= fleet.GalaxyX - 16 && x < fleet.GalaxyX - 16 && y >= fleet.GalaxyY - 16 && y < fleet.GalaxyY + 16)
+					if (x >= fleet.GalaxyX - 16 && x < fleet.GalaxyX + 16 && y >= fleet.GalaxyY - 16 && y < fleet.GalaxyY + 16)
 					{
 						listOfFleets.Add(fleet);
 					}
@@ -199,7 +200,7 @@ namespace Beyond_Beyaan
 					List<Fleet> fleetsToRemove = new List<Fleet>();
 					for (int j = i + 1; j < fleets.Count; j++)
 					{
-						if (fleets[j].TravelNodes == null && fleets[j].GalaxyX == fleets[i].GalaxyX && fleets[j].GalaxyY == fleets[i].GalaxyY)
+						if (fleets[j].TravelNodes == null && fleets[j].AdjacentSystem == fleets[i].AdjacentSystem)
 						{
 							foreach (KeyValuePair<Ship, int> ship in fleets[j].Ships)
 							{
