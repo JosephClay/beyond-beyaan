@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 //using System.Linq;
 using System.Text;
+using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
@@ -72,9 +73,9 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int x, int y, System.Drawing.Color color, BBSprite sprite, int minPlanets, int maxPlanets, Random r)
+		public StarSystem(string name, int x, int y, System.Drawing.Color color, int minPlanets, int maxPlanets, SpriteManager spriteManager, Random r)
 		{
-			this.Sprite = sprite;
+			this.Sprite = spriteManager.GetSprite("Star", r);
 			this.name = name;
 			this.x = x;
 			this.y = y;

@@ -203,6 +203,12 @@ namespace Beyond_Beyaan
 
 				travelNodes = new List<TravelNode>(nodes);
 			}
+			else
+			{
+				//Null because target is either invalid or the system the fleet is currently adjacent
+				travelNodes = null;
+				tentativeNodes = null;
+			}
 		}
 
 		private float CalculatePathCost(List<TravelNode> nodes)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using GorgonLibrary.InputDevices;
@@ -201,16 +202,35 @@ namespace Beyond_Beyaan.Screens
 
 			if (selectedFleetGroup != null && selectedFleetGroup.SelectedFleet.TravelNodes != null)
 			{
-				for (int i = 0; i < selectedFleetGroup.SelectedFleet.TravelNodes.Count; i++)
+				if (selectedFleetGroup.SelectedFleet.Empire == currentEmpire)
 				{
-					if (i == 0)
+					for (int i = 0; i < selectedFleetGroup.SelectedFleet.TravelNodes.Count; i++)
 					{
-						pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[0].Length / pathSprite.Width), camera.ZoomDistance, selectedFleetGroup.SelectedFleet.Empire.EmpireColor, selectedFleetGroup.SelectedFleet.TravelNodes[0].Angle);
+						if (i == 0)
+						{
+							if (selectedFleetGroup.SelectedFleet.AdjacentSystem != null)
+							{
+								//Haven't left yet, so calculate custom path from left side of star
+								float x = selectedFleetGroup.FleetToSplit.TravelNodes[0].StarSystem.X - (selectedFleetGroup.FleetToSplit.GalaxyX - 32);
+								float y = selectedFleetGroup.FleetToSplit.TravelNodes[0].StarSystem.Y - selectedFleetGroup.FleetToSplit.GalaxyY;
+								float length = (float)Math.Sqrt((x * x) + (y * y));
+								float angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+								pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - camera.CameraX - 32) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (length / pathSprite.Width), camera.ZoomDistance, Color.Green, angle);
+							}
+							else
+							{
+								pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[0].Length / pathSprite.Width), camera.ZoomDistance, Color.Green, selectedFleetGroup.SelectedFleet.TravelNodes[0].Angle);
+							}
+						}
+						else
+						{
+							pathSprite.Draw((selectedFleetGroup.SelectedFleet.TravelNodes[0].StarSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.TravelNodes[0].StarSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[i].Length / pathSprite.Width), camera.ZoomDistance, Color.Green, selectedFleetGroup.SelectedFleet.TravelNodes[i].Angle);
+						}
 					}
-					else
-					{
-						pathSprite.Draw((selectedFleetGroup.SelectedFleet.TravelNodes[0].StarSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.TravelNodes[0].StarSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[i].Length / pathSprite.Width), camera.ZoomDistance, selectedFleetGroup.SelectedFleet.Empire.EmpireColor, selectedFleetGroup.SelectedFleet.TravelNodes[i].Angle);
-					}
+				}
+				else
+				{
+					pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[0].Length / pathSprite.Width), camera.ZoomDistance, Color.Red, selectedFleetGroup.SelectedFleet.TravelNodes[0].Angle);
 				}
 			}
 
@@ -220,11 +240,32 @@ namespace Beyond_Beyaan.Screens
 				{
 					if (i == 0)
 					{
-						pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.FleetToSplit.TentativeNodes[0].Length / pathSprite.Width), camera.ZoomDistance, selectedFleetGroup.FleetToSplit.Empire.EmpireColor, selectedFleetGroup.FleetToSplit.TentativeNodes[0].Angle);
+						if (selectedFleetGroup.FleetToSplit.AdjacentSystem != null && selectedFleetGroup.FleetToSplit.TravelNodes != null)
+						{
+							//Haven't left yet, so calculate custom path from left side of star
+							float x = selectedFleetGroup.FleetToSplit.TentativeNodes[0].StarSystem.X - (selectedFleetGroup.FleetToSplit.GalaxyX - 32);
+							float y = selectedFleetGroup.FleetToSplit.TentativeNodes[0].StarSystem.Y - selectedFleetGroup.FleetToSplit.GalaxyY;
+							float length = (float)Math.Sqrt((x * x) + (y * y));
+							float angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+							pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX - 32) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (length / pathSprite.Width), camera.ZoomDistance, Color.LightGreen, angle);
+						}
+						else if (selectedFleetGroup.FleetToSplit.AdjacentSystem != null)
+						{
+							//Haven't left, and not on enroute already, so calculate path from right side of star
+							float x = selectedFleetGroup.FleetToSplit.TentativeNodes[0].StarSystem.X - (selectedFleetGroup.FleetToSplit.GalaxyX + 32);
+							float y = selectedFleetGroup.FleetToSplit.TentativeNodes[0].StarSystem.Y - selectedFleetGroup.FleetToSplit.GalaxyY;
+							float length = (float)Math.Sqrt((x * x) + (y * y));
+							float angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+							pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX + 32) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (length / pathSprite.Width), camera.ZoomDistance, Color.LightGreen, angle);
+						}
+						else
+						{
+							pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.FleetToSplit.TentativeNodes[0].Length / pathSprite.Width), camera.ZoomDistance, Color.LightGreen, selectedFleetGroup.FleetToSplit.TentativeNodes[0].Angle);
+						}
 					}
 					else
 					{
-						pathSprite.Draw((selectedFleetGroup.FleetToSplit.TentativeNodes[0].StarSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.TentativeNodes[0].StarSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.FleetToSplit.TentativeNodes[i].Length / pathSprite.Width), camera.ZoomDistance, selectedFleetGroup.FleetToSplit.Empire.EmpireColor, selectedFleetGroup.FleetToSplit.TentativeNodes[i].Angle);
+						pathSprite.Draw((selectedFleetGroup.FleetToSplit.TentativeNodes[0].StarSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.TentativeNodes[0].StarSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.FleetToSplit.TentativeNodes[i].Length / pathSprite.Width), camera.ZoomDistance, Color.LightGreen, selectedFleetGroup.FleetToSplit.TentativeNodes[i].Angle);
 					}
 				}
 			}
@@ -434,6 +475,7 @@ namespace Beyond_Beyaan.Screens
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
 			pathSprite.Update(frameDeltaTime, gameMain.Random);
+			gameMain.Galaxy.Update(frameDeltaTime, gameMain.Random);
 			if (showingTransferUI)
 			{
 				transferCancelButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
