@@ -8,16 +8,19 @@ using Image = GorgonLibrary.Graphics.Image;
 
 namespace Beyond_Beyaan.Data_Modules
 {
+	internal enum StretchMode { STRETCH, REPEAT }
 	public class BaseSprite
 	{
 		public List<Sprite> Frames { get; private set; }
 		public List<string> FrameLength { get; private set; }
 		public string Name { get; private set; }
+		private StretchMode stretchMode;
 
 		public BaseSprite()
 		{
 			Frames = new List<Sprite>();
 			FrameLength = new List<string>();
+			stretchMode = StretchMode.STRETCH;
 		}
 
 		public bool LoadSprite(XElement spriteValues, string graphicDirectory, out string reason)
@@ -37,6 +40,14 @@ namespace Beyond_Beyaan.Data_Modules
 					case "name":
 					{
 						Name = attribute.Value;
+						break;
+					}
+					case "stretchmode":
+					{
+						if (attribute.Value == "repeat")
+						{
+							stretchMode = StretchMode.REPEAT;
+						}
 						break;
 					}
 				}
@@ -116,6 +127,10 @@ namespace Beyond_Beyaan.Data_Modules
 				}
 				var frame = new Sprite(Name + frameCount, graphicFile.Image, x, y, width, height, axisX,
 				                                              axisY);
+				if (stretchMode == StretchMode.REPEAT)
+				{
+					frame.WrapMode = ImageAddressing.Wrapping;
+				}
 				Frames.Add(frame);
 				FrameLength.Add(frameLength);
 				frameCount++;
@@ -196,9 +211,19 @@ namespace Beyond_Beyaan.Data_Modules
 			var frame = _baseSprite.Frames[_currentFrame];
 			frame.Rotation = angle;
 			frame.SetPosition(x, y);
-			frame.SetScale(scaleX, scaleY);
+			float oldWidth = frame.Width;
+			if (frame.HorizontalWrapMode == ImageAddressing.Wrapping)
+			{
+				frame.SetScale(1, scaleY);
+				frame.Width = frame.Width * scaleX;
+			}
+			else
+			{
+				frame.SetScale(scaleX, scaleY);
+			}
 			frame.Color = color;
 			frame.Draw();
+			frame.Width = oldWidth;
 		}
 	}
 }

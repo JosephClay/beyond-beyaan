@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;

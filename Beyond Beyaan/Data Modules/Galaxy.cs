@@ -243,13 +243,6 @@ namespace Beyond_Beyaan
 		#region Galaxy Filling Functions
 		private bool FillGalaxyWithStars(int minDistance, int minPlanets, int maxPlanets, bool[][] grid, SpriteManager spriteManager, Random r, out string reason)
 		{
-			BBSprite sprite = spriteManager.GetSprite("Star", r);
-			if (sprite == null)
-			{
-				reason = "Star sprite don't exist in sprites.xml";
-				return false;
-			}
-
 			starSystems = new List<StarSystem>();
 			NameGenerator nameGenerator = new NameGenerator();
 
@@ -298,7 +291,7 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * 32 + (r.Next(32)), y * 32 + (r.Next(32)), starColor, sprite, minPlanets, maxPlanets, r));
+				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * 32 + (r.Next(32)), y * 32 + (r.Next(32)), starColor, minPlanets, maxPlanets, spriteManager, r));
 
 				int adjustedMinDistance = minDistance + r.Next(4);
 
@@ -392,6 +385,14 @@ namespace Beyond_Beyaan
 			return nodes;
 		}
 		#endregion
+
+		public void Update(float frameDeltaTime, Random r)
+		{
+			foreach (StarSystem system in starSystems)
+			{
+				system.Sprite.Update(frameDeltaTime, r);
+			}
+		}
 	}
 
 	#region QuadNode Classes
