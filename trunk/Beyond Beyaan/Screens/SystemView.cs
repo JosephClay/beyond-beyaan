@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan.Screens
@@ -12,6 +9,8 @@ namespace Beyond_Beyaan.Screens
 		BBStretchableImage _systemBackground;
 		BBStretchableImage _productionBackground;
 		BBStretchableImage _shipBackground;
+
+		private StarSystem currentSystem;
 
 		#region Constructor
 		public bool Initialize(GameMain gameMain, SpriteManager spriteManager, Random r, out string reason)
@@ -51,15 +50,16 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadSystem()
 		{
-			if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
+			currentSystem = gameMain.EmpireManager.CurrentEmpire.SelectedSystem;
+			if (currentSystem.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
 			{
-				_name.SetString(gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Name);
+				_name.SetString(currentSystem.Name);
 			}
 			else
 			{
 				_name.SetString("Unexplored");
 			}
-			if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[0].Owner == gameMain.EmpireManager.CurrentEmpire)
+			if (currentSystem.Planets[0].Owner == gameMain.EmpireManager.CurrentEmpire)
 			{
 				_name.SetReadOnly(false);
 			}
@@ -76,6 +76,10 @@ namespace Beyond_Beyaan.Screens
 			_systemBackground.Draw();
 			_productionBackground.Draw();
 			_shipBackground.Draw();
+			if (currentSystem.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
+			{
+				currentSystem.Planets[0].SmallSprite.Draw(xPos + 30, yPos + 75);
+			}
 		}
 
 		public override void MoveWindow()

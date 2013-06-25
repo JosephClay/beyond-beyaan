@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
@@ -41,6 +42,7 @@ namespace Beyond_Beyaan
 		{
 			get { return planetTypeString; }
 		}
+		public BBSprite SmallSprite { get; private set; }
 		public string Name
 		{
 			get { return name; }
@@ -213,7 +215,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public Planet(string name, Random r, StarSystem system)
+		public Planet(string name, SpriteManager spriteManager, Random r, StarSystem system)
 		{
 			whichSystem = system;
 			this.name = name;
@@ -236,45 +238,54 @@ namespace Beyond_Beyaan
 				if (populationMax < 5)
 				{
 					planetType = PLANET_TYPE.NONE;
+					SmallSprite = spriteManager.GetSprite("AsteroidsPlanetSmall", r);
 					populationMax = 0;
 				}
 				else if (populationMax <= 10)
 				{
 					planetType = PLANET_TYPE.RADIATED;
+					SmallSprite = spriteManager.GetSprite("RadiatedPlanetSmall", r);
 					industryBonusAdjustment = 500;
 				}
 				else if (populationMax <= 15)
 				{
 					planetType = PLANET_TYPE.TOXIC;
+					SmallSprite = spriteManager.GetSprite("ToxicPlanetSmall", r);
 					industryBonusAdjustment = 300;
 				}
 				else if (populationMax <= 20)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.ARCTIC : PLANET_TYPE.VOLCANIC;
+					SmallSprite = isWetClimate ? spriteManager.GetSprite("ArcticPlanetSmall", r) : spriteManager.GetSprite("VolcanicPlanetSmall", r);
 					industryBonusAdjustment = 200;
 				}
 				else if (populationMax <= 30)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.DEAD : PLANET_TYPE.BARREN;
+					SmallSprite = isWetClimate ? spriteManager.GetSprite("DeadPlanetSmall", r) : spriteManager.GetSprite("BarrenPlanetSmall", r);
 					industryBonusAdjustment = 100;
 				}
 				else if (populationMax <= 40)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.TUNDRA : PLANET_TYPE.BADLAND;
+					SmallSprite = isWetClimate ? spriteManager.GetSprite("TundraPlanetSmall", r) : spriteManager.GetSprite("BadlandsPlanetSmall", r);
 				}
 				else if (populationMax <= 70)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.OCEAN : PLANET_TYPE.DESERT;
+					SmallSprite = isWetClimate ? spriteManager.GetSprite("OceanicPlanetSmall", r) : spriteManager.GetSprite("DesertPlanetSmall", r);
 					fertilityBonusAdjustment = 200;
 				}
 				else if (populationMax <= 90)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.JUNGLE : PLANET_TYPE.STEPPE;
+					SmallSprite = isWetClimate ? spriteManager.GetSprite("JunglePlanetSmall", r) : spriteManager.GetSprite("SteppePlanetSmall", r);
 					fertilityBonusAdjustment = 300;
 				}
 				else
 				{
 					planetType = PLANET_TYPE.TERRAN;
+					SmallSprite = spriteManager.GetSprite("TerranPlanetSmall", r);
 					fertilityBonusAdjustment = 500;
 				}
 
@@ -338,11 +349,12 @@ namespace Beyond_Beyaan
 		}
 		#endregion
 
-		public void SetHomeworld(Empire owner) //Set this planet as homeworld
+		public void SetHomeworld(Empire owner, SpriteManager spriteManager, Random r) //Set this planet as homeworld
 		{
 			this.owner = owner;
 			planetType = PLANET_TYPE.TERRAN;
 			planetTypeString = Utility.PlanetTypeToString(planetType);
+			SmallSprite = spriteManager.GetSprite("TerranPlanetSmall", r);
 			populationMax = 100;
 			races.Add(owner.EmpireRace);
 			racePopulations.Add(owner.EmpireRace, 50.0f);

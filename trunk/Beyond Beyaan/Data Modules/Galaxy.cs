@@ -314,7 +314,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Setup
-		public StarSystem SetHomeworld(Empire empire, out Planet homePlanet)
+		public StarSystem SetHomeworld(Empire empire, SpriteManager spriteManager, out Planet homePlanet)
 		{
 			Random r = new Random();
 			while (true)
@@ -322,7 +322,7 @@ namespace Beyond_Beyaan
 				int starIter = r.Next(starSystems.Count);
 				if (starSystems[starIter].EmpiresWithPlanetsInThisSystem.Count == 0)
 				{
-					starSystems[starIter].SetHomeworld(empire, out homePlanet, r);
+					starSystems[starIter].SetHomeworld(empire, spriteManager, out homePlanet, r);
 					return starSystems[starIter];
 				}
 			}
