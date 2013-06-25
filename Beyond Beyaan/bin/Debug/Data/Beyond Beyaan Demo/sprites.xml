@@ -70,6 +70,49 @@
     <Frame x="0" y="6" width="16" height="3" frameLength="100" axisX="0" axisY="1" />
     <Frame x="0" y="9" width="16" height="3" frameLength="100" axisX="0" axisY="1" />
   </Sprite>
+  <Sprite name="TerranPlanetSmall" file="planets.png">
+    <Frame x="0" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="JunglePlanetSmall" file="planets.png">
+    <Frame x="40" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="OceanicPlanetSmall" file="planets.png">
+    <Frame x="80" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="BadlandsPlanetSmall" file="planets.png">
+    <Frame x="120" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="SteppePlanetSmall" file="planets.png">
+    <Frame x="160" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="DesertPlanetSmall" file="planets.png">
+    <Frame x="200" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="ArcticPlanetSmall" file="planets.png">
+    <Frame x="240" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="BarrenPlanetSmall" file="planets.png">
+    <Frame x="280" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="TundraPlanetSmall" file="planets.png">
+    <Frame x="320" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="DeadPlanetSmall" file="planets.png">
+    <Frame x="360" y="0" width="40" height="40" />
+  </Sprite>
+  <Sprite name="VolcanicPlanetSmall" file="planets.png">
+    <Frame x="0" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="ToxicPlanetSmall" file="planets.png">
+    <Frame x="40" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="RadiatedPlanetSmall" file="planets.png">
+    <Frame x="80" y="40" width="40" height="40" />
+  </Sprite>
+  <Sprite name="AsteroidsPlanetSmall" file="planets.png">
+    <Frame x="160" y="40" width="40" height="40" />
+  </Sprite>
+  
   <!-- Main Menu Buttons-->
   <Sprite name="ContinueGameBG" file="continueBG.png">
     <Frame x="0" y="0" width="260" height="40" />
@@ -530,22 +573,22 @@
     <Frame x="256" y="0" width="32" height="32" />
   </Sprite>
   <Sprite name="HumanNeutralPortrait" file="humans.png">
-    <Frame x="0" y="480" width="300" height="300" />
+    <Frame x="0" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="HumanHappyPortrait" file="humans.png">
-    <Frame x="300" y="480" width="300" height="300" />
+    <Frame x="300" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="HumanAngryPortrait" file="humans.png">
-    <Frame x="600" y="480" width="300" height="300" />
+    <Frame x="600" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="HumanThumbnail" file="humans.png">
-    <Frame x="0" y="780" width="128" height="128" />
+    <Frame x="0" y="781" width="128" height="128" />
   </Sprite>
   <Sprite name="HumanCity" file="humans.png">
-    <Frame x="128" y="780" width="300" height="200" />
+    <Frame x="128" y="781" width="300" height="200" />
   </Sprite>
   <Sprite name="HumanLandingShip" file="humans.png">
-    <Frame x="428" y="780" width="300" height="200" />
+    <Frame x="428" y="781" width="300" height="200" />
   </Sprite>
   <!--Salix Cybornia-->
   <Sprite name="SalixCyborniaTinyShip1" file="salix_cybornia.png">
@@ -651,22 +694,22 @@
     <Frame x="256" y="0" width="32" height="32" />
   </Sprite>
   <Sprite name="SalixCyborniaNeutralPortrait" file="salix_cybornia.png">
-    <Frame x="0" y="480" width="300" height="300" />
+    <Frame x="0" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="SalixCyborniaHappyPortrait" file="salix_cybornia.png">
-    <Frame x="300" y="480" width="300" height="300" />
+    <Frame x="300" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="SalixCyborniaAngryPortrait" file="salix_cybornia.png">
-    <Frame x="600" y="480" width="300" height="300" />
+    <Frame x="600" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="SalixCyborniaThumbnail" file="salix_cybornia.png">
-    <Frame x="0" y="780" width="128" height="128" />
+    <Frame x="0" y="781" width="128" height="128" />
   </Sprite>
   <Sprite name="SalixCyborniaCity" file="salix_cybornia.png">
-    <Frame x="128" y="780" width="300" height="200" />
+    <Frame x="128" y="781" width="300" height="200" />
   </Sprite>
   <Sprite name="SalixCyborniaLandingShip" file="salix_cybornia.png">
-    <Frame x="428" y="780" width="300" height="200" />
+    <Frame x="428" y="781" width="300" height="200" />
   </Sprite>
   <!--Space Hamsters-->
   <Sprite name="SpaceHamsterTinyShip1" file="space_hamsters.png">
@@ -772,22 +815,22 @@
     <Frame x="256" y="0" width="32" height="32" />
   </Sprite>
   <Sprite name="SpaceHamsterNeutralPortrait" file="space_hamsters.png">
-    <Frame x="0" y="480" width="300" height="300" />
+    <Frame x="0" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="SpaceHamsterHappyPortrait" file="space_hamsters.png">
-    <Frame x="300" y="480" width="300" height="300" />
+    <Frame x="300" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="SpaceHamsterAngryPortrait" file="space_hamsters.png">
-    <Frame x="600" y="480" width="300" height="300" />
+    <Frame x="600" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="SpaceHamsterThumbnail" file="space_hamsters.png">
-    <Frame x="0" y="780" width="128" height="128" />
+    <Frame x="0" y="781" width="128" height="128" />
   </Sprite>
   <Sprite name="SpaceHamsterCity" file="space_hamsters.png">
-    <Frame x="128" y="780" width="300" height="200" />
+    <Frame x="128" y="781" width="300" height="200" />
   </Sprite>
   <Sprite name="SpaceHamsterLandingShip" file="space_hamsters.png">
-    <Frame x="428" y="780" width="300" height="200" />
+    <Frame x="428" y="781" width="300" height="200" />
   </Sprite>
   <!--Zero People-->
   <Sprite name="ZeroPeopleTinyShip1" file="zero_people.png">
@@ -893,21 +936,21 @@
     <Frame x="256" y="0" width="32" height="32" />
   </Sprite>
   <Sprite name="ZeroPeopleNeutralPortrait" file="zero_people.png">
-    <Frame x="0" y="480" width="300" height="300" />
+    <Frame x="0" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="ZeroPeopleHappyPortrait" file="zero_people.png">
-    <Frame x="300" y="480" width="300" height="300" />
+    <Frame x="300" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="ZeroPeopleAngryPortrait" file="zero_people.png">
-    <Frame x="600" y="480" width="300" height="300" />
+    <Frame x="600" y="481" width="300" height="300" />
   </Sprite>
   <Sprite name="ZeroPeopleThumbnail" file="zero_people.png">
-    <Frame x="0" y="780" width="128" height="128" />
+    <Frame x="0" y="781" width="128" height="128" />
   </Sprite>
   <Sprite name="ZeroPeopleCity" file="zero_people.png">
-    <Frame x="128" y="780" width="300" height="200" />
+    <Frame x="128" y="781" width="300" height="200" />
   </Sprite>
   <Sprite name="ZeroPeopleLandingShip" file="zero_people.png">
-    <Frame x="428" y="780" width="300" height="200" />
+    <Frame x="428" y="781" width="300" height="200" />
   </Sprite>
 </Sprites>

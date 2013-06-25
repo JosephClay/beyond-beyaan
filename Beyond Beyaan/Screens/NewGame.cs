@@ -472,7 +472,7 @@ namespace Beyond_Beyaan.Screens
 								{
 									Planet homePlanet;
 									gameMain.EmpireManager.AddEmpire(empire);
-									StarSystem homeSystem = gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+									StarSystem homeSystem = gameMain.Galaxy.SetHomeworld(empire, gameMain.SpriteManager, out homePlanet);
 									empire.SetHomeSystem(homeSystem, homePlanet);
 								}
 								gameMain.EmpireManager.SetupContacts();
