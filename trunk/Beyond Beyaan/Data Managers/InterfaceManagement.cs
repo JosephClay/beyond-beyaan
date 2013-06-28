@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using Beyond_Beyaan.Data_Modules;
@@ -32,10 +33,10 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public bool Initialize(string backgroundSprite, string foregroundSprite, string buttonText, int xPos, int yPos, int width, int height, SpriteManager spriteManager, Random r, out string reason)
+		public bool Initialize(string backgroundSprite, string foregroundSprite, string buttonText, int xPos, int yPos, int width, int height, Random r, out string reason)
 		{
-			this.backgroundSprite = spriteManager.GetSprite(backgroundSprite, r);
-			this.foregroundSprite = spriteManager.GetSprite(foregroundSprite, r);
+			this.backgroundSprite = SpriteManager.GetSprite(backgroundSprite, r);
+			this.foregroundSprite = SpriteManager.GetSprite(foregroundSprite, r);
 			if (backgroundSprite == null || foregroundSprite == null)
 			{
 				reason = string.Format("One of those sprites does not exist in sprites.xml: \"{0}\" or \"{1}\"", backgroundSprite, foregroundSprite);
@@ -379,7 +380,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, int xPos, int yPos, int width, int height, SpriteManager spriteManager, Random r, out string reason)
+		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, int xPos, int yPos, int width, int height, Random r, out string reason)
 		{
 			this.xPos = xPos;
 			this.yPos = yPos;
@@ -389,11 +390,11 @@ namespace Beyond_Beyaan
 			backgroundImage = new BBUniStretchableImage();
 			foregroundImage = new BBUniStretchableImage();
 
-			if (!backgroundImage.Initialize(xPos, yPos, width, height, 7, 2, isHorizontal, backgroundSections, spriteManager, r, out reason))
+			if (!backgroundImage.Initialize(xPos, yPos, width, height, 7, 2, isHorizontal, backgroundSections, r, out reason))
 			{
 				return false;
 			}
-			if (!foregroundImage.Initialize(xPos, yPos, width, height, 7, 2, isHorizontal, foregroundSections, spriteManager, r, out reason))
+			if (!foregroundImage.Initialize(xPos, yPos, width, height, 7, 2, isHorizontal, foregroundSections, r, out reason))
 			{
 				return false;
 			}
@@ -779,7 +780,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public bool Initialize(int xPos, int yPos, int length, int amountOfVisibleItems, int amountOfItems, bool isHorizontal, bool isSlider, SpriteManager spriteManager, Random r, out string reason)
+		public bool Initialize(int xPos, int yPos, int length, int amountOfVisibleItems, int amountOfItems, bool isHorizontal, bool isSlider, Random r, out string reason)
 		{
 			this.xPos = xPos;
 			this.yPos = yPos;
@@ -799,21 +800,21 @@ namespace Beyond_Beyaan
 				scrollButtonLength = (int)(((float)amountOfVisibleItems / amountOfItems) * scrollBarLength);
 				if (!isHorizontal)
 				{
-					if (!Up.Initialize("ScrollUpBGButton", "ScrollUpFGButton", "", xPos, yPos, 16, 16, spriteManager, r, out reason))
+					if (!Up.Initialize("ScrollUpBGButton", "ScrollUpFGButton", "", xPos, yPos, 16, 16, r, out reason))
 					{
 						return false;
 					}
-					if (!Down.Initialize("ScrollDownBGButton", "ScrollDownFGButton", "", xPos, yPos + length - 32, 16, 16, spriteManager, r, out reason))
+					if (!Down.Initialize("ScrollDownBGButton", "ScrollDownFGButton", "", xPos, yPos + length - 32, 16, 16, r, out reason))
 					{
 						return false;
 					}
 					if (!Scroll.Initialize(new List<string> { "ScrollVerticalBGButton1", "ScrollVerticalBGButton2", "ScrollVerticalBGButton3" }, 
 										   new List<string> { "ScrollVerticalFGButton1", "ScrollVerticalFGButton2", "ScrollVerticalFGButton3" },
-										   false, "", xPos, yPos + 16, 16, scrollButtonLength, spriteManager, r, out reason))
+										   false, "", xPos, yPos + 16, 16, scrollButtonLength, r, out reason))
 					{
 						return false;
 					}
-					scrollBar = spriteManager.GetSprite("ScrollVerticalBar", r);
+					scrollBar = SpriteManager.GetSprite("ScrollVerticalBar", r);
 					if (scrollBar == null)
 					{
 						reason = "\"ScrollVerticalBar\" sprite does not exist";
@@ -822,21 +823,21 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", xPos, yPos, 16, 16, spriteManager, r, out reason))
+					if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", xPos, yPos, 16, 16, r, out reason))
 					{
 						return false;
 					}
-					if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 32, yPos, 16, 16, spriteManager, r, out reason))
+					if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 32, yPos, 16, 16, r, out reason))
 					{
 						return false;
 					}
 					if (!Scroll.Initialize(new List<string> { "ScrollHorizontalBGButton1", "ScrollHorizontalBGButton2", "ScrollHorizontalBGButton3" },
 										   new List<string> { "ScrollHorizontalFGButton1", "ScrollHorizontalFGButton2", "ScrollHorizontalFGButton3" },
-										   false, "", xPos + 16, yPos, 16, scrollButtonLength, spriteManager, r, out reason))
+										   false, "", xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
 					{
 						return false;
 					}
-					scrollBar = spriteManager.GetSprite("ScrollHorizontalBar", r);
+					scrollBar = SpriteManager.GetSprite("ScrollHorizontalBar", r);
 					if (scrollBar == null)
 					{
 						reason = "\"ScrollHorizontalBar\" sprite does not exist";
@@ -847,27 +848,27 @@ namespace Beyond_Beyaan
 			else
 			{
 				scrollButtonLength = 16;
-				if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", xPos, yPos, 16, 16, spriteManager, r, out reason))
+				if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", xPos, yPos, 16, 16, r, out reason))
 				{
 					return false;
 				}
-				if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 32, yPos, 16, 16, spriteManager, r, out reason))
+				if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 32, yPos, 16, 16, r, out reason))
 				{
 					return false;
 				}
 				if (!Scroll.Initialize(new List<string> { "SliderHorizontalBGButton1", "SliderHorizontalBGButton2", "SliderHorizontalBGButton3" },
 									   new List<string> { "SliderHorizontalFGButton1", "SliderHorizontalFGButton2", "SliderHorizontalFGButton3" },
-									   false, "", xPos + 16, yPos, 16, scrollButtonLength, spriteManager, r, out reason))
+									   false, "", xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
 				{
 					return false;
 				}
-				scrollBar = spriteManager.GetSprite("SliderBGBar", r);
+				scrollBar = SpriteManager.GetSprite("SliderBGBar", r);
 				if (scrollBar == null)
 				{
 					reason = "\"SliderBGBar\" sprite does not exist";
 					return false;
 				}
-				highlightedScrollBar = spriteManager.GetSprite("SliderFGBar", r);
+				highlightedScrollBar = SpriteManager.GetSprite("SliderFGBar", r);
 				if (highlightedScrollBar == null)
 				{
 					reason = "\"SliderFGBar\" sprite does not exist";
@@ -1595,7 +1596,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public bool Initialize(int x, int y, int width, int height, StretchableImageType type, SpriteManager spriteManager, Random r, out string reason)
+		public bool Initialize(int x, int y, int width, int height, StretchableImageType type, Random r, out string reason)
 		{
 			xPos = x;
 			yPos = y;
@@ -1607,63 +1608,63 @@ namespace Beyond_Beyaan
 						sectionWidth = 30;
 						sectionHeight = 13;
 						sections = new List<BBSprite>();
-						var tempSprite = spriteManager.GetSprite("TextTL", r);
+						var tempSprite = SpriteManager.GetSprite("TextTL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextTL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("TextTC", r);
+						tempSprite = SpriteManager.GetSprite("TextTC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextTC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("TextTR", r);
+						tempSprite = SpriteManager.GetSprite("TextTR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextTR\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("TextCL", r);
+						tempSprite = SpriteManager.GetSprite("TextCL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextCL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("TextCC", r);
+						tempSprite = SpriteManager.GetSprite("TextCC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextCC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("TextCR", r);
+						tempSprite = SpriteManager.GetSprite("TextCR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextCR\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("TextBL", r);
+						tempSprite = SpriteManager.GetSprite("TextBL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextBL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("TextBC", r);
+						tempSprite = SpriteManager.GetSprite("TextBC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextBC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("TextBR", r);
+						tempSprite = SpriteManager.GetSprite("TextBR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"TextBR\" from sprites.xml.";
@@ -1677,63 +1678,63 @@ namespace Beyond_Beyaan
 					sectionWidth = 30;
 					sectionHeight = 13;
 					sections = new List<BBSprite>();
-					var tempSprite = spriteManager.GetSprite("ThinBorderBGTL", r);
+					var tempSprite = SpriteManager.GetSprite("ThinBorderBGTL", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGTL\" from sprites.xml.";
 						return false;
 					}
 					sections.Add(tempSprite);
-					tempSprite = spriteManager.GetSprite("ThinBorderBGTC", r);
+					tempSprite = SpriteManager.GetSprite("ThinBorderBGTC", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGTC\" from sprites.xml.";
 						return false;
 					}
 					sections.Add(tempSprite);
-					tempSprite = spriteManager.GetSprite("ThinBorderBGTR", r);
+					tempSprite = SpriteManager.GetSprite("ThinBorderBGTR", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGTR\" from sprites.xml.";
 						return false;
 					}
 					sections.Add(tempSprite);
-					tempSprite = spriteManager.GetSprite("ThinBorderBGCL", r);
+					tempSprite = SpriteManager.GetSprite("ThinBorderBGCL", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGCL\" from sprites.xml.";
 						return false;
 					}
 					sections.Add(tempSprite);
-					tempSprite = spriteManager.GetSprite("ThinBorderBGCC", r);
+					tempSprite = SpriteManager.GetSprite("ThinBorderBGCC", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGCC\" from sprites.xml.";
 						return false;
 					}
 					sections.Add(tempSprite);
-					tempSprite = spriteManager.GetSprite("ThinBorderBGCR", r);
+					tempSprite = SpriteManager.GetSprite("ThinBorderBGCR", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGCR\" from sprites.xml.";
 						return false;
 					}
 					sections.Add(tempSprite);
-					tempSprite = spriteManager.GetSprite("ThinBorderBGBL", r);
+					tempSprite = SpriteManager.GetSprite("ThinBorderBGBL", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGBL\" from sprites.xml.";
 						return false;
 					}
 					sections.Add(tempSprite);
-					tempSprite = spriteManager.GetSprite("ThinBorderBGBC", r);
+					tempSprite = SpriteManager.GetSprite("ThinBorderBGBC", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGBC\" from sprites.xml.";
 						return false;
 					}
 					sections.Add(tempSprite);
-					tempSprite = spriteManager.GetSprite("ThinBorderBGBR", r);
+					tempSprite = SpriteManager.GetSprite("ThinBorderBGBR", r);
 					if (tempSprite == null)
 					{
 						reason = "Failed to get \"ThinBorderBGBR\" from sprites.xml.";
@@ -1746,63 +1747,63 @@ namespace Beyond_Beyaan
 						sectionWidth = 60;
 						sectionHeight = 60;
 						sections = new List<BBSprite>();
-						var tempSprite = spriteManager.GetSprite("MediumBorderBGTL", r);
+						var tempSprite = SpriteManager.GetSprite("MediumBorderBGTL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGTL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("MediumBorderBGTC", r);
+						tempSprite = SpriteManager.GetSprite("MediumBorderBGTC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGTC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("MediumBorderBGTR", r);
+						tempSprite = SpriteManager.GetSprite("MediumBorderBGTR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGTR\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("MediumBorderBGCL", r);
+						tempSprite = SpriteManager.GetSprite("MediumBorderBGCL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGCL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("MediumBorderBGCC", r);
+						tempSprite = SpriteManager.GetSprite("MediumBorderBGCC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGCC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("MediumBorderBGCR", r);
+						tempSprite = SpriteManager.GetSprite("MediumBorderBGCR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGCR\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("MediumBorderBGBL", r);
+						tempSprite = SpriteManager.GetSprite("MediumBorderBGBL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGBL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("MediumBorderBGBC", r);
+						tempSprite = SpriteManager.GetSprite("MediumBorderBGBC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGBC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("MediumBorderBGBR", r);
+						tempSprite = SpriteManager.GetSprite("MediumBorderBGBR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"MediumBorderBGBR\" from sprites.xml.";
@@ -1815,63 +1816,63 @@ namespace Beyond_Beyaan
 						sectionWidth = 200;
 						sectionHeight = 200;
 						sections = new List<BBSprite>();
-						var tempSprite = spriteManager.GetSprite("ThickBorderBGTL", r);
+						var tempSprite = SpriteManager.GetSprite("ThickBorderBGTL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGTL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("ThickBorderBGTC", r);
+						tempSprite = SpriteManager.GetSprite("ThickBorderBGTC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGTC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("ThickBorderBGTR", r);
+						tempSprite = SpriteManager.GetSprite("ThickBorderBGTR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGTR\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("ThickBorderBGCL", r);
+						tempSprite = SpriteManager.GetSprite("ThickBorderBGCL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGCL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("ThickBorderBGCC", r);
+						tempSprite = SpriteManager.GetSprite("ThickBorderBGCC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGCC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("ThickBorderBGCR", r);
+						tempSprite = SpriteManager.GetSprite("ThickBorderBGCR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGCR\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("ThickBorderBGBL", r);
+						tempSprite = SpriteManager.GetSprite("ThickBorderBGBL", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGBL\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("ThickBorderBGBC", r);
+						tempSprite = SpriteManager.GetSprite("ThickBorderBGBC", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGBC\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);
-						tempSprite = spriteManager.GetSprite("ThickBorderBGBR", r);
+						tempSprite = SpriteManager.GetSprite("ThickBorderBGBR", r);
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThickBorderBGBR\" from sprites.xml.";
@@ -1955,7 +1956,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public bool Initialize(int x, int y, int width, int height, int mainLength, int stretchLength, bool isHorizontal, List<string> sections, SpriteManager spriteManager, Random r, out string reason)
+		public bool Initialize(int x, int y, int width, int height, int mainLength, int stretchLength, bool isHorizontal, List<string> sections, Random r, out string reason)
 		{
 			this.x = x;
 			this.y = y;
@@ -1966,7 +1967,7 @@ namespace Beyond_Beyaan
 			this.sections = new List<BBSprite>();
 			foreach (string spriteName in sections)
 			{
-				BBSprite sprite = spriteManager.GetSprite(spriteName, r);
+				BBSprite sprite = SpriteManager.GetSprite(spriteName, r);
 				if (sprite == null)
 				{
 					reason = string.Format("Can't find sprite \"{0}\".", spriteName);
@@ -2146,6 +2147,116 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
+	public class BBLabel
+	{
+		#region Member Variables
+		private int x;
+		private int y;
+		private bool isRightAligned;
+		private TextSprite textSprite;
+		private Color color;
+		#endregion
+
+		#region Properties
+		public string Text { get; private set; }
+		#endregion
+
+		#region Constructor
+		public bool Initialize(int x, int y, string label, Color color, out string reason)
+		{
+			this.x = x;
+			this.y = y;
+			this.color = color;
+			if (!SetText(label))
+			{
+				reason = "Default font not found";
+				return false;
+			}
+			reason = null;
+			return true;
+		}
+		public bool Initialize(int x, int y, string label, Color color, string fontName, out string reason)
+		{
+			this.x = x;
+			this.y = y;
+			this.color = color;
+			if (!SetText(label, fontName))
+			{
+				reason = fontName + " font not found";
+				return false;
+			}
+			reason = null;
+			return true;
+		}
+		#endregion
+
+		#region Functions
+		public bool SetText(string text)
+		{
+			var font = FontManager.GetDefaultFont();
+			if (font == null)
+			{
+				return false;
+			}
+			textSprite = new TextSprite("Arial", text, font);
+			SetAlignment(isRightAligned);
+			Text = text;
+			return true;
+		}
+		public bool SetText(string text, string fontName)
+		{
+			var font = FontManager.GetFont(fontName);
+			if (font == null)
+			{
+				return false;
+			}
+			textSprite = new TextSprite("Arial", text, font);
+			SetAlignment(isRightAligned);
+			Text = text;
+			return true;
+		}
+		public void SetAlignment(bool isRightAligned)
+		{
+			this.isRightAligned = isRightAligned;
+			if (textSprite != null)
+			{
+				if (isRightAligned)
+				{
+					textSprite.SetPosition(x - textSprite.Width, y);
+				}
+				else
+				{
+					textSprite.SetPosition(x, y);
+				}
+			}
+		}
+
+		public float GetWidth()
+		{
+			return textSprite.Width > 0 ? textSprite.Width : 1;
+		}
+		public float GetHeight()
+		{
+			return textSprite.Height > 0 ? textSprite.Height : 1;
+		}
+		public void Move(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+			textSprite.SetPosition(x, y);
+		}
+		public void SetColor(Color color)
+		{
+			this.color = color;
+		}
+		public void Draw()
+		{
+			textSprite.Color = color;
+			textSprite.Draw();
+		}
+		#endregion
+	}
+
 	public class SingleLineTextBox
 	{
 		#region Member Variables
@@ -2260,6 +2371,11 @@ namespace Beyond_Beyaan
 		{
 			actualText = text;
 			this.text.SetText(text);
+		}
+
+		public void SetColor(Color color)
+		{
+			text.SetColor(color);
 		}
 
 		#region Keys
@@ -2468,8 +2584,7 @@ namespace Beyond_Beyaan
 	public class BBSingleLineTextBox
 	{
 		#region Member Variables
-		private Label text;
-		private string actualText;
+		private BBLabel text;
 		private BBStretchableImage background;
 		private int xPos;
 		private int yPos;
@@ -2483,8 +2598,12 @@ namespace Beyond_Beyaan
 		private float timer;
 		#endregion
 
+		#region Properties
+		public string Text { get; private set; }
+		#endregion
+
 		#region Constructors
-		public bool Initialize(string text, int x, int y, int width, int height, bool isReadOnly, SpriteManager spriteManager, Random r, out string reason)
+		public bool Initialize(string text, int x, int y, int width, int height, bool isReadOnly, Random r, out string reason)
 		{
 			xPos = x;
 			yPos = y;
@@ -2492,13 +2611,17 @@ namespace Beyond_Beyaan
 			this.height = height;
 
 			background = new BBStretchableImage();
-			if (!background.Initialize(x, y, width, height, StretchableImageType.TextBox, spriteManager, r, out reason))
+			if (!background.Initialize(x, y, width, height, StretchableImageType.TextBox, r, out reason))
 			{
 				return false;
 			}
 
-			actualText = string.Empty;
-			this.text = new Label(text, x + 6, y + 7);
+			Text = string.Empty;
+			this.text = new BBLabel();
+			if (!this.text.Initialize(x + 6, y + 7, text, Color.White, out reason))
+			{
+				return false;
+			}
 			pressed = false;
 			isSelected = false;
 			blink = true;
@@ -2550,7 +2673,7 @@ namespace Beyond_Beyaan
 			if (!isSelected)
 			{
 				blink = false;
-				text.SetText(actualText);
+				text.SetText(Text);
 			}
 			return isSelected;
 		}
@@ -2563,7 +2686,7 @@ namespace Beyond_Beyaan
 				if (timer >= 0.25f)
 				{
 					blink = !blink;
-					text.SetText(actualText + (blink ? "|" : ""));
+					text.SetText(Text + (blink ? "|" : ""));
 					timer -= 0.25f;
 				}
 			}
@@ -2583,14 +2706,9 @@ namespace Beyond_Beyaan
 			text.Draw();
 		}
 
-		public string GetString()
-		{
-			return actualText;
-		}
-
 		public void SetString(string text)
 		{
-			actualText = text;
+			Text = text;
 			this.text.SetText(text);
 		}
 
@@ -2599,200 +2717,205 @@ namespace Beyond_Beyaan
 			isReadOnly = readOnly;
 		}
 
+		public void SetColor(Color color)
+		{
+			text.SetColor(color);
+		}
+
 		#region Keys
 		public bool KeyDown(KeyboardInputEventArgs e)
 		{
 			if (isSelected)
 			{
-				string prevText = actualText;
+				string prevText = Text;
 				switch (e.Key)
 				{
 					case KeyboardKeys.A:
-						actualText = actualText + (e.Shift ? "A" : "a");
+						Text = Text + (e.Shift ? "A" : "a");
 						break;
 					case KeyboardKeys.B:
-						actualText = actualText + (e.Shift ? "B" : "b");
+						Text = Text + (e.Shift ? "B" : "b");
 						break;
 					case KeyboardKeys.C:
-						actualText = actualText + (e.Shift ? "C" : "c");
+						Text = Text + (e.Shift ? "C" : "c");
 						break;
 					case KeyboardKeys.D:
-						actualText = actualText + (e.Shift ? "D" : "d");
+						Text = Text + (e.Shift ? "D" : "d");
 						break;
 					case KeyboardKeys.E:
-						actualText = actualText + (e.Shift ? "E" : "e");
+						Text = Text + (e.Shift ? "E" : "e");
 						break;
 					case KeyboardKeys.F:
-						actualText = actualText + (e.Shift ? "F" : "f");
+						Text = Text + (e.Shift ? "F" : "f");
 						break;
 					case KeyboardKeys.G:
-						actualText = actualText + (e.Shift ? "G" : "g");
+						Text = Text + (e.Shift ? "G" : "g");
 						break;
 					case KeyboardKeys.H:
-						actualText = actualText + (e.Shift ? "H" : "h");
+						Text = Text + (e.Shift ? "H" : "h");
 						break;
 					case KeyboardKeys.I:
-						actualText = actualText + (e.Shift ? "I" : "i");
+						Text = Text + (e.Shift ? "I" : "i");
 						break;
 					case KeyboardKeys.J:
-						actualText = actualText + (e.Shift ? "J" : "j");
+						Text = Text + (e.Shift ? "J" : "j");
 						break;
 					case KeyboardKeys.K:
-						actualText = actualText + (e.Shift ? "K" : "k");
+						Text = Text + (e.Shift ? "K" : "k");
 						break;
 					case KeyboardKeys.L:
-						actualText = actualText + (e.Shift ? "L" : "l");
+						Text = Text + (e.Shift ? "L" : "l");
 						break;
 					case KeyboardKeys.M:
-						actualText = actualText + (e.Shift ? "M" : "m");
+						Text = Text + (e.Shift ? "M" : "m");
 						break;
 					case KeyboardKeys.N:
-						actualText = actualText + (e.Shift ? "N" : "n");
+						Text = Text + (e.Shift ? "N" : "n");
 						break;
 					case KeyboardKeys.O:
-						actualText = actualText + (e.Shift ? "O" : "o");
+						Text = Text + (e.Shift ? "O" : "o");
 						break;
 					case KeyboardKeys.P:
-						actualText = actualText + (e.Shift ? "P" : "p");
+						Text = Text + (e.Shift ? "P" : "p");
 						break;
 					case KeyboardKeys.Q:
-						actualText = actualText + (e.Shift ? "Q" : "q");
+						Text = Text + (e.Shift ? "Q" : "q");
 						break;
 					case KeyboardKeys.R:
-						actualText = actualText + (e.Shift ? "R" : "r");
+						Text = Text + (e.Shift ? "R" : "r");
 						break;
 					case KeyboardKeys.S:
-						actualText = actualText + (e.Shift ? "S" : "s");
+						Text = Text + (e.Shift ? "S" : "s");
 						break;
 					case KeyboardKeys.T:
-						actualText = actualText + (e.Shift ? "T" : "t");
+						Text = Text + (e.Shift ? "T" : "t");
 						break;
 					case KeyboardKeys.U:
-						actualText = actualText + (e.Shift ? "U" : "u");
+						Text = Text + (e.Shift ? "U" : "u");
 						break;
 					case KeyboardKeys.V:
-						actualText = actualText + (e.Shift ? "V" : "v");
+						Text = Text + (e.Shift ? "V" : "v");
 						break;
 					case KeyboardKeys.W:
-						actualText = actualText + (e.Shift ? "W" : "w");
+						Text = Text + (e.Shift ? "W" : "w");
 						break;
 					case KeyboardKeys.X:
-						actualText = actualText + (e.Shift ? "X" : "x");
+						Text = Text + (e.Shift ? "X" : "x");
 						break;
 					case KeyboardKeys.Y:
-						actualText = actualText + (e.Shift ? "Y" : "y");
+						Text = Text + (e.Shift ? "Y" : "y");
 						break;
 					case KeyboardKeys.Z:
-						actualText = actualText + (e.Shift ? "Z" : "z");
+						Text = Text + (e.Shift ? "Z" : "z");
 						break;
 					case KeyboardKeys.OemQuotes:
-						actualText = actualText + (e.Shift ? "\"" : "'");
+						Text = Text + (e.Shift ? "\"" : "'");
 						break;
 					case KeyboardKeys.OemSemicolon:
-						actualText = actualText + (e.Shift ? ":" : ";");
+						Text = Text + (e.Shift ? ":" : ";");
 						break;
 					case KeyboardKeys.Oemtilde:
-						actualText = actualText + (e.Shift ? "~" : "`");
+						Text = Text + (e.Shift ? "~" : "`");
 						break;
 					case KeyboardKeys.OemPeriod:
-						actualText = actualText + (e.Shift ? ">" : ".");
+						Text = Text + (e.Shift ? ">" : ".");
 						break;
 					case KeyboardKeys.Oemcomma:
-						actualText = actualText + (e.Shift ? "<" : ",");
+						Text = Text + (e.Shift ? "<" : ",");
 						break;
 					case KeyboardKeys.Space:
-						actualText = actualText + " ";
+						Text = Text + " ";
 						break;
 					case KeyboardKeys.D0:
-						actualText = actualText + (e.Shift ? ")" : "0");
+						Text = Text + (e.Shift ? ")" : "0");
 						break;
 					case KeyboardKeys.D1:
-						actualText = actualText + (e.Shift ? "!" : "1");
+						Text = Text + (e.Shift ? "!" : "1");
 						break;
 					case KeyboardKeys.D2:
-						actualText = actualText + (e.Shift ? "@" : "2");
+						Text = Text + (e.Shift ? "@" : "2");
 						break;
 					case KeyboardKeys.D3:
-						actualText = actualText + (e.Shift ? "#" : "3");
+						Text = Text + (e.Shift ? "#" : "3");
 						break;
 					case KeyboardKeys.D4:
-						actualText = actualText + (e.Shift ? "$" : "4");
+						Text = Text + (e.Shift ? "$" : "4");
 						break;
 					case KeyboardKeys.D5:
-						actualText = actualText + (e.Shift ? "%" : "5");
+						Text = Text + (e.Shift ? "%" : "5");
 						break;
 					case KeyboardKeys.D6:
-						actualText = actualText + (e.Shift ? "^" : "6");
+						Text = Text + (e.Shift ? "^" : "6");
 						break;
 					case KeyboardKeys.D7:
-						actualText = actualText + (e.Shift ? "&" : "7");
+						Text = Text + (e.Shift ? "&" : "7");
 						break;
 					case KeyboardKeys.D8:
-						actualText = actualText + (e.Shift ? "*" : "8");
+						Text = Text + (e.Shift ? "*" : "8");
 						break;
 					case KeyboardKeys.D9:
-						actualText = actualText + (e.Shift ? "(" : "9");
+						Text = Text + (e.Shift ? "(" : "9");
 						break;
 					case KeyboardKeys.NumPad0:
-						actualText = actualText + (e.Shift ? "!" : "0");
+						Text = Text + (e.Shift ? "!" : "0");
 						break;
 					case KeyboardKeys.NumPad1:
-						actualText = actualText + "1";
+						Text = Text + "1";
 						break;
 					case KeyboardKeys.NumPad2:
-						actualText = actualText + "2";
+						Text = Text + "2";
 						break;
 					case KeyboardKeys.NumPad3:
-						actualText = actualText + "3";
+						Text = Text + "3";
 						break;
 					case KeyboardKeys.NumPad4:
-						actualText = actualText + "4";
+						Text = Text + "4";
 						break;
 					case KeyboardKeys.NumPad5:
-						actualText = actualText + "5";
+						Text = Text + "5";
 						break;
 					case KeyboardKeys.NumPad6:
-						actualText = actualText + "6";
+						Text = Text + "6";
 						break;
 					case KeyboardKeys.NumPad7:
-						actualText = actualText + "7";
+						Text = Text + "7";
 						break;
 					case KeyboardKeys.NumPad8:
-						actualText = actualText + "8";
+						Text = Text + "8";
 						break;
 					case KeyboardKeys.NumPad9:
-						actualText = actualText + "9";
+						Text = Text + "9";
 						break;
 					case KeyboardKeys.Subtract:
-						actualText = actualText + "-";
+						Text = Text + "-";
 						break;
 					case KeyboardKeys.Multiply:
-						actualText = actualText + "*";
+						Text = Text + "*";
 						break;
 					case KeyboardKeys.Divide:
-						actualText = actualText + "/";
+						Text = Text + "/";
 						break;
 					case KeyboardKeys.Add:
-						actualText = actualText + "+";
+						Text = Text + "+";
 						break;
 					case KeyboardKeys.OemMinus:
-						actualText = actualText + (e.Shift ? "_" : "-");
+						Text = Text + (e.Shift ? "_" : "-");
 						break;
 					case KeyboardKeys.Enter:
 						isSelected = false;
 						break;
 					case KeyboardKeys.Back:
-						if (actualText.Length > 0)
+						if (Text.Length > 0)
 						{
-							actualText = actualText.Substring(0, actualText.Length - 1);
+							Text = Text.Substring(0, Text.Length - 1);
 						}
 						break;
 				}
-				text.SetText(actualText);
+				text.SetText(Text);
 				if (text.GetWidth() > width - 8)
 				{
 					text.SetText(prevText);
-					actualText = prevText;
+					Text = prevText;
 				}
 				return true;
 			}

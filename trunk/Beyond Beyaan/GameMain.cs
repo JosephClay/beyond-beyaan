@@ -34,7 +34,6 @@ namespace Beyond_Beyaan
 
 		#region Properties
 		internal Random Random { get; private set; }
-		internal SpriteManager SpriteManager { get; private set; }
 		internal DrawingManagement DrawingManagement { get; private set; }
 		internal Galaxy Galaxy { get; private set; }
 		internal EmpireManager EmpireManager { get; private set; }
@@ -70,8 +69,11 @@ namespace Beyond_Beyaan
 			ShipShader = GorgonLibrary.Graphics.FXShader.FromFile("ColorShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			StarShader = GorgonLibrary.Graphics.FXShader.FromFile("StarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 
-			SpriteManager = new SpriteManager();
 			if (!SpriteManager.Initialize(GameDataSet, out reason))
+			{
+				return false;
+			}
+			if (!FontManager.Initialize(GameDataSet, out reason))
 			{
 				return false;
 			}
@@ -81,7 +83,7 @@ namespace Beyond_Beyaan
 				return false;
 			}
 			RaceManager = new RaceManager();
-			if (!RaceManager.Initialize(GameDataSet, SpriteManager, Random, out reason))
+			if (!RaceManager.Initialize(GameDataSet, Random, out reason))
 			{
 				return false;
 			}
