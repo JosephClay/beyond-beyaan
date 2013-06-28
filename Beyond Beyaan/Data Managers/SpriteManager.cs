@@ -6,17 +6,19 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Data_Managers
 {
-	public class SpriteManager
+	public static class SpriteManager
 	{
-		public Dictionary<string, BaseSprite> Sprites { get; private set; }
+		public static Dictionary<string, BaseSprite> Sprites { get; private set; }
+		private static bool _initalized;
 
-		public SpriteManager()
+		public static bool Initialize(DirectoryInfo directory, out string reason)
 		{
+			if (_initalized)
+			{
+				reason = null;
+				return true;
+			}
 			Sprites = new Dictionary<string, BaseSprite>();
-		}
-
-		public bool Initialize(DirectoryInfo directory, out string reason)
-		{
 			string file = Path.Combine(directory.FullName, "sprites.xml");
 			string graphicDirectory = Path.Combine(directory.FullName, "graphics");
 			if (!File.Exists(file))
@@ -36,11 +38,12 @@ namespace Beyond_Beyaan.Data_Managers
 				}
 				Sprites.Add(newSprite.Name, newSprite);
 			}
+			_initalized = true;
 			reason = null;
 			return true;
 		}
 
-		public BBSprite GetSprite(string name, Random r)
+		public static BBSprite GetSprite(string name, Random r)
 		{
 			if (Sprites.ContainsKey(name))
 			{

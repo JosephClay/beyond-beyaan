@@ -55,7 +55,7 @@ namespace Beyond_Beyaan.Data_Modules
 		public BBSprite City { get; private set; }
 		public BBSprite LandingShip { get; private set; }
 
-		public bool Initialize(FileInfo file, SpriteManager spriteManager, Random r, out string reason)
+		public bool Initialize(FileInfo file, Random r, out string reason)
 		{
 			XDocument doc = XDocument.Load(file.FullName);
 			XElement root = doc.Element("Race");
@@ -63,16 +63,16 @@ namespace Beyond_Beyaan.Data_Modules
 			SetBaseDefaults();
 
 			RaceName = root.Attribute("name").Value;
-			NeutralAvatar = spriteManager.GetSprite(root.Attribute("neutralPortrait").Value, r);
-			HappyAvatar = spriteManager.GetSprite(root.Attribute("happyPortrait").Value, r);
-			AngryAvatar = spriteManager.GetSprite(root.Attribute("angryPortrait").Value, r);
-			MiniAvatar = spriteManager.GetSprite(root.Attribute("thumbnail").Value, r);
-			GroundTroop = spriteManager.GetSprite(root.Attribute("groundTroop").Value, r);
-			DyingTroop = spriteManager.GetSprite(root.Attribute("dyingTroop").Value, r);
-			FleetIcon = spriteManager.GetSprite(root.Attribute("fleetIcon").Value, r);
-			TransportIcon = spriteManager.GetSprite(root.Attribute("transportIcon").Value, r);
-			City = spriteManager.GetSprite(root.Attribute("city").Value, r);
-			LandingShip = spriteManager.GetSprite(root.Attribute("landingShip").Value, r);
+			NeutralAvatar = SpriteManager.GetSprite(root.Attribute("neutralPortrait").Value, r);
+			HappyAvatar = SpriteManager.GetSprite(root.Attribute("happyPortrait").Value, r);
+			AngryAvatar = SpriteManager.GetSprite(root.Attribute("angryPortrait").Value, r);
+			MiniAvatar = SpriteManager.GetSprite(root.Attribute("thumbnail").Value, r);
+			GroundTroop = SpriteManager.GetSprite(root.Attribute("groundTroop").Value, r);
+			DyingTroop = SpriteManager.GetSprite(root.Attribute("dyingTroop").Value, r);
+			FleetIcon = SpriteManager.GetSprite(root.Attribute("fleetIcon").Value, r);
+			TransportIcon = SpriteManager.GetSprite(root.Attribute("transportIcon").Value, r);
+			City = SpriteManager.GetSprite(root.Attribute("city").Value, r);
+			LandingShip = SpriteManager.GetSprite(root.Attribute("landingShip").Value, r);
 			
 			XElement shipTypes = root.Element("ShipTypes");
 			if (shipTypes == null)
@@ -92,7 +92,7 @@ namespace Beyond_Beyaan.Data_Modules
 				newType.Bodies = new List<BBSprite>();
 				foreach (XElement body in shipType.Elements())
 				{
-					newType.Bodies.Add(spriteManager.GetSprite(body.Attribute("sprite").Value, r));
+					newType.Bodies.Add(SpriteManager.GetSprite(body.Attribute("sprite").Value, r));
 				}
 				ShipTypes.Add(newType);
 			}

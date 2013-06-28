@@ -54,7 +54,7 @@ namespace Beyond_Beyaan.Screens
 		public void Initialize(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
-			pathSprite = gameMain.SpriteManager.GetSprite("Path", gameMain.Random);
+			pathSprite = SpriteManager.GetSprite("Path", gameMain.Random);
 
 			camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, gameMain.ScreenWidth, gameMain.ScreenHeight);
 
@@ -110,7 +110,7 @@ namespace Beyond_Beyaan.Screens
 
 			string reason;
 			systemView = new SystemView();
-			systemView.Initialize(gameMain, gameMain.SpriteManager, gameMain.Random, out reason);
+			systemView.Initialize(gameMain, gameMain.Random, out reason);
 		}
 
 		public void CenterScreen()
@@ -971,6 +971,13 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
+			if (gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null)
+			{
+				if (systemView.KeyDown(e))
+				{
+					return;
+				}
+			}
 			if (e.Key == KeyboardKeys.Escape)
 			{
 				gameMain.ChangeToScreen(Screen.InGameMenu);

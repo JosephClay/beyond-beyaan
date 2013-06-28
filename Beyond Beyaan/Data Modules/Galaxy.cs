@@ -34,7 +34,7 @@ namespace Beyond_Beyaan
 		/// <param name="spriteManager"></param>
 		/// <param name="r"></param>
 		/// <param name="reason"></param>
-		public bool GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, int size, int minDistance, SpriteManager spriteManager, Random r, out string reason)
+		public bool GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, int size, int minDistance, Random r, out string reason)
 		{
 			bool[][] grid = null;
 			switch (galaxyType)
@@ -63,7 +63,7 @@ namespace Beyond_Beyaan
 
 			GalaxySize = grid.Length;
 
-			if (!FillGalaxyWithStars(minDistance, minPlanets, maxPlanets, grid, spriteManager, r, out reason))
+			if (!FillGalaxyWithStars(minDistance, minPlanets, maxPlanets, grid, r, out reason))
 			{
 				return false;
 			}
@@ -241,7 +241,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Filling Functions
-		private bool FillGalaxyWithStars(int minDistance, int minPlanets, int maxPlanets, bool[][] grid, SpriteManager spriteManager, Random r, out string reason)
+		private bool FillGalaxyWithStars(int minDistance, int minPlanets, int maxPlanets, bool[][] grid, Random r, out string reason)
 		{
 			starSystems = new List<StarSystem>();
 			NameGenerator nameGenerator = new NameGenerator();
@@ -291,7 +291,7 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * 32 + (r.Next(32)), y * 32 + (r.Next(32)), starColor, minPlanets, maxPlanets, spriteManager, r));
+				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * 32 + (r.Next(32)), y * 32 + (r.Next(32)), starColor, minPlanets, maxPlanets, r));
 
 				int adjustedMinDistance = minDistance + r.Next(4);
 
@@ -314,7 +314,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Setup
-		public StarSystem SetHomeworld(Empire empire, SpriteManager spriteManager, out Planet homePlanet)
+		public StarSystem SetHomeworld(Empire empire, out Planet homePlanet)
 		{
 			Random r = new Random();
 			while (true)
@@ -322,7 +322,7 @@ namespace Beyond_Beyaan
 				int starIter = r.Next(starSystems.Count);
 				if (starSystems[starIter].EmpiresWithPlanetsInThisSystem.Count == 0)
 				{
-					starSystems[starIter].SetHomeworld(empire, spriteManager, out homePlanet, r);
+					starSystems[starIter].SetHomeworld(empire, out homePlanet, r);
 					return starSystems[starIter];
 				}
 			}

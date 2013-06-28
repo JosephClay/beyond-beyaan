@@ -40,6 +40,11 @@ namespace Beyond_Beyaan
 		public string Name
 		{
 			get { return name; }
+			set
+			{
+				name = value;
+				StarName.SetText(name);
+			}
 		}
 		public BBSprite Sprite
 		{
@@ -62,7 +67,7 @@ namespace Beyond_Beyaan
 		{
 			get { return type; }
 		}*/
-		public Label StarName { get; set; }
+		public BBLabel StarName { get; set; }
 		public Empire DominantEmpire { get; private set; }
 
 		public List<Empire> EmpiresWithFleetAdjacentLastTurn { get; set; }
@@ -73,9 +78,9 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int x, int y, Color color, int minPlanets, int maxPlanets, SpriteManager spriteManager, Random r)
+		public StarSystem(string name, int x, int y, Color color, int minPlanets, int maxPlanets, Random r)
 		{
-			this.Sprite = spriteManager.GetSprite("Star", r);
+			this.Sprite = SpriteManager.GetSprite("Star", r);
 			this.name = name;
 			this.x = x;
 			this.y = y;
@@ -101,9 +106,11 @@ namespace Beyond_Beyaan
 				sb.Append(this.name);
 				sb.Append(" ");
 				sb.Append(Utility.ConvertNumberToRomanNumberical(i + 1));
-				planets.Add(new Planet(sb.ToString(), spriteManager, r, this));
+				planets.Add(new Planet(sb.ToString(), r, this));
 			}
-			StarName = new Label(name, 0, 0);
+			string reason;
+			StarName = new BBLabel();
+			StarName.Initialize(0, 0, name, Color.White, out reason);
 			EmpiresWithFleetAdjacentLastTurn = new List<Empire>();
 			EmpiresWithFleetAdjacentThisTurn = new List<Empire>();
 			EmpiresWithPlanetsInThisSystem = new List<Empire>();
@@ -112,18 +119,18 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Public Functions
-		public void SetHomeworld(Empire empire, SpriteManager spriteManager, out Planet homePlanet, Random r)
+		public void SetHomeworld(Empire empire, out Planet homePlanet, Random r)
 		{
 			if (planets.Count == 0)
 			{
-				planets.Add(new Planet(name + " I", spriteManager, r, this));
-				planets[0].SetHomeworld(empire, spriteManager, r);
+				planets.Add(new Planet(name + " I", r, this));
+				planets[0].SetHomeworld(empire, r);
 				homePlanet = planets[0];
 			}
 			else
 			{
 				int whichPlanet = r.Next(planets.Count);
-				planets[whichPlanet].SetHomeworld(empire, spriteManager, r);
+				planets[whichPlanet].SetHomeworld(empire, r);
 				homePlanet = planets[whichPlanet];
 			}
 			exploredBy.Add(empire);

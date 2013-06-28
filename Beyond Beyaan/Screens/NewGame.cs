@@ -286,7 +286,7 @@ namespace Beyond_Beyaan.Screens
 						type = GALAXYTYPE.STAR;
 						break;
 				}
-				gameMain.Galaxy.GenerateGalaxy(type, 1, 1, galaxySize, 2, gameMain.SpriteManager, gameMain.Random, out reason);
+				gameMain.Galaxy.GenerateGalaxy(type, 1, 1, galaxySize, 2, gameMain.Random, out reason);
 				camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, 500, 500);
 				camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
 				numOfStarsLabel.SetText("Number of stars: " + gameMain.Galaxy.GetAllStars().Count);
@@ -472,7 +472,7 @@ namespace Beyond_Beyaan.Screens
 								{
 									Planet homePlanet;
 									gameMain.EmpireManager.AddEmpire(empire);
-									StarSystem homeSystem = gameMain.Galaxy.SetHomeworld(empire, gameMain.SpriteManager, out homePlanet);
+									StarSystem homeSystem = gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
 									empire.SetHomeSystem(homeSystem, homePlanet);
 								}
 								gameMain.EmpireManager.SetupContacts();

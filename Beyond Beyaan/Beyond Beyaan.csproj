@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="Data Managers\AIManager.cs" />
     <Compile Include="Data Managers\ContactManager.cs" />
+    <Compile Include="Data Managers\FontManager.cs" />
     <Compile Include="Data Managers\RaceManager.cs" />
     <Compile Include="Data Managers\SitRepManager.cs" />
     <Compile Include="Data Managers\SpriteManager.cs" />

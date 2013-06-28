@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Beyond_Beyaan.Data_Managers;
+using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -23,7 +24,7 @@ namespace Beyond_Beyaan.Screens
 
 		protected BBStretchableImage backGroundImage;
 
-		public bool Initialize(int x, int y, int width, int height, GameMain gameMain, bool moveable, SpriteManager spriteManager, Random r, out string reason)
+		public bool Initialize(int x, int y, int width, int height, GameMain gameMain, bool moveable, Random r, out string reason)
 		{
 			xPos = x;
 			yPos = y;
@@ -35,7 +36,7 @@ namespace Beyond_Beyaan.Screens
 			this.gameMain = gameMain;
 
 			backGroundImage = new BBStretchableImage();
-			if (!backGroundImage.Initialize(x, y, width, height, StretchableImageType.MediumBorder, spriteManager, r, out reason))
+			if (!backGroundImage.Initialize(x, y, width, height, StretchableImageType.MediumBorder, r, out reason))
 			{
 				return false;
 			}
@@ -110,6 +111,11 @@ namespace Beyond_Beyaan.Screens
 
 				return true;
 			}
+			return false;
+		}
+
+		public virtual bool KeyDown(KeyboardInputEventArgs e)
+		{
 			return false;
 		}
 
