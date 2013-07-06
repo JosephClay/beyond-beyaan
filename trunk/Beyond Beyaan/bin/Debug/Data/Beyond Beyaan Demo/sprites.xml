@@ -112,7 +112,28 @@
   <Sprite name="AsteroidsPlanetSmall" file="planets.png">
     <Frame x="160" y="40" width="40" height="40" />
   </Sprite>
-  
+  <Sprite name="MilitaryIcon" file="planets.png">
+    <Frame x="0" y="80" width="40" height="40" />
+  </Sprite>
+  <Sprite name="FoodIcon" file="planets.png">
+    <Frame x="40" y="80" width="40" height="40" />
+  </Sprite>
+  <Sprite name="EnvironmentIcon" file="planets.png">
+    <Frame x="80" y="80" width="40" height="40" />
+  </Sprite>
+  <Sprite name="InfrastructureIcon" file="planets.png">
+    <Frame x="120" y="80" width="40" height="40" />
+  </Sprite>
+  <Sprite name="ResearchIcon" file="planets.png">
+    <Frame x="160" y="80" width="40" height="40" />
+  </Sprite>
+  <Sprite name="ConstructionIcon" file="planets.png">
+    <Frame x="200" y="80" width="40" height="40" />
+  </Sprite>
+  <Sprite name="UndevelopedIcon" file="planets.png">
+    <Frame x="240" y="80" width="40" height="40" />
+  </Sprite>
+
   <!-- Main Menu Buttons-->
   <Sprite name="ContinueGameBG" file="continueBG.png">
     <Frame x="0" y="0" width="260" height="40" />

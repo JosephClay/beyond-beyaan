@@ -804,7 +804,7 @@ namespace Beyond_Beyaan
 					{
 						return false;
 					}
-					if (!Down.Initialize("ScrollDownBGButton", "ScrollDownFGButton", "", xPos, yPos + length - 32, 16, 16, r, out reason))
+					if (!Down.Initialize("ScrollDownBGButton", "ScrollDownFGButton", "", xPos, yPos + length - 16, 16, 16, r, out reason))
 					{
 						return false;
 					}
@@ -827,7 +827,7 @@ namespace Beyond_Beyaan
 					{
 						return false;
 					}
-					if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 32, yPos, 16, 16, r, out reason))
+					if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 16, yPos, 16, 16, r, out reason))
 					{
 						return false;
 					}
@@ -852,13 +852,13 @@ namespace Beyond_Beyaan
 				{
 					return false;
 				}
-				if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 32, yPos, 16, 16, r, out reason))
+				if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 16, yPos, 16, 16, r, out reason))
 				{
 					return false;
 				}
 				if (!Scroll.Initialize(new List<string> { "SliderHorizontalBGButton1", "SliderHorizontalBGButton2", "SliderHorizontalBGButton3" },
 									   new List<string> { "SliderHorizontalFGButton1", "SliderHorizontalFGButton2", "SliderHorizontalFGButton3" },
-									   false, "", xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
+									   true, "", xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
 				{
 					return false;
 				}
