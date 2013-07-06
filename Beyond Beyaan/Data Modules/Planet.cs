@@ -70,13 +70,13 @@ namespace Beyond_Beyaan
 		{
 			get { return infrastructure; }
 		}
-		public int TotalProduction
+		public float TotalProduction
 		{
-			get { return 50; }
+			get { return (TotalPopulation * 0.5f) + (infrastructure); }
 		}
-		public int ActualProduction
+		public float ActualProduction
 		{
-			get { return 47; }
+			get { return TotalProduction * (1.0f - owner.ExpensesPercentage); }
 		}
 		public List<Race> Races
 		{
@@ -370,43 +370,91 @@ namespace Beyond_Beyaan
 			races.Add(owner.EmpireRace);
 			racePopulations.Add(owner.EmpireRace, 50.0f);
 			infrastructure = 30;
-			SetMinimumFoodAndWaste();
-			InfrastructureLocked = true;
-			EnvironmentLocked = true;
-			SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, 15);
-			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 15);
-			InfrastructureLocked = false;
-			EnvironmentLocked = false;
+			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
+			SetCleanup();
 			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
 			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
 		}
 
-		public void SetOutputAmount(OUTPUT_TYPE outputType, int amount)
+		public void SetOutputAmount(OUTPUT_TYPE outputType, int amount, bool forceChange)
 		{
+			if (forceChange)
+			{
+				//First, try and change it without forcing it
+				SetOutputAmount(outputType, amount, false);
+				switch (outputType)
+				{
+					case OUTPUT_TYPE.CONSTRUCTION:
+						{
+							if (ConstructionAmount == amount)
+							{
+								//Success
+								return;
+							}
+						} break;
+					case OUTPUT_TYPE.DEFENSE:
+						{
+							if (DefenseAmount == amount)
+							{
+								//Success
+								return;
+							}
+						}
+						break;
+					case OUTPUT_TYPE.ENVIRONMENT:
+						{
+							if (EnvironmentAmount == amount)
+							{
+								//Success
+								return;
+							}
+						}
+						break;
+					case OUTPUT_TYPE.INFRASTRUCTURE:
+						{
+							if (InfrastructureAmount == amount)
+							{
+								//Success
+								return;
+							}
+						}
+						break;
+					case OUTPUT_TYPE.RESEARCH:
+						{
+							if (ResearchAmount == amount)
+							{
+								//Success
+								return;
+							}
+						}
+						break;
+				}
+			}
+			
 			int remainingPercentile = 100;
-			if (InfrastructureLocked)
+			if (InfrastructureLocked && !forceChange)
 			{
 				remainingPercentile -= InfrastructureAmount;
 			}
-			if (EnvironmentLocked)
+			if (EnvironmentLocked && !forceChange)
 			{
 				remainingPercentile -= EnvironmentAmount;
 			}
-			if (DefenseLocked)
+			if (DefenseLocked && !forceChange)
 			{
 				remainingPercentile -= DefenseAmount;
 			}
-			if (ConstructionLocked)
+			if (ConstructionLocked && !forceChange)
 			{
 				remainingPercentile -= ConstructionAmount;
 			}
-			if (ResearchLocked)
+			if (ResearchLocked && !forceChange)
 			{
 				remainingPercentile -= ResearchAmount;
 			}
 
-			//if the player set the slider to or beyond the allowed percentile, all other sliders except food and waste are set to 0
+			//if the player set the slider to or beyond the allowed percentile, all other sliders are set to 0
 			if (amount >= remainingPercentile)
 			{
 				//set all sliders to 0, and change amount to remainingPercentile
@@ -472,24 +520,24 @@ namespace Beyond_Beyaan
 			{
 				int amountToDeduct = totalPointsExcludingSelectedType - remainingPercentile;
 				int prevValue;
-				if (!InfrastructureLocked && outputType != OUTPUT_TYPE.INFRASTRUCTURE)
+				if ((!ResearchLocked || forceChange) && outputType != OUTPUT_TYPE.RESEARCH)
 				{
-					prevValue = InfrastructureAmount;
-					InfrastructureAmount -= (InfrastructureAmount >= amountToDeduct ? amountToDeduct : InfrastructureAmount);
-					amountToDeduct -= (prevValue - InfrastructureAmount);
+					prevValue = ResearchAmount;
+					ResearchAmount -= (ResearchAmount >= amountToDeduct ? amountToDeduct : ResearchAmount);
+					amountToDeduct -= (prevValue - ResearchAmount);
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!EnvironmentLocked && outputType != OUTPUT_TYPE.ENVIRONMENT)
+					if ((!ConstructionLocked || forceChange) && outputType != OUTPUT_TYPE.CONSTRUCTION)
 					{
-						prevValue = EnvironmentAmount;
-						EnvironmentAmount -= (EnvironmentAmount >= amountToDeduct ? amountToDeduct : EnvironmentAmount);
-						amountToDeduct -= (prevValue - EnvironmentAmount);
+						prevValue = ConstructionAmount;
+						ConstructionAmount -= (ConstructionAmount >= amountToDeduct ? amountToDeduct : ConstructionAmount);
+						amountToDeduct -= (prevValue - ConstructionAmount);
 					}
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!DefenseLocked && outputType != OUTPUT_TYPE.DEFENSE)
+					if ((!DefenseLocked || forceChange) && outputType != OUTPUT_TYPE.DEFENSE)
 					{
 						prevValue = DefenseAmount;
 						DefenseAmount -= (DefenseAmount >= amountToDeduct ? amountToDeduct : DefenseAmount);
@@ -498,20 +546,20 @@ namespace Beyond_Beyaan
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!ResearchLocked && outputType != OUTPUT_TYPE.RESEARCH)
+					if ((!InfrastructureLocked || forceChange) && outputType != OUTPUT_TYPE.INFRASTRUCTURE)
 					{
-						prevValue = ResearchAmount;
-						ResearchAmount -= (ResearchAmount >= amountToDeduct ? amountToDeduct : ResearchAmount);
-						amountToDeduct -= (prevValue - ResearchAmount);
+						prevValue = InfrastructureAmount;
+						InfrastructureAmount -= (InfrastructureAmount >= amountToDeduct ? amountToDeduct : InfrastructureAmount);
+						amountToDeduct -= (prevValue - InfrastructureAmount);
 					}
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!ConstructionLocked && outputType != OUTPUT_TYPE.CONSTRUCTION)
+					if ((!EnvironmentLocked || forceChange) && outputType != OUTPUT_TYPE.ENVIRONMENT)
 					{
-						prevValue = ConstructionAmount;
-						ConstructionAmount -= (ConstructionAmount >= amountToDeduct ? amountToDeduct : ConstructionAmount);
-						amountToDeduct -= (prevValue - ConstructionAmount);
+						prevValue = EnvironmentAmount;
+						EnvironmentAmount -= (EnvironmentAmount >= amountToDeduct ? amountToDeduct : EnvironmentAmount);
+						amountToDeduct -= (prevValue - EnvironmentAmount);
 					}
 				}
 			}
@@ -559,128 +607,18 @@ namespace Beyond_Beyaan
 			UpdateOutput();
 		}
 
-		public void SetMinimumFoodAndWaste()
+		public void SetCleanup()
 		{
-			while (CalculateTotalPopGrowth() < 0)
+			//Waste Processing uses the formula: (Number of buildings * 0.5 * lowest pollution tech percentage) / production * 100
+			float wasteAmount = (infrastructure * 0.5f); //add tech improvements and racial bonuses/negatives inside (3.0f)
+			float amountOfProductionUsed = (wasteAmount / ActualProduction) * 100;
+			int percentage = (int)amountOfProductionUsed + ((amountOfProductionUsed - (int)amountOfProductionUsed) > 0 ? 1 : 0);
+			
+			if (EnvironmentAmount < percentage)
 			{
-				SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, InfrastructureAmount + 1);
+				//Only set it if it's below the desired amount
+				SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, percentage, true);
 			}
-			InfrastructureLocked = true;
-			while (CalculateMaxPopGrowth() < 0)
-			{
-				SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, EnvironmentAmount + 1);
-			}
-			InfrastructureLocked = false;
-			/*
-			//Waste Processing uses the formula: Waste Processing Percentage must be greater than or equal to 1 / (3 + tech improvements + racial bonuses/negatives)
-			amount = (1.0f / (3.0f)) * 100.0f; //add tech improvements and racial bonuses/negatives inside (3.0f)
-			if (amount - (int)amount > 0)
-			{
-				amount += 1;
-			}
-			EnvironmentAmount = (int)amount;
-
-			if (AgricultureAmount + EnvironmentAmount > 100)
-			{
-				//Starvation ensues, this planet is now unproductive until population drops or migrates
-				AgricultureAmount = (AgricultureAmount + EnvironmentAmount) - 100;
-				CommerceAmount = 0;
-				ResearchAmount = 0;
-				ConstructionAmount = 0;
-				return; //Nothing more can be done at this point
-			}
-			int remainingPercentile = 100 - (AgricultureAmount + EnvironmentAmount);
-			//If necessary, scale the other percentiles so it all adds up to 100
-
-			int totalMiscPercentile = CommerceAmount + ConstructionAmount + ResearchAmount;
-			if (totalMiscPercentile != remainingPercentile && totalMiscPercentile != 0)
-			{
-				//We need to scale them down or up, even if they're locked
-				float scale = (float)remainingPercentile / totalMiscPercentile;
-				totalMiscPercentile = 0;
-				
-				CommerceAmount = (int)(CommerceAmount * scale);
-				totalMiscPercentile += CommerceAmount;
-
-				ResearchAmount = (int)(ResearchAmount * scale);
-				totalMiscPercentile += ResearchAmount;
-
-				ConstructionAmount = (int)(ConstructionAmount * scale);
-				totalMiscPercentile += ConstructionAmount;
-
-				if (totalMiscPercentile < remainingPercentile)
-				{
-					//We have some extra points left from roundoff
-					int highest = 0;
-					OUTPUT_TYPE type = OUTPUT_TYPE.COMMERCE;
-					if (CommerceAmount > highest)
-					{
-						type = OUTPUT_TYPE.COMMERCE;
-						highest = CommerceAmount;
-					}
-					if (ResearchAmount > highest)
-					{
-						type = OUTPUT_TYPE.RESEARCH;
-						highest = ResearchAmount;
-					}
-					if (ConstructionAmount > highest)
-					{
-						type = OUTPUT_TYPE.CONSTRUCTION;
-					}
-					switch (type)
-					{
-						case OUTPUT_TYPE.COMMERCE:
-							{
-								CommerceAmount += (remainingPercentile - totalMiscPercentile);
-							} break;
-						case OUTPUT_TYPE.CONSTRUCTION:
-							{
-								ConstructionAmount += (remainingPercentile - totalMiscPercentile);
-							} break;
-						case OUTPUT_TYPE.RESEARCH:
-							{
-								ResearchAmount += (remainingPercentile - totalMiscPercentile);
-							} break;
-					}
-				}
-				else if (totalMiscPercentile > remainingPercentile)
-				{
-					//We have too much points, remove from highest
-					int total = totalMiscPercentile - remainingPercentile;
-					if (CommerceAmount > total)
-					{
-						CommerceAmount -= total;
-						return;
-					}
-					if (ResearchAmount > total)
-					{
-						ResearchAmount -= total;
-						return;
-					}
-					if (ConstructionAmount > total)
-					{
-						ConstructionAmount -= total;
-						return;
-					}
-
-					//At this point, subtract from more than one field
-					total -= CommerceAmount;
-					CommerceAmount = 0;
-					if (total > 0)
-					{
-						total -= ResearchAmount;
-						ResearchAmount = 0;
-						if (total > 0)
-						{
-							ConstructionAmount = 0;
-						}
-					}
-				}
-			}
-			else if (totalMiscPercentile == 0 && remainingPercentile > 0)
-			{
-				SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, remainingPercentile);
-			}*/
 		}
 
 		private void UpdateOutput()

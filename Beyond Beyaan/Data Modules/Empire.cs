@@ -152,15 +152,15 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
+				planetIncome = 0;
+				foreach (Planet planet in PlanetManager.Planets)
+				{
+					planetIncome += planet.TotalPopulation * 0.5f;
+					planetIncome += planet.InfrastructureTotal;
+				}
 				if (Refresh)
 				{
-					planetIncome = 0;
-					foreach (Planet planet in PlanetManager.Planets)
-					{
-						planetIncome += planet.TotalPopulation;
-					}
 					UpdateNetIncome();
-					Refresh = false;
 				}
 				return planetIncome;
 			}
@@ -186,6 +186,16 @@ namespace Beyond_Beyaan
 			private set;
 		}
 		public float NetIncome
+		{
+			get;
+			private set;
+		}
+		public float NetExpenses
+		{
+			get;
+			private set;
+		}
+		public float ExpensesPercentage
 		{
 			get;
 			private set;
@@ -241,6 +251,7 @@ namespace Beyond_Beyaan
 			fleetManager.SetupStarterFleet(homeSystem);
 			homePlanet.ShipBeingBuilt = fleetManager.CurrentDesigns[0];
 			ShipMaintenance = fleetManager.GetExpenses();
+			Refresh = true;
 			UpdateNetIncome();
 		}
 
@@ -410,12 +421,15 @@ namespace Beyond_Beyaan
 
 		private void UpdateNetIncome()
 		{
-			NetIncome = planetIncome;
+			Refresh = false; //We're already refreshing stuff at this point
+			NetIncome = EmpirePlanetIncome;
 			NetIncome += EmpireTradeIncome;
 
-			NetIncome -= ShipMaintenance;
-			NetIncome -= EspionageExpense;
-			NetIncome -= SecurityExpense;
+			NetExpenses = ShipMaintenance;
+			NetExpenses += EspionageExpense;
+			NetExpenses += SecurityExpense;
+			
+			ExpensesPercentage = NetExpenses / NetIncome;
 		}
 
 		public void UpdateResearchPoints()
