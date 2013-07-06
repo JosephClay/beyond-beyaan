@@ -425,7 +425,6 @@ namespace Beyond_Beyaan.Screens
 			{
 				weaponTexts[i].SetString(shipSelected.weapons[i + weaponIndex].GetName());
 				mountsTexts[i].SetString(shipSelected.weapons[i + weaponIndex].Mounts.ToString());
-				shotsTexts[i].SetString(shipSelected.weapons[i + weaponIndex].Ammo.ToString());
 			}
 		}
 

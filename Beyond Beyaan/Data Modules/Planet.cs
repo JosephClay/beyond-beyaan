@@ -371,7 +371,6 @@ namespace Beyond_Beyaan
 			racePopulations.Add(owner.EmpireRace, 50.0f);
 			infrastructure = 30;
 			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
-			SetCleanup();
 			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
 			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;

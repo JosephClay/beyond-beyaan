@@ -23,7 +23,6 @@ namespace Beyond_Beyaan.Screens
 		private BBSprite shipSprite;
 		private int totalSpace;
 		private int usedSpace;
-		private int totalCost;
 		private int x;
 		private int y;
 		Button[] removeButtons;
@@ -32,8 +31,6 @@ namespace Beyond_Beyaan.Screens
 		Button addWeapon;
 		Button[] mountUpButton;
 		Button[] mountDownButton;
-		Button[] shotUpButton;
-		Button[] shotDownButton;
 		Button prevShip;
 		Button nextShip;
 		ComboBox sizeComboBox;
@@ -108,15 +105,11 @@ namespace Beyond_Beyaan.Screens
 			removeButtons = new Button[amount];
 			mountUpButton = new Button[amount];
 			mountDownButton = new Button[amount];
-			shotUpButton = new Button[amount];
-			shotDownButton = new Button[amount];
 			for (int i = 0; i < removeButtons.Length; i++)
 			{
 				removeButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, x + 750, y + 84 + (i * 34), 16, 16);
 				mountUpButton[i] = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, string.Empty, x + 600, y + 84 + (i * 34), 16, 16);
 				mountDownButton[i] = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, string.Empty, x + 560, y + 84 + (i * 34), 16, 16);
-				shotUpButton[i] = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, string.Empty, x + 660, y + 84 + (i * 34), 16, 16);
-				shotDownButton[i] = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, string.Empty, x + 620, y + 84 + (i * 34), 16, 16);
 			}
 			nameTextBox = new SingleLineTextBox(x + 70, y + 5, 200, 25, SpriteName.MiniBackgroundButton);
 			techLabels = new Label[5];
@@ -230,7 +223,7 @@ namespace Beyond_Beyaan.Screens
 			drawingManagement.DrawText("Arial", "Total Space: " + totalSpace, x + 300, y + 555, System.Drawing.Color.White);
 			drawingManagement.DrawText("Arial", "Space Used: " + usedSpace, x + 470, y + 555, usedSpace <= totalSpace ? System.Drawing.Color.White : System.Drawing.Color.Red);
 
-			drawingManagement.DrawText("Arial", "Total Cost: " + totalCost, x + 300, y + 535, System.Drawing.Color.White);
+			drawingManagement.DrawText("Arial", "Total Cost: " + shipDesign.Cost, x + 300, y + 535, System.Drawing.Color.White);
 
 			int count = shipDesign.weapons.Count > 13 ? 13 : shipDesign.weapons.Count;
 
@@ -271,22 +264,12 @@ namespace Beyond_Beyaan.Screens
 					space *= shipDesign.weapons[i + shipWeaponIndex].Mounts;
 					drawingManagement.DrawText("Arial", shipDesign.weapons[i + shipWeaponIndex].Mounts.ToString(), x + 578, y + 82 + (i * 34), System.Drawing.Color.White);
 				}
-				if (shipDesign.weapons[i + shipWeaponIndex].Ammo >= 1)
-				{
-					space *= shipDesign.weapons[i + shipWeaponIndex].Ammo;
-					drawingManagement.DrawText("Arial", shipDesign.weapons[i + shipWeaponIndex].Ammo.ToString(), x + 637, y + 82 + (i * 34), System.Drawing.Color.White);
-				}
 				drawingManagement.DrawText("Arial", space.ToString(), x + 690, y + 82 + (i * 34), System.Drawing.Color.White);
 				removeButtons[i].Draw(drawingManagement);
 				if (shipDesign.weapons[i + shipWeaponIndex].Mounts > 0)
 				{
 					mountUpButton[i].Draw(drawingManagement);
 					mountDownButton[i].Draw(drawingManagement);
-				}
-				if (shipDesign.weapons[i + shipWeaponIndex].Ammo > 0)
-				{
-					shotUpButton[i].Draw(drawingManagement);
-					shotDownButton[i].Draw(drawingManagement);
 				}
 			}
 
@@ -365,11 +348,6 @@ namespace Beyond_Beyaan.Screens
 							{
 								mountUpButton[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 								mountDownButton[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
-							}
-							if (shipDesign.weapons[i + shipWeaponIndex].Ammo > 0)
-							{
-								shotUpButton[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
-								shotDownButton[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 							}
 						}
 					} break;
@@ -473,11 +451,6 @@ namespace Beyond_Beyaan.Screens
 							{
 								mountUpButton[i].MouseDown(x, y);
 								mountDownButton[i].MouseDown(x, y);
-							}
-							if (shipDesign.weapons[i + shipWeaponIndex].Ammo > 0)
-							{
-								shotUpButton[i].MouseDown(x, y);
-								shotDownButton[i].MouseDown(x, y);
 							}
 						}
 					} break;
@@ -636,19 +609,6 @@ namespace Beyond_Beyaan.Screens
 								if (mountDownButton[i].MouseUp(x, y) && shipDesign.weapons[i + shipWeaponIndex].Mounts > 1)
 								{
 									shipDesign.weapons[i + shipWeaponIndex].Mounts--;
-									UpdateSpaceUsageAndCost();
-								}
-							}
-							if (shipDesign.weapons[i + shipWeaponIndex].Ammo > 0)
-							{
-								if (shotUpButton[i].MouseUp(x, y))
-								{
-									shipDesign.weapons[i + shipWeaponIndex].Ammo++;
-									UpdateSpaceUsageAndCost();
-								}
-								if (shotDownButton[i].MouseUp(x, y) && shipDesign.weapons[i + shipWeaponIndex].Ammo > 1)
-								{
-									shipDesign.weapons[i + shipWeaponIndex].Ammo--;
 									UpdateSpaceUsageAndCost();
 								}
 							}
@@ -887,12 +847,6 @@ namespace Beyond_Beyaan.Screens
 			usedSpace += shipDesign.computer.GetSpace(totalSpace);
 			usedSpace += shipDesign.shield.GetSpace(totalSpace);
 
-			totalCost = 0;
-			totalCost += shipDesign.engine.GetCost(totalSpace);
-			totalCost += shipDesign.armor.GetCost(totalSpace);
-			totalCost += shipDesign.computer.GetCost(totalSpace);
-			totalCost += shipDesign.shield.GetCost(totalSpace);
-
 			foreach (Weapon weapon in shipDesign.weapons)
 			{
 				int weaponSpace = weapon.GetSpace();
@@ -902,13 +856,7 @@ namespace Beyond_Beyaan.Screens
 					weaponSpace *= weapon.Mounts;
 					weaponCost *= weapon.Mounts;
 				}
-				if (weapon.Ammo > 0)
-				{
-					weaponSpace *= weapon.Ammo;
-					weaponCost *= weapon.Ammo;
-				}
 				usedSpace += weaponSpace;
-				totalCost += weaponCost;
 			}
 
 			spaceUsage.SetMaxProgress(totalSpace);
@@ -923,8 +871,6 @@ namespace Beyond_Beyaan.Screens
 			{
 				spaceUsage.SetColor(System.Drawing.Color.Red);
 			}
-
-			shipDesign.Cost = totalCost;
 		}
 
 		public void LoadTechOptions()

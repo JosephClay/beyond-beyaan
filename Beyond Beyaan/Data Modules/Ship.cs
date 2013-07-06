@@ -8,9 +8,13 @@ namespace Beyond_Beyaan
 {
 	public class Ship
 	{
+		public const int SMALL = 1;
+		public const int MEDIUM = 2;
+		public const int LARGE = 3;
+		public const int HUGE = 4;
+
 		#region Properties
 		public string Name { get; set; }
-		public int Cost { get; set; }
 		public int Size { get; set; }
 		public int WhichStyle { get; set; }
 		public Engine engine;
@@ -18,19 +22,85 @@ namespace Beyond_Beyaan
 		public Armor armor;
 		public Computer computer;
 		public List<Weapon> weapons;
-		public float Maintenance { get { return Cost * 0.1f; } }
-		public int TotalSpace { get { return Size * Size * 40; } }
+		public List<Special> specials;
+		public float Maintenance { get { return Cost * 0.02f; } }
+		public int TotalSpace 
+		{ 
+			get 
+			{
+				int space = 40;
+				switch (Size)
+				{
+					case MEDIUM: 
+						space = 200;
+						break;
+					case LARGE:
+						space = 1000;
+						break;
+					case HUGE:
+						space = 5000;
+						break;
+				}
+				//Todo: Add 2% space for each level in construction tech
+				//space *= (1.0f + (0.02 * ConstructionLevel));
+				return space;
+			} 
+		}
+		public int Cost
+		{
+			get
+			{
+				int cost = 6;
+				switch (Size)
+				{
+					case MEDIUM:
+						cost = 36;
+						break;
+					case LARGE:
+						cost = 200;
+						break;
+					case HUGE:
+						cost = 1200;
+						break;
+				}
+				if (engine != null)
+				{
+					cost += engine.GetCost(TotalSpace);
+				}
+				if (armor != null)
+				{
+					cost += armor.GetCost(TotalSpace);
+				}
+				if (shield != null)
+				{
+					cost += shield.GetCost(TotalSpace);
+				}
+				if (computer != null)
+				{
+					cost += computer.GetCost(TotalSpace);
+				}
+				foreach (var weapon in weapons)
+				{
+					cost += weapon.GetCost();
+				}
+				foreach (var special in specials)
+				{
+					cost += special.GetCost(TotalSpace);
+				}
+				return cost;
+			}
+		}
 		#endregion
 
 		#region Constructors
 		public Ship()
 		{
 			weapons = new List<Weapon>();
+			specials = new List<Special>();
 		}
 		public Ship(Ship shipToCopy)
 		{
 			Name = shipToCopy.Name;
-			Cost = shipToCopy.Cost;
 			Size = shipToCopy.Size;
 			WhichStyle = shipToCopy.WhichStyle;
 			engine = shipToCopy.engine;
@@ -38,12 +108,16 @@ namespace Beyond_Beyaan
 			armor = shipToCopy.armor;
 			computer = shipToCopy.computer;
 			weapons = new List<Weapon>();
+			specials = new List<Special>();
 			foreach (Weapon weapon in shipToCopy.weapons)
 			{
 				Weapon weaponToCopy = new Weapon(weapon);
 				weaponToCopy.Mounts = weapon.Mounts;
-				weaponToCopy.Ammo = weapon.Ammo;
 				weapons.Add(new Weapon(weaponToCopy));
+			}
+			foreach (Special special in shipToCopy.specials)
+			{
+				specials.Add(special);
 			}
 		}
 		#endregion
@@ -68,7 +142,6 @@ namespace Beyond_Beyaan
 		private Bomb bombWeapon;
 
 		private int mounts;
-		private int ammo;
 		#endregion
 
 		#region Properties
@@ -77,18 +150,12 @@ namespace Beyond_Beyaan
 			get { return mounts; }
 			set { mounts = value; }
 		}
-		public int Ammo
-		{
-			get { return ammo; }
-			set { ammo = value; }
-		}
 		#endregion
 
 		#region Constructors
 		public Weapon(Beam beamWeapon)
 		{
 			mounts = 1;
-			ammo = -1; //We don't care about this value if it's beam weapon
 			this.beamWeapon = beamWeapon;
 			particleWeapon = null;
 			missileWeapon = null;
@@ -99,7 +166,6 @@ namespace Beyond_Beyaan
 		public Weapon(Particle particleWeapon)
 		{
 			mounts = 1; 
-			ammo = 1;
 			beamWeapon = null;
 			this.particleWeapon = particleWeapon;
 			missileWeapon = null;
@@ -110,7 +176,6 @@ namespace Beyond_Beyaan
 		public Weapon(Missile missileWeapon)
 		{
 			mounts = 1;
-			ammo = 1;
 			beamWeapon = null;
 			particleWeapon = null;
 			this.missileWeapon = missileWeapon;
@@ -121,7 +186,6 @@ namespace Beyond_Beyaan
 		public Weapon(Torpedo torpedoWeapon)
 		{
 			mounts = 1;
-			ammo = -1; //We don't care about this value if it's torpedo weapon
 			beamWeapon = null;
 			particleWeapon = null;
 			missileWeapon = null;
@@ -132,7 +196,6 @@ namespace Beyond_Beyaan
 		public Weapon(Bomb bombWeapon)
 		{
 			mounts = 1;
-			ammo = 1;
 			beamWeapon = null;
 			particleWeapon = null;
 			missileWeapon = null;
@@ -149,12 +212,6 @@ namespace Beyond_Beyaan
 			bombWeapon = weapon.bombWeapon;
 
 			mounts = 1;
-			ammo = 1;
-
-			if (beamWeapon != null || torpedoWeapon != null)
-			{
-				ammo = -1;
-			}
 		}
 		#endregion
 

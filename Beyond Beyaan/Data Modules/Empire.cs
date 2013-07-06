@@ -253,6 +253,7 @@ namespace Beyond_Beyaan
 			ShipMaintenance = fleetManager.GetExpenses();
 			Refresh = true;
 			UpdateNetIncome();
+			homePlanet.SetCleanup();
 		}
 
 		public void SetUpContacts(List<Empire> allEmpires)
