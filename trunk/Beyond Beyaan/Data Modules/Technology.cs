@@ -1377,6 +1377,125 @@ namespace Beyond_Beyaan
 		}
 	}
 
+	public class Special : Technology
+	{
+		private int space;
+		private int cost;
+
+		public Special()
+		{
+		}
+
+		public bool Load(Dictionary<string, string> items, out string reason)
+		{
+			if (!VerifyItems(items, out reason))
+			{
+				return false;
+			}
+
+			name = items["techname"];
+			if (!int.TryParse(items["baseresearchcost"], out baseResearchCost))
+			{
+				reason = "baseResearchCost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["techlevellimit"], out levelLimit))
+			{
+				reason = "techlevellimit value is not integer";
+				return false;
+			}
+			if (!float.TryParse(items["researchexponentincrease"], out increaseRate))
+			{
+				reason = "researchexponentincrease value is not float";
+				return false;
+			}
+			if (!int.TryParse(items["space"], out space))
+			{
+				reason = "space value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["cost"], out cost))
+			{
+				reason = "cost value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["startlevel"], out startingLevel))
+			{
+				reason = "startlevel value is not integer";
+				return false;
+			}
+			if (!int.TryParse(items["requiredfieldlevel"], out requiredFieldLevel))
+			{
+				reason = "requiredfieldlevel value is not integer";
+				return false;
+			}
+			currentLevel = startingLevel;
+			totalResearch = 0;
+			nextLevelCost = baseResearchCost;
+
+			return true;
+		}
+
+		private bool VerifyItems(Dictionary<string, string> items, out string reason)
+		{
+			string[] essentialTags = new string[] 
+			{
+				"techname",
+				"baseresearchcost",
+				"researchexponentincrease",
+				"techlevellimit",
+				"space",
+				"cost",
+				"startlevel",
+				"requiredfieldlevel",
+			};
+			foreach (string tag in essentialTags)
+			{
+				if (!items.ContainsKey(tag))
+				{
+					reason = "Missing " + tag + " tag";
+					return false;
+				}
+			}
+			reason = null;
+			return true;
+		}
+
+		public int GetSpace(int size)
+		{
+			return (int)(size * (space / 100.0f));
+		}
+
+		public int GetCost(int size)
+		{
+			//this will factor in tech level increase
+			return (int)(size * (cost / 100.0f));
+		}
+
+		public int GetLevel()
+		{
+			return currentLevel;
+		}
+
+		public int GetRequiredLevel()
+		{
+			return requiredFieldLevel;
+		}
+
+		public bool UpdateResearch(float researchPoints)
+		{
+			totalResearch += researchPoints;
+			if (totalResearch >= nextLevelCost)
+			{
+				totalResearch = 0;
+				nextLevelCost = nextLevelCost *= increaseRate;
+				currentLevel++;
+				return true;
+			}
+			return false;
+		}
+	}
+
 	public class Infrastructure : Technology
 	{
 		public Infrastructure()

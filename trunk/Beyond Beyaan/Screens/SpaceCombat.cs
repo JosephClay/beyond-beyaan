@@ -62,10 +62,6 @@ namespace Beyond_Beyaan.Screens
 				for (int i = 0; i < maxVisible; i++)
 				{
 					string text = selectedShip.weapons[i].GetName() + " x " + selectedShip.weapons[i].Mounts;
-					if (selectedShip.weapons[i].Ammo >= 0)
-					{
-						text += " (" + selectedShip.weapons[i].Ammo + ")";
-					}
 					weaponButtons[i].SetButtonText(text);
 				}
 				selectedWeapon = 0;

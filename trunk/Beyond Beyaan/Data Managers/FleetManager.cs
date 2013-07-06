@@ -37,60 +37,20 @@ namespace Beyond_Beyaan
 
 			Ship scout = new Ship();
 			scout.Name = "Scout";
-			scout.Size = 1;
+			scout.Size = Ship.SMALL;
 			scout.WhichStyle = 0;
 			scout.engine = empire.TechnologyManager.VisibleEngines[0];
 			scout.armor = empire.TechnologyManager.VisibleArmors[0];
-			scout.computer = empire.TechnologyManager.VisibleComputers[0];
-			scout.shield = empire.TechnologyManager.VisibleShields[0];
-			scout.weapons.Add(new Weapon(empire.TechnologyManager.VisibleBeams[0]));
-			scout.Cost = empire.TechnologyManager.VisibleEngines[0].GetCost(40) + empire.TechnologyManager.VisibleArmors[0].GetCost(40) + empire.TechnologyManager.VisibleComputers[0].GetCost(40) +
-				empire.TechnologyManager.VisibleShields[0].GetCost(40) + empire.TechnologyManager.VisibleBeams[0].GetCost();
 			currentShipDesigns.Add(scout);
 
-			Ship scout2 = new Ship();
-			scout2.Name = "Scout2";
-			scout2.Size = 2;
-			scout2.WhichStyle = 3;
-			scout2.engine = empire.TechnologyManager.VisibleEngines[0];
-			scout2.armor = empire.TechnologyManager.VisibleArmors[0];
-			scout2.computer = empire.TechnologyManager.VisibleComputers[0];
-			scout2.shield = empire.TechnologyManager.VisibleShields[0];
-			scout2.weapons.Add(new Weapon(empire.TechnologyManager.VisibleBeams[0]));
-			scout2.Cost = empire.TechnologyManager.VisibleEngines[0].GetCost(40) + empire.TechnologyManager.VisibleArmors[0].GetCost(40) + empire.TechnologyManager.VisibleComputers[0].GetCost(40) +
-				empire.TechnologyManager.VisibleShields[0].GetCost(40) + empire.TechnologyManager.VisibleBeams[0].GetCost();
-			currentShipDesigns.Add(scout2);
+			Ship colonyShip = new Ship();
+			colonyShip.Name = "Colony Ship";
+			colonyShip.Size = Ship.LARGE;
+			colonyShip.WhichStyle = 0;
+			colonyShip.engine = empire.TechnologyManager.VisibleEngines[0];
+			colonyShip.armor = empire.TechnologyManager.VisibleArmors[0];
 
-			Ship bomber = new Ship();
-			bomber.Name = "Bomber";
-			bomber.Size = 7;
-			bomber.WhichStyle = 1;
-			bomber.engine = empire.TechnologyManager.VisibleEngines[0];
-			bomber.armor = empire.TechnologyManager.VisibleArmors[0];
-			bomber.computer = empire.TechnologyManager.VisibleComputers[0];
-			bomber.shield = empire.TechnologyManager.VisibleShields[0];
-			bomber.weapons.Add(new Weapon(empire.TechnologyManager.VisibleBeams[0]));
-			bomber.Cost = empire.TechnologyManager.VisibleEngines[0].GetCost(40) + empire.TechnologyManager.VisibleArmors[0].GetCost(40) + empire.TechnologyManager.VisibleComputers[0].GetCost(40) +
-				empire.TechnologyManager.VisibleShields[0].GetCost(40) + empire.TechnologyManager.VisibleBeams[0].GetCost();
-
-			currentShipDesigns.Add(bomber);
-
-			Ship levi = new Ship();
-			levi.Name = "Leviathian";
-			levi.Size = 10;
-			levi.WhichStyle = 4;
-			levi.engine = empire.TechnologyManager.VisibleEngines[0];
-			levi.armor = empire.TechnologyManager.VisibleArmors[0];
-			levi.computer = empire.TechnologyManager.VisibleComputers[0];
-			levi.shield = empire.TechnologyManager.VisibleShields[0];
-			Weapon pewPew = new Weapon(empire.TechnologyManager.VisibleBeams[1]);
-			pewPew.Mounts = 10;
-			levi.weapons.Add(new Weapon(empire.TechnologyManager.VisibleBeams[0]));
-			levi.weapons.Add(pewPew);
-			levi.Cost = empire.TechnologyManager.VisibleEngines[0].GetCost(40) + empire.TechnologyManager.VisibleArmors[0].GetCost(40) + empire.TechnologyManager.VisibleComputers[0].GetCost(40) +
-				empire.TechnologyManager.VisibleShields[0].GetCost(40) + empire.TechnologyManager.VisibleBeams[0].GetCost();
-
-			currentShipDesigns.Add(levi);
+			currentShipDesigns.Add(colonyShip);
 
 			LastShipDesign = new Ship(scout); //Make a copy so we don't accidentally modify the original ship
 		}
@@ -103,9 +63,7 @@ namespace Beyond_Beyaan
 			starterFleet.AdjacentSystem = homeSystem;
 			starterFleet.Empire = empire;
 			starterFleet.AddShips(currentShipDesigns[0], 2);
-			starterFleet.AddShips(currentShipDesigns[1], 5);
-			starterFleet.AddShips(currentShipDesigns[2], 15);
-			starterFleet.AddShips(currentShipDesigns[3], 5);
+			starterFleet.AddShips(currentShipDesigns[1], 1);
 			fleets.Add(starterFleet);
 		}
 
