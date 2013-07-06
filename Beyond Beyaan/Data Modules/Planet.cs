@@ -21,6 +21,7 @@ namespace Beyond_Beyaan
 		private Empire owner;
 		string name;
 		private float populationMax;
+		private float infrastructure;
 		private Dictionary<Race, float> racePopulations;
 		private List<Race> races;
 		private int shipSelected;
@@ -64,6 +65,18 @@ namespace Beyond_Beyaan
 				}
 				return totalPopulation;
 			}
+		}
+		public float InfrastructureTotal
+		{
+			get { return infrastructure; }
+		}
+		public int TotalProduction
+		{
+			get { return 50; }
+		}
+		public int ActualProduction
+		{
+			get { return 47; }
 		}
 		public List<Race> Races
 		{
@@ -356,6 +369,7 @@ namespace Beyond_Beyaan
 			populationMax = 100;
 			races.Add(owner.EmpireRace);
 			racePopulations.Add(owner.EmpireRace, 50.0f);
+			infrastructure = 30;
 			SetMinimumFoodAndWaste();
 			InfrastructureLocked = true;
 			EnvironmentLocked = true;

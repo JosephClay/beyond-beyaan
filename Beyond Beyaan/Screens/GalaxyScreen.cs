@@ -487,8 +487,12 @@ namespace Beyond_Beyaan.Screens
 				return;
 			}
 			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
-			if (currentEmpire.SelectedSystem != null && !systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
+			if (currentEmpire.SelectedSystem != null)
 			{
+				if (systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
+				{
+					return;
+				}
 				/*if (currentEmpire.SelectedSystem.Planets.Count > 6 && systemScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
 					for (int i = 0; i < (currentEmpire.SelectedSystem.Planets.Count <= 6 ? currentEmpire.SelectedSystem.Planets.Count : 6); i++)
