@@ -176,7 +176,7 @@ namespace Beyond_Beyaan.Screens
 				_name.SetColor(isOwned ? currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White);
 				_popLabel.SetText(isOwned ? string.Format("{0}/{1} M", (int)currentSystem.Planets[0].TotalPopulation, currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", currentSystem.Planets[0].PopulationMax));
 				_terrainLabel.SetText(Utility.PlanetTypeToString(currentSystem.Planets[0].PlanetType));
-				_productionLabel.SetText(isOwned ? string.Format("{0} ({1}) Production", currentSystem.Planets[0].ActualProduction, currentSystem.Planets[0].TotalProduction) : "Unknown");
+				_productionLabel.SetText(isOwned ? string.Format("{0:0.0} ({1:0.0}) Production", currentSystem.Planets[0].ActualProduction, currentSystem.Planets[0].TotalProduction) : "Unknown");
 				_infrastructureLabel.SetText(isOwned ? currentSystem.Planets[0].InfrastructureStringOutput : "Unknown");
 				_researchLabel.SetText(isOwned ? currentSystem.Planets[0].ResearchStringOutput : "Unknown");
 				_environmentLabel.SetText(isOwned ? currentSystem.Planets[0].EnvironmentStringOutput : "Unknown");
