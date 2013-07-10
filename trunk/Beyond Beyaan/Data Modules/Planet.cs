@@ -141,11 +141,11 @@ namespace Beyond_Beyaan
 						if (amountBuildThisTurn > amountRemaining) //Will put some into reserve
 						{
 							float difference = (amountBuildThisTurn - amountRemaining) * 5; //This is now BC for excess
-							return string.Format("{0} Buildings (+{1:0.0} Buildings, +{2:0.0} BC)", (int)infrastructure, amountRemaining, difference);
+							return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)infrastructure, amountRemaining, difference);
 						}
 						else
 						{
-							return string.Format("{0} Buildings (+{1:0.0} Buildings)", (int)infrastructure, amountBuildThisTurn);
+							return string.Format("{0} (+{1:0.0}) Buildings", (int)infrastructure, amountBuildThisTurn);
 						}
 					}
 				}
@@ -634,6 +634,28 @@ namespace Beyond_Beyaan
 			if (ConstructionAmount > 0)
 			{
 				constructionTotal += ConstructionAmount * 0.01f * ActualProduction;
+			}
+			if (InfrastructureAmount > 0)
+			{
+				if (infrastructure < populationMax * 2)
+				{
+					float remaining = (populationMax * 2) - infrastructure;
+					float amountToBuild = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
+					if (amountToBuild > remaining)
+					{
+						infrastructure += remaining;
+						amountToBuild -= remaining;
+						//TODO: add BC
+					}
+					else
+					{
+						infrastructure += amountToBuild;
+					}
+				}
+				else
+				{
+					//TODO: add BC
+				}
 			}
 
 			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
