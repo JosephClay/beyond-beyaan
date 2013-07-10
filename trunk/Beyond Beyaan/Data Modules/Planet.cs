@@ -100,40 +100,15 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				if (ConstructionOutput <= 0)
+				if (ConstructionAmount <= 0)
 				{
 					return -1;
 				}
 				float remaining = (shipBeingBuilt.Cost - constructionTotal);
-				return remaining / ConstructionOutput;
+				return remaining / (ConstructionAmount * 0.01f * ActualProduction);
 			}
 		}
 
-		public float EnvironmentOutput
-		{
-			get;
-			private set;
-		}
-		public float InfrastructureOutput
-		{
-			get;
-			private set;
-		}
-		public float DefenseOutput
-		{
-			get;
-			private set;
-		}
-		public float ResearchOutput
-		{
-			get;
-			private set;
-		}
-		public float ConstructionOutput
-		{
-			get;
-			private set;
-		}
 		public PLANET_CONSTRUCTION_BONUS ConstructionBonus
 		{
 			get;
@@ -149,27 +124,60 @@ namespace Beyond_Beyaan
 			get;
 			private set;
 		}
-		public string AgricultureStringOutput
+		public string InfrastructureStringOutput
 		{
 			get 
 			{
-				float growthAmount = CalculateTotalPopGrowth();
-				if (growthAmount < 0)
+				if (InfrastructureAmount > 0)
 				{
-					return String.Format("Starving ({0:0.00} Pop)", growthAmount);
+					if (infrastructure >= populationMax * 2)
+					{
+						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)infrastructure, InfrastructureAmount * 0.01 * 0.5 * ActualProduction);
+					}
+					else
+					{
+						float amountRemaining = (populationMax * 2) - infrastructure;
+						float amountBuildThisTurn = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
+						if (amountBuildThisTurn > amountRemaining) //Will put some into reserve
+						{
+							float difference = (amountBuildThisTurn - amountRemaining) * 5; //This is now BC for excess
+							return string.Format("{0} Buildings (+{1:0.0} Buildings, +{2:0.0} BC)", (int)infrastructure, amountRemaining, difference);
+						}
+						else
+						{
+							return string.Format("{0} Buildings (+{1:0.0} Buildings)", (int)infrastructure, amountBuildThisTurn);
+						}
+					}
 				}
-				if (growthAmount > 0.05f)
+				else
 				{
-					return String.Format("Feasting ({0:0.00} Pop)", growthAmount);
+					return string.Format("{0} Buildings", (int)infrastructure);
 				}
-				return "Content"; 
+			}
+		}
+		public string ResearchStringOutput
+		{
+			get
+			{
+				if (ResearchAmount > 0)
+				{
+					return string.Format("{0:0.0} Research Points", (ResearchAmount * 0.01 * ActualProduction));
+				}
+				return "Not Researching";
+			}
+		}
+		public string DefenseStringOutput
+		{
+			get
+			{
+				return "0 Bases";
 			}
 		}
 		public string EnvironmentStringOutput
 		{
 			get
 			{
-				float increaseAmount = CalculateMaxPopGrowth();
+				/*float increaseAmount = CalculateMaxPopGrowth();
 				if (increaseAmount < 0)
 				{
 					return String.Format("Polluting ({0:0.00} Max Pop)", increaseAmount);
@@ -177,7 +185,7 @@ namespace Beyond_Beyaan
 				if (increaseAmount > 0.05f)
 				{
 					return String.Format("Terraforming ({0:0.00} Max Pop)", increaseAmount);
-				}
+				}*/
 				return "Clean";
 			}
 		}
@@ -603,7 +611,6 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-			UpdateOutput();
 		}
 
 		public void SetCleanup()
@@ -620,35 +627,22 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		private void UpdateOutput()
-		{
-			EnvironmentOutput = (((float)(EnvironmentAmount) / 100.0f) * TotalPopulation) * 4;
-			InfrastructureOutput = (((float)(InfrastructureAmount) / 100.0f) * TotalPopulation) * 4;
-			DefenseOutput = ((float)(DefenseAmount) / 100.0f) * TotalPopulation;
-			ResearchOutput = ((float)(ResearchAmount) / 100.0f) * TotalPopulation;
-			ConstructionOutput = ((float)(ConstructionAmount) / 100.0f) * TotalPopulation;
-		}
-
 		//Used for end of turn processing
 		public void UpdatePlanet()
 		{
 			//Update ship construction
-			if (ConstructionOutput > 0)
+			if (ConstructionAmount > 0)
 			{
-				constructionTotal += ConstructionOutput;
+				constructionTotal += ConstructionAmount * 0.01f * ActualProduction;
 			}
-
-			float foodModifier = (InfrastructureOutput - TotalPopulation) / TotalPopulation;
 
 			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
 			foreach (Race race in races)
 			{
-				racePopulations[race] += (racePopulations[race] * (0.05f)) * (foodModifier - (TotalPopulation / (PopulationMax + CalculateMaxPopGrowth())));
+				racePopulations[race] += (racePopulations[race] * (0.05f)) * (1 - (TotalPopulation / PopulationMax));
 			}
 
 			races.Sort((Race a, Race b) => { return (racePopulations[a].CompareTo(racePopulations[b])); });
-
-			UpdateOutput();
 		}
 
 		public Ship CheckIfShipBuilt(out int amount)
@@ -673,24 +667,10 @@ namespace Beyond_Beyaan
 			float popGrowth = 0;
 			foreach (Race race in races)
 			{
-				popGrowth += (racePopulations[race] * (0.05f)) * (1 - (TotalPopulation / (PopulationMax + CalculateMaxPopGrowth())));
+				popGrowth += (racePopulations[race] * (0.05f)) * (1 - (TotalPopulation / PopulationMax));
 			}
 
 			return popGrowth;
-		}
-
-		private float CalculateMaxPopGrowth()
-		{
-			float amount = ((PopulationMax / 125.0f) * (EnvironmentOutput - CalculateOptimalCleanEffort())) * 0.10f;
-			if (amount + PopulationMax > 125)
-			{
-				amount = 125 - PopulationMax;
-			}
-			else if (amount + PopulationMax < 5)
-			{
-				amount = PopulationMax - 5;
-			}
-			return amount;
 		}
 
 		private float CalculateOptimalCleanEffort()

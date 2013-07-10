@@ -177,11 +177,11 @@ namespace Beyond_Beyaan.Screens
 				_popLabel.SetText(isOwned ? string.Format("{0}/{1} M", (int)currentSystem.Planets[0].TotalPopulation, currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", currentSystem.Planets[0].PopulationMax));
 				_terrainLabel.SetText(Utility.PlanetTypeToString(currentSystem.Planets[0].PlanetType));
 				_productionLabel.SetText(isOwned ? string.Format("{0} ({1}) Production", currentSystem.Planets[0].ActualProduction, currentSystem.Planets[0].TotalProduction) : "Unknown");
-				_infrastructureLabel.SetText(isOwned ? string.Format("{0} Buildings", (int)currentSystem.Planets[0].InfrastructureTotal) : "Unknown");
-				_researchLabel.SetText(string.Empty);
-				_environmentLabel.SetText(string.Empty);
-				_defenseLabel.SetText(string.Empty);
-				_constructionLabel.SetText(string.Empty);
+				_infrastructureLabel.SetText(isOwned ? currentSystem.Planets[0].InfrastructureStringOutput : "Unknown");
+				_researchLabel.SetText(isOwned ? currentSystem.Planets[0].ResearchStringOutput : "Unknown");
+				_environmentLabel.SetText(isOwned ? currentSystem.Planets[0].EnvironmentStringOutput : "Unknown");
+				_defenseLabel.SetText(isOwned ? currentSystem.Planets[0].DefenseStringOutput : "Unknown");
+				_constructionLabel.SetText(isOwned ? currentSystem.Planets[0].ConstructionStringOutput : "Unknown");
 				_infrastructureSlider.TopIndex = planet.InfrastructureAmount;
 				_researchSlider.TopIndex = planet.ResearchAmount;
 				_environmentSlider.TopIndex = planet.EnvironmentAmount;
