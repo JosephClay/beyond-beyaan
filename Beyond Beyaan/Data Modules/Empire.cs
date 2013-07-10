@@ -438,7 +438,7 @@ namespace Beyond_Beyaan
 			totalResearchPoints = 0;
 			foreach (Planet planet in planetManager.Planets)
 			{
-				totalResearchPoints += planet.ResearchOutput;
+				totalResearchPoints += planet.ResearchAmount * 0.01f * planet.ActualProduction;
 			}
 		}
 
