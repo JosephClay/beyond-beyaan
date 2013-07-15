@@ -14,422 +14,265 @@ namespace Beyond_Beyaan
 	public class TechnologyManager
 	{
 		#region Properties
-		private List<Shield> Shields { get; set; }
-		private List<Computer> Computers { get; set; }
-		private List<Beam> Beams { get; set; }
-		private List<Particle> Particles { get; set; }
-		private List<Torpedo> Torpedoes { get; set; }
-		private List<Missile> Missiles { get; set; }
-		private List<Bomb> Bombs { get; set; }
-		private List<Armor> Armors { get; set; }
-		private List<Engine> Engines { get; set; }
-		private List<Infrastructure> Infrastructures { get; set; }
+		public List<Technology> ResearchedComputerTechs { get; private set; }
+		public List<Technology> ResearchedConstructionTechs { get; private set; }
+		public List<Technology> ResearchedForceFieldTechs { get; private set; }
+		public List<Technology> ResearchedPlanetologyTechs { get; private set; }
+		public List<Technology> ResearchedPropulsionTechs { get; private set; }
+		public List<Technology> ResearchedWeaponTechs { get; private set; }
 
-		public int WhichShieldBeingResearched { get; set; }
-		public int WhichComputerBeingResearched { get; set; }
-		public int WhichBeamBeingResearched { get; set; }
-		public int WhichParticleBeingResearched { get; set; }
-		public int WhichTorpedoBeingResearched { get; set; }
-		public int WhichMissileBeingResearched { get; set; }
-		public int WhichBombBeingResearched { get; set; }
-		public int WhichArmorBeingResearched { get; set; }
-		public int WhichEngineBeingResearched { get; set; }
-		public int WhichInfrastructureBeingResearched { get; set; }
+		public List<Technology> UnresearchedComputerTechs { get; private set; }
+		public List<Technology> UnresearchedConstructionTechs { get; private set; }
+		public List<Technology> UnresearchedForceFieldTechs { get; private set; }
+		public List<Technology> UnresearchedPlanetologyTechs { get; private set; }
+		public List<Technology> UnresearchedPropulsionTechs { get; private set; }
+		public List<Technology> UnresearchedWeaponTechs { get; private set; }
 
-		public List<Shield> VisibleShields { get; private set; }
-		public List<Computer> VisibleComputers { get; private set; }
-		public List<Beam> VisibleBeams { get; private set; }
-		public List<Particle> VisibleParticles { get; private set; }
-		public List<Torpedo> VisibleTorpedoes { get; private set; }
-		public List<Missile> VisibleMissiles { get; private set; }
-		public List<Bomb> VisibleBombs { get; private set; }
-		public List<Armor> VisibleArmors { get; private set; }
-		public List<Engine> VisibleEngines { get; private set; }
-		public List<Infrastructure> VisibleInfrastructures { get; private set; }
+		public Technology WhichComputerBeingResearched { get; set; }
+		public Technology WhichConstructionBeingResearched { get; set; }
+		public Technology WhichForceFieldBeingResearched { get; set; }
+		public Technology WhichPlanetologyBeingResearched { get; set; }
+		public Technology WhichPropulsionBeingResearched { get; set; }
+		public Technology WhichWeaponBeingResearched { get; set; }
 
-		public int ShieldLevel { get; private set; }
-		public int ComputerLevel { get; private set; }
-		public int BeamLevel { get; private set; }
-		public int ParticleLevel { get; private set; }
-		public int TorpedoLevel { get; private set; }
-		public int MissileLevel { get; private set; }
-		public int BombLevel { get; private set; }
-		public int ArmorLevel { get; private set; }
-		public int EngineLevel { get; private set; }
-		public int InfrastructureLevel { get; private set; }
+		public int ComputerLevel 
+		{ 
+			get	
+			{
+				int level = 0;
+				int numberOfStartingTechs = 0;
+				for (int i = 0; i < ResearchedComputerTechs.Count; i++)
+				{
+					if (ResearchedComputerTechs[i].TechLevel > level)
+					{
+						level = ResearchedComputerTechs[i].TechLevel;
+					}
+					if (ResearchedComputerTechs[i].TechLevel == 1)
+					{
+						numberOfStartingTechs++;
+					}
+				}
+				level = (int)(level * 0.8);
+				level += ResearchedComputerTechs.Count + 1 - numberOfStartingTechs;
+				return level;
+			}
+		}
+		public int ConstructionLevel
+		{
+			get
+			{
+				int level = 0;
+				int numberOfStartingTechs = 0;
+				for (int i = 0; i < ResearchedConstructionTechs.Count; i++)
+				{
+					if (ResearchedConstructionTechs[i].TechLevel > level)
+					{
+						level = ResearchedConstructionTechs[i].TechLevel;
+					}
+					if (ResearchedConstructionTechs[i].TechLevel == 1)
+					{
+						numberOfStartingTechs++;
+					}
+				}
+				level = (int)(level * 0.8);
+				level += ResearchedConstructionTechs.Count + 1 - numberOfStartingTechs;
+				return level;
+			}
+		}
+		public int ForceFieldLevel
+		{
+			get
+			{
+				int level = 0;
+				int numberOfStartingTechs = 0;
+				for (int i = 0; i < ResearchedForceFieldTechs.Count; i++)
+				{
+					if (ResearchedForceFieldTechs[i].TechLevel > level)
+					{
+						level = ResearchedForceFieldTechs[i].TechLevel;
+					}
+					if (ResearchedForceFieldTechs[i].TechLevel == 1)
+					{
+						numberOfStartingTechs++;
+					}
+				}
+				level = (int)(level * 0.8);
+				level += ResearchedForceFieldTechs.Count + 1 - numberOfStartingTechs;
+				return level;
+			}
+		}
+		public int PlanetologyLevel
+		{
+			get
+			{
+				int level = 0;
+				int numberOfStartingTechs = 0;
+				for (int i = 0; i < ResearchedPlanetologyTechs.Count; i++)
+				{
+					if (ResearchedPlanetologyTechs[i].TechLevel > level)
+					{
+						level = ResearchedPlanetologyTechs[i].TechLevel;
+					}
+					if (ResearchedPlanetologyTechs[i].TechLevel == 1)
+					{
+						numberOfStartingTechs++;
+					}
+				}
+				level = (int)(level * 0.8);
+				level += ResearchedPlanetologyTechs.Count + 1 - numberOfStartingTechs;
+				return level;
+			}
+		}
+		public int PropulsionLevel
+		{
+			get
+			{
+				int level = 0;
+				int numberOfStartingTechs = 0;
+				for (int i = 0; i < ResearchedPropulsionTechs.Count; i++)
+				{
+					if (ResearchedPropulsionTechs[i].TechLevel > level)
+					{
+						level = ResearchedPropulsionTechs[i].TechLevel;
+					}
+					if (ResearchedPropulsionTechs[i].TechLevel == 1)
+					{
+						numberOfStartingTechs++;
+					}
+				}
+				level = (int)(level * 0.8);
+				level += ResearchedPropulsionTechs.Count + 1 - numberOfStartingTechs;
+				return level;
+			}
+		}
+		public int WeaponLevel
+		{
+			get
+			{
+				int level = 0;
+				int numberOfStartingTechs = 0;
+				for (int i = 0; i < ResearchedWeaponTechs.Count; i++)
+				{
+					if (ResearchedWeaponTechs[i].TechLevel > level)
+					{
+						level = ResearchedWeaponTechs[i].TechLevel;
+					}
+					if (ResearchedWeaponTechs[i].TechLevel == 1)
+					{
+						numberOfStartingTechs++;
+					}
+				}
+				level = (int)(level * 0.8);
+				level += ResearchedWeaponTechs.Count + 1 - numberOfStartingTechs;
+				return level;
+			}
+		}
 
-		public bool ShieldLocked { get; set; }
 		public bool ComputerLocked { get; set; }
-		public bool BeamLocked { get; set; }
-		public bool ParticleLocked { get; set; }
-		public bool MissileLocked { get; set; }
-		public bool TorpedoLocked { get; set; }
-		public bool BombLocked { get; set; }
-		public bool ArmorLocked { get; set; }
-		public bool EngineLocked { get; set; }
-		public bool InfrastructureLocked { get; set; }
+		public bool ConstructionLocked { get; set; }
+		public bool ForceFieldLocked { get; set; }
+		public bool PlanetologyLocked { get; set; }
+		public bool PropulsionLocked { get; set; }
+		public bool WeaponLocked { get; set; }
 
-		public int ShieldPercentage { get; private set; }
-		public int ArmorPercentage { get; private set; }
-		public int EnginePercentage { get; private set; }
 		public int ComputerPercentage { get; private set; }
-		public int InfrastructurePercentage { get; private set; }
-		public int BeamPercentage { get; private set; }
-		public int ParticlePercentage { get; private set; }
-		public int MissilePercentage { get; private set; }
-		public int TorpedoPercentage { get; private set; }
-		public int BombPercentage { get; private set; }
+		public int ConstructionPercentage { get; private set; }
+		public int ForceFieldPercentage { get; private set; }
+		public int PlanetologyPercentage { get; private set; }
+		public int PropulsionPercentage { get; private set; }
+		public int WeaponPercentage { get; private set; }
 		#endregion
 
 		#region Constructor
 		public TechnologyManager()
 		{
-			Shields = new List<Shield>();
-			Computers = new List<Computer>();
-			Beams = new List<Beam>();
-			Particles = new List<Particle>();
-			Torpedoes = new List<Torpedo>();
-			Missiles = new List<Missile>();
-			Bombs = new List<Bomb>();
-			Armors = new List<Armor>();
-			Engines = new List<Engine>();
-			Infrastructures = new List<Infrastructure>();
-
-			VisibleShields = new List<Shield>();
-			VisibleComputers = new List<Computer>();
-			VisibleBeams = new List<Beam>();
-			VisibleParticles = new List<Particle>();
-			VisibleTorpedoes = new List<Torpedo>();
-			VisibleMissiles = new List<Missile>();
-			VisibleBombs = new List<Bomb>();
-			VisibleArmors = new List<Armor>();
-			VisibleEngines = new List<Engine>();
-			VisibleInfrastructures = new List<Infrastructure>();
-
-			ShieldPercentage = 10;
-			ArmorPercentage = 10;
-			EnginePercentage = 10;
-			ComputerPercentage = 10;
-			InfrastructurePercentage = 10;
-			BeamPercentage = 10;
-			ParticlePercentage = 10;
-			MissilePercentage = 10;
-			TorpedoPercentage = 10;
-			BombPercentage = 10;
+			//Set the initial starting percentages
+			ComputerPercentage = 20;
+			ConstructionPercentage = 10;
+			ForceFieldPercentage = 15;
+			PlanetologyPercentage = 15;
+			PropulsionPercentage = 20;
+			WeaponPercentage = 20;
 		}
 		#endregion
 
 		#region Functions
-		public bool LoadTechnologies(string filePath)
+		public void SetComputerTechs(List<Technology> techs)
 		{
-			try
+			UnresearchedComputerTechs = techs;
+			ResearchedComputerTechs = new List<Technology>();
+			foreach (var tech in techs)
 			{
-				//This loads technologies from a technologies.txt file.  Each Empire have their own TechnologyManager instance, so it's possible to have racial specific technologies
-				if (File.Exists(filePath))
+				if (tech.TechLevel == 1)
 				{
-					List<string> invalidTechs = new List<string>();
-					string[] lines = File.ReadAllLines(filePath);
-					int currentLine = 1;
-					foreach (string line in lines)
-					{
-						if (string.IsNullOrEmpty(line.Trim()) || line.StartsWith("//"))
-						{
-							//ignore whitespace or comments
-							continue;
-						}
-						Dictionary<string, string> items = new Dictionary<string, string>();
-						string[] parts = line.Split(new[] { '|' });
-						foreach (string part in parts)
-						{
-							string[] values = part.Split(new[] { '=' });
-							if (values.Length != 2)
-							{
-								invalidTechs.Add("Line " + currentLine + " have incomplete value");
-								continue;
-							}
-							items.Add(values[0].ToLower(), values[1]);
-						}
-						if (!items.ContainsKey("techtype"))
-						{
-							invalidTechs.Add("Line " + currentLine + " don't have techType value.");
-							continue;
-						}
-						string reason;
-						switch (items["techtype"])
-						{
-							case "beam":
-								{
-									Beam tech = new Beam();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Beams.Add(tech);
-								} break;
-							case "particle":
-								{
-									Particle tech = new Particle();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Particles.Add(tech);
-								} break;
-							case "torpedo":
-								{
-									Torpedo tech = new Torpedo();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Torpedoes.Add(tech);
-								} break;
-							case "missile":
-								{
-									Missile tech = new Missile();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Missiles.Add(tech);
-								} break;
-							case "armor":
-								{
-									Armor tech = new Armor();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Armors.Add(tech);
-								} break;
-							case "shield":
-								{
-									Shield tech = new Shield();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Shields.Add(tech);
-								} break;
-							case "engine":
-								{
-									Engine tech = new Engine();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Engines.Add(tech);
-								} break;
-							case "computer":
-								{
-									Computer tech = new Computer();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Computers.Add(tech);
-								} break;
-							case "infrastructure":
-								{
-									Infrastructure tech = new Infrastructure();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Infrastructures.Add(tech);
-								} break;
-							case "bomb":
-								{
-									Bomb tech = new Bomb();
-									if (!tech.Load(items, out reason))
-									{
-										invalidTechs.Add("Line " + currentLine + " has invalid data: " + reason);
-										break;
-									}
-									Bombs.Add(tech);
-								} break;
-							default:
-								{
-									invalidTechs.Add("Line " + currentLine + " techType tag have invalid value.");
-								} break;
-						}
-						currentLine++;
-					}
-					UpdateVisibleTechs();
-					return true;
-				}
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show(e.Message, "Exception!");
-			}
-			return false;
-		}
-
-		private void UpdateVisibleTechs()
-		{
-			UpdateTechFieldLevels();
-
-			VisibleEngines.Clear();
-			foreach (Engine engine in Engines)
-			{
-				if (EngineLevel >= engine.GetRequiredLevel())
-				{
-					VisibleEngines.Add(engine);
-				}
-			}
-
-			VisibleComputers.Clear();
-			foreach (Computer computer in Computers)
-			{
-				if (ComputerLevel >= computer.GetRequiredLevel())
-				{
-					VisibleComputers.Add(computer);
-				}
-			}
-
-			VisibleArmors.Clear();
-			foreach (Armor armor in Armors)
-			{
-				if (ArmorLevel >= armor.GetRequiredLevel())
-				{
-					VisibleArmors.Add(armor);
-				}
-			}
-
-			VisibleShields.Clear();
-			foreach (Shield shield in Shields)
-			{
-				if (ShieldLevel >= shield.GetRequiredLevel())
-				{
-					VisibleShields.Add(shield);
-				}
-			}
-
-			VisibleInfrastructures.Clear();
-			foreach (Infrastructure infrastructure in Infrastructures)
-			{
-				if (InfrastructureLevel >= infrastructure.GetRequiredLevel())
-				{
-					VisibleInfrastructures.Add(infrastructure);
-				}
-			}
-
-			VisibleBeams.Clear();
-			foreach (Beam beam in Beams)
-			{
-				if (BeamLevel >= beam.GetRequiredLevel())
-				{
-					VisibleBeams.Add(beam);
-				}
-			}
-
-			VisibleParticles.Clear();
-			foreach (Particle particle in Particles)
-			{
-				if (ParticleLevel >= particle.GetRequiredLevel())
-				{
-					VisibleParticles.Add(particle);
-				}
-			}
-
-			VisibleMissiles.Clear();
-			foreach (Missile missile in Missiles)
-			{
-				if (MissileLevel >= missile.GetRequiredLevel())
-				{
-					VisibleMissiles.Add(missile);
-				}
-			}
-
-			VisibleTorpedoes.Clear();
-			foreach (Torpedo torpedo in Torpedoes)
-			{
-				if (TorpedoLevel >= torpedo.GetRequiredLevel())
-				{
-					VisibleTorpedoes.Add(torpedo);
-				}
-			}
-
-			VisibleBombs.Clear();
-			foreach (Bomb bomb in Bombs)
-			{
-				if (BombLevel >= bomb.GetRequiredLevel())
-				{
-					VisibleBombs.Add(bomb);
+					ResearchedComputerTechs.Add(tech);
+					UnresearchedComputerTechs.Remove(tech);
 				}
 			}
 		}
-
-		private void UpdateTechFieldLevels()
+		public void SetConstructionTechs(List<Technology> techs)
 		{
-			EngineLevel = 0;
-			foreach (Engine engine in Engines)
+			UnresearchedConstructionTechs = techs;
+			ResearchedConstructionTechs = new List<Technology>();
+			foreach (var tech in techs)
 			{
-				EngineLevel += engine.GetLevel();
+				if (tech.TechLevel == 1)
+				{
+					ResearchedConstructionTechs.Add(tech);
+					UnresearchedConstructionTechs.Remove(tech);
+				}
 			}
-
-			ShieldLevel = 0;
-			foreach (Shield shield in Shields)
+		}
+		public void SetForceFieldTechs(List<Technology> techs)
+		{
+			UnresearchedForceFieldTechs = techs;
+			ResearchedForceFieldTechs = new List<Technology>();
+			foreach (var tech in techs)
 			{
-				ShieldLevel += shield.GetLevel();
+				if (tech.TechLevel == 1)
+				{
+					ResearchedForceFieldTechs.Add(tech);
+					UnresearchedForceFieldTechs.Remove(tech);
+				}
 			}
-
-			ArmorLevel = 0;
-			foreach (Armor armor in Armors)
+		}
+		public void SetPlanetologyTechs(List<Technology> techs)
+		{
+			UnresearchedPlanetologyTechs = techs;
+			ResearchedPlanetologyTechs = new List<Technology>();
+			foreach (var tech in techs)
 			{
-				ArmorLevel += armor.GetLevel();
+				if (tech.TechLevel == 1)
+				{
+					ResearchedPlanetologyTechs.Add(tech);
+					UnresearchedPlanetologyTechs.Remove(tech);
+				}
 			}
-
-			ComputerLevel = 0;
-			foreach (Computer computer in Computers)
+		}
+		public void SetPropulsionTechs(List<Technology> techs)
+		{
+			UnresearchedPropulsionTechs = techs;
+			ResearchedPropulsionTechs = new List<Technology>();
+			foreach (var tech in techs)
 			{
-				ComputerLevel += computer.GetLevel();
+				if (tech.TechLevel == 1)
+				{
+					ResearchedPropulsionTechs.Add(tech);
+					UnresearchedPropulsionTechs.Remove(tech);
+				}
 			}
-
-			InfrastructureLevel = 0;
-			foreach (Infrastructure infrastructure in Infrastructures)
+		}
+		public void SetWeaponTechs(List<Technology> techs)
+		{
+			UnresearchedWeaponTechs = techs;
+			ResearchedWeaponTechs = new List<Technology>();
+			foreach (var tech in techs)
 			{
-				InfrastructureLevel += infrastructure.GetLevel();
-			}
-
-			BeamLevel = 0;
-			foreach (Beam beam in Beams)
-			{
-				BeamLevel += beam.GetLevel();
-			}
-
-			ParticleLevel = 0;
-			foreach (Particle particle in Particles)
-			{
-				ParticleLevel += particle.GetLevel();
-			}
-
-			MissileLevel = 0;
-			foreach (Missile missile in Missiles)
-			{
-				MissileLevel += missile.GetLevel();
-			}
-
-			TorpedoLevel = 0;
-			foreach (Torpedo torpedo in Torpedoes)
-			{
-				TorpedoLevel += torpedo.GetLevel();
-			}
-
-			BombLevel = 0;
-			foreach (Bomb bomb in Bombs)
-			{
-				BombLevel += bomb.GetLevel();
+				if (tech.TechLevel == 1)
+				{
+					ResearchedWeaponTechs.Add(tech);
+					UnresearchedWeaponTechs.Remove(tech);
+				}
 			}
 		}
 

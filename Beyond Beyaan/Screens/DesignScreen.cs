@@ -39,11 +39,13 @@ namespace Beyond_Beyaan.Screens
 		Button armorButton;
 		Button shieldButton;
 		ProgressBar spaceUsage;
-		List<Engine> availableEngines;
-		List<Armor> availableArmors;
-		List<Shield> availableShields;
-		List<Computer> availableComputers;
-		List<Weapon> availableWeapons;
+		List<Technology> availableEngines;
+		List<Technology> availableArmors;
+		List<Technology> availableShields;
+		List<Technology> availableComputers;
+		List<Technology> availableECMs;
+		List<Technology> availableWeapons;
+		List<Technology> availableSpecials;
 		Button[] techButtons;
 		int displayingTechOption;
 		int shipWeaponIndex;

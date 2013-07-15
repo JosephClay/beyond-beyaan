@@ -10,6 +10,8 @@ namespace Beyond_Beyaan
 
 	public class Galaxy
 	{
+		public const int PARSEC_SIZE_IN_PIXELS = 60;
+
 		private List<StarSystem> starSystems = new List<StarSystem>();
 
 		/*#region Pathfinding values

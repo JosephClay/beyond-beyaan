@@ -7,47 +7,123 @@ namespace Beyond_Beyaan
 {
 	public class Technology
 	{
-		protected int baseResearchCost; //Base cost of researching an item
-		protected float increaseRate; //How much cost increases to research the next level
-		protected int levelLimit; //How many times this item can be researched, -1 means infinite
-		protected string name; //Name of technology
-		protected int startingLevel; //What level of technology this tech starts off (1 for having the tech researched, 0 for not researched, 2 or higher for base plus incremental effects)
-		protected int currentLevel;
-		protected float totalResearch; //How much points spent into researching this/next level
-		protected int requiredFieldLevel; //How high this tech field must be reached before this tech is visible
-		protected float nextLevelCost; //How much points the next level will require to achieve
+		#region Constants
+		public const int DEEP_SPACE_SCANNER = 1;
+		public const int IMPROVED_SPACE_SCANNER = 2;
+		public const int ADVANCED_SPACE_SCANNER = 3;
 
-		public int GetTotalResearchPoints()
+		public const int TITANIUM_ARMOR = 1;
+		public const int DURALLOY_ARMOR = 2;
+		public const int ZORITUM_ARMOR = 3;
+		public const int ANDRIUM_ARMOR = 4;
+		public const int TRITANIUM_ARMOR = 5;
+		public const int ADAMANTIUM_ARMOR = 6;
+		public const int NEUTRONIUM_ARMOR = 7;
+
+		public const int BATTLE_SUITS = 1;
+		public const int ARMORED_EXOSKELETON = 2;
+		public const int POWERED_ARMOR = 3;
+
+		public const int PERSONAL_DEFLECTOR = 1;
+		public const int PERSONAL_ABSORPTION = 2;
+		public const int PERSONAL_BARRIER = 3;
+
+		public const int AUTOMATED_REPAIR = 1;
+		public const int ADVANCED_REPAIR = 2;
+
+		public const int PLANETARY_V_SHIELD = 1;
+		public const int PLANETARY_X_SHIELD = 2;
+		public const int PLANETARY_XV_SHIELD = 3;
+		public const int PLANETARY_XX_SHIELD = 4;
+
+		public const int ZYRO_SHIELD = 1;
+		public const int LIGHTNING_SHIELD = 2;
+		#endregion
+
+		public int TechLevel { get; private set; }
+		public string TechName { get; private set; }
+		public string TechDescription { get; private set; }
+		public int ResearchPoints
 		{
-			return (int)totalResearch;
+			get { return TechLevel * TechLevel; }
 		}
-		public int GetNextLevelCost()
+
+		public int RoboticControl { get; private set; }
+		public int BattleComputer { get; private set; }
+		public int ECM { get; private set; }
+		public int SpaceScanner { get; private set; }
+		public int Armor { get; private set; }
+		public int IndustrialTech { get; private set; }
+		public int IndustrialWaste { get; private set; }
+		public int GroundArmor { get; private set; }
+		public int Repair { get; private set; }
+		public int Shield { get; private set; }
+		public int PersonalShield { get; private set; }
+		public int PlanetaryShield { get; private set; }
+		public int MissileShield { get; private set; }
+
+		public bool BattleScanner { get; private set; }
+		public bool HyperSpaceCommunicator { get; private set; }
+		public bool OracleInterface { get; private set; }
+		public bool TechnologyNullifier { get; private set; }
+		public bool RepulsorBeam { get; private set; }
+		public bool CloakingDevice { get; private set; }
+		public bool StatisField { get; private set; }
+		public bool BlackHoleGenerator { get; private set; }
+
+		public Technology(string name, string desc, int level,
+						//Optional arguments goes here
+						int roboticControl = 0,
+						int battleComputer = 0,
+						bool battleScanner = false,
+						int ECM = 0,
+						int spaceScanner = 0,
+						bool hyperSpaceCommunicator = false,
+						bool oracleInterface = false,
+						bool technologyNullifier = false,
+						int armor = 0,
+						int industrialTech = 0,
+						int industrialWaste = 100,
+						int groundArmor = 0,
+						int repair = 0,
+						int shield = 0,
+						int personalShield = 0,
+						int planetaryShield = 0,
+						bool repulsorBeam = false,
+						bool cloakingDevice = false,
+						int missileShield = 0,
+						bool statisField = false,
+						bool blackHoleGenerator = false
+						)
 		{
-			return (int)nextLevelCost;
-		}
-		public string GetName()
-		{
-			return name;
-		}
-		public string GetNameWithCurrentLevel()
-		{
-			if (currentLevel > 1)
-			{
-				return name + " " + Utility.ConvertNumberToRomanNumberical(currentLevel);
-			}
-			return name;
-		}
-		public string GetNameWithNextLevel()
-		{
-			if (currentLevel > 0 && (currentLevel < levelLimit || levelLimit < 0))
-			{
-				return name + " " + Utility.ConvertNumberToRomanNumberical(currentLevel + 1);
-			}
-			return GetNameWithCurrentLevel();
+			TechLevel = level;
+			TechName = name;
+			TechDescription = desc;
+			RoboticControl = roboticControl;
+			BattleComputer = battleComputer;
+			BattleScanner = battleScanner;
+			this.ECM = ECM;
+			SpaceScanner = spaceScanner;
+			HyperSpaceCommunicator = hyperSpaceCommunicator;
+			OracleInterface = oracleInterface;
+			TechnologyNullifier = technologyNullifier;
+			Armor = armor;
+			IndustrialTech = industrialTech;
+			IndustrialWaste = industrialWaste;
+			GroundArmor = groundArmor;
+			Repair = repair;
+			Shield = shield;
+			PersonalShield = personalShield;
+			PlanetaryShield = planetaryShield;
+			RepulsorBeam = repulsorBeam;
+			CloakingDevice = cloakingDevice;
+			MissileShield = missileShield;
+			StatisField = statisField;
+			BlackHoleGenerator = blackHoleGenerator;
 		}
 	}
 
-	public class Beam : Technology
+	/*public class Beam : Technology
 	{
 		private int baseDamage;
 		private int accuracy;
@@ -1587,5 +1663,5 @@ namespace Beyond_Beyaan
 			}
 			return false;
 		}
-	}
+	}*/
 }
