@@ -9,7 +9,7 @@ namespace Beyond_Beyaan.Screens
 {
 	class DesignScreen : ScreenInterface
 	{
-		private const int NONE = 0;
+		/*private const int NONE = 0;
 		private const int ENGINE = 1;
 		private const int COMPUTER = 2;
 		private const int ARMOR = 3;
@@ -52,11 +52,11 @@ namespace Beyond_Beyaan.Screens
 		SingleLineTextBox nameTextBox;
 		Label[] techLabels;
 		ScrollBar techScrollBar;
-		#endregion
+		#endregion*/
 
 		public void Initialize(GameMain gameMain)
 		{
-			this.gameMain = gameMain;
+			/*this.gameMain = gameMain;
 
 			x = gameMain.ScreenWidth / 2 - 400;
 			y = gameMain.ScreenHeight / 2 - 300;
@@ -124,12 +124,12 @@ namespace Beyond_Beyaan.Screens
 			techScrollBar = new ScrollBar(x + 640, y + 40, 16, 488, 15, 30, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
 				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
 				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
-			techScrollBar.SetEnabledState(false);
+			techScrollBar.SetEnabledState(false);*/
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			gameMain.DrawGalaxyBackground();
+			/*gameMain.DrawGalaxyBackground();
 
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y - 1, 255, 285, 228, System.Drawing.Color.White);
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x - 1, y + 226, 255, 285, 67, System.Drawing.Color.White);
@@ -322,12 +322,12 @@ namespace Beyond_Beyaan.Screens
 							}
 						} break;
 				}
-			}
+			}*/
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			switch (displayingTechOption)
+			/*switch (displayingTechOption)
 			{
 				case NONE:
 					{
@@ -418,12 +418,12 @@ namespace Beyond_Beyaan.Screens
 							techButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
 						}
 					} break;
-			}
+			}*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			switch (displayingTechOption)
+			/*switch (displayingTechOption)
 			{
 				case NONE:
 					{
@@ -501,12 +501,12 @@ namespace Beyond_Beyaan.Screens
 							techButtons[i].MouseDown(x, y);
 						}
 					} break;
-			}
+			}*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			switch (displayingTechOption)
+			/*switch (displayingTechOption)
 			{
 				case NONE:
 					{
@@ -722,7 +722,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					displayingTechOption = NONE;
 				}
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -731,7 +731,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadScreen()
 		{
-			x = gameMain.ScreenWidth / 2 - 400;
+			/*x = gameMain.ScreenWidth / 2 - 400;
 			y = gameMain.ScreenHeight / 2 - 300;
 
 			shipDesign = gameMain.EmpireManager.CurrentEmpire.FleetManager.LastShipDesign;
@@ -821,12 +821,12 @@ namespace Beyond_Beyaan.Screens
 				{
 					availableWeapons.Add(new Weapon(bomb));
 				}
-			}
+			}*/
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-			if (e.Key == KeyboardKeys.Escape)
+			/*if (e.Key == KeyboardKeys.Escape)
 			{
 				gameMain.ChangeToScreen(Screen.Galaxy);
 			}
@@ -837,10 +837,10 @@ namespace Beyond_Beyaan.Screens
 			if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}
+			}*/
 		}
 
-		private void UpdateSpaceUsageAndCost()
+		/*private void UpdateSpaceUsageAndCost()
 		{
 			totalSpace = shipDesign.TotalSpace;
 			usedSpace = 0;
@@ -873,11 +873,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				spaceUsage.SetColor(System.Drawing.Color.Red);
 			}
-		}
+		}*/
 
 		public void LoadTechOptions()
 		{
-			techScrollBar.TopIndex = 0;
+			/*techScrollBar.TopIndex = 0;
 			switch (displayingTechOption)
 			{
 				case ENGINE:
@@ -981,9 +981,9 @@ namespace Beyond_Beyaan.Screens
 						techLabels[1].SetText("Damage");
 						techLabels[2].SetText("Accuracy");
 					} break;
-			}
+			}*/
 		}
-		private void RefreshTechOptions()
+		/*private void RefreshTechOptions()
 		{
 			//This is when the tech scrollbar is moved
 			switch (displayingTechOption)
@@ -1024,6 +1024,6 @@ namespace Beyond_Beyaan.Screens
 						}
 					} break;
 			}
-		}
+		}*/
 	}
 }

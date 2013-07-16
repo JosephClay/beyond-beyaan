@@ -35,21 +35,55 @@ namespace Beyond_Beyaan
 			currentShipDesigns = new List<Ship>();
 			obsoleteShipDesigns = new List<Ship>();
 
+			Technology retroEngine = null;
+			Technology titaniumArmor = null;
+			foreach (var tech in empire.TechnologyManager.ResearchedPropulsionTechs)
+			{
+				if (tech.Speed == 1)
+				{
+					retroEngine = tech;
+					break;
+				}
+			}
+			foreach (var tech in empire.TechnologyManager.ResearchedConstructionTechs)
+			{
+				if (tech.Armor == Technology.TITANIUM_ARMOR)
+				{
+					titaniumArmor = tech;
+					break;
+				}
+			}
+
 			Ship scout = new Ship();
 			scout.Name = "Scout";
 			scout.Size = Ship.SMALL;
 			scout.WhichStyle = 0;
-			scout.engine = empire.TechnologyManager.VisibleEngines[0];
-			scout.armor = empire.TechnologyManager.VisibleArmors[0];
+			scout.Engine = retroEngine;
+			scout.Armor = titaniumArmor;
+			foreach (var tech in empire.TechnologyManager.ResearchedConstructionTechs)
+			{
+				if (tech.ReserveFuelTanks)
+				{
+					scout.Specials.Add(tech);
+					break;
+				}
+			}
 			currentShipDesigns.Add(scout);
 
 			Ship colonyShip = new Ship();
 			colonyShip.Name = "Colony Ship";
 			colonyShip.Size = Ship.LARGE;
 			colonyShip.WhichStyle = 0;
-			colonyShip.engine = empire.TechnologyManager.VisibleEngines[0];
-			colonyShip.armor = empire.TechnologyManager.VisibleArmors[0];
-
+			colonyShip.Engine = retroEngine;
+			colonyShip.Armor = titaniumArmor;
+			foreach (var tech in empire.TechnologyManager.ResearchedPlanetologyTechs)
+			{
+				if (tech.Colony == Technology.STANDARD_COLONY)
+				{
+					colonyShip.Specials.Add(tech);
+					break;
+				}
+			}
 			currentShipDesigns.Add(colonyShip);
 
 			LastShipDesign = new Ship(scout); //Make a copy so we don't accidentally modify the original ship

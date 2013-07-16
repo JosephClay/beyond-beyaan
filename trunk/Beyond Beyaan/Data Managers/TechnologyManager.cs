@@ -9,6 +9,8 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
+	public enum TechField { COMPUTER, CONSTRUCTION, FORCE_FIELD, PLANETOLOGY, PROPULSION, WEAPON }
+
 	public class TechnologyManager
 	{
 		#region Properties
@@ -216,7 +218,7 @@ namespace Beyond_Beyaan
 		#region Functions
 		public void SetComputerTechs(List<Technology> techs)
 		{
-			UnresearchedComputerTechs = techs;
+			UnresearchedComputerTechs = new List<Technology>(techs);
 			ResearchedComputerTechs = new List<Technology>();
 			foreach (var tech in techs)
 			{
@@ -229,7 +231,7 @@ namespace Beyond_Beyaan
 		}
 		public void SetConstructionTechs(List<Technology> techs)
 		{
-			UnresearchedConstructionTechs = techs;
+			UnresearchedConstructionTechs = new List<Technology>(techs);
 			ResearchedConstructionTechs = new List<Technology>();
 			foreach (var tech in techs)
 			{
@@ -242,7 +244,7 @@ namespace Beyond_Beyaan
 		}
 		public void SetForceFieldTechs(List<Technology> techs)
 		{
-			UnresearchedForceFieldTechs = techs;
+			UnresearchedForceFieldTechs = new List<Technology>(techs);
 			ResearchedForceFieldTechs = new List<Technology>();
 			foreach (var tech in techs)
 			{
@@ -255,7 +257,7 @@ namespace Beyond_Beyaan
 		}
 		public void SetPlanetologyTechs(List<Technology> techs)
 		{
-			UnresearchedPlanetologyTechs = techs;
+			UnresearchedPlanetologyTechs = new List<Technology>(techs);
 			ResearchedPlanetologyTechs = new List<Technology>();
 			foreach (var tech in techs)
 			{
@@ -268,7 +270,7 @@ namespace Beyond_Beyaan
 		}
 		public void SetPropulsionTechs(List<Technology> techs)
 		{
-			UnresearchedPropulsionTechs = techs;
+			UnresearchedPropulsionTechs = new List<Technology>(techs);
 			ResearchedPropulsionTechs = new List<Technology>();
 			foreach (var tech in techs)
 			{
@@ -281,7 +283,7 @@ namespace Beyond_Beyaan
 		}
 		public void SetWeaponTechs(List<Technology> techs)
 		{
-			UnresearchedWeaponTechs = techs;
+			UnresearchedWeaponTechs = new List<Technology>(techs);
 			ResearchedWeaponTechs = new List<Technology>();
 			foreach (var tech in techs)
 			{
@@ -503,88 +505,56 @@ namespace Beyond_Beyaan
 		public void SetPercentage(TechField whichField, int amount)
 		{
 			int remainingPercentile = 100;
-			if (BeamLocked)
-			{
-				remainingPercentile -= BeamPercentage;
-			}
-			if (ParticleLocked)
-			{
-				remainingPercentile -= ParticlePercentage;
-			}
-			if (MissileLocked)
-			{
-				remainingPercentile -= MissilePercentage;
-			}
-			if (TorpedoLocked)
-			{
-				remainingPercentile -= TorpedoPercentage;
-			}
-			if (BombLocked)
-			{
-				remainingPercentile -= BombPercentage;
-			}
-			if (EngineLocked)
-			{
-				remainingPercentile -= EnginePercentage;
-			}
-			if (ShieldLocked)
-			{
-				remainingPercentile -= ShieldPercentage;
-			}
-			if (ArmorLocked)
-			{
-				remainingPercentile -= ArmorPercentage;
-			}
 			if (ComputerLocked)
 			{
 				remainingPercentile -= ComputerPercentage;
 			}
-			if (InfrastructureLocked)
+			if (ConstructionLocked)
 			{
-				remainingPercentile -= InfrastructurePercentage;
+				remainingPercentile -= ConstructionPercentage;
+			}
+			if (ForceFieldLocked)
+			{
+				remainingPercentile -= ForceFieldPercentage;
+			}
+			if (PlanetologyLocked)
+			{
+				remainingPercentile -= PlanetologyPercentage;
+			}
+			if (PropulsionLocked)
+			{
+				remainingPercentile -= PropulsionPercentage;
+			}
+			if (WeaponLocked)
+			{
+				remainingPercentile -= WeaponPercentage;
 			}
 
 			if (amount >= remainingPercentile)
 			{
-				if (!BeamLocked)
-				{
-					BeamPercentage = 0;
-				}
-				if (!ParticleLocked)
-				{
-					ParticlePercentage = 0;
-				}
-				if (!MissileLocked)
-				{
-					MissilePercentage = 0;
-				}
-				if (!TorpedoLocked)
-				{
-					TorpedoPercentage = 0;
-				}
-				if (!BombLocked)
-				{
-					BombPercentage = 0;
-				}
-				if (!EngineLocked)
-				{
-					EnginePercentage = 0;
-				}
-				if (!ShieldLocked)
-				{
-					ShieldPercentage = 0;
-				}
-				if (!ArmorLocked)
-				{
-					ArmorPercentage = 0;
-				}
 				if (!ComputerLocked)
 				{
 					ComputerPercentage = 0;
 				}
-				if (!InfrastructureLocked)
+				if (!ConstructionLocked)
 				{
-					InfrastructurePercentage = 0;
+					ConstructionPercentage = 0;
+				}
+				if (!ForceFieldLocked)
+				{
+					ForceFieldPercentage = 0;
+				}
+				if (!PlanetologyLocked)
+				{
+					PlanetologyPercentage = 0;
+				}
+				if (!PropulsionLocked)
+				{
+					PropulsionPercentage = 0;
+				}
+				if (!WeaponLocked)
+				{
+					WeaponPercentage = 0;
 				}
 				amount = remainingPercentile;
 			}
@@ -593,65 +563,41 @@ namespace Beyond_Beyaan
 			int totalPointsExcludingSelectedType = 0;
 			switch (whichField)
 			{
-				case TechField.ARMOR:
-					{
-						ArmorPercentage = amount;
-						remainingPercentile -= ArmorPercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.ARMOR);
-					} break;
-				case TechField.BEAM:
-					{
-						BeamPercentage = amount;
-						remainingPercentile -= BeamPercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.BEAM);
-					} break;
-				case TechField.BOMB:
-					{
-						BombPercentage = amount;
-						remainingPercentile -= BombPercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.BOMB);
-					} break;
 				case TechField.COMPUTER:
 					{
 						ComputerPercentage = amount;
 						remainingPercentile -= ComputerPercentage;
 						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.COMPUTER);
 					} break;
-				case TechField.ENGINE:
+				case TechField.CONSTRUCTION:
 					{
-						EnginePercentage = amount;
-						remainingPercentile -= EnginePercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.ENGINE);
+						ConstructionPercentage = amount;
+						remainingPercentile -= ConstructionPercentage;
+						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.CONSTRUCTION);
 					} break;
-				case TechField.INFRASTRUCTURE:
+				case TechField.FORCE_FIELD:
 					{
-						InfrastructurePercentage = amount;
-						remainingPercentile -= InfrastructurePercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.INFRASTRUCTURE);
+						ForceFieldPercentage = amount;
+						remainingPercentile -= ForceFieldPercentage;
+						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.FORCE_FIELD);
 					} break;
-				case TechField.MISSILE:
+				case TechField.PLANETOLOGY:
 					{
-						MissilePercentage = amount;
-						remainingPercentile -= MissilePercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.MISSILE);
+						PlanetologyPercentage = amount;
+						remainingPercentile -= PlanetologyPercentage;
+						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.PLANETOLOGY);
 					} break;
-				case TechField.PARTICLE:
+				case TechField.PROPULSION:
 					{
-						ParticlePercentage = amount;
-						remainingPercentile -= ParticlePercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.PARTICLE);
+						PropulsionPercentage = amount;
+						remainingPercentile -= PropulsionPercentage;
+						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.PROPULSION);
 					} break;
-				case TechField.SHIELD:
+				case TechField.WEAPON:
 					{
-						ShieldPercentage = amount;
-						remainingPercentile -= ShieldPercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.SHIELD);
-					} break;
-				case TechField.TORPEDO:
-					{
-						TorpedoPercentage = amount;
-						remainingPercentile -= TorpedoPercentage;
-						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.TORPEDO);
+						WeaponPercentage = amount;
+						remainingPercentile -= WeaponPercentage;
+						totalPointsExcludingSelectedType = GetTotalPercentageExcludingTypeAndLocked(TechField.WEAPON);
 					} break;
 			}
 
@@ -659,91 +605,55 @@ namespace Beyond_Beyaan
 			{
 				int amountToDeduct = totalPointsExcludingSelectedType - remainingPercentile;
 				int prevValue;
-				if (!InfrastructureLocked && whichField != TechField.INFRASTRUCTURE)
+				if (!ComputerLocked && whichField != TechField.COMPUTER)
 				{
-					prevValue = InfrastructurePercentage;
-					InfrastructurePercentage -= (InfrastructurePercentage >= amountToDeduct ? amountToDeduct : InfrastructurePercentage);
-					amountToDeduct -= (prevValue - InfrastructurePercentage);
+					prevValue = ComputerPercentage;
+					ComputerPercentage -= (ComputerPercentage >= amountToDeduct ? amountToDeduct : ComputerPercentage);
+					amountToDeduct -= (prevValue - ComputerPercentage);
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!EngineLocked && whichField != TechField.ENGINE)
+					if (!ConstructionLocked && whichField != TechField.CONSTRUCTION)
 					{
-						prevValue = EnginePercentage;
-						EnginePercentage -= (EnginePercentage >= amountToDeduct ? amountToDeduct : EnginePercentage);
-						amountToDeduct -= (prevValue - EnginePercentage);
+						prevValue = ConstructionPercentage;
+						ConstructionPercentage -= (ConstructionPercentage >= amountToDeduct ? amountToDeduct : ConstructionPercentage);
+						amountToDeduct -= (prevValue - ConstructionPercentage);
 					}
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!ShieldLocked && whichField != TechField.SHIELD)
+					if (!ForceFieldLocked && whichField != TechField.FORCE_FIELD)
 					{
-						prevValue = ShieldPercentage;
-						ShieldPercentage -= (ShieldPercentage >= amountToDeduct ? amountToDeduct : ShieldPercentage);
-						amountToDeduct -= (prevValue - ShieldPercentage);
+						prevValue = ForceFieldPercentage;
+						ForceFieldPercentage -= (ForceFieldPercentage >= amountToDeduct ? amountToDeduct : ForceFieldPercentage);
+						amountToDeduct -= (prevValue - ForceFieldPercentage);
 					}
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!ArmorLocked && whichField != TechField.ARMOR)
+					if (!PlanetologyLocked && whichField != TechField.PLANETOLOGY)
 					{
-						prevValue = ArmorPercentage;
-						ArmorPercentage -= (ArmorPercentage >= amountToDeduct ? amountToDeduct : ArmorPercentage);
-						amountToDeduct -= (prevValue - ArmorPercentage);
+						prevValue = PlanetologyPercentage;
+						PlanetologyPercentage -= (PlanetologyPercentage >= amountToDeduct ? amountToDeduct : PlanetologyPercentage);
+						amountToDeduct -= (prevValue - PlanetologyPercentage);
 					}
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!ComputerLocked && whichField != TechField.COMPUTER)
+					if (!PropulsionLocked && whichField != TechField.PROPULSION)
 					{
-						prevValue = ComputerPercentage;
-						ComputerPercentage -= (ComputerPercentage >= amountToDeduct ? amountToDeduct : ComputerPercentage);
-						amountToDeduct -= (prevValue - ComputerPercentage);
+						prevValue = PropulsionPercentage;
+						PropulsionPercentage -= (PropulsionPercentage >= amountToDeduct ? amountToDeduct : PropulsionPercentage);
+						amountToDeduct -= (prevValue - PropulsionPercentage);
 					}
 				}
 				if (amountToDeduct > 0)
 				{
-					if (!BombLocked && whichField != TechField.BOMB)
+					if (!WeaponLocked && whichField != TechField.WEAPON)
 					{
-						prevValue = BombPercentage;
-						BombPercentage -= (BombPercentage >= amountToDeduct ? amountToDeduct : BombPercentage);
-						amountToDeduct -= (prevValue - BombPercentage);
-					}
-				}
-				if (amountToDeduct > 0)
-				{
-					if (!BeamLocked && whichField != TechField.BEAM)
-					{
-						prevValue = BeamPercentage;
-						BeamPercentage -= (BeamPercentage >= amountToDeduct ? amountToDeduct : BeamPercentage);
-						amountToDeduct -= (prevValue - BeamPercentage);
-					}
-				}
-				if (amountToDeduct > 0)
-				{
-					if (!ParticleLocked && whichField != TechField.PARTICLE)
-					{
-						prevValue = ParticlePercentage;
-						ParticlePercentage -= (ParticlePercentage >= amountToDeduct ? amountToDeduct : ParticlePercentage);
-						amountToDeduct -= (prevValue - ParticlePercentage);
-					}
-				}
-				if (amountToDeduct > 0)
-				{
-					if (!MissileLocked && whichField != TechField.MISSILE)
-					{
-						prevValue = MissilePercentage;
-						MissilePercentage -= (MissilePercentage >= amountToDeduct ? amountToDeduct : MissilePercentage);
-						amountToDeduct -= (prevValue - MissilePercentage);
-					}
-				}
-				if (amountToDeduct > 0)
-				{
-					if (!TorpedoLocked && whichField != TechField.TORPEDO)
-					{
-						prevValue = TorpedoPercentage;
-						TorpedoPercentage -= (TorpedoPercentage >= amountToDeduct ? amountToDeduct : TorpedoPercentage);
-						amountToDeduct -= (prevValue - TorpedoPercentage);
+						prevValue = WeaponPercentage;
+						WeaponPercentage -= (WeaponPercentage >= amountToDeduct ? amountToDeduct : WeaponPercentage);
+						amountToDeduct -= (prevValue - WeaponPercentage);
 					}
 				}
 			}
@@ -751,80 +661,48 @@ namespace Beyond_Beyaan
 			if (remainingPercentile > totalPointsExcludingSelectedType) //excess points needed to allocate
 			{
 				int amountToAdd = remainingPercentile - totalPointsExcludingSelectedType;
-				if (!TorpedoLocked && whichField != TechField.TORPEDO)
+				if (!ComputerLocked && whichField != TechField.COMPUTER)
 				{
-					TorpedoPercentage += amountToAdd;
+					ComputerPercentage += amountToAdd;
 					amountToAdd = 0;
 				}
 				if (amountToAdd > 0)
 				{
-					if (!MissileLocked && whichField != TechField.MISSILE)
+					if (!ConstructionLocked && whichField != TechField.CONSTRUCTION)
 					{
-						MissilePercentage += amountToAdd;
+						ConstructionPercentage += amountToAdd;
 						amountToAdd = 0;
 					}
 				}
 				if (amountToAdd > 0)
 				{
-					if (!ParticleLocked && whichField != TechField.PARTICLE)
+					if (!ForceFieldLocked && whichField != TechField.FORCE_FIELD)
 					{
-						ParticlePercentage += amountToAdd;
+						ForceFieldPercentage += amountToAdd;
 						amountToAdd = 0;
 					}
 				}
 				if (amountToAdd > 0)
 				{
-					if (!BeamLocked && whichField != TechField.BEAM)
+					if (!PlanetologyLocked && whichField != TechField.PLANETOLOGY)
 					{
-						BeamPercentage += amountToAdd;
+						PlanetologyPercentage += amountToAdd;
 						amountToAdd = 0;
 					}
 				}
 				if (amountToAdd > 0)
 				{
-					if (!BombLocked && whichField != TechField.BOMB)
+					if (!PropulsionLocked && whichField != TechField.PROPULSION)
 					{
-						BombPercentage += amountToAdd;
+						PropulsionPercentage += amountToAdd;
 						amountToAdd = 0;
 					}
 				}
 				if (amountToAdd > 0)
 				{
-					if (!ComputerLocked && whichField != TechField.COMPUTER)
+					if (!WeaponLocked && whichField != TechField.WEAPON)
 					{
-						ComputerPercentage += amountToAdd;
-						amountToAdd = 0;
-					}
-				}
-				if (amountToAdd > 0)
-				{
-					if (!ArmorLocked && whichField != TechField.ARMOR)
-					{
-						ArmorPercentage += amountToAdd;
-						amountToAdd = 0;
-					}
-				}
-				if (amountToAdd > 0)
-				{
-					if (!ShieldLocked && whichField != TechField.SHIELD)
-					{
-						ShieldPercentage += amountToAdd;
-						amountToAdd = 0;
-					}
-				}
-				if (amountToAdd > 0)
-				{
-					if (!EngineLocked && whichField != TechField.ENGINE)
-					{
-						EnginePercentage += amountToAdd;
-						amountToAdd = 0;
-					}
-				}
-				if (amountToAdd > 0)
-				{
-					if (!InfrastructureLocked && whichField != TechField.INFRASTRUCTURE)
-					{
-						InfrastructurePercentage += amountToAdd;
+						WeaponPercentage += amountToAdd;
 						amountToAdd = 0;
 					}
 				}
@@ -833,35 +711,23 @@ namespace Beyond_Beyaan
 					//All fields are already checked, so have to add the remaining back to the current tech field
 					switch (whichField)
 					{
-						case TechField.ARMOR:
-							ArmorPercentage += amountToAdd;
-							break;
-						case TechField.BEAM:
-							BeamPercentage += amountToAdd;
-							break;
-						case TechField.BOMB:
-							BombPercentage += amountToAdd;
-							break;
 						case TechField.COMPUTER:
 							ComputerPercentage += amountToAdd;
 							break;
-						case TechField.ENGINE:
-							EnginePercentage += amountToAdd;
+						case TechField.CONSTRUCTION:
+							ConstructionPercentage += amountToAdd;
 							break;
-						case TechField.INFRASTRUCTURE:
-							InfrastructurePercentage += amountToAdd;
+						case TechField.FORCE_FIELD:
+							ForceFieldPercentage += amountToAdd;
 							break;
-						case TechField.MISSILE:
-							MissilePercentage += amountToAdd;
+						case TechField.PLANETOLOGY:
+							PlanetologyPercentage += amountToAdd;
 							break;
-						case TechField.PARTICLE:
-							ParticlePercentage += amountToAdd;
+						case TechField.PROPULSION:
+							PropulsionPercentage += amountToAdd;
 							break;
-						case TechField.SHIELD:
-							ShieldPercentage += amountToAdd;
-							break;
-						case TechField.TORPEDO:
-							TorpedoPercentage += amountToAdd;
+						case TechField.WEAPON:
+							WeaponPercentage += amountToAdd;
 							break;
 					}
 				}
@@ -872,45 +738,29 @@ namespace Beyond_Beyaan
 		{
 			int total = 0;
 
-			if (!BeamLocked && techField != TechField.BEAM)
-			{
-				total += BeamPercentage;
-			}
-			if (!ParticleLocked && techField != TechField.PARTICLE)
-			{
-				total += ParticlePercentage;
-			}
-			if (!BombLocked && techField != TechField.BOMB)
-			{
-				total += BombPercentage;
-			}
-			if (!MissileLocked && techField != TechField.MISSILE)
-			{
-				total += MissilePercentage;
-			}
-			if (!TorpedoLocked && techField != TechField.TORPEDO)
-			{
-				total += TorpedoPercentage;
-			}
 			if (!ComputerLocked && techField != TechField.COMPUTER)
 			{
 				total += ComputerPercentage;
 			}
-			if (!EngineLocked && techField != TechField.ENGINE)
+			if (!ConstructionLocked && techField != TechField.CONSTRUCTION)
 			{
-				total += EnginePercentage;
+				total += ConstructionPercentage;
 			}
-			if (!ArmorLocked && techField != TechField.ARMOR)
+			if (!ForceFieldLocked && techField != TechField.FORCE_FIELD)
 			{
-				total += ArmorPercentage;
+				total += ForceFieldPercentage;
 			}
-			if (!ShieldLocked && techField != TechField.SHIELD)
+			if (!PlanetologyLocked && techField != TechField.PLANETOLOGY)
 			{
-				total += ShieldPercentage;
+				total += PlanetologyPercentage;
 			}
-			if (!InfrastructureLocked && techField != TechField.INFRASTRUCTURE)
+			if (!PropulsionLocked && techField != TechField.PROPULSION)
 			{
-				total += InfrastructurePercentage;
+				total += PropulsionPercentage;
+			}
+			if (!WeaponLocked && techField != TechField.WEAPON)
+			{
+				total += WeaponPercentage;
 			}
 
 			return total;

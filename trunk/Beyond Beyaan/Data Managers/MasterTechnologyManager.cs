@@ -19,6 +19,8 @@ namespace Beyond_Beyaan.Data_Managers
 		#region Initialization functions
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
+			_gameMain = gameMain;
+
 			//Later we'll replace with data files, but for now, all techs are hard-coded
 			ComputerTechs = new List<Technology>();
 			ConstructionTechs = new List<Technology>();
@@ -78,6 +80,7 @@ namespace Beyond_Beyaan.Data_Managers
 
 		private void LoadConstructionTechs(int diffModifier)
 		{
+			ConstructionTechs.Add(new Technology("Reserve Fuel Tanks", "Extends the range of a ship by an additional 3 parsecs", 1, reserveFuelTanks: true));
 			ConstructionTechs.Add(new Technology("Titanium Armor", "Standard armor for ships and missile bases. Gives small ships 3 hit points, medium ships 18 hit points, large ships 100 hit points, and huge ships 600 hit points. Gives missile bases 15 hit points.", 1, armor: Technology.TITANIUM_ARMOR));
 			ConstructionTechs.Add(new Technology("Industrial Tech 9", "Reduces the cost to construct a factory to 9 BCs.", 3, industrialTech: 9));
 			ConstructionTechs.Add(new Technology("Reduced Industrial Waste 80%", "Reduces the pollution by factories to 80% of its original amount.", 5, industrialWaste:80));
@@ -136,68 +139,69 @@ namespace Beyond_Beyaan.Data_Managers
 
 		private void LoadPlanetologyTechs(int diffModifier)
 		{
-			PlanetologyTechs.Add(new Technology("Ecological Restoration", "Eliminates 2 units of pollution for 1 BC.", 1));
-			PlanetologyTechs.Add(new Technology("Terraforming +10", "Increases maximum colonist units on the terraformed planet by 10, for a cost of 50 BC.", 2));
-			PlanetologyTechs.Add(new Technology("Controlled Barren Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a barren or better environment.", 3));
-			PlanetologyTechs.Add(new Technology("Improved Ecological Restoration", "Eliminates 3 units of pollution for 1 BC.", 5));
-			PlanetologyTechs.Add(new Technology("Controlled Tundra Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a tundra or better environment.", 6));
-			PlanetologyTechs.Add(new Technology("Terraforming +20", "Increases maximum colonist units on the terraformed planet by 20, for a cost of 100 BC.", 9));
-			PlanetologyTechs.Add(new Technology("Controlled Dead Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a dead or better environment.", 10));
-			PlanetologyTechs.Add(new Technology("Death Spores", "Ship weapon that reduces the maximum population of a planet by 1 each time it is fired. This is not affected by shields.", 11));
-			PlanetologyTechs.Add(new Technology("Controlled Inferno Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a inferno or better environment.", 12));
-			PlanetologyTechs.Add(new Technology("Enhanced Ecological Restoration", "Eliminates 5 units of pollution for 1 BC.", 13));
-			PlanetologyTechs.Add(new Technology("Terraforming +30", "Increases maximum colonist units on the terraformed planet by 30, for a cost of 150 BC.", 14));
-			PlanetologyTechs.Add(new Technology("Controlled Toxic Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a Toxic or better environment.", 15));
-			PlanetologyTechs.Add(new Technology("Soil Enrichment", "Converts normal environments to fertile environments for a cost of 150 BC. Increases the base size of the planet by 25%.", 16));
-			PlanetologyTechs.Add(new Technology("Bio Toxin Antidote", "Reduces the damage to population from all death weapons by 1.", 17));
-			PlanetologyTechs.Add(new Technology("Controlled Radiated Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a radiated or better environment.", 18));
-			PlanetologyTechs.Add(new Technology("Terraforming +40", "Increases maximum colonist units on the terraformed planet by 40, for a cost of 200 BC.", 20));
-			PlanetologyTechs.Add(new Technology("Cloning", "Reduces the cost to create one unit of population to 10 BC.", 21));
+			PlanetologyTechs.Add(new Technology("Standard Colony Base", "Allows ships equipped with this to sacrifice themselves to create a colony.", 1, colony: Technology.STANDARD_COLONY));
+			PlanetologyTechs.Add(new Technology("Ecological Restoration", "Eliminates 2 units of pollution for 1 BC.", 1, ecoCleanup: 2));
+			PlanetologyTechs.Add(new Technology("Terraforming +10", "Increases maximum colonist units on the terraformed planet by 10, for a cost of 50 BC.", 2, terraforming: 10));
+			PlanetologyTechs.Add(new Technology("Controlled Barren Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a barren or better environment.", 3, colony: Technology.BARREN_COLONY));
+			PlanetologyTechs.Add(new Technology("Improved Ecological Restoration", "Eliminates 3 units of pollution for 1 BC.", 5, ecoCleanup: 3));
+			PlanetologyTechs.Add(new Technology("Controlled Tundra Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a tundra or better environment.", 6, colony: Technology.TUNDRA_COLONY));
+			PlanetologyTechs.Add(new Technology("Terraforming +20", "Increases maximum colonist units on the terraformed planet by 20, for a cost of 100 BC.", 9, terraforming: 20));
+			PlanetologyTechs.Add(new Technology("Controlled Dead Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a dead or better environment.", 10, colony: Technology.DEAD_COLONY));
+			PlanetologyTechs.Add(new Technology("Death Spores", "Ship weapon that reduces the maximum population of a planet by 1 each time it is fired. This is not affected by shields.", 11, bioWeapon: Technology.DEATH_SPORES));
+			PlanetologyTechs.Add(new Technology("Controlled Inferno Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a inferno or better environment.", 12, colony: Technology.INFERNO_COLONY));
+			PlanetologyTechs.Add(new Technology("Enhanced Ecological Restoration", "Eliminates 5 units of pollution for 1 BC.", 13, ecoCleanup: 5));
+			PlanetologyTechs.Add(new Technology("Terraforming +30", "Increases maximum colonist units on the terraformed planet by 30, for a cost of 150 BC.", 14, terraforming: 30));
+			PlanetologyTechs.Add(new Technology("Controlled Toxic Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a Toxic or better environment.", 15, colony: Technology.TOXIC_COLONY));
+			PlanetologyTechs.Add(new Technology("Soil Enrichment", "Converts normal environments to fertile environments for a cost of 150 BC. Increases the base size of the planet by 25%.", 16, enrichment: Technology.SOIL_ENRICHMENT));
+			PlanetologyTechs.Add(new Technology("Bio Toxin Antidote", "Reduces the damage to population from all death weapons by 1.", 17, bioAntidote: Technology.BIO_TOXIN_ANTIDOTE));
+			PlanetologyTechs.Add(new Technology("Controlled Radiated Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a radiated or better environment.", 18, colony: Technology.RADIATED_COLONY));
+			PlanetologyTechs.Add(new Technology("Terraforming +40", "Increases maximum colonist units on the terraformed planet by 40, for a cost of 200 BC.", 20, terraforming: 40));
+			PlanetologyTechs.Add(new Technology("Cloning", "Reduces the cost to create one unit of population to 10 BC.", 21, cloning: 10));
 			PlanetologyTechs.Add(new Technology("Atmospheric Terraforming", "Converts hostile environments to normal environments for a cost of 150 BCs.", 22));
-			PlanetologyTechs.Add(new Technology("Advanced Ecological Restoration", "Eliminates 10 units of pollution for 1 BC.", 24));
-			PlanetologyTechs.Add(new Technology("Terraforming +50", "Increases maximum colonist units on the terraformed planet by 50, for a cost of 250 BC.", 26));
-			PlanetologyTechs.Add(new Technology("Doom Virus", "Ship weapon that reduces the maximum population of a planet by 2 each time it is fired. This is not affected by shields.", 27));
-			PlanetologyTechs.Add(new Technology("Advanced Soil Enrichment", "Converts fertile environments to gaia environments for a cost of 300 BC. Increases the base size of the planet by 50%.", 30));
-			PlanetologyTechs.Add(new Technology("Terraforming +60", "Increases maximum colonist units on the terraformed planet by 60, for a cost of 300 BC.", 32));
-			PlanetologyTechs.Add(new Technology("Complete Ecological Restoration", "Eliminates 20 units of pollution for 1 BC.", 34));
-			PlanetologyTechs.Add(new Technology("Universal Antidote", "Reduces the damage to population from all death weapons by 2.", 36));
-			PlanetologyTechs.Add(new Technology("Terraforming +80", "Increases maximum colonist units on the terraformed planet by 80, for a cost of 400 BC.", 38));
-			PlanetologyTechs.Add(new Technology("Bio Terminator", "Ship weapon that reduces the maximum population of a planet by 3 each time it is fired. This is not affected by shields.", 40));
-			PlanetologyTechs.Add(new Technology("Advanced Cloning", "Reduces the cost to create one unit of population to 5 BC.", 42));
-			PlanetologyTechs.Add(new Technology("Terraforming +100", "Increases maximum colonist units on the terraformed planet by 100, for a cost of 500 BC.", 44));
-			PlanetologyTechs.Add(new Technology("Complete Terraforming", "Increases maximum colonist units on the terraformed planet by 120, for a cost of 600 BC.", 50));
+			PlanetologyTechs.Add(new Technology("Advanced Ecological Restoration", "Eliminates 10 units of pollution for 1 BC.", 24, ecoCleanup: 10));
+			PlanetologyTechs.Add(new Technology("Terraforming +50", "Increases maximum colonist units on the terraformed planet by 50, for a cost of 250 BC.", 26, terraforming: 50));
+			PlanetologyTechs.Add(new Technology("Doom Virus", "Ship weapon that reduces the maximum population of a planet by 2 each time it is fired. This is not affected by shields.", 27, bioWeapon: Technology.DOOM_VIRUS));
+			PlanetologyTechs.Add(new Technology("Advanced Soil Enrichment", "Converts fertile environments to gaia environments for a cost of 300 BC. Increases the base size of the planet by 50%.", 30, enrichment: Technology.ADV_SOIL_ENRICHMENT));
+			PlanetologyTechs.Add(new Technology("Terraforming +60", "Increases maximum colonist units on the terraformed planet by 60, for a cost of 300 BC.", 32, terraforming: 60));
+			PlanetologyTechs.Add(new Technology("Complete Ecological Restoration", "Eliminates 20 units of pollution for 1 BC.", 34, ecoCleanup: 20));
+			PlanetologyTechs.Add(new Technology("Universal Antidote", "Reduces the damage to population from all death weapons by 2.", 36, bioAntidote: Technology.UNIVERSAL_ANTIDOTE));
+			PlanetologyTechs.Add(new Technology("Terraforming +80", "Increases maximum colonist units on the terraformed planet by 80, for a cost of 400 BC.", 38, terraforming: 80));
+			PlanetologyTechs.Add(new Technology("Bio Terminator", "Ship weapon that reduces the maximum population of a planet by 3 each time it is fired. This is not affected by shields.", 40, bioWeapon: Technology.BIO_TERMINATOR));
+			PlanetologyTechs.Add(new Technology("Advanced Cloning", "Reduces the cost to create one unit of population to 5 BC.", 42, cloning: 5));
+			PlanetologyTechs.Add(new Technology("Terraforming +100", "Increases maximum colonist units on the terraformed planet by 100, for a cost of 500 BC.", 44, terraforming: 100));
+			PlanetologyTechs.Add(new Technology("Complete Terraforming", "Increases maximum colonist units on the terraformed planet by 120, for a cost of 600 BC.", 50, terraforming: 120));
 		}
 
 		private void LoadPropulsionTechs(int diffModifier)
 		{
-			PropulsionTechs.Add(new Technology("Retro Engines", "Allows equipped ships to travel at 1 parsec per turn and gives a maximum number of movement squares in space combat of 1.", 1));
-			PropulsionTechs.Add(new Technology("Hydrogen Fuel Cells", "Allows all ships to move a distance of 4 away from the owner's colonies.", 2));
-			PropulsionTechs.Add(new Technology("Deutrium Fuel Cells", "Allows all ships to move a distance of 5 away from the owner's colonies.", 5));
-			PropulsionTechs.Add(new Technology("Nuclear Engines", "Allows equipped ships to travel at 2 parsecs per turn and gives a maximum number of movement squares in space combat of 1.", 6));
-			PropulsionTechs.Add(new Technology("Irridium Fuel Cells", "Allows all ships to move a distance of 6 away from the owner's colonies.", 9));
-			PropulsionTechs.Add(new Technology("Inertial Stabilizer", "Increases the maneuverability rating of the equipped ship by 2 and increases the maximum number of movement squares in space combat by 1.", 10));
-			PropulsionTechs.Add(new Technology("Sub Light Drives", "Allows equipped ships to travel at 3 parsecs per turn and gives a maximum number of movement squares in space combat of 1.", 12));
-			PropulsionTechs.Add(new Technology("Dotomite Crystals", "Allows all ships to move a distance of 7 away from the owner's colonies.", 14));
-			PropulsionTechs.Add(new Technology("Energy Pulsar", "Deals 5 damage to all adjacent and diagonally adjacent ships plus 1 damage per 2 attacking ships.", 16));
-			PropulsionTechs.Add(new Technology("Fusion Drives", "Allows equipped ships to travel at 4 parsecs per turn and gives a maximum number of movement squares in space combat of 2.", 18));
-			PropulsionTechs.Add(new Technology("Uridium Fuel Cells", "Allows all ships to move a distance of 8 away from the owner's colonies.", 19));
-			PropulsionTechs.Add(new Technology("Warp Dissipator", "Ship special that reduces the defender's maneuverability rating by 0 - 1 per turn.", 20));
-			PropulsionTechs.Add(new Technology("Reajax II Fuel Cells", "Allows all ships to move a distance of 9 away from the owner's colonies.", 23));
-			PropulsionTechs.Add(new Technology("Impulse Drives", "Allows equipped ships to travel at 5 parsecs per turn and gives a maximum number of movement squares in space combat of 2.", 24));
-			PropulsionTechs.Add(new Technology("Intergalactic Star Gates", "Ships can travel between any colonies controlled by the owner that have star gates in 1 turn. Costs 3000 BCs to create. Constructed as if it were a ship design.", 27));
-			PropulsionTechs.Add(new Technology("Trilithium Crystals", "Allows all ships to move a distance of 10 away from the owner's colonies.", 29));
-			PropulsionTechs.Add(new Technology("Ion Drives", "Allows equipped ships to travel at 6 parsecs per turn and gives a maximum number of movement squares in space combat of 3.", 30));
-			PropulsionTechs.Add(new Technology("High Energy Focus", "Increases the attack range of all the direct fire weapons on the equipped ship by 3. This includes all weapons that are not missiles, torpedoes, death weapons, and bombs.", 34));
-			PropulsionTechs.Add(new Technology("Anti-Matter Drives", "Allows equipped ships to travel at 7 parsecs per turn and gives a maximum number of movement squares in space combat of 3.", 36));
-			PropulsionTechs.Add(new Technology("Sub Space Teleporter", "Equipped ships always move first in combat and can teleport directly to any square on the battle grid.", 38));
-			PropulsionTechs.Add(new Technology("Ionic Pulsar", "Deals 10 damage to all adjacent and diagonally adjacent ships plus 1 damage per 2 attacking ships.", 40));
-			PropulsionTechs.Add(new Technology("Thorium Cells", "Allows ships to travel an infinite distance from their owner's colonies.", 41));
-			PropulsionTechs.Add(new Technology("Inter-phased Drives", "Allows equipped ships to travel at 8 parsecs per turn and gives a maximum number of movement squares in space combat of 4.", 42));
-			PropulsionTechs.Add(new Technology("Sub Space Interdictor", "Nullifies the functionality of all sub-space teleporters in use over the owner's planets.", 43));
-			PropulsionTechs.Add(new Technology("Combat Transporters", "Ensures at least 50% of transporters land on the targeted planet.", 45));
-			PropulsionTechs.Add(new Technology("Inertial Nullifier", "Increases the maneuverability rating of the equipped ship by 4 and increases the maximum number of movement squares in space combat by 2.", 46));
-			PropulsionTechs.Add(new Technology("Hyper Drives", "Allows equipped ships to travel at 9 parsecs per turn and gives a maximum number of movement squares in space combat of 4.", 48));
-			PropulsionTechs.Add(new Technology("Displacement Device", "Causes 33% of all attacks to miss the target automatically.", 50));
+			PropulsionTechs.Add(new Technology("Retro Engines", "Allows equipped ships to travel at 1 parsec per turn and gives a maximum number of movement squares in space combat of 1.", 1, speed: 1, maneuverSpeed: 1));
+			PropulsionTechs.Add(new Technology("Hydrogen Fuel Cells", "Allows all ships to move a distance of 4 away from the owner's colonies.", 2, fuelRange: 4));
+			PropulsionTechs.Add(new Technology("Deutrium Fuel Cells", "Allows all ships to move a distance of 5 away from the owner's colonies.", 5, fuelRange: 5));
+			PropulsionTechs.Add(new Technology("Nuclear Engines", "Allows equipped ships to travel at 2 parsecs per turn and gives a maximum number of movement squares in space combat of 1.", 6, speed: 2, maneuverSpeed: 1));
+			PropulsionTechs.Add(new Technology("Irridium Fuel Cells", "Allows all ships to move a distance of 6 away from the owner's colonies.", 9, fuelRange: 6));
+			PropulsionTechs.Add(new Technology("Inertial Stabilizer", "Increases the maneuverability rating of the equipped ship by 2 and increases the maximum number of movement squares in space combat by 1.", 10, inertialstabilizer: true));
+			PropulsionTechs.Add(new Technology("Sub Light Drives", "Allows equipped ships to travel at 3 parsecs per turn and gives a maximum number of movement squares in space combat of 1.", 12, speed: 3, maneuverSpeed: 1));
+			PropulsionTechs.Add(new Technology("Dotomite Crystals", "Allows all ships to move a distance of 7 away from the owner's colonies.", 14, fuelRange: 7));
+			PropulsionTechs.Add(new Technology("Energy Pulsar", "Deals 5 damage to all adjacent and diagonally adjacent ships plus 1 damage per 2 attacking ships.", 16, energypulsar: true));
+			PropulsionTechs.Add(new Technology("Fusion Drives", "Allows equipped ships to travel at 4 parsecs per turn and gives a maximum number of movement squares in space combat of 2.", 18, speed: 4, maneuverSpeed: 2));
+			PropulsionTechs.Add(new Technology("Uridium Fuel Cells", "Allows all ships to move a distance of 8 away from the owner's colonies.", 19, fuelRange: 8));
+			PropulsionTechs.Add(new Technology("Warp Dissipator", "Ship special that reduces the defender's maneuverability rating by 0 - 1 per turn.", 20, warpDissipator: true));
+			PropulsionTechs.Add(new Technology("Reajax II Fuel Cells", "Allows all ships to move a distance of 9 away from the owner's colonies.", 23, fuelRange: 9));
+			PropulsionTechs.Add(new Technology("Impulse Drives", "Allows equipped ships to travel at 5 parsecs per turn and gives a maximum number of movement squares in space combat of 2.", 24, speed: 5, maneuverSpeed: 2));
+			PropulsionTechs.Add(new Technology("Intergalactic Star Gates", "Ships can travel between any colonies controlled by the owner that have star gates in 1 turn. Costs 3000 BCs to create. Constructed as if it were a ship design.", 27, stargate: true));
+			PropulsionTechs.Add(new Technology("Trilithium Crystals", "Allows all ships to move a distance of 10 away from the owner's colonies.", 29, fuelRange: 10));
+			PropulsionTechs.Add(new Technology("Ion Drives", "Allows equipped ships to travel at 6 parsecs per turn and gives a maximum number of movement squares in space combat of 3.", 30, speed: 6, maneuverSpeed: 3));
+			PropulsionTechs.Add(new Technology("High Energy Focus", "Increases the attack range of all the direct fire weapons on the equipped ship by 3. This includes all weapons that are not missiles, torpedoes, death weapons, and bombs.", 34, highEnergyFocus: true));
+			PropulsionTechs.Add(new Technology("Anti-Matter Drives", "Allows equipped ships to travel at 7 parsecs per turn and gives a maximum number of movement squares in space combat of 3.", 36, speed: 7, maneuverSpeed: 3));
+			PropulsionTechs.Add(new Technology("Sub Space Teleporter", "Equipped ships always move first in combat and can teleport directly to any square on the battle grid.", 38, subSpaceTeleporter: true));
+			PropulsionTechs.Add(new Technology("Ionic Pulsar", "Deals 10 damage to all adjacent and diagonally adjacent ships plus 1 damage per 2 attacking ships.", 40, ionicPulsar: true));
+			PropulsionTechs.Add(new Technology("Thorium Cells", "Allows ships to travel an infinite distance from their owner's colonies.", 41, fuelRange: int.MaxValue));
+			PropulsionTechs.Add(new Technology("Inter-phased Drives", "Allows equipped ships to travel at 8 parsecs per turn and gives a maximum number of movement squares in space combat of 4.", 42, speed: 8, maneuverSpeed: 4));
+			PropulsionTechs.Add(new Technology("Sub Space Interdictor", "Nullifies the functionality of all sub-space teleporters in use over the owner's planets.", 43, subspaceInterdictor: true));
+			PropulsionTechs.Add(new Technology("Combat Transporters", "Ensures at least 50% of transporters land on the targeted planet.", 45, combatTransporters: true));
+			PropulsionTechs.Add(new Technology("Inertial Nullifier", "Increases the maneuverability rating of the equipped ship by 4 and increases the maximum number of movement squares in space combat by 2.", 46, inertialNullifier: true));
+			PropulsionTechs.Add(new Technology("Hyper Drives", "Allows equipped ships to travel at 9 parsecs per turn and gives a maximum number of movement squares in space combat of 4.", 48, speed: 9, maneuverSpeed: 4));
+			PropulsionTechs.Add(new Technology("Displacement Device", "Causes 33% of all attacks to miss the target automatically.", 50, displacementDevice: true));
 		}
 
 		private void LoadWeaponTechs(int diffModifier)
@@ -254,7 +258,7 @@ namespace Beyond_Beyaan.Data_Managers
 		}
 		#endregion
 
-		public List<Technology> GetRandomizedComputerTechs(Random r)
+		public List<Technology> GetRandomizedComputerTechs()
 		{
 			while (true)
 			{
@@ -267,10 +271,10 @@ namespace Beyond_Beyaan.Data_Managers
 						//Include starting levels
 						randomList.Add(tech);
 					}
-					else if (r.Next(100) < 50)
+					else if (_gameMain.Random.Next(100) < 50)
 					{
 						randomList.Add(tech);
-						if (tech.TechName.StartsWith("Improved Robotic Controls"))
+						if (tech.RoboticControl > 2)
 						{
 							isValid = true;
 						}
@@ -282,7 +286,7 @@ namespace Beyond_Beyaan.Data_Managers
 				}
 			}
 		}
-		public List<Technology> GetRandomizedConstructionTechs(Random r)
+		public List<Technology> GetRandomizedConstructionTechs()
 		{
 			List<Technology> randomList = new List<Technology>();
 			foreach (var tech in ConstructionTechs)
@@ -292,14 +296,14 @@ namespace Beyond_Beyaan.Data_Managers
 					//Include starting levels
 					randomList.Add(tech);
 				}
-				else if (r.Next(100) < 50)
+				else if (_gameMain.Random.Next(100) < 50)
 				{
 					randomList.Add(tech);
 				}
 			}
 			return randomList;
 		}
-		public List<Technology> GetRandomizedForceFieldTechs(Random r)
+		public List<Technology> GetRandomizedForceFieldTechs()
 		{
 			while (true)
 			{
@@ -312,10 +316,10 @@ namespace Beyond_Beyaan.Data_Managers
 						//Include starting levels
 						randomList.Add(tech);
 					}
-					else if (r.Next(100) < 50)
+					else if (_gameMain.Random.Next(100) < 50)
 					{
 						randomList.Add(tech);
-						if (tech.TechName.Contains("Planetary"))
+						if (tech.PlanetaryShield > 0)
 						{
 							isValid = true;
 						}
@@ -327,7 +331,7 @@ namespace Beyond_Beyaan.Data_Managers
 				}
 			}
 		}
-		public List<Technology> GetRandomizedPlanetologyTechs(Random r)
+		public List<Technology> GetRandomizedPlanetologyTechs()
 		{
 			List<Technology> randomList = new List<Technology>();
 			foreach (var tech in PlanetologyTechs)
@@ -337,14 +341,14 @@ namespace Beyond_Beyaan.Data_Managers
 					//Include starting levels
 					randomList.Add(tech);
 				}
-				else if (r.Next(100) < 50)
+				else if (_gameMain.Random.Next(100) < 50)
 				{
 					randomList.Add(tech);
 				}
 			}
 			return randomList;
 		}
-		public List<Technology> GetRandomizedPropulsionTechs(Random r)
+		public List<Technology> GetRandomizedPropulsionTechs()
 		{
 			while (true)
 			{
@@ -357,10 +361,10 @@ namespace Beyond_Beyaan.Data_Managers
 						//Include starting levels
 						randomList.Add(tech);
 					}
-					else if (r.Next(100) < 50)
+					else if (_gameMain.Random.Next(100) < 50)
 					{
 						randomList.Add(tech);
-						if (tech.TechName.StartsWith("Hydrogen") || tech.TechName.StartsWith("Deutrium"))
+						if (tech.FuelRange == 4 || tech.FuelRange == 5)
 						{
 							isValid = true;
 						}
@@ -372,7 +376,7 @@ namespace Beyond_Beyaan.Data_Managers
 				}
 			}
 		}
-		public List<Technology> GetRandomizedWeaponTechs(Random r)
+		public List<Technology> GetRandomizedWeaponTechs()
 		{
 			while (true)
 			{
@@ -385,7 +389,7 @@ namespace Beyond_Beyaan.Data_Managers
 						//Include starting levels
 						randomList.Add(tech);
 					}
-					else if (r.Next(100) < 50)
+					else if (_gameMain.Random.Next(100) < 50)
 					{
 						randomList.Add(tech);
 						if (tech.TechName.Contains("Missile") || tech.TechName.Contains("Torpedo") || tech.TechName.Contains("Hyper"))

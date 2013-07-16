@@ -10,9 +10,10 @@ namespace Beyond_Beyaan
 	{
 		#region Variables
 		private List<Empire> empires;
-		private List<CombatToProcess> combatsToProcess;
+		//private List<CombatToProcess> combatsToProcess;
 		private Empire currentEmpire;
 		private int empireIter;
+		private GameMain _gameMain;
 		#endregion
 
 		#region Properties
@@ -21,22 +22,23 @@ namespace Beyond_Beyaan
 			//Current human empire
 			get { return currentEmpire; }
 		}
-		public List<CombatToProcess> CombatsToProcess
+		/*public List<CombatToProcess> CombatsToProcess
 		{
 			get { return combatsToProcess; }
 		}
 		public bool HasCombat
 		{
 			get { return combatsToProcess.Count > 0; }
-		}
+		}*/
 		#endregion
 
 		#region Constructors
-		public EmpireManager()
+		public EmpireManager(GameMain gameMain)
 		{
+			_gameMain = gameMain;
 			empires = new List<Empire>();
 			empireIter = -1;
-			combatsToProcess = new List<CombatToProcess>();
+			//combatsToProcess = new List<CombatToProcess>();
 		}
 		#endregion
 
@@ -168,14 +170,14 @@ namespace Beyond_Beyaan
 				empire.PlanetManager.UpdatePopGrowth();
 				empire.CheckForBuiltShips();
 				empire.UpdateResearchPoints();
-				empire.TechnologyManager.ProcessResearchTurn(empire.ResearchPoints, empire.SitRepManager);
+				empire.TechnologyManager.ProcessResearchTurn(empire.ResearchPoints, _gameMain.Random, empire.SitRepManager);
 				empire.ContactManager.UpdateContacts(empire.SitRepManager);
 			}
 		}
 
 		public void LookForCombat()
 		{
-			List<Fleet> fleets = new List<Fleet>();
+			/*List<Fleet> fleets = new List<Fleet>();
 			foreach (Empire empire in empires)
 			{
 				foreach (Fleet fleet in empire.FleetManager.GetFleets())
@@ -185,7 +187,7 @@ namespace Beyond_Beyaan
 			}
 			combatsToProcess = new List<CombatToProcess>();
 			CombatToProcess combatToProcess = new CombatToProcess(0, 0, fleets);
-			combatsToProcess.Add(combatToProcess);
+			combatsToProcess.Add(combatToProcess);*/
 		}
 
 		/*public void UpdateInfluenceMaps(Galaxy galaxy)

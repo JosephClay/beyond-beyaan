@@ -222,8 +222,12 @@ namespace Beyond_Beyaan
 			technologyManager = new TechnologyManager();
 			try
 			{
-				string techPath = Path.Combine(gameMain.GameDataSet.FullName, "technologies.txt");
-				technologyManager.LoadTechnologies(techPath);
+				technologyManager.SetComputerTechs(gameMain.MasterTechnologyManager.GetRandomizedComputerTechs());
+				technologyManager.SetConstructionTechs(gameMain.MasterTechnologyManager.GetRandomizedConstructionTechs());
+				technologyManager.SetForceFieldTechs(gameMain.MasterTechnologyManager.GetRandomizedForceFieldTechs());
+				technologyManager.SetPlanetologyTechs(gameMain.MasterTechnologyManager.GetRandomizedPlanetologyTechs());
+				technologyManager.SetPropulsionTechs(gameMain.MasterTechnologyManager.GetRandomizedPropulsionTechs());
+				technologyManager.SetWeaponTechs(gameMain.MasterTechnologyManager.GetRandomizedWeaponTechs());
 			}
 			catch (Exception e)
 			{

@@ -132,7 +132,7 @@ namespace Beyond_Beyaan
 			ships = new Dictionary<Ship, int>();
 			orderedShips = new List<Ship>();
 			transportShips = new List<TransportShip>();
-			remainingMoves = maxSpeed;
+			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 		}
 		#endregion
 
@@ -142,16 +142,20 @@ namespace Beyond_Beyaan
 			maxSpeed = int.MaxValue;
 			foreach (Ship ship in orderedShips)
 			{
-				if (ship.engine.GetGalaxySpeed() < maxSpeed)
+				if (ship.Engine.Speed < maxSpeed)
 				{
-					maxSpeed = ship.engine.GetGalaxySpeed();
+					maxSpeed = ship.Engine.Speed;
 				}
 			}
 			if (transportShips.Count > 0)
 			{
 				maxSpeed -= 1;
+				if (maxSpeed == 0)
+				{
+					maxSpeed = 1;
+				}
 			}
-			remainingMoves = maxSpeed;
+			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 		}
 
 		public void SetTentativePath(StarSystem destination, Galaxy galaxy)
@@ -316,7 +320,7 @@ namespace Beyond_Beyaan
 		public void ResetMove()
 		{
 			UpdateSpeed();
-			remainingMoves = maxSpeed;
+			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 		}
 
 		public bool Move(float frameDeltaTime)
@@ -328,7 +332,7 @@ namespace Beyond_Beyaan
 			if (remainingMoves > 0)
 			{
 				adjacentSystem = null; //Left the system
-				float amountToMove = frameDeltaTime * maxSpeed;
+				float amountToMove = frameDeltaTime * maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 				if (amountToMove > remainingMoves)
 				{
 					amountToMove = remainingMoves;

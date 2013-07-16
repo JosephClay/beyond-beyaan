@@ -81,10 +81,10 @@ namespace Beyond_Beyaan.Screens
 					case 3:
 						//gameMain.EmpireManager.UpdateMigration(gameMain.Galaxy);
 						//gameMain.EmpireManager.LookForCombat();
-						if (gameMain.EmpireManager.HasCombat)
+						/*if (gameMain.EmpireManager.HasCombat)
 						{
 							gameMain.ChangeToScreen(Screen.Battle);
-						}
+						}*/
 						break;
 					case 4:
 						updateSection = -1;
