@@ -7,7 +7,7 @@ using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class SpaceCombat : ScreenInterface
+	/*class SpaceCombat : ScreenInterface
 	{
 		const int COMBATSIZE = 200;
 
@@ -43,25 +43,25 @@ namespace Beyond_Beyaan.Screens
 			{
 				selectedShip = value;
 				shipNameLabel.SetText(selectedShip.Name);
-				engineLabel.SetText(selectedShip.engine.GetName());
-				armorLabel.SetText(selectedShip.armor.GetName());
-				shieldLabel.SetText(selectedShip.shield.GetName());
-				computerLabel.SetText(selectedShip.computer.GetName());				
-				if (selectedShip.weapons.Count > 6)
+				engineLabel.SetText(selectedShip.Engine.TechName);
+				armorLabel.SetText(selectedShip.Armor.TechName);
+				shieldLabel.SetText(selectedShip.Shield.TechName);
+				computerLabel.SetText(selectedShip.Computer.TechName);
+				if (selectedShip.Weapons.Count > 6)
 				{
 					maxVisible = 6;
 					weaponScrollBar.SetEnabledState(true);
-					weaponScrollBar.SetAmountOfItems(selectedShip.weapons.Count);
+					weaponScrollBar.SetAmountOfItems(selectedShip.Weapons.Count);
 				}
 				else
 				{
-					maxVisible = selectedShip.weapons.Count;
+					maxVisible = selectedShip.Weapons.Count;
 					weaponScrollBar.SetEnabledState(false);
 					weaponScrollBar.SetAmountOfItems(6);
 				}
 				for (int i = 0; i < maxVisible; i++)
 				{
-					string text = selectedShip.weapons[i].GetName() + " x " + selectedShip.weapons[i].Mounts;
+					string text = selectedShip.Weapons[i].TechName; //+ " x " + selectedShip.Weapons[i].Mounts;
 					weaponButtons[i].SetButtonText(text);
 				}
 				selectedWeapon = 0;
@@ -71,7 +71,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				weaponButtons[selectedWeapon].Selected = true;
 				weaponScrollBar.TopIndex = 0;
-				hitPointsLabel.SetText("HP: " + string.Format("{0}", selectedShip.CurrentHitPoints) + "/" + selectedShip.armor.GetHP(selectedShip.TotalSpace));
+				//hitPointsLabel.SetText("HP: " + string.Format("{0}", selectedShip.CurrentHitPoints) + "/" + selectedShip.Armor.GetHP(selectedShip.TotalSpace));
 			}
 		}
 
@@ -223,7 +223,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				weaponScrollBar.DrawScrollBar(drawingManagement);
 			}*/
-		}
+		/*}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
@@ -269,7 +269,7 @@ namespace Beyond_Beyaan.Screens
 				return;
 			}
 			camera.HandleUpdate(mouseX, mouseY, frameDeltaTime);*/
-		}
+		/*}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
@@ -409,7 +409,7 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 			IsClickOnShip(x, y);*/
-		}
+		/*}
 
 		public void MouseScroll(int direction, int x, int y)
 		{
@@ -417,7 +417,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				camera.MouseWheel(direction, x, y);
 			}*/
-		}
+		/*}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
@@ -448,7 +448,7 @@ namespace Beyond_Beyaan.Screens
 					}
 				}
 			}*/
-		}
+		/*}
 
 		public void SetupBattle(List<Fleet> fleets, StarSystem system)
 		{
@@ -489,7 +489,7 @@ namespace Beyond_Beyaan.Screens
 			selectedShipIter = 0;
 			SelectedShip = fleetsInCombat[0].combatShips[selectedShipIter];
 			camera.CenterCamera(SelectedShip.X, SelectedShip.Y);*/
-		}
+		/*}
 
 		private void MoveToNextEmpireTurn()
 		{
@@ -525,6 +525,6 @@ namespace Beyond_Beyaan.Screens
 				selectedShip = retreatingShips[0];
 				camera.CenterCamera(selectedShip.X, selectedShip.Y);
 			}*/
-		}
-	}
+	//	}
+	//}
 }

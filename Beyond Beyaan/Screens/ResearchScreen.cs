@@ -8,7 +8,7 @@ namespace Beyond_Beyaan.Screens
 {
 	class ResearchScreen : ScreenInterface
 	{
-		private const int BEAM = 0;
+		/*private const int BEAM = 0;
 		private const int PARTICLE = 1;
 		private const int MISSILE = 2;
 		private const int TORPEDO = 3;
@@ -33,11 +33,11 @@ namespace Beyond_Beyaan.Screens
 
 		private int whichField;
 		private int maxVisible;
-		private int techIndex;
+		private int techIndex;*/
 
 		public void Initialize(GameMain gameMain)
 		{
-			this.gameMain = gameMain;
+			/*this.gameMain = gameMain;
 
 			int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
@@ -70,12 +70,12 @@ namespace Beyond_Beyaan.Screens
 			availableScrollBar = new ScrollBar(x + 770, y + 4, 16, 342, 12, 30, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
 				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
 				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
-			availableScrollBar.SetEnabledState(false);
+			availableScrollBar.SetEnabledState(false);*/
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			gameMain.DrawGalaxyBackground();
+			/*gameMain.DrawGalaxyBackground();
 
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, (gameMain.ScreenWidth / 2) - 400, (gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
 
@@ -94,12 +94,12 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			availableScrollBar.DrawScrollBar(drawingManagement);
-			researchPointsLabel.Draw();
+			researchPointsLabel.Draw();*/
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			for (int i = 0; i < techScrollBars.Length; i++)
+			/*for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				if (techScrollBars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
 				{
@@ -155,12 +155,12 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				availableTechs[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			}
+			}*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			for (int i = 0; i < techScrollBars.Length; i++)
+			/*for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				techScrollBars[i].MouseDown(x, y);
 				lockedButtons[i].MouseDown(x, y);
@@ -173,12 +173,12 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				availableTechs[i].MouseDown(x, y);
-			}
+			}*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			for (int i = 0; i < techScrollBars.Length; i++)
+			/*for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				if (techScrollBars[i].MouseUp(x, y))
 				{
@@ -367,7 +367,7 @@ namespace Beyond_Beyaan.Screens
 							} break;
 					}
 				}
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -376,15 +376,15 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-			if (e.Key == KeyboardKeys.Escape)
+			/*if (e.Key == KeyboardKeys.Escape)
 			{
 				gameMain.ChangeToScreen(Screen.Galaxy);
-			}
+			}*/
 		}
 
 		public void LoadPoints(float researchPoints)
 		{
-			this.researchPoints = researchPoints;
+			/*this.researchPoints = researchPoints;
 			researchPointsLabel.SetText("Research Points: " + researchPoints);
 
 			TechnologyManager techManager = gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
@@ -461,10 +461,10 @@ namespace Beyond_Beyaan.Screens
 			}
 			researchingTechNames[whichField].Selected = true;
 			techIndex = 0;
-			RefreshAvailableTechs();
+			RefreshAvailableTechs();*/
 		}
 
-		private void SetPercentages(TechnologyManager techManager)
+		/*private void SetPercentages(TechnologyManager techManager)
 		{
 			techScrollBars[BEAM].TopIndex = techManager.BeamPercentage;
 			techScrollBars[PARTICLE].TopIndex = techManager.ParticlePercentage;
@@ -606,6 +606,6 @@ namespace Beyond_Beyaan.Screens
 						availableScrollBar.SetEnabledState(techManager.VisibleInfrastructures.Count > 12);
 					} break;
 			}
-		}
+		}*/
 	}
 }

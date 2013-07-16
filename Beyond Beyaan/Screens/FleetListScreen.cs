@@ -9,7 +9,7 @@ namespace Beyond_Beyaan.Screens
 {
 	class FleetListScreen : ScreenInterface
 	{
-		GameMain gameMain;
+		/*GameMain gameMain;
 
 		Label fleetLabel;
 		Label shipLabel;
@@ -56,11 +56,11 @@ namespace Beyond_Beyaan.Screens
 		Fleet hoveringFleet;
 
 		Ship shipSelected;
-		private BBSprite shipSprite;
+		private BBSprite shipSprite;*/
 
 		public void Initialize(GameMain gameMain)
 		{
-			this.gameMain = gameMain;
+			/*this.gameMain = gameMain;
 
 			int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
@@ -108,12 +108,12 @@ namespace Beyond_Beyaan.Screens
 				weaponTexts[i] = new SingleLineTextBox(x + 450, y + 425, 200, 23, SpriteName.MiniBackgroundButton);
 				mountsTexts[i] = new SingleLineTextBox(x + 675, y + 425, 40, 23, SpriteName.MiniBackgroundButton);
 				shotsTexts[i] = new SingleLineTextBox(x + 730, y + 425, 40, 23, SpriteName.MiniBackgroundButton);
-			}
+			}*/
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			gameMain.DrawGalaxyBackground();
+			/*gameMain.DrawGalaxyBackground();
 
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, (gameMain.ScreenWidth / 2) - 400, (gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
 			drawingManagement.DrawSprite(SpriteName.Screen, (gameMain.ScreenWidth / 2), (gameMain.ScreenHeight / 2) - 300, 255, 399, 399, System.Drawing.Color.White);
@@ -168,7 +168,7 @@ namespace Beyond_Beyaan.Screens
 				armorText.Draw(drawingManagement);
 				shieldText.Draw(drawingManagement);
 
-				maxVisible = shipSelected.weapons.Count > weaponTexts.Length ? weaponTexts.Length : shipSelected.weapons.Count;
+				maxVisible = shipSelected.Weapons.Count > weaponTexts.Length ? weaponTexts.Length : shipSelected.Weapons.Count;
 
 				for (int i = 0; i < maxVisible; i++)
 				{
@@ -176,12 +176,12 @@ namespace Beyond_Beyaan.Screens
 					mountsTexts[i].Draw(drawingManagement);
 					shotsTexts[i].Draw(drawingManagement);
 				}
-			}
+			}*/
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
+			/*int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			hoveringFleet = null;
 			for (int i = 0; i < maxVisible; i++)
 			{
@@ -201,12 +201,12 @@ namespace Beyond_Beyaan.Screens
 			scrapFleet.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			scrapShip.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			showOtherFleets.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			showOurFleets.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+			showOurFleets.UpdateHovering(mouseX, mouseY, frameDeltaTime);*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
+			/*int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			for (int i = 0; i < maxVisible; i++)
 			{
 				fleetButtons[i].MouseDown(x, y);
@@ -222,12 +222,12 @@ namespace Beyond_Beyaan.Screens
 			scrapFleet.MouseDown(x, y);
 			scrapShip.MouseDown(x, y);
 			showOtherFleets.MouseDown(x, y);
-			showOurFleets.MouseDown(x, y);
+			showOurFleets.MouseDown(x, y);*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
+			/*int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			for (int i = 0; i < maxVisible; i++)
 			{
 				if (fleetButtons[i].MouseUp(x, y))
@@ -279,7 +279,7 @@ namespace Beyond_Beyaan.Screens
 				showOurFleets.Selected = !showOurFleets.Selected;
 				UpdateList();
 				UpdateLabels();
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -288,19 +288,19 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-			if (e.Key == KeyboardKeys.Escape)
+			/*if (e.Key == KeyboardKeys.Escape)
 			{
 				gameMain.ChangeToScreen(Screen.Galaxy);
 			}
 			if (e.Key == KeyboardKeys.Space)
 			{
 				gameMain.ToggleSitRep();
-			}
+			}*/
 		}
 
 		public void LoadScreen()
 		{
-			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
+			/*Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
 			ownedFleets = currentEmpire.FleetManager.GetFleets();
 			otherFleets = currentEmpire.VisibleFleets;
 			allFleets = new List<Fleet>();
@@ -322,10 +322,10 @@ namespace Beyond_Beyaan.Screens
 			fleetSelected = null;
 
 			UpdateList();
-			UpdateLabels();
+			UpdateLabels();*/
 		}
 
-		public void UpdateLabels()
+		/*public void UpdateLabels()
 		{
 			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			for (int i = 0; i < maxVisible; i++)
@@ -404,10 +404,10 @@ namespace Beyond_Beyaan.Screens
 						shipSelected = ship.Key;
 						nameText.SetString(shipSelected.Name);
 						sizeText.SetString(Utility.ShipSizeToString(shipSelected.Size));
-						engineText.SetString(shipSelected.engine.GetName());
-						computerText.SetString(shipSelected.computer.GetName());
-						armorText.SetString(shipSelected.armor.GetName());
-						shieldText.SetString(shipSelected.shield.GetName());
+						engineText.SetString(shipSelected.Engine.TechName);
+						computerText.SetString(shipSelected.Computer.TechName);
+						armorText.SetString(shipSelected.Armor.TechName);
+						shieldText.SetString(shipSelected.Shield.TechName);
 						weaponIndex = 0;
 						UpdateWeaponSpecs();
 						LoadShipSprite(whichFleets[selectedFleet - fleetIndex].Empire, ship.Key);
@@ -463,6 +463,6 @@ namespace Beyond_Beyaan.Screens
 		private void LoadShipSprite(Empire empire, Ship ship)
 		{
 			shipSprite = empire.EmpireRace.GetShip(ship.Size, ship.WhichStyle);
-		}
+		}*/
 	}
 }

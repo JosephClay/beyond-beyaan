@@ -38,6 +38,24 @@ namespace Beyond_Beyaan
 
 		public const int ZYRO_SHIELD = 1;
 		public const int LIGHTNING_SHIELD = 2;
+
+		public const int STANDARD_COLONY = 1;
+		public const int BARREN_COLONY = 2;
+		public const int TUNDRA_COLONY = 3;
+		public const int DEAD_COLONY = 4;
+		public const int INFERNO_COLONY = 5;
+		public const int TOXIC_COLONY = 6;
+		public const int RADIATED_COLONY = 7;
+
+		public const int DEATH_SPORES = 1;
+		public const int DOOM_VIRUS = 2;
+		public const int BIO_TERMINATOR = 3;
+
+		public const int BIO_TOXIN_ANTIDOTE = 1;
+		public const int UNIVERSAL_ANTIDOTE = 2;
+
+		public const int SOIL_ENRICHMENT = 1;
+		public const int ADV_SOIL_ENRICHMENT = 2;
 		#endregion
 
 		public int TechLevel { get; private set; }
@@ -61,7 +79,18 @@ namespace Beyond_Beyaan
 		public int PersonalShield { get; private set; }
 		public int PlanetaryShield { get; private set; }
 		public int MissileShield { get; private set; }
+		public int EcoCleanup { get; private set; }
+		public int Terraforming { get; private set; }
+		public int Colony { get; private set; }
+		public int Cloning { get; private set; }
+		public int BioWeapon { get; private set; }
+		public int BioAntidote { get; private set; }
+		public int Enrichment { get; private set; }
+		public int Speed { get; private set; }
+		public int ManeuverSpeed { get; private set; }
+		public int FuelRange { get; private set; }
 
+		public bool ReserveFuelTanks { get; private set; }
 		public bool BattleScanner { get; private set; }
 		public bool HyperSpaceCommunicator { get; private set; }
 		public bool OracleInterface { get; private set; }
@@ -70,6 +99,17 @@ namespace Beyond_Beyaan
 		public bool CloakingDevice { get; private set; }
 		public bool StatisField { get; private set; }
 		public bool BlackHoleGenerator { get; private set; }
+		public bool InertialStabilizer { get; private set; }
+		public bool EnergyPulsar { get; private set; }
+		public bool WarpDissipator { get; private set; }
+		public bool HighEnergyFocus { get; private set; }
+		public bool Stargate { get; private set; }
+		public bool SubspaceTeleporter { get; private set; }
+		public bool IonicPulsar { get; private set; }
+		public bool SubspaceInterdictor { get; private set; }
+		public bool CombatTransporters { get; private set; }
+		public bool InertialNullifier { get; private set; }
+		public bool DisplacementDevice { get; private set; }
 
 		public Technology(string name, string desc, int level,
 						//Optional arguments goes here
@@ -82,7 +122,8 @@ namespace Beyond_Beyaan
 						bool oracleInterface = false,
 						bool technologyNullifier = false,
 						int armor = 0,
-						int industrialTech = 0,
+						bool reserveFuelTanks = false,
+						int industrialTech = 10,
 						int industrialWaste = 100,
 						int groundArmor = 0,
 						int repair = 0,
@@ -93,7 +134,28 @@ namespace Beyond_Beyaan
 						bool cloakingDevice = false,
 						int missileShield = 0,
 						bool statisField = false,
-						bool blackHoleGenerator = false
+						bool blackHoleGenerator = false,
+						int ecoCleanup = 0,
+						int terraforming = 0,
+						int colony = 0,
+						int cloning = 20,
+						int bioWeapon = 0,
+						int bioAntidote = 0,
+						int enrichment = 0,
+						int speed = 0,
+						int maneuverSpeed = 0,
+						int fuelRange = 0,
+						bool inertialstabilizer = false,
+						bool energypulsar = false,
+						bool warpDissipator = false,
+						bool highEnergyFocus = false,
+						bool stargate = false,
+						bool subSpaceTeleporter = false,
+						bool ionicPulsar = false,
+						bool subspaceInterdictor = false,
+						bool combatTransporters = false,
+						bool inertialNullifier = false,
+						bool displacementDevice = false
 						)
 		{
 			TechLevel = level;
@@ -108,6 +170,7 @@ namespace Beyond_Beyaan
 			OracleInterface = oracleInterface;
 			TechnologyNullifier = technologyNullifier;
 			Armor = armor;
+			ReserveFuelTanks = reserveFuelTanks;
 			IndustrialTech = industrialTech;
 			IndustrialWaste = industrialWaste;
 			GroundArmor = groundArmor;
@@ -120,6 +183,26 @@ namespace Beyond_Beyaan
 			MissileShield = missileShield;
 			StatisField = statisField;
 			BlackHoleGenerator = blackHoleGenerator;
+			EcoCleanup = ecoCleanup;
+			Terraforming = terraforming;
+			Colony = colony;
+			Cloning = cloning;
+			BioWeapon = bioWeapon;
+			BioAntidote = bioAntidote;
+			Enrichment = enrichment;
+			Speed = speed;
+			ManeuverSpeed = maneuverSpeed;
+			FuelRange = fuelRange;
+			InertialStabilizer = inertialstabilizer;
+			EnergyPulsar = energypulsar;
+			WarpDissipator = warpDissipator;
+			HighEnergyFocus = highEnergyFocus;
+			SubspaceTeleporter = subSpaceTeleporter;
+			IonicPulsar = ionicPulsar;
+			SubspaceInterdictor = subspaceInterdictor;
+			CombatTransporters = combatTransporters;
+			InertialNullifier = inertialNullifier;
+			DisplacementDevice = displacementDevice;
 		}
 	}
 

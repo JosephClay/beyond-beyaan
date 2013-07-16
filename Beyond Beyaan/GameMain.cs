@@ -24,7 +24,7 @@ namespace Beyond_Beyaan
 		private PlanetsScreen _planetsScreen;
 		private ResearchScreen _researchScreen;
 		private ProcessingTurnScreen _processingTurnScreen;
-		private SpaceCombat _spaceCombat;
+		//private SpaceCombat _spaceCombat;
 		private TaskBar _taskBar;
 		private SituationReport _situationReport;
 		private Screen _currentScreen;
@@ -39,6 +39,7 @@ namespace Beyond_Beyaan
 		internal EmpireManager EmpireManager { get; private set; }
 		internal RaceManager RaceManager { get; private set; }
 		internal AIManager AIManager { get; private set; }
+		internal MasterTechnologyManager MasterTechnologyManager { get; private set; }
 		internal int ScreenWidth { get; private set; }
 		internal int ScreenHeight { get; private set; }
 		internal GorgonLibrary.Graphics.FXShader ShipShader { get; private set; }
@@ -64,7 +65,7 @@ namespace Beyond_Beyaan
 			GameDataSet = dataSet;
 
 			Galaxy = new Galaxy();
-			EmpireManager = new EmpireManager();
+			EmpireManager = new EmpireManager(this);
 
 			ShipShader = GorgonLibrary.Graphics.FXShader.FromFile("ColorShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
 			StarShader = GorgonLibrary.Graphics.FXShader.FromFile("StarShader.fx", GorgonLibrary.Graphics.ShaderCompileOptions.OptimizationLevel3);
@@ -92,7 +93,11 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-
+			MasterTechnologyManager = new Data_Managers.MasterTechnologyManager();
+			if (!MasterTechnologyManager.Initialize(this, out reason))
+			{
+				return false;
+			}
 			_mainGameMenu = new MainGameMenu();
 			_mainGameMenu.Initialize(this);
 
@@ -121,7 +126,7 @@ namespace Beyond_Beyaan
 		{
 			//Used when exiting out of current game (new game for example)
 			_taskBar.SetToScreen(Screen.MainMenu);
-			EmpireManager = new EmpireManager();
+			EmpireManager = new EmpireManager(this);
 			AIManager = new AIManager();
 			RaceManager = new RaceManager();
 			_situationReport.Clear();
@@ -359,13 +364,13 @@ namespace Beyond_Beyaan
 					_taskBar.Hide = true;
 					break;
 				case Screen.Battle:
-					if (_spaceCombat == null)
+					/*if (_spaceCombat == null)
 					{
 						_spaceCombat = new SpaceCombat();
 						_spaceCombat.Initialize(this);
 					}
 					_spaceCombat.SetupScreen();
-					_screenInterface = _spaceCombat;
+					_screenInterface = _spaceCombat;*/
 					break;
 			}
 			_currentScreen = whichScreen;

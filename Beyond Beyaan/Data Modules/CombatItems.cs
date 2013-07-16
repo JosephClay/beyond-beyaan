@@ -6,7 +6,7 @@ using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan.Data_Modules
 {
-	class CombatShip : Ship
+	/*class CombatShip : Ship
 	{
 		private int amount;
 		public Label AmountLabel { get; private set; }
@@ -218,5 +218,5 @@ namespace Beyond_Beyaan.Data_Modules
 			this.y = y;
 			this.fleetsInCombat = fleetsInCombat;
 		}
-	}
+	}*/
 }
