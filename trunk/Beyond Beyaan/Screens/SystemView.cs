@@ -253,12 +253,23 @@ namespace Beyond_Beyaan.Screens
 			base.MoveWindow();
 			_name.MoveTo(xPos + 10, yPos + 15);
 			_terrainLabel.Move(xPos + 55, yPos + 60);
-			_popLabel.Move(xPos + 55, yPos + 85);
-			_infrastructureBackground.MoveTo(xPos + 10, yPos + 180);
-			_researchBackground.MoveTo(xPos + 10, yPos + 260);
-			_environmentBackground.MoveTo(xPos + 10, yPos + 340);
-			_defenseBackground.MoveTo(xPos + 10, yPos + 420);
-			_constructionBackground.MoveTo(xPos + 10, yPos + 500);
+			_popLabel.Move(xPos + 55, yPos + 80);
+			_infrastructureBackground.MoveTo(xPos + 10, yPos + 130);
+			_researchBackground.MoveTo(xPos + 10, yPos + 190);
+			_environmentBackground.MoveTo(xPos + 10, yPos + 250);
+			_defenseBackground.MoveTo(xPos + 10, yPos + 310);
+			_constructionBackground.MoveTo(xPos + 10, yPos + 370);
+			_productionLabel.Move(xPos + 55, yPos + 100);
+			_infrastructureLabel.Move(xPos + 65, yPos + 140);
+			_infrastructureSlider.MoveScrollBar(xPos + 65, yPos + 160);
+			_researchLabel.Move(xPos + 65, yPos + 200);
+			_researchSlider.MoveScrollBar(xPos + 65, yPos + 220);
+			_environmentLabel.Move(xPos + 65, yPos + 260);
+			_environmentSlider.MoveScrollBar(xPos + 65, yPos + 280);
+			_defenseLabel.Move(xPos + 65, yPos + 320);
+			_defenseSlider.MoveScrollBar(xPos + 65, yPos + 340);
+			_constructionLabel.Move(xPos + 65, yPos + 380);
+			_constructionSlider.MoveScrollBar(xPos + 65, yPos + 400);
 		}
 
 		public override bool MouseDown(int x, int y)
