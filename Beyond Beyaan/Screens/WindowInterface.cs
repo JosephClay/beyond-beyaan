@@ -102,13 +102,14 @@ namespace Beyond_Beyaan.Screens
 
 		public virtual bool MouseUp(int x, int y)
 		{
+			if (moving)
+			{
+				//If it was moving, no matter what, it should capture the mouse up since it's releasing the moving grip
+				moving = false;
+				return true;
+			}
 			if (x >= xPos && x < xPos + windowWidth && y >= yPos && y < yPos + windowHeight)
 			{
-				if (moving)
-				{
-					moving = false;
-				}
-
 				return true;
 			}
 			return false;
