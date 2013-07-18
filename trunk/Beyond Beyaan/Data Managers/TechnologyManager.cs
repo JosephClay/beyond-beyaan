@@ -174,6 +174,7 @@ namespace Beyond_Beyaan
 				return level;
 			}
 		}
+		public int FuelRange { get; private set; }
 
 		public bool ComputerLocked { get; set; }
 		public bool ConstructionLocked { get; set; }
@@ -212,6 +213,15 @@ namespace Beyond_Beyaan
 			PlanetologyPercentage = 15;
 			PropulsionPercentage = 20;
 			WeaponPercentage = 20;
+
+			ResearchedComputerTechs = new List<Technology>();
+			ResearchedConstructionTechs = new List<Technology>();
+			ResearchedForceFieldTechs = new List<Technology>();
+			ResearchedPlanetologyTechs = new List<Technology>();
+			ResearchedPropulsionTechs = new List<Technology>();
+			ResearchedWeaponTechs = new List<Technology>();
+
+			UpdateValues();
 		}
 		#endregion
 
@@ -500,6 +510,8 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+
+			UpdateValues();
 		}
 
 		public void SetPercentage(TechField whichField, int amount)
@@ -764,6 +776,19 @@ namespace Beyond_Beyaan
 			}
 
 			return total;
+		}
+
+		private void UpdateValues()
+		{
+			//After researching or obtaining a technology, update all values
+			FuelRange = 3;
+			foreach (var tech in ResearchedPropulsionTechs)
+			{
+				if (tech.FuelRange > FuelRange)
+				{
+					FuelRange = tech.FuelRange;
+				}
+			}
 		}
 		#endregion
 	}
