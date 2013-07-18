@@ -287,7 +287,7 @@ namespace Beyond_Beyaan.Screens
 							float y = travelNode.StarSystem.Y - selectedFleetGroup.FleetToSplit.GalaxyY;
 							float length = (float)Math.Sqrt((x * x) + (y * y));
 							float angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
-							pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX - 32) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (length / pathSprite.Width), camera.ZoomDistance, Color.LightGreen, angle);
+							pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX - 32) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (length / pathSprite.Width), camera.ZoomDistance, travelNode.IsValid ? Color.LightGreen : Color.Red, angle);
 						}
 						else if (selectedFleetGroup.FleetToSplit.AdjacentSystem != null)
 						{
@@ -640,10 +640,7 @@ namespace Beyond_Beyaan.Screens
 					hoveringPoint.Y = (int)((mouseY / camera.ZoomDistance) + camera.CameraY);
 
 					StarSystem selectedSystem = _gameMain.Galaxy.GetStarAtPoint(hoveringPoint);
-					if (selectedSystem != null && selectedSystem != _gameMain.EmpireManager.CurrentEmpire.SelectedSystem)
-					{
-						currentEmpire.SelectedFleetGroup.FleetToSplit.SetTentativePath(selectedSystem, _gameMain.Galaxy);
-					}
+					currentEmpire.SelectedFleetGroup.FleetToSplit.SetTentativePath(selectedSystem, currentEmpire.SelectedFleetGroup.FleetToSplit.HasReserveTanks, _gameMain.Galaxy);
 				}
 				if ((mouseX >= _gameMain.ScreenWidth - 207 && mouseX < _gameMain.ScreenWidth - 1) && (mouseY < 460 && mouseY > 0))
 				{
@@ -1001,9 +998,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null && _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.Empire == _gameMain.EmpireManager.CurrentEmpire)
 				{
-					_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.ConfirmPath();
-					_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.SplitFleet(_gameMain.EmpireManager.CurrentEmpire);
-					LoadFleetInfoIntoUI(_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup);
+					if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.ConfirmPath())
+					{
+						_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.SplitFleet(_gameMain.EmpireManager.CurrentEmpire);
+						LoadFleetInfoIntoUI(_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup);
+					}
 				}
 			}
 		}

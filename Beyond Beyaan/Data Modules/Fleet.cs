@@ -103,6 +103,35 @@ namespace Beyond_Beyaan
 			}
 		}
 
+		public bool HasReserveTanks
+		{
+			get
+			{
+				foreach (var ship in ships)
+				{
+					if (ship.Value == 0)
+					{
+						//Skip ships that won't be split off with this fleet
+						continue;
+					}
+					bool hasReserve = false;
+					foreach (var special in ship.Key.Specials)
+					{
+						if (special.ReserveFuelTanks)
+						{
+							hasReserve = true;
+							break;
+						}
+					}
+					if (!hasReserve)
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+
 		public Dictionary<Ship, int> Ships
 		{
 			get
@@ -159,11 +188,11 @@ namespace Beyond_Beyaan
 			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 		}
 
-		public void SetTentativePath(StarSystem destination, Galaxy galaxy)
+		public void SetTentativePath(StarSystem destination, bool hasExtendedFuelTanks, Galaxy galaxy)
 		{
-			if (destination == adjacentSystem)
+			if (destination == null || destination == adjacentSystem)
 			{
-				//if destination is same as origin, don't bother.
+				//if destination is same as origin, or nowhere, clear the tentative path
 				tentativeNodes = null;
 				return;
 			}
@@ -184,7 +213,7 @@ namespace Beyond_Beyaan
 			{
 				currentDestination = travelNodes[0].StarSystem;
 			}
-			List<TravelNode> path = galaxy.GetPath(galaxyX, galaxyY, currentDestination, destination, false, empire);
+			List<TravelNode> path = galaxy.GetPath(galaxyX, galaxyY, currentDestination, destination, hasExtendedFuelTanks, empire);
 			if (path == null)
 			{
 				tentativeNodes = null;
@@ -198,10 +227,17 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void ConfirmPath()
+		public bool ConfirmPath()
 		{
 			if (tentativeNodes != null)
 			{
+				foreach (var node in tentativeNodes)
+				{
+					if (!node.IsValid)
+					{
+						return false;
+					}
+				}
 				TravelNode[] nodes = new TravelNode[tentativeNodes.Count];
 				tentativeNodes.CopyTo(nodes);
 				tentativeNodes = null;
@@ -214,6 +250,7 @@ namespace Beyond_Beyaan
 				travelNodes = null;
 				tentativeNodes = null;
 			}
+			return true;
 		}
 
 		private float CalculatePathCost(List<TravelNode> nodes)
