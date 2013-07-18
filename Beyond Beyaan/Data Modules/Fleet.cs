@@ -13,6 +13,7 @@ namespace Beyond_Beyaan
 		//For drawing
 		public float Length { get; set; }
 		public float Angle { get; set; }
+		public bool IsValid { get; set; }
 	}
 
 	public class Fleet
@@ -183,7 +184,7 @@ namespace Beyond_Beyaan
 			{
 				currentDestination = travelNodes[0].StarSystem;
 			}
-			List<TravelNode> path = galaxy.GetPath(galaxyX, galaxyY, currentDestination, destination, empire);
+			List<TravelNode> path = galaxy.GetPath(galaxyX, galaxyY, currentDestination, destination, false, empire);
 			if (path == null)
 			{
 				tentativeNodes = null;

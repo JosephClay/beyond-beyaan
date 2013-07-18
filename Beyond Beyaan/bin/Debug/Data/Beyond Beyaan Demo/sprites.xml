@@ -64,6 +64,9 @@
   <Sprite name="BackgroundStar7" file="main.png">
 	  <Frame x="304" y="128" width="16" height="16" axisX="8" axisY="8" />
   </Sprite>
+  <Sprite name="FuelCircle" file="circle.png" blend="True">
+	  <Frame x="0" y="0" width="360" height="360" axisX="180" axisY="180" />
+  </Sprite>
   <Sprite name="Path" file="path.png" stretchMode="repeat">
     <Frame x="0" y="0" width="16" height="3" frameLength="100" axisX="0" axisY="1" />
     <Frame x="0" y="3" width="16" height="3" frameLength="100" axisX="0" axisY="1" />

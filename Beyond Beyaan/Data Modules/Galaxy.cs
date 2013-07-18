@@ -342,7 +342,7 @@ namespace Beyond_Beyaan
 		/// <param name="newDestination">New destination</param>
 		/// <param name="whichEmpire">For fuel range and other info</param>
 		/// <returns></returns>
-		public List<TravelNode> GetPath(float currentX, float currentY, StarSystem currentDestination, StarSystem newDestination, Empire whichEmpire)
+		public List<TravelNode> GetPath(float currentX, float currentY, StarSystem currentDestination, StarSystem newDestination, bool hasExtended, Empire whichEmpire)
 		{
 			// TODO: When Hyperspace communication is implemented, add this
 			/*
@@ -364,6 +364,7 @@ namespace Beyond_Beyaan
 				float y = currentDestination.Y - currentY;
 				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
 				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				newNode.IsValid = true;
 				nodes.Add(newNode);
 				newNode = new TravelNode();
 				newNode.StarSystem = newDestination;
@@ -371,6 +372,7 @@ namespace Beyond_Beyaan
 				y = newDestination.Y - currentDestination.Y;
 				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
 				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				newNode.IsValid = IsDestinationValid(newDestination, hasExtended, whichEmpire);
 				nodes.Add(newNode);
 			}
 			else
@@ -381,10 +383,34 @@ namespace Beyond_Beyaan
 				float y = newDestination.Y - currentY;
 				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
 				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				newNode.IsValid = IsDestinationValid(newDestination, hasExtended, whichEmpire);
 				nodes.Add(newNode);
 			}
 			
 			return nodes;
+		}
+		private bool IsDestinationValid(StarSystem destination, bool hasExtended, Empire whichEmpire)
+		{
+			if (destination.Planets[0].Owner == whichEmpire)
+			{
+				//By default, always true if destination is owned
+				return true;
+			}
+			int fuelRange = (whichEmpire.TechnologyManager.FuelRange + (hasExtended ? 3 : 0)) * PARSEC_SIZE_IN_PIXELS;
+			fuelRange *= fuelRange; //To avoid square rooting
+			foreach (StarSystem system in starSystems)
+			{
+				if (system.Planets[0].Owner == whichEmpire)
+				{
+					float x = destination.X - system.X;
+					float y = destination.Y - system.Y;
+					if ((x * x) + (y * y) <= fuelRange)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		#endregion
 
