@@ -53,6 +53,7 @@ namespace Beyond_Beyaan.Screens
 		//private int maxVisible;
 		private BBSprite pathSprite;
 		private BBSprite fuelCircle;
+		private BBSprite[] selectionSprites;
 		private bool showingFuelRange;
 	
 
@@ -61,6 +62,11 @@ namespace Beyond_Beyaan.Screens
 			_gameMain = gameMain;
 			pathSprite = SpriteManager.GetSprite("Path", _gameMain.Random);
 			fuelCircle = SpriteManager.GetSprite("FuelCircle", _gameMain.Random);
+			selectionSprites = new BBSprite[4];
+			selectionSprites[0] = SpriteManager.GetSprite("SelectionTL", _gameMain.Random);
+			selectionSprites[1] = SpriteManager.GetSprite("SelectionTR", _gameMain.Random);
+			selectionSprites[2] = SpriteManager.GetSprite("SelectionBL", _gameMain.Random);
+			selectionSprites[3] = SpriteManager.GetSprite("SelectionBR", _gameMain.Random);
 			showingFuelRange = false;
 
 			camera = new Camera(_gameMain.Galaxy.GalaxySize * 32, _gameMain.Galaxy.GalaxySize * 32, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
@@ -204,6 +210,14 @@ namespace Beyond_Beyaan.Screens
 				system.Sprite.Draw((int)((system.X - camera.CameraX) * camera.ZoomDistance), (int)((system.Y - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 
+				if (system == _gameMain.EmpireManager.CurrentEmpire.SelectedSystem)
+				{
+					selectionSprites[0].Draw(((system.X - 16) - camera.CameraX) * camera.ZoomDistance, ((system.Y - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+					selectionSprites[1].Draw(((system.X) - camera.CameraX) * camera.ZoomDistance, ((system.Y - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+					selectionSprites[2].Draw(((system.X - 16) - camera.CameraX) * camera.ZoomDistance, ((system.Y) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+					selectionSprites[3].Draw(((system.X) - camera.CameraX) * camera.ZoomDistance, ((system.Y) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+				}
+
 				if (displayName && (_gameMain.EmpireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(_gameMain.EmpireManager.CurrentEmpire)))
 				{
 					float x = (system.X - camera.CameraX) * camera.ZoomDistance;
@@ -319,17 +333,38 @@ namespace Beyond_Beyaan.Screens
 					{
 						if (fleet.TravelNodes != null && fleet.TravelNodes.Count > 0)
 						{
+							if (selectedFleetGroup != null && selectedFleetGroup.Fleets.Contains(fleet))
+							{
+								selectionSprites[0].Draw(((fleet.GalaxyX - 48) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+								selectionSprites[1].Draw(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+								selectionSprites[2].Draw(((fleet.GalaxyX - 48) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+								selectionSprites[3].Draw(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+							}
 							//Adjacent to a system, but is heading to another system
 							fleet.Empire.EmpireRace.FleetIcon.Draw((int)(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 						}
 						else
 						{
+							if (selectedFleetGroup != null && selectedFleetGroup.Fleets.Contains(fleet))
+							{
+								selectionSprites[0].Draw(((fleet.GalaxyX + 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+								selectionSprites[1].Draw(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+								selectionSprites[2].Draw(((fleet.GalaxyX + 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+								selectionSprites[3].Draw(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+							}
 							//Adjacent to a system, just chilling
 							fleet.Empire.EmpireRace.FleetIcon.Draw((int)(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 						}
 					}
 					else
 					{
+						if (selectedFleetGroup != null && selectedFleetGroup.Fleets.Contains(fleet))
+						{
+							selectionSprites[0].Draw(((fleet.GalaxyX - 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+							selectionSprites[1].Draw(((fleet.GalaxyX) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+							selectionSprites[2].Draw(((fleet.GalaxyX - 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+							selectionSprites[3].Draw(((fleet.GalaxyX) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+						}
 						fleet.Empire.EmpireRace.FleetIcon.Draw((int)((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 					}
 				}
@@ -533,66 +568,6 @@ namespace Beyond_Beyaan.Screens
 				{
 					return;
 				}
-				/*if (currentEmpire.SelectedSystem.Planets.Count > 6 && systemScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
-				{
-					for (int i = 0; i < (currentEmpire.SelectedSystem.Planets.Count <= 6 ? currentEmpire.SelectedSystem.Planets.Count : 6); i++)
-					{
-						//When a planet is selected, this may move the button up or down, need to update as needed
-						if (currentEmpire.PlanetSelected - systemScrollBar.TopIndex == i)
-						{
-							systemButtons[i].Selected = true;
-						}
-						else
-						{
-							systemButtons[i].Selected = false;
-						}
-					}
-					return;
-				}
-				foreach (Button button in systemButtons)
-				{
-					button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-				}
-				if (currentEmpire.SelectedSystem.Planets.Count > 0 && currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].Owner == currentEmpire)
-				{
-					for (int i = 0; i < planetScrollBars.Length; i++)
-					{
-						if (planetScrollBars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
-						{
-							switch (i)
-							{
-								case AGRICULTURE:
-									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.AGRICULTURE, planetScrollBars[i].TopIndex);
-									break;
-								case WASTE:
-									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, planetScrollBars[i].TopIndex);
-									break;
-								case COMMERCE:
-									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.COMMERCE, planetScrollBars[i].TopIndex);
-									break;
-								case RESEARCH:
-									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.RESEARCH, planetScrollBars[i].TopIndex);
-									break;
-								case CONSTRUCTION:
-									currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, planetScrollBars[i].TopIndex);
-									break;
-							}
-							planetScrollBars[AGRICULTURE].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].AgricultureAmount;
-							planetScrollBars[WASTE].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].EnvironmentAmount;
-							planetScrollBars[COMMERCE].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].CommerceAmount;
-							planetScrollBars[RESEARCH].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].ResearchAmount;
-							planetScrollBars[CONSTRUCTION].TopIndex = currentEmpire.SelectedSystem.Planets[currentEmpire.PlanetSelected].ConstructionAmount;
-							return;
-						}
-					}
-					prevShip.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-					nextShip.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-					transferButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-				}
-				if ((mouseX >= _gameMain.ScreenWidth - 207 && mouseX < _gameMain.ScreenWidth - 1) && (mouseY < 650 && mouseY > 0))
-				{
-					return;
-				}*/
 			}
 			if (currentEmpire.SelectedFleetGroup != null)
 			{
@@ -664,59 +639,12 @@ namespace Beyond_Beyaan.Screens
 					}*/
 					return;
 				}
-				if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null && !systemView.MouseDown(x, y))
+				if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null)
 				{
-					/*if (x >= _gameMain.ScreenWidth - 207 && y < 650)
-					{
-						pressedInWindow = true;
-					}
-					if (systemScrollBar.MouseDown(x, y))
+					if (systemView.MouseDown(x, y))
 					{
 						return;
 					}
-					for (int i = 0; i < systemButtons.Length; i++)
-					{
-						if (systemButtons[i].MouseDown(x, y))
-						{
-							return;
-						}
-					}
-					if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets.Count > 0 && _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].Owner == _gameMain.EmpireManager.CurrentEmpire)
-					{
-						for (int i = 0; i < planetScrollBars.Length; i++)
-						{
-							if (planetScrollBars[i].MouseDown(x, y))
-							{
-								switch (i)
-								{
-									case AGRICULTURE:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.AGRICULTURE, planetScrollBars[i].TopIndex);
-										break;
-									case WASTE:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, planetScrollBars[i].TopIndex);
-										break;
-									case COMMERCE:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.COMMERCE, planetScrollBars[i].TopIndex);
-										break;
-									case RESEARCH:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.RESEARCH, planetScrollBars[i].TopIndex);
-										break;
-									case CONSTRUCTION:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, planetScrollBars[i].TopIndex);
-										break;
-								}
-								planetScrollBars[AGRICULTURE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].AgricultureAmount;
-								planetScrollBars[WASTE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].EnvironmentAmount;
-								planetScrollBars[COMMERCE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].CommerceAmount;
-								planetScrollBars[RESEARCH].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].ResearchAmount;
-								planetScrollBars[CONSTRUCTION].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].ConstructionAmount;
-								break;
-							}
-						}
-						prevShip.MouseDown(x, y);
-						nextShip.MouseDown(x, y);
-						transferButton.MouseDown(x, y);
-					}*/
 				}
 				else if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{
@@ -779,92 +707,6 @@ namespace Beyond_Beyaan.Screens
 					{
 						return;
 					}
-					else
-					{
-						pressedInWindow = false;
-					}
-					/*
-					if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets.Count > 0 && _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].Owner == _gameMain.EmpireManager.CurrentEmpire)
-					{
-						for (int i = 0; i < planetScrollBars.Length; i++)
-						{
-							if (planetScrollBars[i].MouseUp(x, y))
-							{
-								switch (i)
-								{
-									case AGRICULTURE:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.AGRICULTURE, planetScrollBars[i].TopIndex);
-										break;
-									case WASTE:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, planetScrollBars[i].TopIndex);
-										break;
-									case COMMERCE:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.COMMERCE, planetScrollBars[i].TopIndex);
-										break;
-									case RESEARCH:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.RESEARCH, planetScrollBars[i].TopIndex);
-										break;
-									case CONSTRUCTION:
-										_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, planetScrollBars[i].TopIndex);
-										break;
-								}
-								planetScrollBars[AGRICULTURE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].AgricultureAmount;
-								planetScrollBars[WASTE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].EnvironmentAmount;
-								planetScrollBars[COMMERCE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].CommerceAmount;
-								planetScrollBars[RESEARCH].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].ResearchAmount;
-								planetScrollBars[CONSTRUCTION].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].ConstructionAmount;
-								pressedInWindow = false;
-								break;
-							}
-						}
-						if (prevShip.MouseUp(x, y))
-						{
-							Planet selectedPlanet = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected];
-							selectedPlanet.ShipSelected--;
-							if (selectedPlanet.ShipSelected < 0)
-							{
-								selectedPlanet.ShipSelected = _gameMain.EmpireManager.CurrentEmpire.FleetManager.CurrentDesigns.Count - 1;
-							}
-							selectedPlanet.ShipBeingBuilt = _gameMain.EmpireManager.CurrentEmpire.FleetManager.CurrentDesigns[selectedPlanet.ShipSelected];
-							LoadShipSprite(selectedPlanet);
-							pressedInWindow = false;
-						}
-						if (nextShip.MouseUp(x, y))
-						{
-							Planet selectedPlanet = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected];
-							selectedPlanet.ShipSelected++;
-							if (selectedPlanet.ShipSelected >= _gameMain.EmpireManager.CurrentEmpire.FleetManager.CurrentDesigns.Count)
-							{
-								selectedPlanet.ShipSelected = 0;
-							}
-							selectedPlanet.ShipBeingBuilt = _gameMain.EmpireManager.CurrentEmpire.FleetManager.CurrentDesigns[selectedPlanet.ShipSelected];
-							LoadShipSprite(selectedPlanet);
-							pressedInWindow = false;
-						}
-						if (transferButton.MouseUp(x, y))
-						{
-							Planet selectedPlanet = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected];
-							//Do something
-							showingTransferUI = true;
-							tempTransportShips = new List<TransportShip>();
-							foreach (Race race in selectedPlanet.Races)
-							{
-								TransportShip tempShip = new TransportShip();
-								tempShip.raceOnShip = race;
-								tempTransportShips.Add(tempShip);
-							}
-							maxVisible = tempTransportShips.Count > 4 ? 4 : tempTransportShips.Count;
-							for (int i = 0; i < maxVisible; i++)
-							{
-								popTransferSliders[i].SetAmountOfItems((int)selectedPlanet.GetRacePopulation(selectedPlanet.Races[i]));
-							}
-						}
-					}
-					if (x >= _gameMain.ScreenWidth - 250 && y < 720)
-					{
-						pressedInWindow = false;
-						return;
-					}*/
 				}
 				if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{
