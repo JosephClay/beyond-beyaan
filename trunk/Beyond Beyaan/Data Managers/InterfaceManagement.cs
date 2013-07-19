@@ -70,7 +70,7 @@ namespace Beyond_Beyaan
 			label.SetText(text);
 		}
 
-		public void MoveButton(int x, int y)
+		public void MoveTo(int x, int y)
 		{
 			xPos = x;
 			yPos = y;
@@ -83,7 +83,7 @@ namespace Beyond_Beyaan
 			this.height = height;
 		}
 
-		public bool UpdateHovering(int x, int y, float frameDeltaTime)
+		public bool MouseHover(int x, int y, float frameDeltaTime)
 		{
 			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
 			{
@@ -1066,8 +1066,8 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					Up.UpdateHovering(x, y, frameDeltaTime);
-					Down.UpdateHovering(x, y, frameDeltaTime);
+					Up.MouseHover(x, y, frameDeltaTime);
+					Down.MouseHover(x, y, frameDeltaTime);
 					return false;
 				}
 			}
@@ -1076,15 +1076,15 @@ namespace Beyond_Beyaan
 
 		public void MoveScrollBar(int x, int y)
 		{
-			Up.MoveButton(x, y);
+			Up.MoveTo(x, y);
 			if (isHorizontal)
 			{
-				Down.MoveButton(x + scrollBarLength + 16, y);
+				Down.MoveTo(x + scrollBarLength + 16, y);
 				Scroll.MoveTo(x + 16 + scrollPos, y);
 			}
 			else
 			{
-				Down.MoveButton(x, y + scrollBarLength + 16);
+				Down.MoveTo(x, y + scrollBarLength + 16);
 				Scroll.MoveTo(x, y + 16 + scrollPos);
 			}
 			xPos = x;

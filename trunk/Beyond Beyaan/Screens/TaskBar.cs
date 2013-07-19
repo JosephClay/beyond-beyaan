@@ -102,7 +102,7 @@ namespace Beyond_Beyaan
 			}
 			foreach (BBButton button in TaskButtons)
 			{
-				button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				button.MouseHover(mouseX, mouseY, frameDeltaTime);
 			}
 			if (mouseX >= left && mouseX < left + 360 && mouseY > top && mouseY < top + 39)
 			{

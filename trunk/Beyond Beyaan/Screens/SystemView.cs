@@ -140,7 +140,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_infrastructureSlider.Initialize(xPos + 65, yPos + 160, 200, 1, 100, true, true, r, out reason))
+			if (!_infrastructureSlider.Initialize(xPos + 65, yPos + 160, 200, 1, 101, true, true, r, out reason))
 			{
 				return false;
 			}
@@ -152,7 +152,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_researchSlider.Initialize(xPos + 65, yPos + 220, 200, 1, 100, true, true, r, out reason))
+			if (!_researchSlider.Initialize(xPos + 65, yPos + 220, 200, 1, 101, true, true, r, out reason))
 			{
 				return false;
 			}
@@ -164,7 +164,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_environmentSlider.Initialize(xPos + 65, yPos + 280, 200, 1, 100, true, true, r, out reason))
+			if (!_environmentSlider.Initialize(xPos + 65, yPos + 280, 200, 1, 101, true, true, r, out reason))
 			{
 				return false;
 			}
@@ -176,7 +176,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_defenseSlider.Initialize(xPos + 65, yPos + 340, 200, 1, 100, true, true, r, out reason))
+			if (!_defenseSlider.Initialize(xPos + 65, yPos + 340, 200, 1, 101, true, true, r, out reason))
 			{
 				return false;
 			}
@@ -188,7 +188,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_constructionSlider.Initialize(xPos + 65, yPos + 400, 200, 1, 100, true, true, r, out reason))
+			if (!_constructionSlider.Initialize(xPos + 65, yPos + 400, 200, 1, 101, true, true, r, out reason))
 			{
 				return false;
 			}
@@ -316,36 +316,187 @@ namespace Beyond_Beyaan.Screens
 			_productionLabel.Move(xPos + 55, yPos + 100);
 			_infrastructureLabel.Move(xPos + 65, yPos + 140);
 			_infrastructureSlider.MoveScrollBar(xPos + 65, yPos + 160);
-			_infrastructureLockButton.MoveButton(xPos + 267, yPos + 160);
+			_infrastructureLockButton.MoveTo(xPos + 267, yPos + 160);
 			_researchLabel.Move(xPos + 65, yPos + 200);
 			_researchSlider.MoveScrollBar(xPos + 65, yPos + 220);
-			_researchLockButton.MoveButton(xPos + 267, yPos + 220);
+			_researchLockButton.MoveTo(xPos + 267, yPos + 220);
 			_environmentLabel.Move(xPos + 65, yPos + 260);
 			_environmentSlider.MoveScrollBar(xPos + 65, yPos + 280);
-			_environmentLockButton.MoveButton(xPos + 267, yPos + 280);
+			_environmentLockButton.MoveTo(xPos + 267, yPos + 280);
 			_defenseLabel.Move(xPos + 65, yPos + 320);
 			_defenseSlider.MoveScrollBar(xPos + 65, yPos + 340);
-			_defenseLockButton.MoveButton(xPos + 267, yPos + 340);
+			_defenseLockButton.MoveTo(xPos + 267, yPos + 340);
 			_constructionLabel.Move(xPos + 65, yPos + 380);
 			_constructionSlider.MoveScrollBar(xPos + 65, yPos + 400);
-			_constructionLockButton.MoveButton(xPos + 267, yPos + 400);
+			_constructionLockButton.MoveTo(xPos + 267, yPos + 400);
 		}
 
 		public override bool MouseDown(int x, int y)
 		{
 			bool result = _name.MouseDown(x, y);
-			return result || base.MouseDown(x, y);
+			if (!result)
+			{
+				result = _infrastructureSlider.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _researchSlider.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _environmentSlider.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _defenseSlider.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _constructionSlider.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _infrastructureLockButton.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _researchLockButton.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _environmentLockButton.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _defenseLockButton.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _constructionLockButton.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = base.MouseDown(x, y);
+			}
+			return result;
 		}
 
 		public override bool MouseUp(int x, int y)
 		{
 			bool result = _name.MouseUp(x, y);
-			return result || base.MouseUp(x, y);
+			if (!result && _infrastructureSlider.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, _infrastructureSlider.TopIndex, false);
+				Refresh();
+				result = true;
+			}
+			if (!result && _researchSlider.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.RESEARCH, _researchSlider.TopIndex, false);
+				Refresh();
+				result = true;
+			}
+			if (!result && _environmentSlider.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, _environmentSlider.TopIndex, false);
+				Refresh();
+				result = true;
+			}
+			if (!result && _defenseSlider.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.DEFENSE, _defenseSlider.TopIndex, false);
+				Refresh();
+				result = true;
+			}
+			if (!result && _constructionSlider.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, _constructionSlider.TopIndex, false);
+				Refresh();
+				result = true;
+			}
+			if (!result && _infrastructureLockButton.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].InfrastructureLocked = !currentSystem.Planets[0].InfrastructureLocked;
+				_infrastructureSlider.SetEnabledState(!currentSystem.Planets[0].InfrastructureLocked);
+				_infrastructureLockButton.Selected = currentSystem.Planets[0].InfrastructureLocked;
+				result = true;
+			}
+			if (!result && _researchLockButton.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].ResearchLocked = !currentSystem.Planets[0].ResearchLocked;
+				_researchSlider.SetEnabledState(!currentSystem.Planets[0].ResearchLocked);
+				_researchLockButton.Selected = currentSystem.Planets[0].ResearchLocked;
+				result = true;
+			}
+			if (!result && _environmentLockButton.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].EnvironmentLocked = !currentSystem.Planets[0].EnvironmentLocked;
+				_environmentSlider.SetEnabledState(!currentSystem.Planets[0].EnvironmentLocked);
+				_environmentLockButton.Selected = currentSystem.Planets[0].EnvironmentLocked;
+				result = true;
+			}
+			if (!result && _defenseLockButton.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].DefenseLocked = !currentSystem.Planets[0].DefenseLocked;
+				_defenseSlider.SetEnabledState(!currentSystem.Planets[0].DefenseLocked);
+				_defenseLockButton.Selected = currentSystem.Planets[0].DefenseLocked;
+				result = true;
+			}
+			if (!result && _constructionLockButton.MouseUp(x, y))
+			{
+				currentSystem.Planets[0].ConstructionLocked = !currentSystem.Planets[0].ConstructionLocked;
+				_constructionSlider.SetEnabledState(!currentSystem.Planets[0].ConstructionLocked);
+				_constructionLockButton.Selected = currentSystem.Planets[0].ConstructionLocked;
+				result = true;
+			}
+			if (!result)
+			{
+				result = base.MouseUp(x, y);
+			}
+			return result;
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			_name.Update(frameDeltaTime);
+			if (_isOwnedSystem)
+			{
+				_name.Update(frameDeltaTime);
+				if (_infrastructureSlider.MouseHover(x, y, frameDeltaTime))
+				{
+					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, _infrastructureSlider.TopIndex, false);
+					Refresh();
+					return true;
+				}
+				if (_researchSlider.MouseHover(x, y, frameDeltaTime))
+				{
+					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.RESEARCH, _researchSlider.TopIndex, false);
+					Refresh();
+					return true;
+				}
+				if (_environmentSlider.MouseHover(x, y, frameDeltaTime))
+				{
+					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, _environmentSlider.TopIndex, false);
+					Refresh();
+					return true;
+				}
+				if (_defenseSlider.MouseHover(x, y, frameDeltaTime))
+				{
+					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.DEFENSE, _defenseSlider.TopIndex, false);
+					Refresh();
+					return true;
+				}
+				if (_constructionSlider.MouseHover(x, y, frameDeltaTime))
+				{
+					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, _constructionSlider.TopIndex, false);
+					Refresh();
+					return true;
+				}
+				_infrastructureLockButton.MouseHover(x, y, frameDeltaTime);
+				_researchLockButton.MouseHover(x, y, frameDeltaTime);
+				_environmentLockButton.MouseHover(x, y, frameDeltaTime);
+				_defenseLockButton.MouseHover(x, y, frameDeltaTime);
+				_constructionLockButton.MouseHover(x, y, frameDeltaTime);
+			}
 			return base.MouseHover(x, y, frameDeltaTime);
 		}
 
@@ -357,6 +508,22 @@ namespace Beyond_Beyaan.Screens
 				return true;
 			}
 			return false;
+		}
+
+		private void Refresh()
+		{
+			//Occurs when a slider value changes
+			_infrastructureSlider.TopIndex = currentSystem.Planets[0].InfrastructureAmount;
+			_researchSlider.TopIndex = currentSystem.Planets[0].ResearchAmount;
+			_environmentSlider.TopIndex = currentSystem.Planets[0].EnvironmentAmount;
+			_defenseSlider.TopIndex = currentSystem.Planets[0].DefenseAmount;
+			_constructionSlider.TopIndex = currentSystem.Planets[0].ConstructionAmount;
+
+			_infrastructureLabel.SetText(currentSystem.Planets[0].InfrastructureStringOutput);
+			_researchLabel.SetText(currentSystem.Planets[0].ResearchStringOutput);
+			_environmentLabel.SetText(currentSystem.Planets[0].EnvironmentStringOutput);
+			_defenseLabel.SetText(currentSystem.Planets[0].DefenseStringOutput);
+			_constructionLabel.SetText(currentSystem.Planets[0].ConstructionStringOutput);
 		}
 	}
 }
