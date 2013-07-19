@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorgonLibrary.InputDevices;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class InGameMenu : ScreenInterface
+	public class InGameMenu : ScreenInterface
 	{
 		GameMain gameMain;
 		Button[] buttons;
 		Label version;
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
 
@@ -25,6 +21,9 @@ namespace Beyond_Beyaan.Screens
 			buttons[4] = new Button(SpriteName.Exit, SpriteName.Exit, string.Empty, 400, 575, 260, 40);
 
 			version = new Label("Version 0.4", 5, gameMain.ScreenHeight - 25);
+
+			reason = null;
+			return true;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)

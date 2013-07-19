@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
 {
-	class DiplomacyScreen : ScreenInterface
+	public class DiplomacyScreen : ScreenInterface
 	{
 		#region Constants
 		const int TRADE = 0;
@@ -48,7 +45,7 @@ namespace Beyond_Beyaan.Screens
 		int x;
 		int y;
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
 			x = (gameMain.ScreenWidth / 2) - 400;
@@ -101,6 +98,9 @@ namespace Beyond_Beyaan.Screens
 			spriteNames.Add(SpriteName.ScrollVerticalBackgroundButton);
 			spriteNames.Add(SpriteName.ScrollVerticalForegroundButton);
 			whichMessageToSend = -1;
+
+			reason = null;
+			return true;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)

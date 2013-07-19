@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorgonLibrary.InputDevices;
-using Beyond_Beyaan.Data_Modules;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class FleetListScreen : ScreenInterface
+	public class FleetListScreen : ScreenInterface
 	{
 		/*GameMain gameMain;
 
@@ -58,7 +53,7 @@ namespace Beyond_Beyaan.Screens
 		Ship shipSelected;
 		private BBSprite shipSprite;*/
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			/*this.gameMain = gameMain;
 
@@ -109,6 +104,8 @@ namespace Beyond_Beyaan.Screens
 				mountsTexts[i] = new SingleLineTextBox(x + 675, y + 425, 40, 23, SpriteName.MiniBackgroundButton);
 				shotsTexts[i] = new SingleLineTextBox(x + 730, y + 425, 40, 23, SpriteName.MiniBackgroundButton);
 			}*/
+			reason = null;
+			return true;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)

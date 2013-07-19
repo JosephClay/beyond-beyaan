@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
 {
-	class NewGame : ScreenInterface
+	public class NewGame : ScreenInterface
 	{
 		private const int PLAYER_LIMIT = 16;
 
@@ -24,7 +22,7 @@ namespace Beyond_Beyaan.Screens
 		ComboBox raceComboBox;
 		ComboBox aiComboBox;
 
-		SingleLineTextBox empireNameTextBox;
+		BBSingleLineTextBox empireNameTextBox;
 
 		Label minPlanetLabel;
 		Label maxPlanetLabel;
@@ -53,7 +51,7 @@ namespace Beyond_Beyaan.Screens
 
 		private BBSprite miniAvatar;
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
 
@@ -97,7 +95,11 @@ namespace Beyond_Beyaan.Screens
 			aiPlayer = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Computer", 10, 560, 175, 25);
 			humanPlayer.Selected = true;
 
-			empireNameTextBox = new SingleLineTextBox(395, 530, 110, 25, SpriteName.MiniBackgroundButton);
+			empireNameTextBox = new BBSingleLineTextBox();
+			if (!empireNameTextBox.Initialize(string.Empty, 395, 530, 110, 25, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
 			addPlayer = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Add Player", 395, 560, 110, 25);
 
 			aiComboBox.Active = false;
@@ -151,6 +153,9 @@ namespace Beyond_Beyaan.Screens
 			emperorNameLabel = new Label("Empire Name:", 10, 5);
 			raceLabel = new Label("Race:", 200, 5);
 			handicapLabel = new Label("Handicap:", 350, 5);
+
+			reason = null;
+			return true;
 		}
 
 		public void Clear()
@@ -218,7 +223,7 @@ namespace Beyond_Beyaan.Screens
 			humanPlayer.Draw(drawingManagement);
 			aiPlayer.Draw(drawingManagement);
 			addPlayer.Draw(drawingManagement);
-			empireNameTextBox.Draw(drawingManagement);
+			empireNameTextBox.Draw();
 
 			aiComboBox.Draw(drawingManagement);
 			raceComboBox.Draw(drawingManagement);
@@ -406,14 +411,14 @@ namespace Beyond_Beyaan.Screens
 						id = empire.EmpireID + 1;
 					}
 				}
-				if (string.IsNullOrEmpty(empireNameTextBox.GetString()))
+				if (string.IsNullOrEmpty(empireNameTextBox.Text))
 				{
 					empireNameTextBox.SetString(race.GetRandomEmperorName());
 				}
-				Empire newEmpire = new Empire(empireNameTextBox.GetString(), id, race, humanPlayer.Selected ? PlayerType.HUMAN : PlayerType.CPU, ai, 
+				Empire newEmpire = new Empire(empireNameTextBox.Text, id, race, humanPlayer.Selected ? PlayerType.HUMAN : PlayerType.CPU, ai, 
 					System.Drawing.Color.FromArgb(255, r.Next(201) + 55, r.Next(201) + 55, r.Next(201) + 55), gameMain);
 				empires.Add(newEmpire);
-				empireNames[empires.Count - 1].SetText(empireNameTextBox.GetString());
+				empireNames[empires.Count - 1].SetText(empireNameTextBox.Text);
 				if (raceComboBox.SelectedIndex == 0)
 				{
 					races[empires.Count - 1].SetText("Random");

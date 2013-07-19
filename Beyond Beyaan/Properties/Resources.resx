@@ -130,4 +130,7 @@
     <value>Error loading game resources, error message: {0}
 </value>
   </data>
+  <data name="BeyondBeyaan_OnLoad_There_are_no_available_datasets_to_choose_from___Ensure_that_the_program_is_installed_correctly_" xml:space="preserve">
+    <value>There are no available datasets to choose from.  Ensure that the program is installed correctly.</value>
+  </data>
 </root>

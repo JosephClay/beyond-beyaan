@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class ProcessingTurnScreen : ScreenInterface
+	public class ProcessingTurnScreen : ScreenInterface
 	{
 		GameMain gameMain;
 		Camera camera;
@@ -15,7 +12,7 @@ namespace Beyond_Beyaan.Screens
 		int updateSection;
 		Label updateText;
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
 			camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, gameMain.ScreenWidth, gameMain.ScreenHeight);
@@ -25,6 +22,9 @@ namespace Beyond_Beyaan.Screens
 			updateSection = -1;
 			updateText = new Label(string.Empty, (gameMain.ScreenWidth / 2) - 130, (gameMain.ScreenHeight / 2) - 17);
 			resetted = false;
+
+			reason = null;
+			return true;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
