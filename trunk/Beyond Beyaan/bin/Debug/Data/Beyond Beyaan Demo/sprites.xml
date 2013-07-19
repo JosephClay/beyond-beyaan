@@ -509,7 +509,18 @@
   <Sprite name="LockFG" file="main.png">
     <Frame x="608" y="64" width="16" height="16" />
   </Sprite>
-
+  <Sprite name="RelocateToFG" file="main.png">
+    <Frame x="1" y="204" width="75" height="35" />
+  </Sprite>
+  <Sprite name="RelocateToBG" file="main.png">
+    <Frame x="1" y="239" width="75" height="35" />
+  </Sprite>
+  <Sprite name="TransferToFG" file="main.png">
+    <Frame x="153" y="204" width="75" height="35" />
+  </Sprite>
+  <Sprite name="TransferToBG" file="main.png">
+    <Frame x="153" y="239" width="75" height="35" />
+  </Sprite>
   <!--Race Sprites-->
   <!--Humans-->
   <Sprite name="HumanTinyShip1" file="humans.png">

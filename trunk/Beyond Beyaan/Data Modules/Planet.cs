@@ -96,6 +96,7 @@ namespace Beyond_Beyaan
 			get { return shipBeingBuilt; }
 			set { shipBeingBuilt = value; }
 		}
+		public StarSystem RelocateToSystem { get; set; }
 		public float ShipConstructionLength
 		{
 			get
@@ -365,6 +366,7 @@ namespace Beyond_Beyaan
 			{
 				planetTypeString = Utility.PlanetTypeToString(planetType);
 			}
+			RelocateToSystem = null;
 		}
 		#endregion
 

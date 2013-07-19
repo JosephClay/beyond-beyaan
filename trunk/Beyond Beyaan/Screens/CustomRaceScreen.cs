@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorgonLibrary.InputDevices;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class CustomRaceScreen : ScreenInterface
+	public class CustomRaceScreen : ScreenInterface
 	{
 		private GameMain gameMain;
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
+			reason = null;
 			this.gameMain = gameMain;
+			return true;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)

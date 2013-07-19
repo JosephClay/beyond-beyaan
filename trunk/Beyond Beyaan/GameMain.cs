@@ -93,13 +93,16 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			MasterTechnologyManager = new Data_Managers.MasterTechnologyManager();
+			MasterTechnologyManager = new MasterTechnologyManager();
 			if (!MasterTechnologyManager.Initialize(this, out reason))
 			{
 				return false;
 			}
 			_mainGameMenu = new MainGameMenu();
-			_mainGameMenu.Initialize(this);
+			if (!_mainGameMenu.Initialize(this, out reason))
+			{
+				return false;
+			}
 
 			_screenInterface = _mainGameMenu;
 			_currentScreen = Screen.MainMenu;
@@ -263,7 +266,12 @@ namespace Beyond_Beyaan
 					if (_mainGameMenu == null)
 					{
 						_mainGameMenu = new MainGameMenu();
-						_mainGameMenu.Initialize(this);
+						string reason;
+						if (!_mainGameMenu.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading Main Menu. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_screenInterface = _mainGameMenu;
 					break;
@@ -271,7 +279,12 @@ namespace Beyond_Beyaan
 					if (_newGame == null)
 					{
 						_newGame = new NewGame();
-						_newGame.Initialize(this);
+						string reason;
+						if (!_newGame.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading New Game Menu. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_screenInterface = _newGame;
 					break;
@@ -279,7 +292,12 @@ namespace Beyond_Beyaan
 					if (_galaxyScreen == null)
 					{
 						_galaxyScreen = new GalaxyScreen();
-						_galaxyScreen.Initialize(this);
+						string reason;
+						if (!_galaxyScreen.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading Galaxy Screen. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_taskBar.Hide = false;
 					_galaxyScreen.CenterScreen();
@@ -290,7 +308,12 @@ namespace Beyond_Beyaan
 					if (_inGameMenu == null)
 					{
 						_inGameMenu = new InGameMenu();
-						_inGameMenu.Initialize(this);
+						string reason;
+						if (!_inGameMenu.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading In-Game Menu. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_screenInterface = _inGameMenu;
 					_taskBar.SetToScreen(Screen.InGameMenu);
@@ -299,7 +322,12 @@ namespace Beyond_Beyaan
 					if (_diplomacyScreen == null)
 					{
 						_diplomacyScreen = new DiplomacyScreen();
-						_diplomacyScreen.Initialize(this);
+						string reason;
+						if (!_diplomacyScreen.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading Diplomacy Screen. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_diplomacyScreen.SetupScreen();
 					_screenInterface = _diplomacyScreen;
@@ -309,7 +337,12 @@ namespace Beyond_Beyaan
 					if (_fleetListScreen == null)
 					{
 						_fleetListScreen = new FleetListScreen();
-						_fleetListScreen.Initialize(this);
+						string reason;
+						if (!_fleetListScreen.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading Fleet List Screen. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_fleetListScreen.LoadScreen();
 					_screenInterface = _fleetListScreen;
@@ -319,7 +352,12 @@ namespace Beyond_Beyaan
 					if (_designScreen == null)
 					{
 						_designScreen = new DesignScreen();
-						_designScreen.Initialize(this);
+						string reason;
+						if (!_designScreen.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading Design Screen. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_screenInterface = _designScreen;
 					_designScreen.LoadScreen();
@@ -329,7 +367,12 @@ namespace Beyond_Beyaan
 					if (_planetsScreen == null)
 					{
 						_planetsScreen = new PlanetsScreen();
-						_planetsScreen.Initialize(this);
+						string reason;
+						if (!_planetsScreen.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading Planet List Screen. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_screenInterface = _planetsScreen;
 					_planetsScreen.LoadScreen();
@@ -340,7 +383,12 @@ namespace Beyond_Beyaan
 					if (_researchScreen == null)
 					{
 						_researchScreen = new ResearchScreen();
-						_researchScreen.Initialize(this);
+						string reason;
+						if (!_researchScreen.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading Research Screen. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					_researchScreen.LoadPoints(EmpireManager.CurrentEmpire.ResearchPoints);
 					_screenInterface = _researchScreen;
@@ -351,7 +399,12 @@ namespace Beyond_Beyaan
 					if (_processingTurnScreen == null)
 					{
 						_processingTurnScreen = new ProcessingTurnScreen();
-						_processingTurnScreen.Initialize(this);
+						string reason;
+						if (!_processingTurnScreen.Initialize(this, out reason))
+						{
+							MessageBox.Show("Exception in loading Processing Turn Screen. Reason: " + reason);
+							_parentForm.Close();
+						}
 					}
 					if (!EmpireManager.ProcessNextEmpire())
 					{

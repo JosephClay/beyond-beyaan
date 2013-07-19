@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using GorgonLibrary.Graphics;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Managers;
@@ -10,7 +8,7 @@ using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
 {
-	class GalaxyScreen : ScreenInterface
+	public class GalaxyScreen : ScreenInterface
 	{
 		#region Constants
 		private const int INFRASTRUCTURE = 0;
@@ -57,7 +55,7 @@ namespace Beyond_Beyaan.Screens
 		private bool showingFuelRange;
 	
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			_gameMain = gameMain;
 			pathSprite = SpriteManager.GetSprite("Path", _gameMain.Random);
@@ -124,9 +122,13 @@ namespace Beyond_Beyaan.Screens
 				amountPopTransferLabel[i] = new Label(_gameMain.ScreenWidth / 2 - 160, (_gameMain.ScreenHeight / 2 - 120) + (i * 40));
 			}
 
-			string reason;
 			systemView = new SystemView();
-			systemView.Initialize(_gameMain, _gameMain.Random, out reason);
+			if (!systemView.Initialize(_gameMain, _gameMain.Random, out reason))
+			{
+				return false;
+			}
+			reason = null;
+			return true;
 		}
 
 		public void CenterScreen()

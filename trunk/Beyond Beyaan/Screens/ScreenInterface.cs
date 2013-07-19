@@ -8,7 +8,7 @@ namespace Beyond_Beyaan.Screens
 {
 	interface ScreenInterface
 	{
-		void Initialize(GameMain gameMain);
+		bool Initialize(GameMain gameMain, out string reason);
 
 		void DrawScreen(DrawingManagement drawingManagement);
 

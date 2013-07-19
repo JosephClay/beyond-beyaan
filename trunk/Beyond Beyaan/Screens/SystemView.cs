@@ -25,6 +25,9 @@ namespace Beyond_Beyaan.Screens
 		private BBButton _defenseLockButton;
 		private BBButton _constructionLockButton;
 
+		private BBButton _relocateToButton;
+		private BBButton _transferToButton;
+
 		private BBLabel _infrastructureLabel;
 		private BBLabel _researchLabel;
 		private BBLabel _environmentLabel;
@@ -45,17 +48,22 @@ namespace Beyond_Beyaan.Screens
 		private bool _isOwnedSystem; //To determine whether or not to display/handle sliders
 		private bool _isExplored;
 
+		public bool IsRelocating { get; private set; }
+		public bool IsTransferring { get; private set; }
+
 		#region Constructor
 		public bool Initialize(GameMain gameMain, Random r, out string reason)
 		{
 			this.gameMain = gameMain;
 			_isExplored = false;
 			_isOwnedSystem = false;
-			if (!base.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 220, 300, 440, gameMain, true, r, out reason))
+			IsRelocating = false;
+			IsTransferring = false;
+			if (!base.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 240, 300, 480, gameMain, true, r, out reason))
 			{
 				return false;
 			}
-			if (!backGroundImage.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 220, 300, 440, StretchableImageType.ThinBorder, r, out reason))
+			if (!backGroundImage.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 240, 300, 480, StretchableImageType.ThinBorder, r, out reason))
 			{
 				return false;
 			}
@@ -102,6 +110,9 @@ namespace Beyond_Beyaan.Screens
 			_environmentLockButton = new BBButton();
 			_defenseLockButton = new BBButton();
 			_constructionLockButton = new BBButton();
+
+			_relocateToButton = new BBButton();
+			_transferToButton = new BBButton();
 
 			if (!_infrastructureBackground.Initialize(xPos + 10, yPos + 130, 280, 60, StretchableImageType.ThinBorder, r, out reason))
 			{
@@ -193,6 +204,15 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 			if (!_constructionLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 400, 16, 16, r, out reason))
+			{
+				return false;
+			}
+
+			if (!_relocateToButton.Initialize("RelocateToBG", "RelocateToFG", string.Empty, xPos + 130, yPos + 435, 75, 35, r, out reason))
+			{
+				return false;
+			}
+			if (!_transferToButton.Initialize("TransferToBG", "TransferToFG", string.Empty, xPos + 215, yPos + 435, 75, 35, r, out reason))
 			{
 				return false;
 			}
@@ -298,6 +318,8 @@ namespace Beyond_Beyaan.Screens
 					_constructionLabel.Draw();
 					_constructionSlider.Draw();
 					_constructionLockButton.Draw();
+					_relocateToButton.Draw();
+					_transferToButton.Draw();
 				}
 			}
 		}
@@ -376,6 +398,14 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (!result)
 			{
+				result = _relocateToButton.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _transferToButton.MouseDown(x, y);
+			}
+			if (!result)
+			{
 				result = base.MouseDown(x, y);
 			}
 			return result;
@@ -383,77 +413,87 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseUp(int x, int y)
 		{
-			bool result = _name.MouseUp(x, y);
-			if (!result && _infrastructureSlider.MouseUp(x, y))
+			if (_name.MouseUp(x, y))
+			{
+				return true;
+			}
+			if (_infrastructureSlider.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, _infrastructureSlider.TopIndex, false);
 				Refresh();
-				result = true;
+				return true;
 			}
-			if (!result && _researchSlider.MouseUp(x, y))
+			if (_researchSlider.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.RESEARCH, _researchSlider.TopIndex, false);
 				Refresh();
-				result = true;
+				return true;
 			}
-			if (!result && _environmentSlider.MouseUp(x, y))
+			if (_environmentSlider.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, _environmentSlider.TopIndex, false);
 				Refresh();
-				result = true;
+				return true;
 			}
-			if (!result && _defenseSlider.MouseUp(x, y))
+			if (_defenseSlider.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.DEFENSE, _defenseSlider.TopIndex, false);
 				Refresh();
-				result = true;
+				return true;
 			}
-			if (!result && _constructionSlider.MouseUp(x, y))
+			if (_constructionSlider.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, _constructionSlider.TopIndex, false);
 				Refresh();
-				result = true;
+				return true;
 			}
-			if (!result && _infrastructureLockButton.MouseUp(x, y))
+			if (_infrastructureLockButton.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].InfrastructureLocked = !currentSystem.Planets[0].InfrastructureLocked;
 				_infrastructureSlider.SetEnabledState(!currentSystem.Planets[0].InfrastructureLocked);
 				_infrastructureLockButton.Selected = currentSystem.Planets[0].InfrastructureLocked;
-				result = true;
+				return true;
 			}
-			if (!result && _researchLockButton.MouseUp(x, y))
+			if (_researchLockButton.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].ResearchLocked = !currentSystem.Planets[0].ResearchLocked;
 				_researchSlider.SetEnabledState(!currentSystem.Planets[0].ResearchLocked);
 				_researchLockButton.Selected = currentSystem.Planets[0].ResearchLocked;
-				result = true;
+				return true;
 			}
-			if (!result && _environmentLockButton.MouseUp(x, y))
+			if (_environmentLockButton.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].EnvironmentLocked = !currentSystem.Planets[0].EnvironmentLocked;
 				_environmentSlider.SetEnabledState(!currentSystem.Planets[0].EnvironmentLocked);
 				_environmentLockButton.Selected = currentSystem.Planets[0].EnvironmentLocked;
-				result = true;
+				return true;
 			}
-			if (!result && _defenseLockButton.MouseUp(x, y))
+			if (_defenseLockButton.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].DefenseLocked = !currentSystem.Planets[0].DefenseLocked;
 				_defenseSlider.SetEnabledState(!currentSystem.Planets[0].DefenseLocked);
 				_defenseLockButton.Selected = currentSystem.Planets[0].DefenseLocked;
-				result = true;
+				return true;
 			}
-			if (!result && _constructionLockButton.MouseUp(x, y))
+			if (_constructionLockButton.MouseUp(x, y))
 			{
 				currentSystem.Planets[0].ConstructionLocked = !currentSystem.Planets[0].ConstructionLocked;
 				_constructionSlider.SetEnabledState(!currentSystem.Planets[0].ConstructionLocked);
 				_constructionLockButton.Selected = currentSystem.Planets[0].ConstructionLocked;
-				result = true;
+				return true;
 			}
-			if (!result)
+			if (_relocateToButton.MouseUp(x, y))
 			{
-				result = base.MouseUp(x, y);
+				//We let GalaxyScreen handle this part now
+				IsRelocating = true;
+				return true;
 			}
-			return result;
+			if (_transferToButton.MouseUp(x, y))
+			{
+				IsTransferring = true;
+				return true;
+			}
+			return base.MouseUp(x, y);
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -496,6 +536,8 @@ namespace Beyond_Beyaan.Screens
 				_environmentLockButton.MouseHover(x, y, frameDeltaTime);
 				_defenseLockButton.MouseHover(x, y, frameDeltaTime);
 				_constructionLockButton.MouseHover(x, y, frameDeltaTime);
+				_relocateToButton.MouseHover(x, y, frameDeltaTime);
+				_transferToButton.MouseHover(x, y, frameDeltaTime);
 			}
 			return base.MouseHover(x, y, frameDeltaTime);
 		}

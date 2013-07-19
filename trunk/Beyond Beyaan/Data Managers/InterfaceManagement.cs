@@ -2257,330 +2257,6 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
-	public class SingleLineTextBox
-	{
-		#region Member Variables
-		private Label text;
-		private string actualText;
-		private int xPos;
-		private int yPos;
-		private int width;
-		private int height;
-		private SpriteName background;
-
-		private bool isSelected;
-		private bool pressed;
-		private bool blink;
-		private float timer;
-		#endregion
-
-		#region Constructors
-		public SingleLineTextBox(int x, int y, int width, int height, SpriteName background)
-		{
-			xPos = x;
-			yPos = y;
-			this.width = width;
-			this.height = height;
-			this.background = background;
-			actualText = string.Empty;
-			text = new Label(string.Empty, x + 2, y + 2);
-			pressed = false;
-			isSelected = false;
-			blink = true;
-		}
-
-		public SingleLineTextBox(string text, int x, int y, int width, int height, SpriteName background)
-		{
-			xPos = x;
-			yPos = y;
-			this.width = width;
-			this.height = height;
-			this.background = background;
-			actualText = text;
-			this.text = new Label(text, x + 2, y + 2);
-			pressed = false;
-			isSelected = false;
-			blink = false;
-		}
-		#endregion
-
-		#region Functions
-		public bool MouseDown(int x, int y)
-		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-			{
-				pressed = true;
-				return true;
-			}
-			return false;
-		}
-
-		public bool MouseUp(int x, int y)
-		{
-			if (pressed)
-			{
-				pressed = false;
-				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
-				{
-					blink = true;
-					isSelected = true;
-				}
-				else
-				{
-					isSelected = false;
-				}
-			}
-			else
-			{
-				isSelected = false;
-			}
-			if (!isSelected)
-			{
-				blink = false;
-				text.SetText(actualText);
-			}
-			return isSelected;
-		}
-
-		public void Update(float frameDeltaTime)
-		{
-			if (isSelected)
-			{
-				timer += frameDeltaTime;
-				if (timer >= 0.25f)
-				{
-					blink = !blink;
-					text.SetText(actualText + (blink ? "|" : ""));
-					timer -= 0.25f;
-				}
-			}
-		}
-
-		public void Draw(DrawingManagement drawingManagement)
-		{
-			drawingManagement.DrawSprite(background, xPos, yPos, 255, width, height, System.Drawing.Color.White);
-			text.Draw();
-		}
-
-		public string GetString()
-		{
-			return actualText;
-		}
-
-		public void SetString(string text)
-		{
-			actualText = text;
-			this.text.SetText(text);
-		}
-
-		public void SetColor(Color color)
-		{
-			text.SetColor(color);
-		}
-
-		#region Keys
-		public bool KeyDown(KeyboardInputEventArgs e)
-		{
-			if (isSelected)
-			{
-				string prevText = actualText;
-				switch (e.Key)
-				{
-					case KeyboardKeys.A: 
-						actualText = actualText + (e.Shift ? "A" : "a");
-						break;
-					case KeyboardKeys.B:
-						actualText = actualText + (e.Shift ? "B" : "b");
-						break;
-					case KeyboardKeys.C:
-						actualText = actualText + (e.Shift ? "C" : "c");
-						break;
-					case KeyboardKeys.D:
-						actualText = actualText + (e.Shift ? "D" : "d");
-						break;
-					case KeyboardKeys.E:
-						actualText = actualText + (e.Shift ? "E" : "e");
-						break;
-					case KeyboardKeys.F:
-						actualText = actualText + (e.Shift ? "F" : "f");
-						break;
-					case KeyboardKeys.G:
-						actualText = actualText + (e.Shift ? "G" : "g");
-						break;
-					case KeyboardKeys.H:
-						actualText = actualText + (e.Shift ? "H" : "h");
-						break;
-					case KeyboardKeys.I:
-						actualText = actualText + (e.Shift ? "I" : "i");
-						break;
-					case KeyboardKeys.J:
-						actualText = actualText + (e.Shift ? "J" : "j");
-						break;
-					case KeyboardKeys.K:
-						actualText = actualText + (e.Shift ? "K" : "k");
-						break;
-					case KeyboardKeys.L:
-						actualText = actualText + (e.Shift ? "L" : "l");
-						break;
-					case KeyboardKeys.M:
-						actualText = actualText + (e.Shift ? "M" : "m");
-						break;
-					case KeyboardKeys.N:
-						actualText = actualText + (e.Shift ? "N" : "n");
-						break;
-					case KeyboardKeys.O:
-						actualText = actualText + (e.Shift ? "O" : "o");
-						break;
-					case KeyboardKeys.P:
-						actualText = actualText + (e.Shift ? "P" : "p");
-						break;
-					case KeyboardKeys.Q:
-						actualText = actualText + (e.Shift ? "Q" : "q");
-						break;
-					case KeyboardKeys.R:
-						actualText = actualText + (e.Shift ? "R" : "r");
-						break;
-					case KeyboardKeys.S:
-						actualText = actualText + (e.Shift ? "S" : "s");
-						break;
-					case KeyboardKeys.T:
-						actualText = actualText + (e.Shift ? "T" : "t");
-						break;
-					case KeyboardKeys.U:
-						actualText = actualText + (e.Shift ? "U" : "u");
-						break;
-					case KeyboardKeys.V:
-						actualText = actualText + (e.Shift ? "V" : "v");
-						break;
-					case KeyboardKeys.W:
-						actualText = actualText + (e.Shift ? "W" : "w");
-						break;
-					case KeyboardKeys.X:
-						actualText = actualText + (e.Shift ? "X" : "x");
-						break;
-					case KeyboardKeys.Y:
-						actualText = actualText + (e.Shift ? "Y" : "y");
-						break;
-					case KeyboardKeys.Z:
-						actualText = actualText + (e.Shift ? "Z" : "z");
-						break;
-					case KeyboardKeys.OemQuotes:
-						actualText = actualText + (e.Shift ? "\"" : "'");
-						break;
-					case KeyboardKeys.OemSemicolon:
-						actualText = actualText + (e.Shift ? ":" : ";");
-						break;
-					case KeyboardKeys.Oemtilde:
-						actualText = actualText + (e.Shift ? "~" : "`");
-						break;
-					case KeyboardKeys.OemPeriod:
-						actualText = actualText + (e.Shift ? ">" : ".");
-						break;
-					case KeyboardKeys.Oemcomma:
-						actualText = actualText + (e.Shift ? "<" : ",");
-						break;
-					case KeyboardKeys.Space:
-						actualText = actualText + " ";
-						break;
-					case KeyboardKeys.D0:
-						actualText = actualText + (e.Shift ? ")" : "0");
-						break;
-					case KeyboardKeys.D1:
-						actualText = actualText + (e.Shift ? "!" : "1");
-						break;
-					case KeyboardKeys.D2:
-						actualText = actualText + (e.Shift ? "@" : "2");
-						break;
-					case KeyboardKeys.D3:
-						actualText = actualText + (e.Shift ? "#" : "3");
-						break;
-					case KeyboardKeys.D4:
-						actualText = actualText + (e.Shift ? "$" : "4");
-						break;
-					case KeyboardKeys.D5:
-						actualText = actualText + (e.Shift ? "%" : "5");
-						break;
-					case KeyboardKeys.D6:
-						actualText = actualText + (e.Shift ? "^" : "6");
-						break;
-					case KeyboardKeys.D7:
-						actualText = actualText + (e.Shift ? "&" : "7");
-						break;
-					case KeyboardKeys.D8:
-						actualText = actualText + (e.Shift ? "*" : "8");
-						break;
-					case KeyboardKeys.D9:
-						actualText = actualText + (e.Shift ? "(" : "9");
-						break;
-					case KeyboardKeys.NumPad0:
-						actualText = actualText + (e.Shift ? "!" : "0");
-						break;
-					case KeyboardKeys.NumPad1:
-						actualText = actualText + "1";
-						break;
-					case KeyboardKeys.NumPad2:
-						actualText = actualText + "2";
-						break;
-					case KeyboardKeys.NumPad3:
-						actualText = actualText + "3";
-						break;
-					case KeyboardKeys.NumPad4:
-						actualText = actualText + "4";
-						break;
-					case KeyboardKeys.NumPad5:
-						actualText = actualText + "5";
-						break;
-					case KeyboardKeys.NumPad6:
-						actualText = actualText + "6";
-						break;
-					case KeyboardKeys.NumPad7:
-						actualText = actualText + "7";
-						break;
-					case KeyboardKeys.NumPad8:
-						actualText = actualText + "8";
-						break;
-					case KeyboardKeys.NumPad9:
-						actualText = actualText + "9";
-						break;
-					case KeyboardKeys.Subtract:
-						actualText = actualText + "-";
-						break;
-					case KeyboardKeys.Multiply:
-						actualText = actualText + "*";
-						break;
-					case KeyboardKeys.Divide:
-						actualText = actualText + "/";
-						break;
-					case KeyboardKeys.Add:
-						actualText = actualText + "+";
-						break;
-					case KeyboardKeys.OemMinus:
-						actualText = actualText + (e.Shift ? "_" : "-");
-						break;
-					case KeyboardKeys.Enter:
-						isSelected = false;
-						break;
-					case KeyboardKeys.Back:
-						if (actualText.Length > 0)
-						{
-							actualText = actualText.Substring(0, actualText.Length - 1);
-						}
-						break;
-				}
-				text.SetText(actualText);
-				if (text.GetWidth() > width)
-				{
-					text.SetText(prevText);
-					actualText = prevText;
-				}
-				return true;
-			}
-			return false;
-		}
-		#endregion
-		#endregion
-	}
-
 	public class BBSingleLineTextBox
 	{
 		#region Member Variables
@@ -2924,4 +2600,100 @@ namespace Beyond_Beyaan
 		#endregion
 		#endregion
 	}
+
+	/*public class BBTextBox
+	{
+		#region Member Variables
+		private Viewport wrapView;
+		private TextSprite textSprite;
+		private BBScrollBar textScrollBar;
+		private RenderImage target;
+		private bool scrollbarVisible;
+		private bool usingScrollBar;
+
+		#endregion
+
+		public bool Initialize(int xPos, int yPos, int width, int height)
+		{
+			
+		}
+	}
+
+	public class BBToolTip
+	{
+		#region Member Variables
+		private const int WIDTH = 250;
+
+		private BBStretchableImage _background;
+		private BBTextBox _text;
+
+		private float _delayBeforeShowing;
+		private bool _showing;
+
+		private int _screenWidth;
+		private int _screenHeight;
+
+		private int totalHeight;
+		#endregion
+
+		public bool Initialize(string text, int screenWidth, int screenHeight)
+		{
+			text = new BBLabel();
+
+			_background = new BBStretchableImage(0, 0, WIDTH, totalHeight + sectionHeight, sectionWidth, sectionHeight, backgroundImage);
+
+			showing = false;
+
+			this.screenWidth = screenWidth;
+			this.screenHeight = screenHeight;
+
+			this.sectionWidth = sectionWidth / 2;
+			this.sectionHeight = sectionHeight / 2;
+		}
+
+		public override void Draw(DrawingManagement drawingManagement)
+		{
+			if (showing)
+			{
+				background.Draw(drawingManagement);
+				title.Draw();
+				for (int i = 0; i < icons.Count; i++)
+				{
+					icons[i].Draw(xPos + 10, yPos + (i * 24) + 20 + sectionHeight, 250, 24, drawingManagement);
+				}
+			}
+		}
+
+		public override bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			int modifiedX = 0;
+			int modifiedY = 0;
+			if (x < screenWidth - WIDTH)
+			{
+				modifiedX = x;
+			}
+			else
+			{
+				modifiedX = x - WIDTH;
+			}
+			if (y < screenHeight - totalHeight)
+			{
+				modifiedY = y;
+			}
+			else
+			{
+				modifiedY = y - totalHeight;
+			}
+			background.MoveTo(modifiedX, modifiedY);
+			title.MoveTo(modifiedX + sectionWidth, modifiedY + sectionHeight);
+			xPos = modifiedX;
+			yPos = modifiedY;
+			return true;
+		}
+
+		public void SetShowing(bool showing)
+		{
+			this.showing = showing;
+		}
+	}*/
 }

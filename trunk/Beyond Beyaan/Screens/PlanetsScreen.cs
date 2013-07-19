@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class PlanetsScreen : ScreenInterface
+	public class PlanetsScreen : ScreenInterface
 	{
 		GameMain gameMain;
 
@@ -53,7 +50,7 @@ namespace Beyond_Beyaan.Screens
 		private StarSystem selectedSystem;
 		private StarSystem hoveringSystem;
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
 
@@ -110,6 +107,9 @@ namespace Beyond_Beyaan.Screens
 			scrollBar = new ScrollBar(x + 784, y, 16, 568, 6, 10, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
 				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
 				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
+
+			reason = null;
+			return true;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)

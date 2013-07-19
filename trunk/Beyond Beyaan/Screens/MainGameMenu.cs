@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorgonLibrary.InputDevices;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class MainGameMenu : ScreenInterface
+	public class MainGameMenu : ScreenInterface
 	{
 		GameMain gameMain;
 		Button[] buttons;
@@ -14,7 +10,7 @@ namespace Beyond_Beyaan.Screens
 		int x;
 		int y;
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
 
@@ -33,6 +29,9 @@ namespace Beyond_Beyaan.Screens
 
 			x = (gameMain.ScreenWidth / 2) - 512;
 			y = 25;
+
+			reason = null;
+			return true;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)

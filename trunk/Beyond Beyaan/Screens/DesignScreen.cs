@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorgonLibrary.InputDevices;
-using Beyond_Beyaan.Data_Modules;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class DesignScreen : ScreenInterface
+	public class DesignScreen : ScreenInterface
 	{
 		/*private const int NONE = 0;
 		private const int ENGINE = 1;
@@ -54,8 +49,10 @@ namespace Beyond_Beyaan.Screens
 		ScrollBar techScrollBar;
 		#endregion*/
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
+			reason = null;
+			return true;
 			/*this.gameMain = gameMain;
 
 			x = gameMain.ScreenWidth / 2 - 400;

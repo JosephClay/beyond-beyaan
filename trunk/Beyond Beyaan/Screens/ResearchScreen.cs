@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GorgonLibrary.InputDevices;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	class ResearchScreen : ScreenInterface
+	public class ResearchScreen : ScreenInterface
 	{
 		/*private const int BEAM = 0;
 		private const int PARTICLE = 1;
@@ -35,7 +31,7 @@ namespace Beyond_Beyaan.Screens
 		private int maxVisible;
 		private int techIndex;*/
 
-		public void Initialize(GameMain gameMain)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			/*this.gameMain = gameMain;
 
@@ -71,6 +67,8 @@ namespace Beyond_Beyaan.Screens
 				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
 				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
 			availableScrollBar.SetEnabledState(false);*/
+			reason = null;
+			return true;
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)

@@ -56,18 +56,18 @@ namespace Beyond_Beyaan
 				}
 				catch (Exception exception)
 				{
-					MessageBox.Show("Failed to copy directories.  Error: " + exception.Message);
+					MessageBox.Show(string.Format("Failed to copy directories.  Error: {0}", exception.Message));
 					Close();
 					return;
 				}
 				if (dataSets.Count == 0)
 				{
-					MessageBox.Show("There are no available datasets to choose from.  Ensure that the program is installed correctly.");
+					MessageBox.Show(Resources.BeyondBeyaan_OnLoad_There_are_no_available_datasets_to_choose_from___Ensure_that_the_program_is_installed_correctly_);
 					Close();
 					return;
 				}
 
-				dataSets.Sort((a, b) => a.Name.CompareTo(b.Name));
+				dataSets.Sort((a, b) => String.Compare(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase));
 
 				Gorgon.Initialize(true, false);
 
@@ -105,7 +105,7 @@ namespace Beyond_Beyaan
 				keyboard = input.Keyboard;
 				keyboard.Enabled = true;
 				keyboard.Exclusive = false;
-				keyboard.KeyDown += new KeyboardInputEvent(keyboard_KeyDown);
+				keyboard.KeyDown += keyboard_KeyDown;
 
 				gameMain = new GameMain();
 
@@ -126,7 +126,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		private void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
+		private static void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
 		{
 			if (!target.Exists)
 			{
