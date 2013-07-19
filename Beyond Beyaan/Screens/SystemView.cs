@@ -19,6 +19,12 @@ namespace Beyond_Beyaan.Screens
 		private BBScrollBar _defenseSlider;
 		private BBScrollBar _constructionSlider;
 
+		private BBButton _infrastructureLockButton;
+		private BBButton _researchLockButton;
+		private BBButton _environmentLockButton;
+		private BBButton _defenseLockButton;
+		private BBButton _constructionLockButton;
+
 		private BBLabel _infrastructureLabel;
 		private BBLabel _researchLabel;
 		private BBLabel _environmentLabel;
@@ -36,10 +42,15 @@ namespace Beyond_Beyaan.Screens
 		private BBSprite _constructionIcon;
 		private StarSystem currentSystem;
 
+		private bool _isOwnedSystem; //To determine whether or not to display/handle sliders
+		private bool _isExplored;
+
 		#region Constructor
 		public bool Initialize(GameMain gameMain, Random r, out string reason)
 		{
 			this.gameMain = gameMain;
+			_isExplored = false;
+			_isOwnedSystem = false;
 			if (!base.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 220, 300, 440, gameMain, true, r, out reason))
 			{
 				return false;
@@ -86,6 +97,12 @@ namespace Beyond_Beyaan.Screens
 			_defenseSlider = new BBScrollBar();
 			_constructionSlider = new BBScrollBar();
 
+			_infrastructureLockButton = new BBButton();
+			_researchLockButton = new BBButton();
+			_environmentLockButton = new BBButton();
+			_defenseLockButton = new BBButton();
+			_constructionLockButton = new BBButton();
+
 			if (!_infrastructureBackground.Initialize(xPos + 10, yPos + 130, 280, 60, StretchableImageType.ThinBorder, r, out reason))
 			{
 				return false;
@@ -127,11 +144,19 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			if (!_infrastructureLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 160, 16, 16, r, out reason))
+			{
+				return false;
+			}
 			if (!_researchLabel.Initialize(xPos + 65, yPos + 200, string.Empty, System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
 			if (!_researchSlider.Initialize(xPos + 65, yPos + 220, 200, 1, 100, true, true, r, out reason))
+			{
+				return false;
+			}
+			if (!_researchLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 220, 16, 16, r, out reason))
 			{
 				return false;
 			}
@@ -143,6 +168,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			if (!_environmentLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 280, 16, 16, r, out reason))
+			{
+				return false;
+			}
 			if (!_defenseLabel.Initialize(xPos + 65, yPos + 320, string.Empty, System.Drawing.Color.White, out reason))
 			{
 				return false;
@@ -151,11 +180,19 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			if (!_defenseLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 340, 16, 16, r, out reason))
+			{
+				return false;
+			}
 			if (!_constructionLabel.Initialize(xPos + 65, yPos + 380, string.Empty, System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
 			if (!_constructionSlider.Initialize(xPos + 65, yPos + 400, 200, 1, 100, true, true, r, out reason))
+			{
+				return false;
+			}
+			if (!_constructionLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 400, 16, 16, r, out reason))
 			{
 				return false;
 			}
@@ -170,26 +207,39 @@ namespace Beyond_Beyaan.Screens
 			currentSystem = gameMain.EmpireManager.CurrentEmpire.SelectedSystem;
 			if (currentSystem.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
 			{
+				_isExplored = true;
 				var planet = currentSystem.Planets[0];
 				_name.SetString(currentSystem.Name);
-				bool isOwned = currentSystem.Planets[0].Owner != null;
-				_name.SetColor(isOwned ? currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White);
-				_popLabel.SetText(isOwned ? string.Format("{0}/{1} M", (int)currentSystem.Planets[0].TotalPopulation, currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", currentSystem.Planets[0].PopulationMax));
+				_isOwnedSystem = currentSystem.Planets[0].Owner != null;
+				_name.SetColor(_isOwnedSystem ? currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White);
+				_popLabel.SetText(_isOwnedSystem ? string.Format("{0}/{1} M", (int)currentSystem.Planets[0].TotalPopulation, currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", currentSystem.Planets[0].PopulationMax));
 				_terrainLabel.SetText(Utility.PlanetTypeToString(currentSystem.Planets[0].PlanetType));
-				_productionLabel.SetText(isOwned ? string.Format("{0:0.0} ({1:0.0}) Production", currentSystem.Planets[0].ActualProduction, currentSystem.Planets[0].TotalProduction) : "Unknown");
-				_infrastructureLabel.SetText(isOwned ? currentSystem.Planets[0].InfrastructureStringOutput : "Unknown");
-				_researchLabel.SetText(isOwned ? currentSystem.Planets[0].ResearchStringOutput : "Unknown");
-				_environmentLabel.SetText(isOwned ? currentSystem.Planets[0].EnvironmentStringOutput : "Unknown");
-				_defenseLabel.SetText(isOwned ? currentSystem.Planets[0].DefenseStringOutput : "Unknown");
-				_constructionLabel.SetText(isOwned ? currentSystem.Planets[0].ConstructionStringOutput : "Unknown");
+				_productionLabel.SetText(_isOwnedSystem ? string.Format("{0:0.0} ({1:0.0}) Production", currentSystem.Planets[0].ActualProduction, currentSystem.Planets[0].TotalProduction) : "Unknown");
+				_infrastructureLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].InfrastructureStringOutput : "Unknown");
+				_researchLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].ResearchStringOutput : "Unknown");
+				_environmentLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].EnvironmentStringOutput : "Unknown");
+				_defenseLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].DefenseStringOutput : "Unknown");
+				_constructionLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].ConstructionStringOutput : "Unknown");
 				_infrastructureSlider.TopIndex = planet.InfrastructureAmount;
 				_researchSlider.TopIndex = planet.ResearchAmount;
 				_environmentSlider.TopIndex = planet.EnvironmentAmount;
 				_defenseSlider.TopIndex = planet.DefenseAmount;
 				_constructionSlider.TopIndex = planet.ConstructionAmount;
+				
+				_infrastructureLockButton.Selected = planet.InfrastructureLocked;
+				_infrastructureSlider.SetEnabledState(!planet.InfrastructureLocked);
+				_researchLockButton.Selected = planet.ResearchLocked;
+				_researchSlider.SetEnabledState(!planet.ResearchLocked);
+				_environmentLockButton.Selected = planet.EnvironmentLocked;
+				_environmentSlider.SetEnabledState(!planet.EnvironmentLocked);
+				_defenseLockButton.Selected = planet.DefenseLocked;
+				_defenseSlider.SetEnabledState(!planet.DefenseLocked);
+				_constructionLockButton.Selected = planet.ConstructionLocked;
+				_constructionSlider.SetEnabledState(!planet.ConstructionLocked);
 			}
 			else
 			{
+				_isExplored = false;
 				_name.SetString("Unexplored");
 				_name.SetColor(System.Drawing.Color.White);
 				_popLabel.SetText(string.Empty);
@@ -215,13 +265,13 @@ namespace Beyond_Beyaan.Screens
 		{
 			base.Draw();
 			_name.Draw();
-			_infrastructureBackground.Draw();
-			_researchBackground.Draw();
-			_environmentBackground.Draw();
-			_defenseBackground.Draw();
-			_constructionBackground.Draw();
-			if (currentSystem.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
+			if (_isExplored)
 			{
+				_infrastructureBackground.Draw();
+				_researchBackground.Draw();
+				_environmentBackground.Draw();
+				_defenseBackground.Draw();
+				_constructionBackground.Draw();
 				currentSystem.Planets[0].SmallSprite.Draw(xPos + 10, yPos + 60);
 				_infrastructureIcon.Draw(xPos + 20, yPos + 140);
 				_researchIcon.Draw(xPos + 20, yPos + 200);
@@ -231,19 +281,23 @@ namespace Beyond_Beyaan.Screens
 				_popLabel.Draw();
 				_terrainLabel.Draw();
 				_productionLabel.Draw();
-				bool isOwned = currentSystem.Planets[0].Owner == gameMain.EmpireManager.CurrentEmpire;
-				if (isOwned)
+				if (_isOwnedSystem)
 				{
 					_infrastructureLabel.Draw();
 					_infrastructureSlider.Draw();
+					_infrastructureLockButton.Draw();
 					_researchLabel.Draw();
 					_researchSlider.Draw();
+					_researchLockButton.Draw();
 					_environmentLabel.Draw();
 					_environmentSlider.Draw();
+					_environmentLockButton.Draw();
 					_defenseLabel.Draw();
 					_defenseSlider.Draw();
+					_defenseLockButton.Draw();
 					_constructionLabel.Draw();
 					_constructionSlider.Draw();
+					_constructionLockButton.Draw();
 				}
 			}
 		}
@@ -262,14 +316,19 @@ namespace Beyond_Beyaan.Screens
 			_productionLabel.Move(xPos + 55, yPos + 100);
 			_infrastructureLabel.Move(xPos + 65, yPos + 140);
 			_infrastructureSlider.MoveScrollBar(xPos + 65, yPos + 160);
+			_infrastructureLockButton.MoveButton(xPos + 267, yPos + 160);
 			_researchLabel.Move(xPos + 65, yPos + 200);
 			_researchSlider.MoveScrollBar(xPos + 65, yPos + 220);
+			_researchLockButton.MoveButton(xPos + 267, yPos + 220);
 			_environmentLabel.Move(xPos + 65, yPos + 260);
 			_environmentSlider.MoveScrollBar(xPos + 65, yPos + 280);
+			_environmentLockButton.MoveButton(xPos + 267, yPos + 280);
 			_defenseLabel.Move(xPos + 65, yPos + 320);
 			_defenseSlider.MoveScrollBar(xPos + 65, yPos + 340);
+			_defenseLockButton.MoveButton(xPos + 267, yPos + 340);
 			_constructionLabel.Move(xPos + 65, yPos + 380);
 			_constructionSlider.MoveScrollBar(xPos + 65, yPos + 400);
+			_constructionLockButton.MoveButton(xPos + 267, yPos + 400);
 		}
 
 		public override bool MouseDown(int x, int y)

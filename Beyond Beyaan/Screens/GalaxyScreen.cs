@@ -783,46 +783,7 @@ namespace Beyond_Beyaan.Screens
 					{
 						pressedInWindow = false;
 					}
-					/*if (systemScrollBar.MouseUp(x, y))
-					{
-						for (int i = 0; i < (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets.Count <= 6 ? _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets.Count : 6); i++)
-						{
-							if (_gameMain.EmpireManager.CurrentEmpire.PlanetSelected - systemScrollBar.TopIndex == i)
-							{
-								systemButtons[i].Selected = true;
-							}
-							else
-							{
-								systemButtons[i].Selected = false;
-							}
-						}
-						pressedInWindow = false;
-						return;
-					}
-					for (int i = 0; i < systemButtons.Length; i++)
-					{
-						if (systemButtons[i].MouseUp(x, y))
-						{
-							foreach (Button button in systemButtons)
-							{
-								button.Selected = false;
-							}
-							systemButtons[i].Selected = true;
-							_gameMain.EmpireManager.CurrentEmpire.PlanetSelected = i + systemScrollBar.TopIndex;
-							LoadPlanetInfoIntoUI(_gameMain.EmpireManager.CurrentEmpire.SelectedSystem);
-							if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].Owner == _gameMain.EmpireManager.CurrentEmpire)
-							{
-								planetScrollBars[AGRICULTURE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].AgricultureAmount;
-								planetScrollBars[WASTE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].EnvironmentAmount;
-								planetScrollBars[COMMERCE].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].CommerceAmount;
-								planetScrollBars[RESEARCH].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].ResearchAmount;
-								planetScrollBars[CONSTRUCTION].TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].ConstructionAmount;
-								LoadShipSprite(_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected]);
-							}
-							pressedInWindow = false;
-							return;
-						}
-					}
+					/*
 					if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets.Count > 0 && _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Planets[_gameMain.EmpireManager.CurrentEmpire.PlanetSelected].Owner == _gameMain.EmpireManager.CurrentEmpire)
 					{
 						for (int i = 0; i < planetScrollBars.Length; i++)
