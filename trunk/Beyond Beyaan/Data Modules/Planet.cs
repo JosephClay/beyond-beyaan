@@ -491,38 +491,33 @@ namespace Beyond_Beyaan
 			}
 
 			//Now scale
-			int totalPointsExcludingSelectedType = 0;
+			int totalPointsExcludingSelectedType = GetPointsExcludingSelectedTypeAndLockedTypes(outputType);
 			switch (outputType)
 			{
 				case OUTPUT_TYPE.INFRASTRUCTURE:
 					{
 						InfrastructureAmount = amount;
 						remainingPercentile -= InfrastructureAmount;
-						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + DefenseAmount + EnvironmentAmount;
 					} break;
 				case OUTPUT_TYPE.ENVIRONMENT:
 					{
 						EnvironmentAmount = amount;
 						remainingPercentile -= EnvironmentAmount;
-						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + DefenseAmount + InfrastructureAmount;
 					} break;
 				case OUTPUT_TYPE.DEFENSE:
 					{
 						DefenseAmount = amount;
 						remainingPercentile -= DefenseAmount;
-						totalPointsExcludingSelectedType = ConstructionAmount + ResearchAmount + InfrastructureAmount + EnvironmentAmount;
 					} break;
 				case OUTPUT_TYPE.CONSTRUCTION:
 					{
 						ConstructionAmount = amount;
 						remainingPercentile -= ConstructionAmount;
-						totalPointsExcludingSelectedType = DefenseAmount + ResearchAmount + InfrastructureAmount + EnvironmentAmount;
 					} break;
 				case OUTPUT_TYPE.RESEARCH:
 					{
 						ResearchAmount = amount;
 						remainingPercentile -= ResearchAmount;
-						totalPointsExcludingSelectedType = ConstructionAmount + DefenseAmount + InfrastructureAmount + EnvironmentAmount;
 					} break;
 			}
 			if (remainingPercentile < totalPointsExcludingSelectedType)
@@ -612,7 +607,64 @@ namespace Beyond_Beyaan
 						amountToAdd = 0;
 					}
 				}
+				if (amountToAdd > 0) //All other sliders has been locked, allocate the remaining points back to this output
+				{
+					switch (outputType)
+					{
+						case OUTPUT_TYPE.INFRASTRUCTURE:
+								{
+									InfrastructureAmount += amountToAdd;
+									break;
+								}
+						case OUTPUT_TYPE.RESEARCH:
+								{
+									ResearchAmount += amountToAdd;
+									break;
+								}
+						case OUTPUT_TYPE.ENVIRONMENT:
+								{
+									EnvironmentAmount += amountToAdd;
+									break;
+								}
+						case OUTPUT_TYPE.DEFENSE:
+								{
+									DefenseAmount += amountToAdd;
+									break;
+								}
+						case OUTPUT_TYPE.CONSTRUCTION:
+								{
+									ConstructionAmount += amountToAdd;
+									break;
+								}
+					}
+				}
 			}
+		}
+
+		private int GetPointsExcludingSelectedTypeAndLockedTypes(OUTPUT_TYPE type)
+		{
+			int points = 0;
+			if (type != OUTPUT_TYPE.ENVIRONMENT && !EnvironmentLocked)
+			{
+				points += EnvironmentAmount;
+			}
+			if (type != OUTPUT_TYPE.RESEARCH && !ResearchLocked)
+			{
+				points += ResearchAmount;
+			}
+			if (type != OUTPUT_TYPE.CONSTRUCTION && !ConstructionLocked)
+			{
+				points += ConstructionAmount;
+			}
+			if (type != OUTPUT_TYPE.DEFENSE && !DefenseLocked)
+			{
+				points += DefenseAmount;
+			}
+			if (type != OUTPUT_TYPE.INFRASTRUCTURE && !InfrastructureLocked)
+			{
+				points += InfrastructureAmount;
+			}
+			return points;
 		}
 
 		public void SetCleanup()
