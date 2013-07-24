@@ -212,7 +212,15 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			if (!_relocateToButton.SetToolTip("RelocateToolTip", "Set a friendly system as the destination of newly built ships", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
 			if (!_transferToButton.Initialize("TransferToBG", "TransferToFG", string.Empty, xPos + 215, yPos + 435, 75, 35, r, out reason))
+			{
+				return false;
+			}
+			if (!_transferToButton.SetToolTip("TransferToToolTip", "Send up to half of the population to another occupied system", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -320,6 +328,8 @@ namespace Beyond_Beyaan.Screens
 					_constructionLockButton.Draw();
 					_relocateToButton.Draw();
 					_transferToButton.Draw();
+					_relocateToButton.DrawToolTip();
+					_transferToButton.DrawToolTip();
 				}
 			}
 		}
@@ -337,20 +347,22 @@ namespace Beyond_Beyaan.Screens
 			_constructionBackground.MoveTo(xPos + 10, yPos + 370);
 			_productionLabel.Move(xPos + 55, yPos + 100);
 			_infrastructureLabel.Move(xPos + 65, yPos + 140);
-			_infrastructureSlider.MoveScrollBar(xPos + 65, yPos + 160);
+			_infrastructureSlider.MoveTo(xPos + 65, yPos + 160);
 			_infrastructureLockButton.MoveTo(xPos + 267, yPos + 160);
 			_researchLabel.Move(xPos + 65, yPos + 200);
-			_researchSlider.MoveScrollBar(xPos + 65, yPos + 220);
+			_researchSlider.MoveTo(xPos + 65, yPos + 220);
 			_researchLockButton.MoveTo(xPos + 267, yPos + 220);
 			_environmentLabel.Move(xPos + 65, yPos + 260);
-			_environmentSlider.MoveScrollBar(xPos + 65, yPos + 280);
+			_environmentSlider.MoveTo(xPos + 65, yPos + 280);
 			_environmentLockButton.MoveTo(xPos + 267, yPos + 280);
 			_defenseLabel.Move(xPos + 65, yPos + 320);
-			_defenseSlider.MoveScrollBar(xPos + 65, yPos + 340);
+			_defenseSlider.MoveTo(xPos + 65, yPos + 340);
 			_defenseLockButton.MoveTo(xPos + 267, yPos + 340);
 			_constructionLabel.Move(xPos + 65, yPos + 380);
-			_constructionSlider.MoveScrollBar(xPos + 65, yPos + 400);
+			_constructionSlider.MoveTo(xPos + 65, yPos + 400);
 			_constructionLockButton.MoveTo(xPos + 267, yPos + 400);
+			_relocateToButton.MoveTo(xPos + 130, yPos + 435);
+			_transferToButton.MoveTo(xPos + 215, yPos + 435);
 		}
 
 		public override bool MouseDown(int x, int y)
