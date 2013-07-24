@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
 using GorgonLibrary.Graphics;
@@ -13,6 +11,7 @@ namespace Beyond_Beyaan
 	public class BBButton
 	{
 		#region Member Variables
+		private BBToolTip toolTip;
 		private BBSprite backgroundSprite;
 		private BBSprite foregroundSprite;
 		private int xPos;
@@ -69,6 +68,15 @@ namespace Beyond_Beyaan
 		{
 			label.SetText(text);
 		}
+		public bool SetToolTip(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
+		{
+			toolTip = new BBToolTip();
+			if (!toolTip.Initialize(name, text, screenWidth, screenHeight, r, out reason))
+			{
+				return false;
+			}
+			return true;
+		}
 
 		public void MoveTo(int x, int y)
 		{
@@ -112,15 +120,24 @@ namespace Beyond_Beyaan
 						}
 					}
 				}
+				if (toolTip != null)
+				{
+					toolTip.SetShowing(true);
+					toolTip.MouseHover(x, y, frameDeltaTime);
+				}
 				return true;
 			}
-			else if (pulse > 0)
+			if (pulse > 0)
 			{
 				pulse -= frameDeltaTime * 2;
 				if (pulse < 0)
 				{
 					pulse = 0;
 				}
+			}
+			if (toolTip != null)
+			{
+				toolTip.SetShowing(false);
 			}
 			return false;
 		}
@@ -129,6 +146,10 @@ namespace Beyond_Beyaan
 		{
 			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
 			{
+				if (toolTip != null)
+				{
+					toolTip.SetShowing(false);
+				}
 				if (Active)
 				{
 					pressed = true;
@@ -142,6 +163,10 @@ namespace Beyond_Beyaan
 		{
 			if (Active && pressed)
 			{
+				if (toolTip != null)
+				{
+					toolTip.SetShowing(false);
+				}
 				pressed = false;
 				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
 				{
@@ -179,6 +204,13 @@ namespace Beyond_Beyaan
 			if (label.Text.Length > 0)
 			{
 				label.Draw();
+			}
+		}
+		public void DrawToolTip()
+		{
+			if (toolTip != null)
+			{
+				toolTip.Draw();
 			}
 		}
 		#endregion
@@ -1074,7 +1106,7 @@ namespace Beyond_Beyaan
 			return false;
 		}
 
-		public void MoveScrollBar(int x, int y)
+		public void MoveTo(int x, int y)
 		{
 			Up.MoveTo(x, y);
 			if (isHorizontal)
@@ -2601,21 +2633,147 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
-	/*public class BBTextBox
+	public class BBTextBox
 	{
 		#region Member Variables
-		private Viewport wrapView;
-		private TextSprite textSprite;
-		private BBScrollBar textScrollBar;
-		private RenderImage target;
-		private bool scrollbarVisible;
-		private bool usingScrollBar;
-
+		private Viewport _wrapView;
+		private TextSprite _textSprite;
+		private BBScrollBar _textScrollBar;
+		private RenderImage _target;
+		private bool _scrollbarVisible;
+		private bool _usingScrollBar;
+		private int _x;
+		private int _y;
 		#endregion
 
-		public bool Initialize(int xPos, int yPos, int width, int height)
+		public int Width { get; private set; }
+		public int Height { get; private set; }
+
+		public bool Initialize(int xPos, int yPos, int width, int height, bool useScrollBar, string name, Random r, out string reason)
 		{
-			
+			//If using scrollbar, then shrink the actual width by 16 to allow for scrollbar, even if it's not visible
+			_x = xPos;
+			_y = yPos;
+			Width = width;
+			Height = height == 0 ? 1 : height;
+			_usingScrollBar = useScrollBar;
+			_scrollbarVisible = false;
+			if (_usingScrollBar)
+			{
+				_textScrollBar = new BBScrollBar();
+				if (!_textScrollBar.Initialize(xPos + Width - 16, yPos, Height, Height, 1, false, false, r, out reason))
+				{
+					return false;
+				}
+				_wrapView = new Viewport(0, 0, Width - 16, Height);
+
+				_target = new RenderImage(name + "render", Width - 16, Height, ImageBufferFormats.BufferRGB888A8);
+			}
+			else
+			{
+				_wrapView = new Viewport(0, 0, Width, Height);
+
+				_target = new RenderImage(name + "render", Width, Height, ImageBufferFormats.BufferRGB888A8);
+			}
+			_textSprite = new TextSprite(name, string.Empty, FontManager.GetDefaultFont());
+			_textSprite.WordWrap = true;
+			_textSprite.Bounds = _wrapView;
+			_target.BlendingMode = BlendingModes.Modulated;
+			reason = null;
+			return true;
+		}
+
+		public void SetText(string text)
+		{
+			_textSprite.Text = text;
+			if (_usingScrollBar)
+			{
+				_textScrollBar.TopIndex = 0;
+				if (_textSprite.Height > Height)
+				{
+					_scrollbarVisible = true;
+					_textScrollBar.SetAmountOfItems((int)_textSprite.Height);
+				}
+				else
+				{
+					_scrollbarVisible = false;
+				}
+			}
+			else
+			{
+				//Expand the height to the actual text sprite's height
+				Height = (int)_textSprite.Height;
+				_target.Height = Height;
+			}
+			//Draw it once onto _target for performance reasons
+			_target.Clear(Color.FromArgb(0, Color.Black));
+			RenderTarget old = GorgonLibrary.Gorgon.CurrentRenderTarget;
+			GorgonLibrary.Gorgon.CurrentRenderTarget = _target;
+			_textSprite.SetPosition(0, _usingScrollBar ? -_textScrollBar.TopIndex : 0);
+			_textSprite.Draw();
+			GorgonLibrary.Gorgon.CurrentRenderTarget = old;
+		}
+
+		public void Draw()
+		{
+			if (_usingScrollBar && _scrollbarVisible)
+			{
+				_textScrollBar.Draw();
+			}
+			//Already rendered when text was set
+			_target.Blit(_x, _y);
+		}
+
+		public bool MouseDown(int x, int y)
+		{
+			bool result = false;
+			if (_usingScrollBar && _scrollbarVisible)
+			{
+				result = _textScrollBar.MouseDown(x, y);
+			}
+			if (!result && x >= _x && x < _x + Width && y >= _y && y < _y + Height)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		public bool MouseUp(int x, int y)
+		{
+			bool result = false;
+			if (_usingScrollBar && _scrollbarVisible)
+			{
+				result = _textScrollBar.MouseUp(x, y);
+			}
+			if (!result && x >= _x && x < _x + Width && y >= _y && y < _y + Height)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			bool result = false;
+			if (_usingScrollBar && _scrollbarVisible)
+			{
+				result = _textScrollBar.MouseHover(x, y, frameDeltaTime);
+			}
+			if (!result && x >= _x && x < _x + Width && y >= _y && y < _y + Height)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		public void MoveTo(int x, int y)
+		{
+			_x = x;
+			_y = y;
+			if (_usingScrollBar)
+			{
+				_textScrollBar.MoveTo(_x + Width - 16, y);
+			}
 		}
 	}
 
@@ -2633,67 +2791,89 @@ namespace Beyond_Beyaan
 		private int _screenWidth;
 		private int _screenHeight;
 
-		private int totalHeight;
+		private int _totalHeight;
 		#endregion
 
-		public bool Initialize(string text, int screenWidth, int screenHeight)
+		public bool Initialize(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
 		{
-			text = new BBLabel();
+			_text = new BBTextBox();
+			if (!_text.Initialize(0, 0, WIDTH - 20, 0, false, name, r, out reason))
+			{
+				return false;
+			}
+			_text.SetText(text);
 
-			_background = new BBStretchableImage(0, 0, WIDTH, totalHeight + sectionHeight, sectionWidth, sectionHeight, backgroundImage);
+			_totalHeight = _text.Height + 10;
 
-			showing = false;
+			_background = new BBStretchableImage();
+			if (!_background.Initialize(0, 0, WIDTH, _totalHeight, StretchableImageType.ThinBorder, r, out reason))
+			{
+				return false;
+			}
 
-			this.screenWidth = screenWidth;
-			this.screenHeight = screenHeight;
+			_showing = false;
+			_delayBeforeShowing = 0; //1 second will turn on showing
 
-			this.sectionWidth = sectionWidth / 2;
-			this.sectionHeight = sectionHeight / 2;
+			_screenWidth = screenWidth;
+			_screenHeight = screenHeight;
+
+			reason = null;
+			return true;
 		}
 
-		public override void Draw(DrawingManagement drawingManagement)
+		public void Draw()
 		{
-			if (showing)
+			if (_showing && _delayBeforeShowing >= 1)
 			{
-				background.Draw(drawingManagement);
-				title.Draw();
-				for (int i = 0; i < icons.Count; i++)
+				_background.Draw();
+				_text.Draw();
+			}
+		}
+
+		public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			if (_showing)
+			{
+				int modifiedX = 0;
+				int modifiedY = 0;
+				if (x < _screenWidth - WIDTH)
 				{
-					icons[i].Draw(xPos + 10, yPos + (i * 24) + 20 + sectionHeight, 250, 24, drawingManagement);
+					modifiedX = x;
+				}
+				else
+				{
+					modifiedX = x - WIDTH;
+				}
+				if (y < _screenHeight - _totalHeight)
+				{
+					modifiedY = y;
+				}
+				else
+				{
+					modifiedY = y - _totalHeight;
+				}
+				_background.MoveTo(modifiedX, modifiedY);
+				_text.MoveTo(modifiedX + 10, modifiedY + 5);
+
+				if (_delayBeforeShowing < 1.0)
+				{
+					_delayBeforeShowing += frameDeltaTime;
 				}
 			}
-		}
-
-		public override bool MouseHover(int x, int y, float frameDeltaTime)
-		{
-			int modifiedX = 0;
-			int modifiedY = 0;
-			if (x < screenWidth - WIDTH)
-			{
-				modifiedX = x;
-			}
 			else
 			{
-				modifiedX = x - WIDTH;
+				_delayBeforeShowing = 0;
 			}
-			if (y < screenHeight - totalHeight)
-			{
-				modifiedY = y;
-			}
-			else
-			{
-				modifiedY = y - totalHeight;
-			}
-			background.MoveTo(modifiedX, modifiedY);
-			title.MoveTo(modifiedX + sectionWidth, modifiedY + sectionHeight);
-			xPos = modifiedX;
-			yPos = modifiedY;
 			return true;
 		}
 
 		public void SetShowing(bool showing)
 		{
-			this.showing = showing;
+			_showing = showing;
+			if (!_showing)
+			{
+				_delayBeforeShowing = 0;
+			}
 		}
-	}*/
+	}
 }
