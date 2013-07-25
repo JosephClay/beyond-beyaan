@@ -481,11 +481,11 @@ namespace Beyond_Beyaan.Screens
 									empire.SetHomeSystem(homeSystem, homePlanet);
 								}
 								gameMain.EmpireManager.SetupContacts();
-								//gameMain.EmpireManager.UpdateInfluenceMaps(gameMain.Galaxy);
+								//_gameMain.EmpireManager.UpdateInfluenceMaps(_gameMain.Galaxy);
 								gameMain.EmpireManager.SetInitialEmpireTurn();
-								//gameMain.EmpireManager.ProcessNextEmpire(); //This will process the AI players, then set the current empire to human controlled one
+								//_gameMain.EmpireManager.ProcessNextEmpire(); //This will process the AI players, then set the current empire to human controlled one
 								gameMain.RefreshSitRep();
-								//gameMain.Galaxy.ConstructQuadTree();
+								//_gameMain.Galaxy.ConstructQuadTree();
 								gameMain.ChangeToScreen(Screen.Galaxy);
 							}
 							break;
@@ -547,13 +547,13 @@ namespace Beyond_Beyaan.Screens
 		{
 			drawingManagement.DrawSprite(SpriteName.Screen, gameMain.ScreenWidth - 500, 0, 255, System.Drawing.Color.White);
 
-			/*GorgonLibrary.Graphics.Sprite nebula = gameMain.Galaxy.Nebula;
+			/*GorgonLibrary.Graphics.Sprite nebula = _gameMain.Galaxy.Nebula;
 			if (nebula != null)
 			{
-				nebula.SetPosition(gameMain.ScreenWidth - 499, 1);
-				float scale = (498.0f / (gameMain.Galaxy.GalaxySize + 3));
+				nebula.SetPosition(_gameMain.ScreenWidth - 499, 1);
+				float scale = (498.0f / (_gameMain.Galaxy.GalaxySize + 3));
 				nebula.SetScale(scale, scale);
-				gameMain.Galaxy.Nebula.Draw();
+				_gameMain.Galaxy.Nebula.Draw();
 			}*/
 
 			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();

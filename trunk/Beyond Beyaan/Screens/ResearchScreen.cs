@@ -15,7 +15,7 @@ namespace Beyond_Beyaan.Screens
 		private const int COMPUTER = 8;
 		private const int INFRASTRUCTURE = 9;
 
-		GameMain gameMain;
+		GameMain _gameMain;
 
 		private float researchPoints;
 		private Label researchPointsLabel;
@@ -33,10 +33,10 @@ namespace Beyond_Beyaan.Screens
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			/*this.gameMain = gameMain;
+			/*this._gameMain = _gameMain;
 
-			int x = (gameMain.ScreenWidth / 2) - 400;
-			int y = (gameMain.ScreenHeight / 2) - 300;
+			int x = (_gameMain.ScreenWidth / 2) - 400;
+			int y = (_gameMain.ScreenHeight / 2) - 300;
 
 			researchPointsLabel = new Label(x + 500, y + 575);
 
@@ -73,9 +73,9 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			/*gameMain.DrawGalaxyBackground();
+			/*_gameMain.DrawGalaxyBackground();
 
-			drawingManagement.DrawSprite(SpriteName.ControlBackground, (gameMain.ScreenWidth / 2) - 400, (gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, (_gameMain.ScreenWidth / 2) - 400, (_gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
 
 			for (int i = 0; i < techScrollBars.Length; i++)
 			{
@@ -103,35 +103,35 @@ namespace Beyond_Beyaan.Screens
 				{
 					switch (i)
 					{
-						case BEAM: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.BEAM, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case BEAM: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.BEAM, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case PARTICLE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.PARTICLE, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case PARTICLE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.PARTICLE, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case MISSILE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.MISSILE, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case MISSILE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.MISSILE, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case TORPEDO: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.TORPEDO, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case TORPEDO: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.TORPEDO, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case BOMB: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.BOMB, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case BOMB: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.BOMB, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case ENGINE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.ENGINE, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case ENGINE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.ENGINE, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case ARMOR: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.ARMOR, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case ARMOR: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.ARMOR, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case SHIELD: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.SHIELD, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case SHIELD: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.SHIELD, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case COMPUTER: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.COMPUTER, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case COMPUTER: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.COMPUTER, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case INFRASTRUCTURE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.INFRASTRUCTURE, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case INFRASTRUCTURE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.INFRASTRUCTURE, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
 					}
 				}
@@ -182,34 +182,34 @@ namespace Beyond_Beyaan.Screens
 				{
 					switch (i)
 					{
-						case BEAM: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.BEAM, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case BEAM: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.BEAM, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case PARTICLE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.PARTICLE, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case PARTICLE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.PARTICLE, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case MISSILE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.MISSILE, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case MISSILE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.MISSILE, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case TORPEDO: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.TORPEDO, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case TORPEDO: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.TORPEDO, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case BOMB: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.BOMB, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case BOMB: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.BOMB, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case ENGINE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.ENGINE, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case ENGINE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.ENGINE, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case ARMOR: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.ARMOR, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case ARMOR: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.ARMOR, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case SHIELD: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.SHIELD, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case SHIELD: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.SHIELD, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case COMPUTER: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.COMPUTER, techScrollBars[i].TopIndex);
-							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
+						case COMPUTER: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.COMPUTER, techScrollBars[i].TopIndex);
+							SetPercentages(_gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
-						case INFRASTRUCTURE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.INFRASTRUCTURE, techScrollBars[i].TopIndex);
+						case INFRASTRUCTURE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.SetPercentage(TechField.INFRASTRUCTURE, techScrollBars[i].TopIndex);
 							SetPercentages(gameMain.EmpireManager.CurrentEmpire.TechnologyManager);
 							return;
 					}
@@ -221,25 +221,25 @@ namespace Beyond_Beyaan.Screens
 				{
 					switch (i)
 					{
-						case BEAM: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.BeamLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.BeamLocked;
+						case BEAM: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.BeamLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.BeamLocked;
 							break;
-						case PARTICLE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ParticleLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ParticleLocked;
+						case PARTICLE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ParticleLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ParticleLocked;
 							break;
-						case MISSILE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.MissileLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.MissileLocked;
+						case MISSILE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.MissileLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.MissileLocked;
 							break;
-						case TORPEDO: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.TorpedoLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.TorpedoLocked;
+						case TORPEDO: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.TorpedoLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.TorpedoLocked;
 							break;
-						case BOMB: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.BombLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.BombLocked;
+						case BOMB: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.BombLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.BombLocked;
 							break;
-						case ENGINE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.EngineLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.EngineLocked;
+						case ENGINE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.EngineLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.EngineLocked;
 							break;
-						case ARMOR: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ArmorLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ArmorLocked;
+						case ARMOR: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ArmorLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ArmorLocked;
 							break;
-						case SHIELD: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ShieldLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ShieldLocked;
+						case SHIELD: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ShieldLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ShieldLocked;
 							break;
-						case COMPUTER: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ComputerLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ComputerLocked;
+						case COMPUTER: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ComputerLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ComputerLocked;
 							break;
-						case INFRASTRUCTURE: gameMain.EmpireManager.CurrentEmpire.TechnologyManager.InfrastructureLocked = !gameMain.EmpireManager.CurrentEmpire.TechnologyManager.InfrastructureLocked;
+						case INFRASTRUCTURE: _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.InfrastructureLocked = !_gameMain.EmpireManager.CurrentEmpire.TechnologyManager.InfrastructureLocked;
 							break;
 					}
 					techScrollBars[i].SetEnabledState(lockedButtons[i].Selected);
@@ -269,7 +269,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (availableTechs[i].MouseUp(x, y))
 				{
-					TechnologyManager techManager = gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
+					TechnologyManager techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
 					Technology whichTechToUpdate;
 					switch (whichField)
 					{
@@ -376,7 +376,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			/*if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(Screen.Galaxy);
+				_gameMain.ChangeToScreen(Screen.Galaxy);
 			}*/
 		}
 
@@ -385,7 +385,7 @@ namespace Beyond_Beyaan.Screens
 			/*this.researchPoints = researchPoints;
 			researchPointsLabel.SetText("Research Points: " + researchPoints);
 
-			TechnologyManager techManager = gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
+			TechnologyManager techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
 
 			researchingTechNames[BEAM].SetButtonText(techManager.VisibleBeams[techManager.WhichBeamBeingResearched].GetNameWithNextLevel());
 			researchingTechNames[PARTICLE].SetButtonText(techManager.VisibleParticles[techManager.WhichParticleBeingResearched].GetNameWithNextLevel());
@@ -489,7 +489,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void RefreshAvailableTechs()
 		{
-			TechnologyManager techManager = gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
+			TechnologyManager techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
 
 			switch (whichField)
 			{

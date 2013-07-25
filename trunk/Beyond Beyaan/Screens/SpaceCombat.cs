@@ -12,7 +12,7 @@ namespace Beyond_Beyaan.Screens
 		const int COMBATSIZE = 200;
 
 		//bool loaded;
-		GameMain gameMain;
+		GameMain _gameMain;
 		//Camera camera;
 		//StarSystem system;
 		//List<Fleet> originalFleets;
@@ -78,14 +78,14 @@ namespace Beyond_Beyaan.Screens
 		private int x;
 		private int y;
 
-		public void Initialize(GameMain gameMain)
+		public void Initialize(GameMain _gameMain)
 		{
-			this.gameMain = gameMain;
-			//camera = new Camera(this.gameMain.ScreenWidth, this.gameMain.ScreenHeight);
+			this._gameMain = _gameMain;
+			//camera = new Camera(this._gameMain.ScreenWidth, this._gameMain.ScreenHeight);
 			retreatingShips = new List<CombatShip>();
 
-			x = (gameMain.ScreenWidth / 2) - 140;
-			y = gameMain.ScreenHeight - 40;
+			x = (_gameMain.ScreenWidth / 2) - 140;
+			y = _gameMain.ScreenHeight - 40;
 			actionButtons = new Button[7];
 			actionButtons[0] = new Button(SpriteName.AutoBackground, SpriteName.AutoForeground, string.Empty, x, y, 40, 40);
 			actionButtons[1] = new Button(SpriteName.RetreatBackground, SpriteName.RetreatForeground, string.Empty, x + 40, y, 40, 40);
@@ -95,20 +95,20 @@ namespace Beyond_Beyaan.Screens
 			actionButtons[5] = new Button(SpriteName.NextShipBackground, SpriteName.NextShipForeground, string.Empty, x + 200, y, 40, 40);
 			actionButtons[6] = new Button(SpriteName.EOT, SpriteName.HighlightedEOT, string.Empty, x + 240, y, 40, 40);
 
-			shipNameLabel = new Label(string.Empty, 25, gameMain.ScreenHeight - 150);
-			computerLabel = new Label(string.Empty, 25, gameMain.ScreenHeight - 125);
-			engineLabel = new Label(string.Empty, 25, gameMain.ScreenHeight - 100);
-			shieldLabel = new Label(string.Empty, 25, gameMain.ScreenHeight - 75);
-			armorLabel = new Label(string.Empty, 25, gameMain.ScreenHeight - 50);
-			hitPointsLabel = new Label(string.Empty, 25, gameMain.ScreenHeight - 25);
+			shipNameLabel = new Label(string.Empty, 25, _gameMain.ScreenHeight - 150);
+			computerLabel = new Label(string.Empty, 25, _gameMain.ScreenHeight - 125);
+			engineLabel = new Label(string.Empty, 25, _gameMain.ScreenHeight - 100);
+			shieldLabel = new Label(string.Empty, 25, _gameMain.ScreenHeight - 75);
+			armorLabel = new Label(string.Empty, 25, _gameMain.ScreenHeight - 50);
+			hitPointsLabel = new Label(string.Empty, 25, _gameMain.ScreenHeight - 25);
 
 			weaponButtons = new Button[6];
 			for (int i = 0; i < weaponButtons.Length; i++)
 			{
-				weaponButtons[i] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, string.Empty, 150, gameMain.ScreenHeight - (150 - (i * 25)), 180, 25);
+				weaponButtons[i] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, string.Empty, 150, _gameMain.ScreenHeight - (150 - (i * 25)), 180, 25);
 			}
 
-			weaponScrollBar = new ScrollBar(330, gameMain.ScreenHeight - 150, 16, 118, 6, 6, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton, SpriteName.ScrollDownBackgroundButton,
+			weaponScrollBar = new ScrollBar(330, _gameMain.ScreenHeight - 150, 16, 118, 6, 6, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton, SpriteName.ScrollDownBackgroundButton,
 				SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
 		}
 
@@ -116,7 +116,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			combatIter = 0;
 			//whichEmpireTurn = 0;
-			SetupBattle(gameMain.EmpireManager.CombatsToProcess[combatIter].fleetsInCombat, null);
+			SetupBattle(_gameMain.EmpireManager.CombatsToProcess[combatIter].fleetsInCombat, null);
 		}
 
 		public void ResetScreen()
@@ -130,8 +130,8 @@ namespace Beyond_Beyaan.Screens
 
 			foreach (CombatFleet fleet in fleetsInCombat)
 			{
-				GorgonLibrary.Gorgon.CurrentShader = gameMain.ShipShader;
-				gameMain.ShipShader.Parameters["EmpireColor"].SetValue(fleet.Empire.ConvertedColor);
+				GorgonLibrary.Gorgon.CurrentShader = _gameMain.ShipShader;
+				_gameMain.ShipShader.Parameters["EmpireColor"].SetValue(fleet.Empire.ConvertedColor);
 				foreach (CombatShip ship in fleet.combatShips)
 				{
 					shipSprite = fleet.Empire.EmpireRace.GetShip(ship.Size, ship.WhichStyle);
@@ -192,10 +192,10 @@ namespace Beyond_Beyaan.Screens
 
 			if (!processRetreating)
 			{
-				int empireY = gameMain.ScreenHeight - (fleetsInCombat.Count * 25);
+				int empireY = _gameMain.ScreenHeight - (fleetsInCombat.Count * 25);
 				for (int i = 0; i < fleetsInCombat.Count; i++)
 				{
-					int empireX = (int)(gameMain.ScreenWidth - (fleetsInCombat[i].EmpireNameLabel.GetWidth() + 5));
+					int empireX = (int)(_gameMain.ScreenWidth - (fleetsInCombat[i].EmpireNameLabel.GetWidth() + 5));
 					fleetsInCombat[i].EmpireNameLabel.Move(empireX, empireY);
 					fleetsInCombat[i].EmpireNameLabel.Draw();
 					if (i == whichEmpireTurn)
@@ -210,7 +210,7 @@ namespace Beyond_Beyaan.Screens
 					button.Draw(drawingManagement);
 				}
 
-				drawingManagement.DrawSprite(SpriteName.ControlBackground, 0, gameMain.ScreenHeight - 160, 100, 350, 160, System.Drawing.Color.White);
+				drawingManagement.DrawSprite(SpriteName.ControlBackground, 0, _gameMain.ScreenHeight - 160, 100, 350, 160, System.Drawing.Color.White);
 				shipNameLabel.Draw();
 				computerLabel.Draw();
 				shieldLabel.Draw();
