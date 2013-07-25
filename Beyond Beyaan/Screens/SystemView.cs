@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
 
@@ -13,11 +14,15 @@ namespace Beyond_Beyaan.Screens
 		private BBStretchableImage _defenseBackground;
 		private BBStretchableImage _constructionBackground;
 
+		private BBStretchableImage _generalPurposeBackground; //Used for unexplored planets, enemy-occupied planets, empty planets, population transferring, or ship relocating
+
 		private BBScrollBar _infrastructureSlider;
 		private BBScrollBar _researchSlider;
 		private BBScrollBar _environmentSlider;
 		private BBScrollBar _defenseSlider;
 		private BBScrollBar _constructionSlider;
+
+		private BBScrollBar _popTransferSlider;
 
 		private BBButton _infrastructureLockButton;
 		private BBButton _researchLockButton;
@@ -38,6 +43,9 @@ namespace Beyond_Beyaan.Screens
 		private BBLabel _popLabel;
 		private BBLabel _productionLabel;
 
+		private BBTextBox _generalPurposeText; //Used for unexplored, etc...
+		private BBLabel _transferLabel;
+
 		private BBSprite _infrastructureIcon;
 		private BBSprite _defenseIcon;
 		private BBSprite _researchIcon;
@@ -48,8 +56,10 @@ namespace Beyond_Beyaan.Screens
 		private bool _isOwnedSystem; //To determine whether or not to display/handle sliders
 		private bool _isExplored;
 
-		public bool IsRelocating { get; private set; }
-		public bool IsTransferring { get; private set; }
+		public bool IsRelocating { get; set; }
+		public bool IsTransferring { get; set; }
+		public StarSystem DestinationSystem { get; set; }
+		public TravelNode TransferSystem { get; set; }
 
 		#region Constructor
 		public bool Initialize(GameMain gameMain, Random r, out string reason)
@@ -59,6 +69,7 @@ namespace Beyond_Beyaan.Screens
 			_isOwnedSystem = false;
 			IsRelocating = false;
 			IsTransferring = false;
+			DestinationSystem = null;
 			if (!base.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 240, 300, 480, gameMain, true, r, out reason))
 			{
 				return false;
@@ -84,6 +95,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			_generalPurposeBackground = new BBStretchableImage();
 			_infrastructureBackground = new BBStretchableImage();
 			_researchBackground = new BBStretchableImage();
 			_environmentBackground = new BBStretchableImage();
@@ -99,11 +111,15 @@ namespace Beyond_Beyaan.Screens
 			_defenseLabel = new BBLabel();
 			_constructionLabel = new BBLabel();
 
+			_generalPurposeText = new BBTextBox();
+			_transferLabel = new BBLabel();
+
 			_infrastructureSlider = new BBScrollBar();
 			_researchSlider = new BBScrollBar();
 			_environmentSlider = new BBScrollBar();
 			_defenseSlider = new BBScrollBar();
 			_constructionSlider = new BBScrollBar();
+			_popTransferSlider = new BBScrollBar();
 
 			_infrastructureLockButton = new BBButton();
 			_researchLockButton = new BBButton();
@@ -114,6 +130,14 @@ namespace Beyond_Beyaan.Screens
 			_relocateToButton = new BBButton();
 			_transferToButton = new BBButton();
 
+			if (!_generalPurposeBackground.Initialize(xPos + 10, yPos + 130, 280, 300, StretchableImageType.ThinBorder, r, out reason))
+			{
+				return false;
+			}
+			if (!_generalPurposeText.Initialize(xPos + 20, yPos + 140, 260, 260, false, "PlanetUIText", r, out reason))
+			{
+				return false;
+			}
 			if (!_infrastructureBackground.Initialize(xPos + 10, yPos + 130, 280, 60, StretchableImageType.ThinBorder, r, out reason))
 			{
 				return false;
@@ -208,6 +232,15 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
+			if (!_transferLabel.Initialize(xPos + 20, yPos + 370, string.Empty, System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_popTransferSlider.Initialize(xPos + 20, yPos + 400, 260, 1, 1, true, true, r, out reason))
+			{
+				return false;
+			}
+
 			if (!_relocateToButton.Initialize("RelocateToBG", "RelocateToFG", string.Empty, xPos + 130, yPos + 435, 75, 35, r, out reason))
 			{
 				return false;
@@ -238,38 +271,63 @@ namespace Beyond_Beyaan.Screens
 				_isExplored = true;
 				var planet = currentSystem.Planets[0];
 				_name.SetString(currentSystem.Name);
-				_isOwnedSystem = currentSystem.Planets[0].Owner != null;
-				_name.SetColor(_isOwnedSystem ? currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White);
-				_popLabel.SetText(_isOwnedSystem ? string.Format("{0}/{1} M", (int)currentSystem.Planets[0].TotalPopulation, currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", currentSystem.Planets[0].PopulationMax));
+				_isOwnedSystem = currentSystem.Planets[0].Owner == gameMain.EmpireManager.CurrentEmpire;
+				_name.SetColor(currentSystem.Planets[0].Owner != null ? currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White);
+				_popLabel.SetText(currentSystem.Planets[0].Owner != null ? string.Format("{0}/{1} M", (int)currentSystem.Planets[0].TotalPopulation, currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", currentSystem.Planets[0].PopulationMax));
 				_terrainLabel.SetText(Utility.PlanetTypeToString(currentSystem.Planets[0].PlanetType));
-				_productionLabel.SetText(_isOwnedSystem ? string.Format("{0:0.0} ({1:0.0}) Production", currentSystem.Planets[0].ActualProduction, currentSystem.Planets[0].TotalProduction) : "Unknown");
-				_infrastructureLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].InfrastructureStringOutput : "Unknown");
-				_researchLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].ResearchStringOutput : "Unknown");
-				_environmentLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].EnvironmentStringOutput : "Unknown");
-				_defenseLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].DefenseStringOutput : "Unknown");
-				_constructionLabel.SetText(_isOwnedSystem ? currentSystem.Planets[0].ConstructionStringOutput : "Unknown");
-				_infrastructureSlider.TopIndex = planet.InfrastructureAmount;
-				_researchSlider.TopIndex = planet.ResearchAmount;
-				_environmentSlider.TopIndex = planet.EnvironmentAmount;
-				_defenseSlider.TopIndex = planet.DefenseAmount;
-				_constructionSlider.TopIndex = planet.ConstructionAmount;
-				
-				_infrastructureLockButton.Selected = planet.InfrastructureLocked;
-				_infrastructureSlider.SetEnabledState(!planet.InfrastructureLocked);
-				_researchLockButton.Selected = planet.ResearchLocked;
-				_researchSlider.SetEnabledState(!planet.ResearchLocked);
-				_environmentLockButton.Selected = planet.EnvironmentLocked;
-				_environmentSlider.SetEnabledState(!planet.EnvironmentLocked);
-				_defenseLockButton.Selected = planet.DefenseLocked;
-				_defenseSlider.SetEnabledState(!planet.DefenseLocked);
-				_constructionLockButton.Selected = planet.ConstructionLocked;
-				_constructionSlider.SetEnabledState(!planet.ConstructionLocked);
+				if (_isOwnedSystem)
+				{
+					_name.SetReadOnly(false);
+					_productionLabel.SetText(string.Format("{0:0.0} ({1:0.0}) Production", currentSystem.Planets[0].ActualProduction, currentSystem.Planets[0].TotalProduction));
+					_infrastructureLabel.SetText(currentSystem.Planets[0].InfrastructureStringOutput);
+					_researchLabel.SetText(currentSystem.Planets[0].ResearchStringOutput);
+					_environmentLabel.SetText(currentSystem.Planets[0].EnvironmentStringOutput);
+					_defenseLabel.SetText(currentSystem.Planets[0].DefenseStringOutput);
+					_constructionLabel.SetText(currentSystem.Planets[0].ConstructionStringOutput);
+					_infrastructureSlider.TopIndex = planet.InfrastructureAmount;
+					_researchSlider.TopIndex = planet.ResearchAmount;
+					_environmentSlider.TopIndex = planet.EnvironmentAmount;
+					_defenseSlider.TopIndex = planet.DefenseAmount;
+					_constructionSlider.TopIndex = planet.ConstructionAmount;
+
+					_infrastructureLockButton.Selected = planet.InfrastructureLocked;
+					_infrastructureSlider.SetEnabledState(!planet.InfrastructureLocked);
+					_researchLockButton.Selected = planet.ResearchLocked;
+					_researchSlider.SetEnabledState(!planet.ResearchLocked);
+					_environmentLockButton.Selected = planet.EnvironmentLocked;
+					_environmentSlider.SetEnabledState(!planet.EnvironmentLocked);
+					_defenseLockButton.Selected = planet.DefenseLocked;
+					_defenseSlider.SetEnabledState(!planet.DefenseLocked);
+					_constructionLockButton.Selected = planet.ConstructionLocked;
+					_constructionSlider.SetEnabledState(!planet.ConstructionLocked);
+
+					if (currentSystem.Planets[0].TransferSystem.Key.StarSystem != currentSystem)
+					{
+						_transferLabel.SetText("Moving " + currentSystem.Planets[0].TransferSystem.Value + " Pop");
+						_transferLabel.Move(xPos + 10, yPos + 440);
+					}
+					else
+					{
+						_transferLabel.SetText(string.Empty);
+					}
+				}
+				else if (currentSystem.Planets[0].Owner != null)
+				{
+					_generalPurposeText.SetText("Colonized by " + currentSystem.Planets[0].Owner.EmpireRace.RaceName + " Empire");
+					_name.SetReadOnly(true);
+				}
+				else
+				{
+					_generalPurposeText.SetText("No colony");
+					_name.SetReadOnly(true);
+				}
 			}
 			else
 			{
 				_isExplored = false;
 				_name.SetString("Unexplored");
 				_name.SetColor(System.Drawing.Color.White);
+				_generalPurposeText.SetText(currentSystem.Description);
 				_popLabel.SetText(string.Empty);
 				_terrainLabel.SetText(string.Empty);
 				_productionLabel.SetText(string.Empty);
@@ -278,13 +336,6 @@ namespace Beyond_Beyaan.Screens
 				_environmentLabel.SetText(string.Empty);
 				_defenseLabel.SetText(string.Empty);
 				_constructionLabel.SetText(string.Empty);
-			}
-			if (currentSystem.Planets[0].Owner == gameMain.EmpireManager.CurrentEmpire)
-			{
-				_name.SetReadOnly(false);
-			}
-			else
-			{
 				_name.SetReadOnly(true);
 			}
 		}
@@ -295,42 +346,68 @@ namespace Beyond_Beyaan.Screens
 			_name.Draw();
 			if (_isExplored)
 			{
-				_infrastructureBackground.Draw();
-				_researchBackground.Draw();
-				_environmentBackground.Draw();
-				_defenseBackground.Draw();
-				_constructionBackground.Draw();
 				currentSystem.Planets[0].SmallSprite.Draw(xPos + 10, yPos + 60);
-				_infrastructureIcon.Draw(xPos + 20, yPos + 140);
-				_researchIcon.Draw(xPos + 20, yPos + 200);
-				_environmentIcon.Draw(xPos + 20, yPos + 260);
-				_defenseIcon.Draw(xPos + 20, yPos + 320);
-				_constructionIcon.Draw(xPos + 20, yPos + 380);
 				_popLabel.Draw();
 				_terrainLabel.Draw();
-				_productionLabel.Draw();
 				if (_isOwnedSystem)
 				{
-					_infrastructureLabel.Draw();
-					_infrastructureSlider.Draw();
-					_infrastructureLockButton.Draw();
-					_researchLabel.Draw();
-					_researchSlider.Draw();
-					_researchLockButton.Draw();
-					_environmentLabel.Draw();
-					_environmentSlider.Draw();
-					_environmentLockButton.Draw();
-					_defenseLabel.Draw();
-					_defenseSlider.Draw();
-					_defenseLockButton.Draw();
-					_constructionLabel.Draw();
-					_constructionSlider.Draw();
-					_constructionLockButton.Draw();
-					_relocateToButton.Draw();
-					_transferToButton.Draw();
-					_relocateToButton.DrawToolTip();
-					_transferToButton.DrawToolTip();
+					if (IsTransferring)
+					{
+						_generalPurposeBackground.Draw();
+						_generalPurposeText.Draw();
+						_popTransferSlider.Draw();
+						_transferLabel.Draw();
+						_transferToButton.Draw();
+						_transferToButton.DrawToolTip();
+					}
+					else
+					{
+						_productionLabel.Draw();
+						_infrastructureBackground.Draw();
+						_researchBackground.Draw();
+						_environmentBackground.Draw();
+						_defenseBackground.Draw();
+						_constructionBackground.Draw();
+						_infrastructureIcon.Draw(xPos + 20, yPos + 140);
+						_researchIcon.Draw(xPos + 20, yPos + 200);
+						_environmentIcon.Draw(xPos + 20, yPos + 260);
+						_defenseIcon.Draw(xPos + 20, yPos + 320);
+						_constructionIcon.Draw(xPos + 20, yPos + 380);
+						_infrastructureLabel.Draw();
+						_infrastructureSlider.Draw();
+						_infrastructureLockButton.Draw();
+						_researchLabel.Draw();
+						_researchSlider.Draw();
+						_researchLockButton.Draw();
+						_environmentLabel.Draw();
+						_environmentSlider.Draw();
+						_environmentLockButton.Draw();
+						_defenseLabel.Draw();
+						_defenseSlider.Draw();
+						_defenseLockButton.Draw();
+						_constructionLabel.Draw();
+						_constructionSlider.Draw();
+						_constructionLockButton.Draw();
+						_relocateToButton.Draw();
+						_transferToButton.Draw();
+						_relocateToButton.DrawToolTip();
+						_transferToButton.DrawToolTip();
+						if (currentSystem.Planets[0].TransferSystem.Key.StarSystem != currentSystem)
+						{
+							_transferLabel.Draw();
+						}
+					}
 				}
+				else
+				{
+					_generalPurposeBackground.Draw();
+					_generalPurposeText.Draw();
+				}
+			}
+			else
+			{
+				_generalPurposeBackground.Draw();
+				_generalPurposeText.Draw();
 			}
 		}
 
@@ -367,7 +444,25 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseDown(int x, int y)
 		{
-			bool result = _name.MouseDown(x, y);
+			if (!_isOwnedSystem)
+			{
+				return base.MouseDown(x, y);
+			}
+			bool result;
+			if (IsTransferring)
+			{
+				result = _popTransferSlider.MouseDown(x, y);
+				if (!result)
+				{
+					result = _transferToButton.MouseDown(x, y);
+				}
+				if (!result)
+				{
+					result = base.MouseDown(x, y);
+				}
+				return result;
+			}
+			result = _name.MouseDown(x, y);
 			if (!result)
 			{
 				result = _infrastructureSlider.MouseDown(x, y);
@@ -425,6 +520,29 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseUp(int x, int y)
 		{
+			if (!_isOwnedSystem)
+			{
+				return base.MouseUp(x, y);
+			}
+			if (IsTransferring)
+			{
+				if (_popTransferSlider.MouseUp(x, y))
+				{
+					_transferLabel.SetText("Moving " + _popTransferSlider.TopIndex + " Population");
+					return true;
+				}
+				if (_transferToButton.MouseUp(x, y))
+				{
+					if (TransferSystem.IsValid)
+					{
+						currentSystem.Planets[0].TransferSystem = new KeyValuePair<TravelNode, int>(TransferSystem, _popTransferSlider.TopIndex);
+						_transferLabel.SetText("Moving " + currentSystem.Planets[0].TransferSystem.Value + " Pop");
+						_transferLabel.Move(xPos + 10, yPos + 440);
+						IsTransferring = false;
+						//Done setting transfer
+					}
+				}
+			}
 			if (_name.MouseUp(x, y))
 			{
 				return true;
@@ -496,13 +614,18 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (_relocateToButton.MouseUp(x, y))
 			{
-				//We let GalaxyScreen handle this part now
 				IsRelocating = true;
+				_generalPurposeText.SetText("Select a friendly system to send newly built ships");
 				return true;
 			}
 			if (_transferToButton.MouseUp(x, y))
 			{
 				IsTransferring = true;
+				_transferLabel.Move(xPos + 20, yPos + 370);
+				_transferLabel.SetText("Moving 0 Population");
+				TransferSystem = new TravelNode();
+				_popTransferSlider.SetAmountOfItems((int)(currentSystem.Planets[0].TotalPopulation / 2));
+				_generalPurposeText.SetText("Select a colonized planet to send population");
 				return true;
 			}
 			return base.MouseUp(x, y);
@@ -510,47 +633,61 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			if (_isOwnedSystem)
+			if (!_isOwnedSystem)
 			{
-				_name.Update(frameDeltaTime);
-				if (_infrastructureSlider.MouseHover(x, y, frameDeltaTime))
-				{
-					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, _infrastructureSlider.TopIndex, false);
-					Refresh();
-					return true;
-				}
-				if (_researchSlider.MouseHover(x, y, frameDeltaTime))
-				{
-					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.RESEARCH, _researchSlider.TopIndex, false);
-					Refresh();
-					return true;
-				}
-				if (_environmentSlider.MouseHover(x, y, frameDeltaTime))
-				{
-					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, _environmentSlider.TopIndex, false);
-					Refresh();
-					return true;
-				}
-				if (_defenseSlider.MouseHover(x, y, frameDeltaTime))
-				{
-					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.DEFENSE, _defenseSlider.TopIndex, false);
-					Refresh();
-					return true;
-				}
-				if (_constructionSlider.MouseHover(x, y, frameDeltaTime))
-				{
-					currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, _constructionSlider.TopIndex, false);
-					Refresh();
-					return true;
-				}
-				_infrastructureLockButton.MouseHover(x, y, frameDeltaTime);
-				_researchLockButton.MouseHover(x, y, frameDeltaTime);
-				_environmentLockButton.MouseHover(x, y, frameDeltaTime);
-				_defenseLockButton.MouseHover(x, y, frameDeltaTime);
-				_constructionLockButton.MouseHover(x, y, frameDeltaTime);
-				_relocateToButton.MouseHover(x, y, frameDeltaTime);
-				_transferToButton.MouseHover(x, y, frameDeltaTime);
+				return base.MouseHover(x, y, frameDeltaTime);
 			}
+			if (IsTransferring)
+			{
+				if (_popTransferSlider.MouseHover(x, y, frameDeltaTime))
+				{
+					_transferLabel.SetText("Moving " + _popTransferSlider.TopIndex + " Population");
+					return true;
+				}
+				if (_transferToButton.MouseHover(x, y, frameDeltaTime))
+				{
+					return true;
+				}
+				return base.MouseHover(x, y, frameDeltaTime);
+			}
+			_name.Update(frameDeltaTime);
+			if (_infrastructureSlider.MouseHover(x, y, frameDeltaTime))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, _infrastructureSlider.TopIndex, false);
+				Refresh();
+				return true;
+			}
+			if (_researchSlider.MouseHover(x, y, frameDeltaTime))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.RESEARCH, _researchSlider.TopIndex, false);
+				Refresh();
+				return true;
+			}
+			if (_environmentSlider.MouseHover(x, y, frameDeltaTime))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, _environmentSlider.TopIndex, false);
+				Refresh();
+				return true;
+			}
+			if (_defenseSlider.MouseHover(x, y, frameDeltaTime))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.DEFENSE, _defenseSlider.TopIndex, false);
+				Refresh();
+				return true;
+			}
+			if (_constructionSlider.MouseHover(x, y, frameDeltaTime))
+			{
+				currentSystem.Planets[0].SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, _constructionSlider.TopIndex, false);
+				Refresh();
+				return true;
+			}
+			_infrastructureLockButton.MouseHover(x, y, frameDeltaTime);
+			_researchLockButton.MouseHover(x, y, frameDeltaTime);
+			_environmentLockButton.MouseHover(x, y, frameDeltaTime);
+			_defenseLockButton.MouseHover(x, y, frameDeltaTime);
+			_constructionLockButton.MouseHover(x, y, frameDeltaTime);
+			_relocateToButton.MouseHover(x, y, frameDeltaTime);
+			_transferToButton.MouseHover(x, y, frameDeltaTime);
 			return base.MouseHover(x, y, frameDeltaTime);
 		}
 

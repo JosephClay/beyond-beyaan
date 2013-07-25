@@ -272,28 +272,31 @@ namespace Beyond_Beyaan
 				//int newSize = r.Next(3) + 2;
 
 				Color starColor = Color.White;
+				string description = string.Empty;
 
-				switch (r.Next(8)) //type of star
+				switch (r.Next(6)) //type of star
 				{
 					case 0: starColor = Color.Red;
+						description = "Red stars are old, dull stars that commonly have poor planets";
 						break;
-					case 1: starColor = Color.Orange;
+					case 1: starColor = Color.Green;
+						description = "Green stars are moderately bright and have a wide range of planetary types";
 						break;
-					case 2: starColor = Color.Green;
+					case 2: starColor = Color.Purple;
+						description = "Neutron stars are rare and offer the greatest chance of finding rich planets";
 						break;
-					case 3: starColor = Color.Purple;
+					case 3: starColor = Color.Blue;
+						description = "Blue stars are relatively young stars with mineral rich lifeless planets";
 						break;
-					case 4: starColor = Color.Blue;
+					case 4: starColor = Color.White;
+						description = "White stars burn incredibly hot and generally have hostile planets";
 						break;
-					case 5: starColor = Color.Brown;
-						break;
-					case 6: starColor = Color.White;
-						break;
-					case 7: starColor = Color.Yellow;
+					case 5: starColor = Color.Yellow;
+						description = "Yellow stars offer the best chance of discovering planets with friendly environment";
 						break;
 				}
 
-				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * 32 + (r.Next(32)), y * 32 + (r.Next(32)), starColor, minPlanets, maxPlanets, r));
+				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * 32 + (r.Next(32)), y * 32 + (r.Next(32)), starColor, description, minPlanets, maxPlanets, r));
 
 				int adjustedMinDistance = minDistance + r.Next(4);
 
