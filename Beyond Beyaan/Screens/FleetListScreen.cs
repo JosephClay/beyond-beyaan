@@ -4,7 +4,7 @@ namespace Beyond_Beyaan.Screens
 {
 	public class FleetListScreen : ScreenInterface
 	{
-		/*GameMain gameMain;
+		/*GameMain _gameMain;
 
 		Label fleetLabel;
 		Label shipLabel;
@@ -55,10 +55,10 @@ namespace Beyond_Beyaan.Screens
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			/*this.gameMain = gameMain;
+			/*this._gameMain = _gameMain;
 
-			int x = (gameMain.ScreenWidth / 2) - 400;
-			int y = (gameMain.ScreenHeight / 2) - 300;
+			int x = (_gameMain.ScreenWidth / 2) - 400;
+			int y = (_gameMain.ScreenHeight / 2) - 300;
 
 			fleetLabel = new Label("Fleets", x + 2, y + 2);
 			shipLabel = new Label("Ships in this fleet", x + 202, y + 2);
@@ -110,10 +110,10 @@ namespace Beyond_Beyaan.Screens
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			/*gameMain.DrawGalaxyBackground();
+			/*_gameMain.DrawGalaxyBackground();
 
-			drawingManagement.DrawSprite(SpriteName.ControlBackground, (gameMain.ScreenWidth / 2) - 400, (gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
-			drawingManagement.DrawSprite(SpriteName.Screen, (gameMain.ScreenWidth / 2), (gameMain.ScreenHeight / 2) - 300, 255, 399, 399, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.ControlBackground, (_gameMain.ScreenWidth / 2) - 400, (_gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.Screen, (_gameMain.ScreenWidth / 2), (_gameMain.ScreenHeight / 2) - 300, 255, 399, 399, System.Drawing.Color.White);
 
 			DrawGalaxyPreview(drawingManagement);
 
@@ -152,11 +152,11 @@ namespace Beyond_Beyaan.Screens
 				shotsLabel.Draw();
 				specs.Draw();
 
-				GorgonLibrary.Gorgon.CurrentShader = gameMain.ShipShader;
-				gameMain.ShipShader.Parameters["EmpireColor"].SetValue(whichFleets[selectedFleet].Empire.ConvertedColor);
-				shipSprite.Draw((gameMain.ScreenWidth / 2) - 398, (gameMain.ScreenHeight / 2) + 98, (180.0f / shipSprite.Width), (180.0f / shipSprite.Height));
+				GorgonLibrary.Gorgon.CurrentShader = _gameMain.ShipShader;
+				_gameMain.ShipShader.Parameters["EmpireColor"].SetValue(whichFleets[selectedFleet].Empire.ConvertedColor);
+				shipSprite.Draw((_gameMain.ScreenWidth / 2) - 398, (_gameMain.ScreenHeight / 2) + 98, (180.0f / shipSprite.Width), (180.0f / shipSprite.Height));
 				GorgonLibrary.Gorgon.CurrentShader = null;
-				//DrawingManagement.DrawSprite(SpriteName.Corvette, (gameMain.ScreenWidth / 2) - 398, (gameMain.ScreenHeight / 2) + 98, 255, 180, 180, System.Drawing.Color.White);
+				//DrawingManagement.DrawSprite(SpriteName.Corvette, (_gameMain.ScreenWidth / 2) - 398, (_gameMain.ScreenHeight / 2) + 98, 255, 180, 180, System.Drawing.Color.White);
 
 				nameText.Draw(drawingManagement);
 				sizeText.Draw(drawingManagement);
@@ -287,17 +287,17 @@ namespace Beyond_Beyaan.Screens
 		{
 			/*if (e.Key == KeyboardKeys.Escape)
 			{
-				gameMain.ChangeToScreen(Screen.Galaxy);
+				_gameMain.ChangeToScreen(Screen.Galaxy);
 			}
 			if (e.Key == KeyboardKeys.Space)
 			{
-				gameMain.ToggleSitRep();
+				_gameMain.ToggleSitRep();
 			}*/
 		}
 
 		public void LoadScreen()
 		{
-			/*Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
+			/*Empire currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 			ownedFleets = currentEmpire.FleetManager.GetFleets();
 			otherFleets = currentEmpire.VisibleFleets;
 			allFleets = new List<Fleet>();
@@ -427,15 +427,15 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
 		{
-			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
+			List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
-				int x = (gameMain.ScreenWidth / 2) + (int)(386.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize));
+				int x = (_gameMain.ScreenWidth / 2) + (int)(386.0f * (system.X / (float)_gameMain.Galaxy.GalaxySize));
+				int y = ((_gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)_gameMain.Galaxy.GalaxySize));
 
-				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+				GorgonLibrary.Gorgon.CurrentShader = _gameMain.StarShader;
+				_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
 				system.Sprite.Draw(x, y, 0.4f, 0.4f);
 				//drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 				GorgonLibrary.Gorgon.CurrentShader = null;
@@ -443,8 +443,8 @@ namespace Beyond_Beyaan.Screens
 
 			foreach (Fleet fleet in whichFleets)
 			{
-				int x = (gameMain.ScreenWidth / 2) + (int)(386.0f * (fleet.GalaxyX / (float)gameMain.Galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (fleet.GalaxyY / (float)gameMain.Galaxy.GalaxySize));
+				int x = (_gameMain.ScreenWidth / 2) + (int)(386.0f * (fleet.GalaxyX / (float)_gameMain.Galaxy.GalaxySize));
+				int y = ((_gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (fleet.GalaxyY / (float)_gameMain.Galaxy.GalaxySize));
 
 				if (fleet == fleetSelected || fleet == hoveringFleet)
 				{

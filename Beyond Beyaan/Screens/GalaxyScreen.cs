@@ -13,22 +13,11 @@ namespace Beyond_Beyaan.Screens
 		private GameMain _gameMain;
 		private Camera camera;
 
-		private Button[] systemButtons;
-		private Button[] fleetButtons;
-		private ScrollBar systemScrollBar;
-		private ScrollBar[] planetScrollBars;
-		private Button[] planetFieldLocks;
-		private Button prevShip;
-		private Button nextShip;
-		private ScrollBar fleetScrollBar;
-		private ScrollBar shipSelectorScrollBar;
-		private ScrollBar[] shipScrollBars;
 		private RenderTarget oldTarget;
 		private RenderImage starName;
 		private RenderImage backBuffer;
-		private SystemView systemView;
-
-		private bool pressedInWindow;
+		private SystemView _systemView;
+		private FleetView _fleetView;
 
 		//private int maxVisible;
 		private BBSprite pathSprite;
@@ -51,35 +40,13 @@ namespace Beyond_Beyaan.Screens
 
 			camera = new Camera(_gameMain.Galaxy.GalaxySize * 32, _gameMain.Galaxy.GalaxySize * 32, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
 
-			systemButtons = new Button[6];
-			for (int i = 0; i < systemButtons.Length; i++)
-			{
-				systemButtons[i] = new Button(SpriteName.NormalBackgroundButton, SpriteName.NormalForegroundButton, string.Empty, _gameMain.ScreenWidth - 490, 8 + (47 * i), 215, 47);
-			}
-			systemScrollBar = new ScrollBar(_gameMain.ScreenWidth - 274, 8, 20, 242, 6, 6, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
-							SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton,
-							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
+			/*
 			fleetScrollBar = new ScrollBar(_gameMain.ScreenWidth - 24, 30, 16, 48, 4, 6, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
 							SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton,
 							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
 			shipSelectorScrollBar = new ScrollBar(_gameMain.ScreenWidth - 20, 130, 16, 286, 8, 10, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
 							SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton,
-							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
-
-			planetScrollBars = new ScrollBar[5];
-			planetFieldLocks = new Button[5];
-
-			for (int i = 0; i < 5; i++)
-			{
-				planetScrollBars[i] = new ScrollBar(_gameMain.ScreenWidth - 245, 30 + (i * 40), 16, 188, 1, 101, true, true, SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton,
-					SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, SpriteName.SliderHorizontalBackgroundButton,
-					SpriteName.SliderHorizontalForegroundButton, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
-				planetFieldLocks[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, _gameMain.ScreenWidth - 21, 30 + (i * 40), 16, 16);
-			}
-
-			prevShip = new Button(SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton, string.Empty, _gameMain.ScreenWidth - 245, 275, 16, 16);
-			nextShip = new Button(SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, string.Empty, _gameMain.ScreenWidth - 25, 275, 16, 16);
-			pressedInWindow = false;
+							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);*/
 
 			starName = new RenderImage("starNameRendered", 1, 1, ImageBufferFormats.BufferRGB888A8);
 			starName.BlendingMode = BlendingModes.Modulated;
@@ -87,8 +54,13 @@ namespace Beyond_Beyaan.Screens
 			backBuffer = new RenderImage("galaxyBackBuffer", _gameMain.ScreenWidth, _gameMain.ScreenHeight, ImageBufferFormats.BufferRGB888A8);
 			backBuffer.BlendingMode = BlendingModes.Modulated;
 
-			systemView = new SystemView();
-			if (!systemView.Initialize(_gameMain, _gameMain.Random, out reason))
+			_systemView = new SystemView();
+			if (!_systemView.Initialize(_gameMain, out reason))
+			{
+				return false;
+			}
+			_fleetView = new FleetView();
+			if (!_fleetView.Initialize(_gameMain, out reason))
 			{
 				return false;
 			}
@@ -102,7 +74,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				_gameMain.EmpireManager.CurrentEmpire.SelectedSystem = _gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem;
 				camera.CenterCamera(_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.X, _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Y, camera.ZoomDistance);
-				systemView.LoadSystem();
+				_systemView.LoadSystem();
 			}
 		}
 
@@ -142,6 +114,7 @@ namespace Beyond_Beyaan.Screens
 
 			if (showingFuelRange)
 			{
+				// TODO: Optimize this by going through an empire's owned systems, instead of all stars
 				float scale = (currentEmpire.TechnologyManager.FuelRange / 3.0f) * camera.ZoomDistance;
 				float extendedScale = ((currentEmpire.TechnologyManager.FuelRange + 3) / 3.0f) * camera.ZoomDistance;
 				backBuffer.Clear(Color.Black);
@@ -178,13 +151,13 @@ namespace Beyond_Beyaan.Screens
 				{
 					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedSystem.Planets[0].RelocateToSystem.Length / pathSprite.Width), camera.ZoomDistance, Color.Blue, selectedSystem.Planets[0].RelocateToSystem.Angle);
 				}
-				if (systemView.IsTransferring && systemView.TransferSystem != null)
+				if (_systemView.IsTransferring && _systemView.TransferSystem != null)
 				{
-					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (systemView.TransferSystem.Length / pathSprite.Width), camera.ZoomDistance, systemView.TransferSystem.IsValid ? Color.LightGreen : Color.Red, systemView.TransferSystem.Angle);
+					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (_systemView.TransferSystem.Length / pathSprite.Width), camera.ZoomDistance, _systemView.TransferSystem.IsValid ? Color.LightGreen : Color.Red, _systemView.TransferSystem.Angle);
 				}
-				if (systemView.IsRelocating && systemView.RelocateSystem != null)
+				if (_systemView.IsRelocating && _systemView.RelocateSystem != null)
 				{
-					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (systemView.RelocateSystem.Length / pathSprite.Width), camera.ZoomDistance, systemView.RelocateSystem.IsValid ? Color.LightSkyBlue : Color.Red, systemView.RelocateSystem.Angle);
+					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (_systemView.RelocateSystem.Length / pathSprite.Width), camera.ZoomDistance, _systemView.RelocateSystem.IsValid ? Color.LightSkyBlue : Color.Red, _systemView.RelocateSystem.Angle);
 				}
 			}
 
@@ -368,6 +341,7 @@ namespace Beyond_Beyaan.Screens
 
 			if (selectedFleetGroup != null)
 			{
+				_fleetView.Draw();
 				/*drawingManagement.DrawSprite(SpriteName.SelectedFleet, (int)(((((selectedFleetGroup.Fleets[0].GalaxyX - 1) - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((selectedFleetGroup.Fleets[0].GalaxyY - 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[2], sizes[2], System.Drawing.Color.White);
 				if (selectedFleetGroup.FleetToSplit.TentativeNodes != null)
 				{
@@ -390,7 +364,7 @@ namespace Beyond_Beyaan.Screens
 							drawingManagement.DrawSprite(SpriteName.SelectCell, (int)((((node.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((node.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 150, sizes[0], sizes[0], System.Drawing.Color.Green);
 						}
 					}
-				}*/
+				}
 
 				drawingManagement.DrawSprite(SpriteName.ControlBackground, _gameMain.ScreenWidth - 207, 0, 255, 207, 460, System.Drawing.Color.White);
 				drawingManagement.DrawSprite(SpriteName.ControlBackground, _gameMain.ScreenWidth - 204, 6, 255, 200, 110, System.Drawing.Color.DarkGray);
@@ -428,11 +402,11 @@ namespace Beyond_Beyaan.Screens
 				{
 					shipScrollBars[i].DrawScrollBar(drawingManagement);
 					drawingManagement.DrawText("Arial", selectedFleetGroup.GetShipsForDisplay()[i].Name + " x " +  selectedFleetGroup.FleetToSplit.Ships[selectedFleetGroup.GetShipsForDisplay()[i]], x, 130 + i * 40, System.Drawing.Color.White);
-				}
+				}*/
 			}
 			if (selectedSystem != null)
 			{
-				systemView.Draw();
+				_systemView.Draw();
 			}
 		}
 
@@ -443,14 +417,18 @@ namespace Beyond_Beyaan.Screens
 			Empire currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 			if (currentEmpire.SelectedSystem != null)
 			{
-				if (systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (_systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
 				{
 					return;
 				}
 			}
 			if (currentEmpire.SelectedFleetGroup != null)
 			{
-				if (currentEmpire.SelectedFleetGroup.Fleets.Count > 4)
+				if (_fleetView.MouseHover(mouseX, mouseY, frameDeltaTime))
+				{
+					return;
+				}
+				/*if (currentEmpire.SelectedFleetGroup.Fleets.Count > 4)
 				{
 					if (fleetScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
 					{
@@ -499,7 +477,7 @@ namespace Beyond_Beyaan.Screens
 				if ((mouseX >= _gameMain.ScreenWidth - 207 && mouseX < _gameMain.ScreenWidth - 1) && (mouseY < 460 && mouseY > 0))
 				{
 					return;
-				}
+				}*/
 			}
 			camera.HandleUpdate(mouseX, mouseY, frameDeltaTime);
 		}
@@ -510,14 +488,18 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null)
 				{
-					if (systemView.MouseDown(x, y))
+					if (_systemView.MouseDown(x, y))
 					{
 						return;
 					}
 				}
 				else if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{
-					if (x >= _gameMain.ScreenWidth - 250 && y < 720)
+					if (_fleetView.MouseDown(x, y))
+					{
+						return;
+					}
+					/*if (x >= _gameMain.ScreenWidth - 250 && y < 720)
 					{
 						pressedInWindow = true;
 					}
@@ -542,7 +524,7 @@ namespace Beyond_Beyaan.Screens
 						{
 							return;
 						}
-					}
+					}*/
 				}
 			}
 		}
@@ -554,11 +536,11 @@ namespace Beyond_Beyaan.Screens
 				var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 				if (currentEmpire.SelectedSystem != null)
 				{
-					if (systemView.MouseUp(x, y))
+					if (_systemView.MouseUp(x, y))
 					{
 						return;
 					}
-					if (systemView.IsTransferring)
+					if (_systemView.IsTransferring)
 					{
 						Point point = new Point();
 
@@ -575,18 +557,18 @@ namespace Beyond_Beyaan.Screens
 								{
 									path[0].IsValid = false;
 								}
-								systemView.TransferSystem = path[0];
+								_systemView.TransferSystem = path[0];
 							}
 						}
 						else
 						{
 							//Clicked to clear the option
-							systemView.IsTransferring = false;
-							systemView.TransferSystem = null;
+							_systemView.IsTransferring = false;
+							_systemView.TransferSystem = null;
 						}
 						return;
 					}
-					if (systemView.IsRelocating)
+					if (_systemView.IsRelocating)
 					{
 						Point point = new Point();
 
@@ -603,24 +585,25 @@ namespace Beyond_Beyaan.Screens
 								{
 									path[0].IsValid = false;
 								}
-								systemView.RelocateSystem = path[0];
+								_systemView.RelocateSystem = path[0];
 							}
 						}
 						else
 						{
 							//Clicked to clear the option
-							systemView.IsRelocating = false;
-							systemView.RelocateSystem = null;
+							_systemView.IsRelocating = false;
+							_systemView.RelocateSystem = null;
 						}
 						return;
 					}
-					//At this point, the user just wants to close the system view
-					_gameMain.EmpireManager.CurrentEmpire.SelectedSystem = null;
-					return;
 				}
 				if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{
-					if (fleetScrollBar.MouseUp(x, y))
+					if (_fleetView.MouseUp(x, y))
+					{
+						return;
+					}
+					/*if (fleetScrollBar.MouseUp(x, y))
 					{
 						_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetIndex = fleetScrollBar.TopIndex;
 						foreach (Button button in fleetButtons)
@@ -668,13 +651,15 @@ namespace Beyond_Beyaan.Screens
 					{
 						pressedInWindow = false;
 						return;
-					}
+					}*/
 				}
-				if (pressedInWindow)
+				/*if (pressedInWindow)
 				{
 					pressedInWindow = false;
 					return;
-				}
+				}*/
+				//If a window is open, but the player didn't click on another system or fleet, the action is to close the current window
+				bool clearingUI = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null || _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null;
 				Point pointClicked = new Point();
 
 				pointClicked.X = (int)((x / camera.ZoomDistance) + camera.CameraX);
@@ -691,7 +676,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					_gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem = selectedSystem;
 					_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup = null;
-					systemView.LoadSystem();
+					_systemView.LoadSystem();
 					return;
 				}
 
@@ -704,7 +689,10 @@ namespace Beyond_Beyaan.Screens
 					LoadFleetInfoIntoUI(selectedFleetGroup);
 					return;
 				}
-				camera.CenterCamera(pointClicked.X, pointClicked.Y, camera.ZoomDistance);
+				if (!clearingUI)
+				{
+					camera.CenterCamera(pointClicked.X, pointClicked.Y, camera.ZoomDistance);
+				}
 			}
 			else if (whichButton == 2)
 			{
@@ -728,7 +716,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null)
 			{
-				if (systemView.KeyDown(e))
+				if (_systemView.KeyDown(e))
 				{
 					return;
 				}
@@ -749,7 +737,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void LoadFleetInfoIntoUI(FleetGroup fleetGroup)
 		{
-			int maxVisible = fleetGroup.Fleets.Count > 4 ? 4 : fleetGroup.Fleets.Count;
+			/*int maxVisible = fleetGroup.Fleets.Count > 4 ? 4 : fleetGroup.Fleets.Count;
 			fleetButtons = new Button[maxVisible];
 			int x = _gameMain.ScreenWidth - 200;
 			if (fleetGroup.Fleets.Count <= 4)
@@ -758,17 +746,17 @@ namespace Beyond_Beyaan.Screens
 			}
 			for (int i = 0; i < maxVisible; i++)
 			{
-				fleetButtons[i] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, /*fleetGroup.Fleets[i + fleetGroup.FleetIndex].Empire.EmpireName + " Fleet" + travel*/"", x, 30 + (20 * i), 175, 20);
+				fleetButtons[i] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, fleetGroup.Fleets[i + fleetGroup.FleetIndex].Empire.EmpireName + " Fleet" + travel"", x, 30 + (20 * i), 175, 20);
 			}
 			fleetScrollBar.SetAmountOfItems(fleetGroup.Fleets.Count);
 			fleetScrollBar.TopIndex = 0;
 			fleetButtons[0].Selected = true;
 			_gameMain.EmpireManager.CurrentEmpire.FleetSelected = 0;
 			_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.SelectFleet(0);
-			LoadSelectedFleetInfoIntoUI(fleetGroup);
+			LoadSelectedFleetInfoIntoUI(fleetGroup);*/
 		}
 
-		private void LoadSelectedFleetInfoIntoUI(FleetGroup fleetGroup)
+		/*private void LoadSelectedFleetInfoIntoUI(FleetGroup fleetGroup)
 		{
 			Fleet selectedFleet = fleetGroup.Fleets[_gameMain.EmpireManager.CurrentEmpire.FleetSelected];
 			bool isEnabled = selectedFleet.Empire == _gameMain.EmpireManager.CurrentEmpire;
@@ -791,6 +779,6 @@ namespace Beyond_Beyaan.Screens
 				shipScrollBars[i].SetEnabledState(isEnabled);
 			}
 			shipSelectorScrollBar.SetAmountOfItems(fleetGroup.Fleets[_gameMain.EmpireManager.CurrentEmpire.FleetSelected].Ships.Count);
-		}
+		}*/
 	}
 }

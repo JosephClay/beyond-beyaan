@@ -74,16 +74,16 @@ namespace Beyond_Beyaan.Screens
 						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 2:
-						//gameMain.EmpireManager.UpdateInfluenceMaps(gameMain.Galaxy);
+						//_gameMain.EmpireManager.UpdateInfluenceMaps(_gameMain.Galaxy);
 						updateText.SetText("Processing Migration");
 						updateText.Move((int)((gameMain.ScreenWidth / 2) - (updateText.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (updateText.GetHeight() / 2)));
 						break;
 					case 3:
-						//gameMain.EmpireManager.UpdateMigration(gameMain.Galaxy);
-						//gameMain.EmpireManager.LookForCombat();
-						/*if (gameMain.EmpireManager.HasCombat)
+						//_gameMain.EmpireManager.UpdateMigration(_gameMain.Galaxy);
+						//_gameMain.EmpireManager.LookForCombat();
+						/*if (_gameMain.EmpireManager.HasCombat)
 						{
-							gameMain.ChangeToScreen(Screen.Battle);
+							_gameMain.ChangeToScreen(Screen.Battle);
 						}*/
 						break;
 					case 4:

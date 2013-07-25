@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Beyond_Beyaan.Data_Modules;
 using Beyond_Beyaan.Data_Managers;
 
@@ -110,24 +109,19 @@ namespace Beyond_Beyaan.Screens
 		}
 
 		#region Constructor
-		public bool Initialize(GameMain gameMain, Random r, out string reason)
+		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			this.gameMain = gameMain;
 			_isExplored = false;
 			_isOwnedSystem = false;
-			if (!base.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 240, 300, 480, gameMain, true, r, out reason))
+			if (!base.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 240, 300, 480, StretchableImageType.ThinBorder, gameMain, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!backGroundImage.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 240, 300, 480, StretchableImageType.ThinBorder, r, out reason))
-			{
-				return false;
-			}
-			_infrastructureIcon = SpriteManager.GetSprite("InfrastructureIcon", r);
-			_defenseIcon = SpriteManager.GetSprite("MilitaryIcon", r);
-			_researchIcon = SpriteManager.GetSprite("ResearchIcon", r);
-			_environmentIcon = SpriteManager.GetSprite("EnvironmentIcon", r);
-			_constructionIcon = SpriteManager.GetSprite("ConstructionIcon", r);
+			_infrastructureIcon = SpriteManager.GetSprite("InfrastructureIcon", gameMain.Random);
+			_defenseIcon = SpriteManager.GetSprite("MilitaryIcon", gameMain.Random);
+			_researchIcon = SpriteManager.GetSprite("ResearchIcon", gameMain.Random);
+			_environmentIcon = SpriteManager.GetSprite("EnvironmentIcon", gameMain.Random);
+			_constructionIcon = SpriteManager.GetSprite("ConstructionIcon", gameMain.Random);
 
 			if (_infrastructureIcon == null || _defenseIcon == null || _researchIcon == null || _environmentIcon == null || _constructionIcon == null)
 			{
@@ -136,7 +130,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			_name = new BBSingleLineTextBox();
-			if (!_name.Initialize(string.Empty, xPos + 10, yPos + 15, 280, 35, false, r, out reason))
+			if (!_name.Initialize(string.Empty, xPos + 10, yPos + 15, 280, 35, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -175,31 +169,31 @@ namespace Beyond_Beyaan.Screens
 			_relocateToButton = new BBButton();
 			_transferToButton = new BBButton();
 
-			if (!_generalPurposeBackground.Initialize(xPos + 10, yPos + 130, 280, 300, StretchableImageType.ThinBorder, r, out reason))
+			if (!_generalPurposeBackground.Initialize(xPos + 10, yPos + 130, 280, 300, StretchableImageType.ThinBorder, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_generalPurposeText.Initialize(xPos + 20, yPos + 140, 260, 260, false, "PlanetUIText", r, out reason))
+			if (!_generalPurposeText.Initialize(xPos + 20, yPos + 140, 260, 260, false, "PlanetUIText", gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_infrastructureBackground.Initialize(xPos + 10, yPos + 130, 280, 60, StretchableImageType.ThinBorder, r, out reason))
+			if (!_infrastructureBackground.Initialize(xPos + 10, yPos + 130, 280, 60, StretchableImageType.ThinBorder, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_researchBackground.Initialize(xPos + 10, yPos + 190, 280, 60, StretchableImageType.ThinBorder, r, out reason))
+			if (!_researchBackground.Initialize(xPos + 10, yPos + 190, 280, 60, StretchableImageType.ThinBorder, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_environmentBackground.Initialize(xPos + 10, yPos + 250, 280, 60, StretchableImageType.ThinBorder, r, out reason))
+			if (!_environmentBackground.Initialize(xPos + 10, yPos + 250, 280, 60, StretchableImageType.ThinBorder, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_defenseBackground.Initialize(xPos + 10, yPos + 310, 280, 60, StretchableImageType.ThinBorder, r, out reason))
+			if (!_defenseBackground.Initialize(xPos + 10, yPos + 310, 280, 60, StretchableImageType.ThinBorder, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_constructionBackground.Initialize(xPos + 10, yPos + 370, 280, 60, StretchableImageType.ThinBorder, r, out reason))
+			if (!_constructionBackground.Initialize(xPos + 10, yPos + 370, 280, 60, StretchableImageType.ThinBorder, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -220,11 +214,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_infrastructureSlider.Initialize(xPos + 65, yPos + 160, 200, 1, 101, true, true, r, out reason))
+			if (!_infrastructureSlider.Initialize(xPos + 65, yPos + 160, 200, 1, 101, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_infrastructureLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 160, 16, 16, r, out reason))
+			if (!_infrastructureLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 160, 16, 16, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -232,11 +226,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_researchSlider.Initialize(xPos + 65, yPos + 220, 200, 1, 101, true, true, r, out reason))
+			if (!_researchSlider.Initialize(xPos + 65, yPos + 220, 200, 1, 101, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_researchLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 220, 16, 16, r, out reason))
+			if (!_researchLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 220, 16, 16, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -244,11 +238,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_environmentSlider.Initialize(xPos + 65, yPos + 280, 200, 1, 101, true, true, r, out reason))
+			if (!_environmentSlider.Initialize(xPos + 65, yPos + 280, 200, 1, 101, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_environmentLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 280, 16, 16, r, out reason))
+			if (!_environmentLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 280, 16, 16, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -256,11 +250,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_defenseSlider.Initialize(xPos + 65, yPos + 340, 200, 1, 101, true, true, r, out reason))
+			if (!_defenseSlider.Initialize(xPos + 65, yPos + 340, 200, 1, 101, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_defenseLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 340, 16, 16, r, out reason))
+			if (!_defenseLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 340, 16, 16, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -268,11 +262,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_constructionSlider.Initialize(xPos + 65, yPos + 400, 200, 1, 101, true, true, r, out reason))
+			if (!_constructionSlider.Initialize(xPos + 65, yPos + 400, 200, 1, 101, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_constructionLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 400, 16, 16, r, out reason))
+			if (!_constructionLockButton.Initialize("LockBG", "LockFG", string.Empty, xPos + 267, yPos + 400, 16, 16, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -281,12 +275,12 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_popTransferSlider.Initialize(xPos + 20, yPos + 400, 260, 1, 1, true, true, r, out reason))
+			if (!_popTransferSlider.Initialize(xPos + 20, yPos + 400, 260, 1, 1, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
 
-			if (!_relocateToButton.Initialize("RelocateToBG", "RelocateToFG", string.Empty, xPos + 130, yPos + 435, 75, 35, r, out reason))
+			if (!_relocateToButton.Initialize("RelocateToBG", "RelocateToFG", string.Empty, xPos + 130, yPos + 435, 75, 35, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -294,7 +288,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_transferToButton.Initialize("TransferToBG", "TransferToFG", string.Empty, xPos + 215, yPos + 435, 75, 35, r, out reason))
+			if (!_transferToButton.Initialize("TransferToBG", "TransferToFG", string.Empty, xPos + 215, yPos + 435, 75, 35, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -310,13 +304,13 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadSystem()
 		{
-			currentSystem = gameMain.EmpireManager.CurrentEmpire.SelectedSystem;
-			if (currentSystem.IsThisSystemExploredByEmpire(gameMain.EmpireManager.CurrentEmpire))
+			currentSystem = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem;
+			if (currentSystem.IsThisSystemExploredByEmpire(_gameMain.EmpireManager.CurrentEmpire))
 			{
 				_isExplored = true;
 				var planet = currentSystem.Planets[0];
 				_name.SetString(currentSystem.Name);
-				_isOwnedSystem = currentSystem.Planets[0].Owner == gameMain.EmpireManager.CurrentEmpire;
+				_isOwnedSystem = currentSystem.Planets[0].Owner == _gameMain.EmpireManager.CurrentEmpire;
 				_name.SetColor(currentSystem.Planets[0].Owner != null ? currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White);
 				_popLabel.SetText(currentSystem.Planets[0].Owner != null ? string.Format("{0}/{1} M", (int)currentSystem.Planets[0].TotalPopulation, currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", currentSystem.Planets[0].PopulationMax));
 				_terrainLabel.SetText(Utility.PlanetTypeToString(currentSystem.Planets[0].PlanetType));

@@ -408,15 +408,15 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview()
 		{
-			/*List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
+			/*List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
-				int x = (gameMain.ScreenWidth / 2) - 400 + (int)(386.0f * (system.X / (float)gameMain.Galaxy.GalaxySize));
-				int y = ((gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)gameMain.Galaxy.GalaxySize));
+				int x = (_gameMain.ScreenWidth / 2) - 400 + (int)(386.0f * (system.X / (float)_gameMain.Galaxy.GalaxySize));
+				int y = ((_gameMain.ScreenHeight / 2) - 300) + (int)(386.0f * (system.Y / (float)_gameMain.Galaxy.GalaxySize));
 
-				GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-				gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+				GorgonLibrary.Gorgon.CurrentShader = _gameMain.StarShader;
+				_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
 				if (system == selectedSystem || system == hoveringSystem)
 				{
 					system.Sprite.Draw(x, y, 0.6f, 0.6f);

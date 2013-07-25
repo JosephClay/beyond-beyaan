@@ -5,7 +5,7 @@ namespace Beyond_Beyaan.Screens
 {
 	public class WindowInterface
 	{
-		protected GameMain gameMain;
+		protected GameMain _gameMain;
 
 		protected int xPos;
 		protected int yPos;
@@ -18,9 +18,9 @@ namespace Beyond_Beyaan.Screens
 		protected bool moving;
 		protected bool moveable;
 
-		protected BBStretchableImage backGroundImage;
+		protected BBStretchableImage _backGroundImage;
 
-		public bool Initialize(int x, int y, int width, int height, GameMain gameMain, bool moveable, Random r, out string reason)
+		public bool Initialize(int x, int y, int width, int height, StretchableImageType backgroundImage, GameMain gameMain, bool moveable, Random r, out string reason)
 		{
 			xPos = x;
 			yPos = y;
@@ -29,10 +29,10 @@ namespace Beyond_Beyaan.Screens
 			this.moveable = moveable;
 
 			moving = false;
-			this.gameMain = gameMain;
+			_gameMain = gameMain;
 
-			backGroundImage = new BBStretchableImage();
-			if (!backGroundImage.Initialize(x, y, width, height, StretchableImageType.MediumBorder, r, out reason))
+			_backGroundImage = new BBStretchableImage();
+			if (!_backGroundImage.Initialize(x, y, width, height, backgroundImage, r, out reason))
 			{
 				return false;
 			}
@@ -42,7 +42,7 @@ namespace Beyond_Beyaan.Screens
 
 		public virtual void Draw()
 		{
-			backGroundImage.Draw();
+			_backGroundImage.Draw();
 		}
 
 		public virtual bool MouseHover(int x, int y, float frameDeltaTime)
@@ -52,13 +52,13 @@ namespace Beyond_Beyaan.Screens
 				xPos = (x - mouseX) + origX;
 				yPos = (y - mouseY) + origY;
 
-				if (xPos + windowWidth > gameMain.ScreenWidth)
+				if (xPos + windowWidth > _gameMain.ScreenWidth)
 				{
-					xPos = gameMain.ScreenWidth - windowWidth;
+					xPos = _gameMain.ScreenWidth - windowWidth;
 				}
-				if (yPos + windowHeight > gameMain.ScreenHeight)
+				if (yPos + windowHeight > _gameMain.ScreenHeight)
 				{
-					yPos = gameMain.ScreenHeight - windowHeight;
+					yPos = _gameMain.ScreenHeight - windowHeight;
 				}
 				if (xPos < 0)
 				{
@@ -118,7 +118,7 @@ namespace Beyond_Beyaan.Screens
 
 		public virtual void MoveWindow()
 		{
-			backGroundImage.MoveTo(xPos, yPos);
+			_backGroundImage.MoveTo(xPos, yPos);
 		}
 	}
 }
