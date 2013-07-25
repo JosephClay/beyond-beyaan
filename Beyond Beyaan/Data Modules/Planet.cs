@@ -96,7 +96,7 @@ namespace Beyond_Beyaan
 			get { return shipBeingBuilt; }
 			set { shipBeingBuilt = value; }
 		}
-		public StarSystem RelocateToSystem { get; set; }
+		public TravelNode RelocateToSystem { get; set; }
 		public KeyValuePair<TravelNode, int> TransferSystem { get; set; }
 		public float ShipConstructionLength
 		{
