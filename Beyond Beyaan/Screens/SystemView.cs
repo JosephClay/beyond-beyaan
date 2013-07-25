@@ -59,7 +59,23 @@ namespace Beyond_Beyaan.Screens
 		public bool IsRelocating { get; set; }
 		public bool IsTransferring { get; set; }
 		public StarSystem DestinationSystem { get; set; }
-		public TravelNode TransferSystem { get; set; }
+		private TravelNode _transferSystem;
+		public TravelNode TransferSystem
+		{
+			get { return _transferSystem; }
+			set
+			{
+				_transferSystem = value;
+				if (_transferSystem != null && !_transferSystem.IsValid)
+				{
+					_transferToButton.Active = false;
+				}
+				else
+				{
+					_transferToButton.Active = true;
+				}
+			}
+		}
 
 		#region Constructor
 		public bool Initialize(GameMain gameMain, Random r, out string reason)
@@ -539,6 +555,7 @@ namespace Beyond_Beyaan.Screens
 						_transferLabel.SetText("Moving " + currentSystem.Planets[0].TransferSystem.Value + " Pop");
 						_transferLabel.Move(xPos + 10, yPos + 440);
 						IsTransferring = false;
+						TransferSystem = null;
 						//Done setting transfer
 					}
 				}

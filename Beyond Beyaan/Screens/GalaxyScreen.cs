@@ -563,6 +563,10 @@ namespace Beyond_Beyaan.Screens
 							var path = _gameMain.Galaxy.GetPath(currentEmpire.SelectedSystem.X, currentEmpire.SelectedSystem.Y, null, system, false, currentEmpire);
 							if (path.Count > 0)
 							{
+								if (!path[0].StarSystem.IsThisSystemExploredByEmpire(currentEmpire) || path[0].StarSystem.Planets[0].Owner == null)
+								{
+									path[0].IsValid = false;
+								}
 								systemView.TransferSystem = path[0];
 							}
 						}
@@ -570,6 +574,7 @@ namespace Beyond_Beyaan.Screens
 						{
 							//Clicked to clear the option
 							systemView.IsTransferring = false;
+							systemView.TransferSystem = null;
 						}
 						return;
 					}
