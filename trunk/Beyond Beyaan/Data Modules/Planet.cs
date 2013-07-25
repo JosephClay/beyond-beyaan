@@ -97,6 +97,7 @@ namespace Beyond_Beyaan
 			set { shipBeingBuilt = value; }
 		}
 		public StarSystem RelocateToSystem { get; set; }
+		public KeyValuePair<TravelNode, int> TransferSystem { get; set; }
 		public float ShipConstructionLength
 		{
 			get
@@ -243,6 +244,7 @@ namespace Beyond_Beyaan
 			this.name = name;
 			races = new List<Race>();
 			racePopulations = new Dictionary<Race, float>();
+			TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode {StarSystem = system}, 0);
 
 			isWetClimate = r.Next(2) == 0;
 			populationMax = r.Next(0, 150) - 25;

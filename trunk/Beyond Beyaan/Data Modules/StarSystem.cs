@@ -63,6 +63,7 @@ namespace Beyond_Beyaan
 		{
 			get { return planets; }
 		}
+		public string Description { get; private set; }
 		/*public StarType Type
 		{
 			get { return type; }
@@ -78,7 +79,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int x, int y, Color color, int minPlanets, int maxPlanets, Random r)
+		public StarSystem(string name, int x, int y, Color color, string description, int minPlanets, int maxPlanets, Random r)
 		{
 			this.Sprite = SpriteManager.GetSprite("Star", r);
 			this.name = name;
@@ -115,6 +116,7 @@ namespace Beyond_Beyaan
 			EmpiresWithFleetAdjacentThisTurn = new List<Empire>();
 			EmpiresWithPlanetsInThisSystem = new List<Empire>();
 			OwnerPercentage = new Dictionary<Empire, float>();
+			Description = description;
 		}
 		#endregion
 
