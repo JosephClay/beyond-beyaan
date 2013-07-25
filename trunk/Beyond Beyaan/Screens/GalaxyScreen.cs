@@ -174,9 +174,17 @@ namespace Beyond_Beyaan.Screens
 				{
 					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedSystem.Planets[0].TransferSystem.Key.Length / pathSprite.Width), camera.ZoomDistance, Color.Green, selectedSystem.Planets[0].TransferSystem.Key.Angle);
 				}
-				if (systemView.IsTransferring && systemView.TransferSystem.StarSystem != selectedSystem)
+				if (selectedSystem.Planets[0].RelocateToSystem != null)
+				{
+					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedSystem.Planets[0].RelocateToSystem.Length / pathSprite.Width), camera.ZoomDistance, Color.Blue, selectedSystem.Planets[0].RelocateToSystem.Angle);
+				}
+				if (systemView.IsTransferring && systemView.TransferSystem != null)
 				{
 					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (systemView.TransferSystem.Length / pathSprite.Width), camera.ZoomDistance, systemView.TransferSystem.IsValid ? Color.LightGreen : Color.Red, systemView.TransferSystem.Angle);
+				}
+				if (systemView.IsRelocating && systemView.RelocateSystem != null)
+				{
+					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (systemView.RelocateSystem.Length / pathSprite.Width), camera.ZoomDistance, systemView.RelocateSystem.IsValid ? Color.LightSkyBlue : Color.Red, systemView.RelocateSystem.Angle);
 				}
 			}
 
@@ -578,6 +586,37 @@ namespace Beyond_Beyaan.Screens
 						}
 						return;
 					}
+					if (systemView.IsRelocating)
+					{
+						Point point = new Point();
+
+						point.X = (int)((x / camera.ZoomDistance) + camera.CameraX);
+						point.Y = (int)((y / camera.ZoomDistance) + camera.CameraY);
+
+						StarSystem system = _gameMain.Galaxy.GetStarAtPoint(point);
+						if (system != null)
+						{
+							var path = _gameMain.Galaxy.GetPath(currentEmpire.SelectedSystem.X, currentEmpire.SelectedSystem.Y, null, system, false, currentEmpire);
+							if (path.Count > 0)
+							{
+								if (path[0].StarSystem.Planets[0].Owner != currentEmpire)
+								{
+									path[0].IsValid = false;
+								}
+								systemView.RelocateSystem = path[0];
+							}
+						}
+						else
+						{
+							//Clicked to clear the option
+							systemView.IsRelocating = false;
+							systemView.RelocateSystem = null;
+						}
+						return;
+					}
+					//At this point, the user just wants to close the system view
+					_gameMain.EmpireManager.CurrentEmpire.SelectedSystem = null;
+					return;
 				}
 				if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null)
 				{

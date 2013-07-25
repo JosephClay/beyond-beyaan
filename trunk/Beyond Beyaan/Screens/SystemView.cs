@@ -56,9 +56,41 @@ namespace Beyond_Beyaan.Screens
 		private bool _isOwnedSystem; //To determine whether or not to display/handle sliders
 		private bool _isExplored;
 
-		public bool IsRelocating { get; set; }
+		private bool _isRelocating;
+		public bool IsRelocating
+		{
+			get { return _isRelocating; }
+			set
+			{
+				_isRelocating = value;
+				if (!_isRelocating)
+				{
+					_relocateToButton.MoveTo(xPos + 130, yPos + 435);
+				}
+				else
+				{
+					_relocateToButton.MoveTo(xPos + 215, yPos + 435);
+				}
+			}
+		}
 		public bool IsTransferring { get; set; }
-		public StarSystem DestinationSystem { get; set; }
+		private TravelNode _relocateSystem;
+		public TravelNode RelocateSystem
+		{
+			get { return _relocateSystem; }
+			set
+			{
+				_relocateSystem = value;
+				if (_relocateSystem != null && !_relocateSystem.IsValid)
+				{
+					_relocateToButton.Active = false;
+				}
+				else
+				{
+					_relocateToButton.Active = true;
+				}
+			}
+		}
 		private TravelNode _transferSystem;
 		public TravelNode TransferSystem
 		{
@@ -83,9 +115,6 @@ namespace Beyond_Beyaan.Screens
 			this.gameMain = gameMain;
 			_isExplored = false;
 			_isOwnedSystem = false;
-			IsRelocating = false;
-			IsTransferring = false;
-			DestinationSystem = null;
 			if (!base.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 240, 300, 480, gameMain, true, r, out reason))
 			{
 				return false;
@@ -376,6 +405,13 @@ namespace Beyond_Beyaan.Screens
 						_transferToButton.Draw();
 						_transferToButton.DrawToolTip();
 					}
+					else if (IsRelocating)
+					{
+						_generalPurposeBackground.Draw();
+						_generalPurposeText.Draw();
+						_relocateToButton.Draw();
+						_relocateToButton.DrawToolTip();
+					}
 					else
 					{
 						_productionLabel.Draw();
@@ -454,7 +490,14 @@ namespace Beyond_Beyaan.Screens
 			_constructionLabel.Move(xPos + 65, yPos + 380);
 			_constructionSlider.MoveTo(xPos + 65, yPos + 400);
 			_constructionLockButton.MoveTo(xPos + 267, yPos + 400);
-			_relocateToButton.MoveTo(xPos + 130, yPos + 435);
+			if (IsRelocating)
+			{
+				_relocateToButton.MoveTo(xPos + 215, yPos + 435);
+			}
+			else
+			{
+				_relocateToButton.MoveTo(xPos + 130, yPos + 435);
+			}
 			_transferToButton.MoveTo(xPos + 215, yPos + 435);
 		}
 
@@ -477,6 +520,14 @@ namespace Beyond_Beyaan.Screens
 					result = base.MouseDown(x, y);
 				}
 				return result;
+			}
+			if (IsRelocating)
+			{
+				if (_relocateToButton.MouseDown(x, y))
+				{
+					return true;
+				}
+				return base.MouseDown(x, y);
 			}
 			result = _name.MouseDown(x, y);
 			if (!result)
@@ -558,6 +609,19 @@ namespace Beyond_Beyaan.Screens
 						TransferSystem = null;
 						//Done setting transfer
 					}
+					return true;
+				}
+			}
+			if (IsRelocating)
+			{
+				if (_relocateToButton.MouseUp(x, y))
+				{
+					if (RelocateSystem.IsValid)
+					{
+						currentSystem.Planets[0].RelocateToSystem = RelocateSystem;
+						IsRelocating = false;
+						RelocateSystem = null;
+					}
 				}
 			}
 			if (_name.MouseUp(x, y))
@@ -633,6 +697,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				IsRelocating = true;
 				_generalPurposeText.SetText("Select a friendly system to send newly built ships");
+				_relocateToButton.Active = false;
 				return true;
 			}
 			if (_transferToButton.MouseUp(x, y))
@@ -640,7 +705,6 @@ namespace Beyond_Beyaan.Screens
 				IsTransferring = true;
 				_transferLabel.Move(xPos + 20, yPos + 370);
 				_transferLabel.SetText("Moving 0 Population");
-				TransferSystem = new TravelNode();
 				_popTransferSlider.SetAmountOfItems((int)(currentSystem.Planets[0].TotalPopulation / 2));
 				_generalPurposeText.SetText("Select a colonized planet to send population");
 				return true;
@@ -662,6 +726,14 @@ namespace Beyond_Beyaan.Screens
 					return true;
 				}
 				if (_transferToButton.MouseHover(x, y, frameDeltaTime))
+				{
+					return true;
+				}
+				return base.MouseHover(x, y, frameDeltaTime);
+			}
+			if (IsRelocating)
+			{
+				if (_relocateToButton.MouseHover(x, y, frameDeltaTime))
 				{
 					return true;
 				}
