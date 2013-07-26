@@ -62,7 +62,7 @@ namespace Beyond_Beyaan.Screens
 				for (int i = 0; i < maxVisible; i++)
 				{
 					string text = selectedShip.Weapons[i].TechName; //+ " x " + selectedShip.Weapons[i].Mounts;
-					weaponButtons[i].SetButtonText(text);
+					weaponButtons[i].SetText(text);
 				}
 				selectedWeapon = 0;
 				foreach (Button button in weaponButtons)

@@ -571,13 +571,13 @@ namespace Beyond_Beyaan.Screens
 						if (clear.MouseUp(x, y))
 						{
 							shipDesign.engine = availableEngines[0];
-							engineButton.SetButtonText(shipDesign.engine.GetName());
+							engineButton.SetText(shipDesign.engine.GetName());
 							shipDesign.computer = availableComputers[0];
-							computerButton.SetButtonText(shipDesign.computer.GetName());
+							computerButton.SetText(shipDesign.computer.GetName());
 							shipDesign.armor = availableArmors[0];
-							armorButton.SetButtonText(shipDesign.armor.GetName());
+							armorButton.SetText(shipDesign.armor.GetName());
 							shipDesign.shield = availableShields[0];
-							shieldButton.SetButtonText(shipDesign.shield.GetName());
+							shieldButton.SetText(shipDesign.shield.GetName());
 							shipDesign.weapons.Clear();
 							UpdateSpaceUsageAndCost();
 						}
@@ -626,7 +626,7 @@ namespace Beyond_Beyaan.Screens
 							if (techButtons[i].MouseUp(x, y))
 							{
 								shipDesign.engine = availableEngines[i + techScrollBar.TopIndex];
-								engineButton.SetButtonText(shipDesign.engine.GetName());
+								engineButton.SetText(shipDesign.engine.GetName());
 								displayingTechOption = NONE;
 								UpdateSpaceUsageAndCost();
 								return;
@@ -646,7 +646,7 @@ namespace Beyond_Beyaan.Screens
 							if (techButtons[i].MouseUp(x, y))
 							{
 								shipDesign.computer = availableComputers[i + techScrollBar.TopIndex];
-								computerButton.SetButtonText(shipDesign.computer.GetName());
+								computerButton.SetText(shipDesign.computer.GetName());
 								displayingTechOption = NONE;
 								UpdateSpaceUsageAndCost();
 								return;
@@ -666,7 +666,7 @@ namespace Beyond_Beyaan.Screens
 							if (techButtons[i].MouseUp(x, y))
 							{
 								shipDesign.armor = availableArmors[i + techScrollBar.TopIndex];
-								armorButton.SetButtonText(shipDesign.armor.GetName());
+								armorButton.SetText(shipDesign.armor.GetName());
 								displayingTechOption = NONE;
 								UpdateSpaceUsageAndCost();
 								return;
@@ -686,7 +686,7 @@ namespace Beyond_Beyaan.Screens
 							if (techButtons[i].MouseUp(x, y))
 							{
 								shipDesign.shield = availableShields[i + techScrollBar.TopIndex];
-								shieldButton.SetButtonText(shipDesign.shield.GetName());
+								shieldButton.SetText(shipDesign.shield.GetName());
 								displayingTechOption = NONE;
 								UpdateSpaceUsageAndCost();
 								return;
@@ -734,10 +734,10 @@ namespace Beyond_Beyaan.Screens
 			shipDesign = _gameMain.EmpireManager.CurrentEmpire.FleetManager.LastShipDesign;
 			shipSprite = _gameMain.EmpireManager.CurrentEmpire.EmpireRace.GetShip(shipDesign.Size, shipDesign.WhichStyle);
 
-			engineButton.SetButtonText(shipDesign.engine.GetName());
-			computerButton.SetButtonText(shipDesign.computer.GetName());
-			armorButton.SetButtonText(shipDesign.armor.GetName());
-			shieldButton.SetButtonText(shipDesign.shield.GetName());
+			engineButton.SetText(shipDesign.engine.GetName());
+			computerButton.SetText(shipDesign.computer.GetName());
+			armorButton.SetText(shipDesign.armor.GetName());
+			shieldButton.SetText(shipDesign.shield.GetName());
 			sizeComboBox.SelectedIndex = shipDesign.Size - 1;
 
 			UpdateSpaceUsageAndCost();
@@ -893,7 +893,7 @@ namespace Beyond_Beyaan.Screens
 						
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].SetButtonText(availableEngines[i].GetName());
+							techButtons[i].SetText(availableEngines[i].GetName());
 						}
 						techLabels[1].SetText("Combat Speed");
 						techLabels[2].SetText("Galaxy Speed");
@@ -913,7 +913,7 @@ namespace Beyond_Beyaan.Screens
 						}
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].SetButtonText(availableComputers[i].GetName());
+							techButtons[i].SetText(availableComputers[i].GetName());
 						}
 						techLabels[1].SetText("Efficiency");
 						techLabels[2].SetText(string.Empty);
@@ -933,7 +933,7 @@ namespace Beyond_Beyaan.Screens
 						}
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].SetButtonText(availableArmors[i].GetName());
+							techButtons[i].SetText(availableArmors[i].GetName());
 						}
 						techLabels[1].SetText("Efficiency");
 						techLabels[2].SetText("HP");
@@ -953,7 +953,7 @@ namespace Beyond_Beyaan.Screens
 						}
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].SetButtonText(availableShields[i].GetName());
+							techButtons[i].SetText(availableShields[i].GetName());
 						}
 						techLabels[1].SetText("Efficiency");
 						techLabels[2].SetText("Resistance");
@@ -973,7 +973,7 @@ namespace Beyond_Beyaan.Screens
 						}
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].SetButtonText(availableWeapons[i].GetName());
+							techButtons[i].SetText(availableWeapons[i].GetName());
 						}
 						techLabels[1].SetText("Damage");
 						techLabels[2].SetText("Accuracy");
@@ -989,35 +989,35 @@ namespace Beyond_Beyaan.Screens
 					{
 						for (int i = 0; i < techButtons.Length; i++)
 						{
-							techButtons[i].SetButtonText(availableEngines[i + techScrollBar.TopIndex].GetName());
+							techButtons[i].SetText(availableEngines[i + techScrollBar.TopIndex].GetName());
 						}
 					} break;
 				case COMPUTER:
 					{
 						for (int i = 0; i < techButtons.Length; i++)
 						{
-							techButtons[i].SetButtonText(availableComputers[i + techScrollBar.TopIndex].GetName());
+							techButtons[i].SetText(availableComputers[i + techScrollBar.TopIndex].GetName());
 						}
 					} break;
 				case ARMOR:
 					{
 						for (int i = 0; i < techButtons.Length; i++)
 						{
-							techButtons[i].SetButtonText(availableArmors[i + techScrollBar.TopIndex].GetName());
+							techButtons[i].SetText(availableArmors[i + techScrollBar.TopIndex].GetName());
 						}
 					} break;
 				case SHIELD:
 					{
 						for (int i = 0; i < techButtons.Length; i++)
 						{
-							techButtons[i].SetButtonText(availableShields[i + techScrollBar.TopIndex].GetName());
+							techButtons[i].SetText(availableShields[i + techScrollBar.TopIndex].GetName());
 						}
 					} break;
 				case WEAPON:
 					{
 						for (int i = 0; i < techButtons.Length; i++)
 						{
-							techButtons[i].SetButtonText(availableWeapons[i + techScrollBar.TopIndex].GetName());
+							techButtons[i].SetText(availableWeapons[i + techScrollBar.TopIndex].GetName());
 						}
 					} break;
 			}

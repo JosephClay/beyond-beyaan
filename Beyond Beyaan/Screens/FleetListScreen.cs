@@ -327,7 +327,7 @@ namespace Beyond_Beyaan.Screens
 			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			for (int i = 0; i < maxVisible; i++)
 			{
-				fleetButtons[i].SetButtonText(whichFleets[i + fleetIndex].Empire.EmpireName);
+				fleetButtons[i].SetText(whichFleets[i + fleetIndex].Empire.EmpireName);
 			}
 			if (selectedFleet >= 0)
 			{
@@ -347,7 +347,7 @@ namespace Beyond_Beyaan.Screens
 						{
 							break;
 						}
-						shipButtons[j].SetButtonText(ship.Key.Name + " x " + ship.Value);
+						shipButtons[j].SetText(ship.Key.Name + " x " + ship.Value);
 						j++;
 					}
 					i++;

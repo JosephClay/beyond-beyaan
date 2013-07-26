@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Beyond_Beyaan
 {
@@ -56,6 +53,7 @@ namespace Beyond_Beyaan
 
 			Ship scout = new Ship();
 			scout.Name = "Scout";
+			scout.Owner = empire;
 			scout.Size = Ship.SMALL;
 			scout.WhichStyle = 0;
 			scout.Engine = retroEngine;
@@ -72,6 +70,7 @@ namespace Beyond_Beyaan
 
 			Ship colonyShip = new Ship();
 			colonyShip.Name = "Colony Ship";
+			colonyShip.Owner = empire;
 			colonyShip.Size = Ship.LARGE;
 			colonyShip.WhichStyle = 0;
 			colonyShip.Engine = retroEngine;

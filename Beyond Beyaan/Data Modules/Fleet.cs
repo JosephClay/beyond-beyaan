@@ -144,6 +144,18 @@ namespace Beyond_Beyaan
 				return orderedShips;
 			}
 		}
+		public int ShipCount
+		{
+			get
+			{
+				int amount = 0;
+				foreach (var ship in ships)
+				{
+					amount += ship.Value;
+				}
+				return amount;
+			}
+		}
 		public List<TransportShip> TransportShips
 		{
 			get { return transportShips; }

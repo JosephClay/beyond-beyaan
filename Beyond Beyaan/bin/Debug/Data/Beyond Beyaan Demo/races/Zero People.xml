@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Zero People" 
+      singularName="Zero People"
       neutralPortrait="ZeroPeopleNeutralPortrait" 
       happyPortrait="ZeroPeopleHappyPortrait" 
       angryPortrait="ZeroPeopleAngryPortrait" 

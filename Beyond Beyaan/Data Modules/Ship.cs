@@ -8,13 +8,14 @@ namespace Beyond_Beyaan
 {
 	public class Ship
 	{
-		public const int SMALL = 1;
-		public const int MEDIUM = 2;
-		public const int LARGE = 3;
-		public const int HUGE = 4;
+		public const int SMALL = 0;
+		public const int MEDIUM = 1;
+		public const int LARGE = 2;
+		public const int HUGE = 3;
 
 		#region Properties
 		public string Name { get; set; }
+		public Empire Owner { get; set; }
 		public int Size { get; set; }
 		public int WhichStyle { get; set; }
 		public Technology Engine;
@@ -102,6 +103,7 @@ namespace Beyond_Beyaan
 		public Ship(Ship shipToCopy)
 		{
 			Name = shipToCopy.Name;
+			Owner = shipToCopy.Owner;
 			Size = shipToCopy.Size;
 			WhichStyle = shipToCopy.WhichStyle;
 			Engine = shipToCopy.Engine;
