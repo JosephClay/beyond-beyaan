@@ -300,7 +300,7 @@ namespace Beyond_Beyaan
 			if (GorgonLibrary.Graphics.ImageCache.Images.Contains(empireName + empireID))
 			{
 				image = GorgonLibrary.Graphics.ImageCache.Images[empireName + empireID];
-				image.SetDimensions(squaredSize, squaredSize);
+				image.Resize(squaredSize, squaredSize);
 			}
 			else
 			{

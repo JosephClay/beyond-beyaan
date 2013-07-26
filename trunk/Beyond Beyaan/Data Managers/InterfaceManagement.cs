@@ -8,17 +8,19 @@ using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan
 {
+	public enum ButtonTextAlignment { LEFT, CENTER, RIGHT }
 	public class BBButton
 	{
 		#region Member Variables
 		private BBToolTip toolTip;
 		private BBSprite backgroundSprite;
 		private BBSprite foregroundSprite;
-		private int xPos;
-		private int yPos;
-		private int width;
-		private int height;
-		private Label label;
+		private int _xPos;
+		private int _yPos;
+		private int _width;
+		private int _height;
+		private BBLabel _label;
+		private ButtonTextAlignment _alignment;
 		#endregion
 
 		//Button state information
@@ -32,7 +34,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public bool Initialize(string backgroundSprite, string foregroundSprite, string buttonText, int xPos, int yPos, int width, int height, Random r, out string reason)
+		public bool Initialize(string backgroundSprite, string foregroundSprite, string buttonText, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, Random r, out string reason)
 		{
 			this.backgroundSprite = SpriteManager.GetSprite(backgroundSprite, r);
 			this.foregroundSprite = SpriteManager.GetSprite(foregroundSprite, r);
@@ -41,12 +43,17 @@ namespace Beyond_Beyaan
 				reason = string.Format("One of those sprites does not exist in sprites.xml: \"{0}\" or \"{1}\"", backgroundSprite, foregroundSprite);
 				return false;
 			}
-			this.xPos = xPos;
-			this.yPos = yPos;
-			this.width = width;
-			this.height = height;
+			_xPos = xPos;
+			_yPos = yPos;
+			_width = width;
+			_height = height;
+			_alignment = alignment;
 
-			label = new Label(buttonText, xPos + 2, yPos + 2);
+			_label = new BBLabel();
+			if (!_label.Initialize(0, 0, buttonText, Color.White, out reason))
+			{
+				return false;
+			}
 
 			Reset();
 			reason = null;
@@ -66,7 +73,19 @@ namespace Beyond_Beyaan
 
 		public void SetButtonText(string text)
 		{
-			label.SetText(text);
+			_label.SetText(text);
+			switch (_alignment)
+			{
+				case ButtonTextAlignment.LEFT:
+					_label.MoveTo(_xPos + 5, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.CENTER:
+					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.RIGHT:
+					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+			}
 		}
 		public bool SetToolTip(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
 		{
@@ -80,20 +99,31 @@ namespace Beyond_Beyaan
 
 		public void MoveTo(int x, int y)
 		{
-			xPos = x;
-			yPos = y;
-			label.Move(x, y);
+			_xPos = x;
+			_yPos = y;
+			switch (_alignment)
+			{
+				case ButtonTextAlignment.LEFT:
+					_label.MoveTo(_xPos + 5, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.CENTER:
+					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.RIGHT:
+					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+			}
 		}
 
-		public void ResizeButton(int width, int height)
+		public void Resize(int width, int height)
 		{
-			this.width = width;
-			this.height = height;
+			this._width = width;
+			this._height = height;
 		}
 
 		public bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 			{
 				if (pulse < 0.6f)
 				{
@@ -144,7 +174,7 @@ namespace Beyond_Beyaan
 
 		public bool MouseDown(int x, int y)
 		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 			{
 				if (toolTip != null)
 				{
@@ -168,7 +198,7 @@ namespace Beyond_Beyaan
 					toolTip.SetShowing(false);
 				}
 				pressed = false;
-				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+				if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 				{
 					return true;
 				}
@@ -182,28 +212,28 @@ namespace Beyond_Beyaan
 			{
 				if (pressed || Selected)
 				{
-					foregroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height);
+					foregroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height);
 				}
 				else if (!Selected)
 				{
-					backgroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height);
+					backgroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height);
 					if (pulse > 0)
 					{
-						foregroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height, (byte)(255 * pulse));
+						foregroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height, (byte)(255 * pulse));
 					}
 				}
 			}
 			else
 			{
-				backgroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height, System.Drawing.Color.Tan);
+				backgroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height, System.Drawing.Color.Tan);
 				if (Selected)
 				{
-					foregroundSprite.Draw(xPos, yPos, foregroundSprite.Width / width, foregroundSprite.Height / height, System.Drawing.Color.Tan);
+					foregroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height, System.Drawing.Color.Tan);
 				}
 			}
-			if (label.Text.Length > 0)
+			if (_label.Text.Length > 0)
 			{
-				label.Draw();
+				_label.Draw();
 			}
 		}
 		public void DrawToolTip()
@@ -393,17 +423,18 @@ namespace Beyond_Beyaan
 		#region Member Variables
 		private BBUniStretchableImage backgroundImage;
 		private BBUniStretchableImage foregroundImage;
-		private Label label;
+		private BBLabel _label;
+		private ButtonTextAlignment _alignment;
 
 		//Button state information
 		private bool pressed;
 		private float pulse;
 		private bool direction;
 
-		private int xPos;
-		private int yPos;
-		private int width;
-		private int height;
+		private int _xPos;
+		private int _yPos;
+		private int _width;
+		private int _height;
 		#endregion
 
 		#region Properties
@@ -412,12 +443,13 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, int xPos, int yPos, int width, int height, Random r, out string reason)
+		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, Random r, out string reason)
 		{
-			this.xPos = xPos;
-			this.yPos = yPos;
-			this.width = width;
-			this.height = height;
+			_xPos = xPos;
+			_yPos = yPos;
+			_width = width;
+			_height = height;
+			_alignment = alignment;
 
 			backgroundImage = new BBUniStretchableImage();
 			foregroundImage = new BBUniStretchableImage();
@@ -431,9 +463,11 @@ namespace Beyond_Beyaan
 				return false;
 			}
 
-			label = new Label(0, 0);
-			SetButtonText(buttonText);
-			label.SetColor(System.Drawing.Color.DarkBlue);
+			_label = new BBLabel();
+			if (!_label.Initialize(0, 0, buttonText, Color.White, out reason))
+			{
+				return false;
+			}
 
 			Reset();
 
@@ -454,30 +488,52 @@ namespace Beyond_Beyaan
 
 		public void SetButtonText(string text)
 		{
-			label.SetText(text);
-			label.Move((int)((width / 2) - (label.GetWidth() / 2) + xPos), (int)((height / 2) - (label.GetHeight() / 2) + yPos));
+			_label.SetText(text);
+			switch (_alignment)
+			{
+				case ButtonTextAlignment.LEFT:
+					_label.MoveTo(_xPos + 5, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.CENTER:
+					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.RIGHT:
+					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+			}
 		}
 
 		public void MoveTo(int x, int y)
 		{
-			this.xPos = x;
-			this.yPos = y;
-			label.Move((int)((width / 2) - (label.GetWidth() / 2) + x), (int)((height / 2) - (label.GetHeight() / 2) + y));
+			_xPos = x;
+			_yPos = y;
+			switch (_alignment)
+			{
+				case ButtonTextAlignment.LEFT:
+					_label.MoveTo(_xPos + 5, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.CENTER:
+					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.RIGHT:
+					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+			}
 			backgroundImage.MoveTo(x, y);
 			foregroundImage.MoveTo(x, y);
 		}
 
 		public void ResizeButton(int width, int height)
 		{
-			this.width = width;
-			this.height = height;
+			this._width = width;
+			this._height = height;
 			backgroundImage.Resize(width, height);
 			foregroundImage.Resize(width, height);
 		}
 
 		public bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 			{
 				if (pulse < 0.6f)
 				{
@@ -519,7 +575,7 @@ namespace Beyond_Beyaan
 
 		public bool MouseDown(int x, int y)
 		{
-			if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 			{
 				if (Active)
 				{
@@ -535,7 +591,7 @@ namespace Beyond_Beyaan
 			if (Active && pressed)
 			{
 				pressed = false;
-				if (x >= xPos && x < xPos + width && y >= yPos && y < yPos + height)
+				if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 				{
 					return true;
 				}
@@ -562,18 +618,266 @@ namespace Beyond_Beyaan
 			}
 			else
 			{
-				backgroundImage.Draw(System.Drawing.Color.Tan, 255);
+				backgroundImage.Draw(Color.Tan, 255);
 				if (Selected)
 				{
-					foregroundImage.Draw(System.Drawing.Color.Tan, 255);
+					foregroundImage.Draw(Color.Tan, 255);
 				}
 			}
-			if (label.Text.Length > 0)
+			if (_label.Text.Length > 0)
 			{
-				label.Draw();
+				_label.Draw();
 			}
 		}
 		#endregion
+	}
+
+	public class BBStretchButton
+	{
+		#region Member Variables
+		protected BBStretchableImage _backgroundImage;
+		protected BBStretchableImage _foregroundImage;
+		protected BBLabel _label;
+		protected ButtonTextAlignment _alignment;
+
+		//Button state information
+		protected bool _pressed;
+		protected float _pulse;
+		protected bool _direction;
+
+		protected int _xPos;
+		protected int _yPos;
+		protected int _width;
+		protected int _height;
+		#endregion
+
+		#region Properties
+		public bool Enabled { get; set; }
+		public bool Selected { get; set; }
+		#endregion
+
+		#region Constructors
+		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, Random r, out string reason)
+		{
+			_xPos = xPos;
+			_yPos = yPos;
+			_width = width;
+			_height = height;
+			_alignment = alignment;
+
+			_backgroundImage = new BBStretchableImage();
+			_foregroundImage = new BBStretchableImage();
+
+			if (!_backgroundImage.Initialize(xPos, yPos, width, height, StretchableImageType.ThinBorderBG, r, out reason))
+			{
+				return false;
+			}
+			if (!_foregroundImage.Initialize(xPos, yPos, width, height, StretchableImageType.ThinBorderFG, r, out reason))
+			{
+				return false;
+			}
+
+			_label = new BBLabel();
+			if (!_label.Initialize(0, 0, buttonText, Color.White, out reason))
+			{
+				return false;
+			}
+
+			Reset();
+
+			reason = null;
+			return true;
+		}
+		#endregion
+
+		#region Functions
+		public void Reset()
+		{
+			_pulse = 0;
+			_direction = false;
+			Enabled = true;
+			_pressed = false;
+			Selected = false;
+		}
+
+		public void SetButtonText(string text)
+		{
+			_label.SetText(text);
+			switch (_alignment)
+			{
+				case ButtonTextAlignment.LEFT:
+					_label.MoveTo(_xPos + 5, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.CENTER:
+					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.RIGHT:
+					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+			}
+		}
+
+		public void MoveTo(int x, int y)
+		{
+			_xPos = x;
+			_yPos = y;
+			switch (_alignment)
+			{
+				case ButtonTextAlignment.LEFT:
+					_label.MoveTo(_xPos + 5, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.CENTER:
+					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+				case ButtonTextAlignment.RIGHT:
+					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					break;
+			}
+			_backgroundImage.MoveTo(x, y);
+			_foregroundImage.MoveTo(x, y);
+		}
+
+		public void ResizeButton(int width, int height)
+		{
+			this._width = width;
+			this._height = height;
+			_backgroundImage.Resize(width, height);
+			_foregroundImage.Resize(width, height);
+		}
+
+		public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
+			{
+				if (_pulse < 0.6f)
+				{
+					_pulse = 0.9f;
+				}
+				if (Enabled)
+				{
+					if (_direction)
+					{
+						_pulse += frameDeltaTime / 2;
+						if (_pulse > 0.9f)
+						{
+							_direction = !_direction;
+							_pulse = 0.9f;
+						}
+					}
+					else
+					{
+						_pulse -= frameDeltaTime / 2;
+						if (_pulse < 0.6f)
+						{
+							_direction = !_direction;
+							_pulse = 0.6f;
+						}
+					}
+				}
+				return true;
+			}
+			if (_pulse > 0)
+			{
+				_pulse -= frameDeltaTime * 2;
+				if (_pulse < 0)
+				{
+					_pulse = 0;
+				}
+			}
+			return false;
+		}
+
+		public bool MouseDown(int x, int y)
+		{
+			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
+			{
+				if (Enabled)
+				{
+					_pressed = true;
+				}
+				return true;
+			}
+			return false;
+		}
+
+		public bool MouseUp(int x, int y)
+		{
+			if (Enabled && _pressed)
+			{
+				_pressed = false;
+				if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public void Draw()
+		{
+			if (Enabled)
+			{
+				if (_pressed || Selected)
+				{
+					_foregroundImage.Draw();
+				}
+				else if (!Selected)
+				{
+					_backgroundImage.Draw();
+					if (_pulse > 0)
+					{
+						_foregroundImage.Draw((byte)(255 * _pulse));
+					}
+				}
+			}
+			else
+			{
+				_backgroundImage.Draw(Color.Tan, 255);
+				if (Selected)
+				{
+					_foregroundImage.Draw(Color.Tan, 255);
+				}
+			}
+			if (_label.Text.Length > 0)
+			{
+				_label.Draw();
+			}
+		}
+		#endregion
+	}
+
+	public class BBInvisibleStretchButton : BBStretchButton
+	{
+		private bool _visible;
+
+		new public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			_visible = base.MouseHover(x, y, frameDeltaTime);
+			return _visible;
+		}
+
+		new public void Draw()
+		{
+			if (Enabled && (_visible || Selected))
+			{
+				if (_pressed)
+				{
+					_foregroundImage.Draw();
+				}
+				else if (!Selected)
+				{
+					_backgroundImage.Draw();
+					if (_pulse > 0)
+					{
+						_foregroundImage.Draw((byte)(255 * _pulse));
+					}
+				}
+			}
+			if (_label.Text.Length > 0)
+			{
+				_label.Draw();
+			}
+		}
 	}
 
 	class ComboBox
@@ -770,7 +1074,7 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
-	class BBScrollBar
+	public class BBScrollBar
 	{
 		#region Member Variables
 		//Variables that are defined in constructor
@@ -832,17 +1136,17 @@ namespace Beyond_Beyaan
 				scrollButtonLength = (int)(((float)amountOfVisibleItems / amountOfItems) * scrollBarLength);
 				if (!isHorizontal)
 				{
-					if (!Up.Initialize("ScrollUpBGButton", "ScrollUpFGButton", "", xPos, yPos, 16, 16, r, out reason))
+					if (!Up.Initialize("ScrollUpBGButton", "ScrollUpFGButton", "", ButtonTextAlignment.CENTER, xPos, yPos, 16, 16, r, out reason))
 					{
 						return false;
 					}
-					if (!Down.Initialize("ScrollDownBGButton", "ScrollDownFGButton", "", xPos, yPos + length - 16, 16, 16, r, out reason))
+					if (!Down.Initialize("ScrollDownBGButton", "ScrollDownFGButton", "", ButtonTextAlignment.CENTER, xPos, yPos + length - 16, 16, 16, r, out reason))
 					{
 						return false;
 					}
 					if (!Scroll.Initialize(new List<string> { "ScrollVerticalBGButton1", "ScrollVerticalBGButton2", "ScrollVerticalBGButton3" }, 
 										   new List<string> { "ScrollVerticalFGButton1", "ScrollVerticalFGButton2", "ScrollVerticalFGButton3" },
-										   false, "", xPos, yPos + 16, 16, scrollButtonLength, r, out reason))
+										   false, "", ButtonTextAlignment.LEFT, xPos, yPos + 16, 16, scrollButtonLength, r, out reason))
 					{
 						return false;
 					}
@@ -855,17 +1159,17 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", xPos, yPos, 16, 16, r, out reason))
+					if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", ButtonTextAlignment.CENTER, xPos, yPos, 16, 16, r, out reason))
 					{
 						return false;
 					}
-					if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 16, yPos, 16, 16, r, out reason))
+					if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", ButtonTextAlignment.CENTER, xPos + length - 16, yPos, 16, 16, r, out reason))
 					{
 						return false;
 					}
 					if (!Scroll.Initialize(new List<string> { "ScrollHorizontalBGButton1", "ScrollHorizontalBGButton2", "ScrollHorizontalBGButton3" },
 										   new List<string> { "ScrollHorizontalFGButton1", "ScrollHorizontalFGButton2", "ScrollHorizontalFGButton3" },
-										   false, "", xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
+										   false, "", ButtonTextAlignment.LEFT, xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
 					{
 						return false;
 					}
@@ -880,17 +1184,17 @@ namespace Beyond_Beyaan
 			else
 			{
 				scrollButtonLength = 16;
-				if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", xPos, yPos, 16, 16, r, out reason))
+				if (!Up.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", "", ButtonTextAlignment.CENTER, xPos, yPos, 16, 16, r, out reason))
 				{
 					return false;
 				}
-				if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", xPos + length - 16, yPos, 16, 16, r, out reason))
+				if (!Down.Initialize("ScrollRightBGButton", "ScrollRightFGButton", "", ButtonTextAlignment.CENTER, xPos + length - 16, yPos, 16, 16, r, out reason))
 				{
 					return false;
 				}
 				if (!Scroll.Initialize(new List<string> { "SliderHorizontalBGButton1", "SliderHorizontalBGButton2", "SliderHorizontalBGButton3" },
 									   new List<string> { "SliderHorizontalFGButton1", "SliderHorizontalFGButton2", "SliderHorizontalFGButton3" },
-									   true, "", xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
+									   true, "", ButtonTextAlignment.LEFT, xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
 				{
 					return false;
 				}
@@ -1607,7 +1911,8 @@ namespace Beyond_Beyaan
 	{
 		ThickBorder,
 		MediumBorder,
-		ThinBorder,
+		ThinBorderBG,
+		ThinBorderFG,
 		TextBox
 	}
 	public class BBStretchableImage
@@ -1705,7 +2010,7 @@ namespace Beyond_Beyaan
 						sections.Add(tempSprite);
 					}
 					break;
-				case StretchableImageType.ThinBorder:
+				case StretchableImageType.ThinBorderBG:
 				{
 					sectionWidth = 30;
 					sectionHeight = 13;
@@ -1774,6 +2079,75 @@ namespace Beyond_Beyaan
 					}
 					sections.Add(tempSprite);
 				} break;
+				case StretchableImageType.ThinBorderFG:
+					{
+						sectionWidth = 30;
+						sectionHeight = 13;
+						sections = new List<BBSprite>();
+						var tempSprite = SpriteManager.GetSprite("ThinBorderFGTL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGTL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("ThinBorderFGTC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGTC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("ThinBorderFGTR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGTR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("ThinBorderFGCL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGCL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("ThinBorderFGCC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGCC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("ThinBorderFGCR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGCR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("ThinBorderFGBL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGBL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("ThinBorderFGBC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGBC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("ThinBorderFGBR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"ThinBorderFGBR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+					} break;
 				case StretchableImageType.MediumBorder:
 					{
 						sectionWidth = 60;
@@ -1943,7 +2317,7 @@ namespace Beyond_Beyaan
 			Draw(System.Drawing.Color.White, alpha);
 		}
 
-		public void Draw(System.Drawing.Color color, byte alpha)
+		public void Draw(Color color, byte alpha)
 		{
 			sections[0].Draw(xPos, yPos, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
 			sections[1].Draw(xPos + sectionWidth, yPos, horizontalStretchLength / sections[1].Width, 1, System.Drawing.Color.FromArgb(alpha, color));
@@ -1955,7 +2329,7 @@ namespace Beyond_Beyaan
 			sections[7].Draw(xPos + sectionWidth, yPos + sectionHeight + verticalStretchLength, horizontalStretchLength / sections[7].Width, 1, System.Drawing.Color.FromArgb(alpha, color));
 			sections[8].Draw(xPos + sectionWidth + horizontalStretchLength, yPos + sectionHeight + verticalStretchLength, 1, 1, System.Drawing.Color.FromArgb(alpha, color));
 		}
-		public void SetDimensions(int width, int height)
+		public void Resize(int width, int height)
 		{
 			this.width = width;
 			this.height = height;
@@ -2271,7 +2645,7 @@ namespace Beyond_Beyaan
 		{
 			return textSprite.Height > 0 ? textSprite.Height : 1;
 		}
-		public void Move(int x, int y)
+		public void MoveTo(int x, int y)
 		{
 			this.x = x;
 			this.y = y;
@@ -2405,7 +2779,7 @@ namespace Beyond_Beyaan
 			xPos = x;
 			yPos = y;
 			background.MoveTo(x, y);
-			text.Move(x + 6, y + 7);
+			text.MoveTo(x + 6, y + 7);
 		}
 
 		public void Draw()
@@ -2806,7 +3180,7 @@ namespace Beyond_Beyaan
 			_totalHeight = _text.Height + 10;
 
 			_background = new BBStretchableImage();
-			if (!_background.Initialize(0, 0, WIDTH, _totalHeight, StretchableImageType.ThinBorder, r, out reason))
+			if (!_background.Initialize(0, 0, WIDTH, _totalHeight, StretchableImageType.ThinBorderBG, r, out reason))
 			{
 				return false;
 			}

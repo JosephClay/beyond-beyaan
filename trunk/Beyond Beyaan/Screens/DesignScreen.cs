@@ -861,8 +861,8 @@ namespace Beyond_Beyaan.Screens
 			spaceUsage.SetMaxProgress(totalSpace);
 			spaceUsage.SetProgress(usedSpace);
 
-			confirm.Active = totalSpace >= usedSpace;
-			if (confirm.Active)
+			confirm.Enabled = totalSpace >= usedSpace;
+			if (confirm.Enabled)
 			{
 				spaceUsage.SetColor(System.Drawing.Color.Green);
 			}

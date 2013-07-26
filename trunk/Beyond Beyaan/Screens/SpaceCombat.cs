@@ -196,7 +196,7 @@ namespace Beyond_Beyaan.Screens
 				for (int i = 0; i < fleetsInCombat.Count; i++)
 				{
 					int empireX = (int)(_gameMain.ScreenWidth - (fleetsInCombat[i].EmpireNameLabel.GetWidth() + 5));
-					fleetsInCombat[i].EmpireNameLabel.Move(empireX, empireY);
+					fleetsInCombat[i].EmpireNameLabel.MoveTo(empireX, empireY);
 					fleetsInCombat[i].EmpireNameLabel.Draw();
 					if (i == whichEmpireTurn)
 					{
@@ -290,7 +290,7 @@ namespace Beyond_Beyaan.Screens
 						case 1:
 							{
 								SelectedShip.Retreating = true;
-								actionButtons[i].Active = false;
+								actionButtons[i].Enabled = false;
 							} break;
 						case 2:
 							{
@@ -319,7 +319,7 @@ namespace Beyond_Beyaan.Screens
 									}
 									SelectedShip = fleetsInCombat[whichEmpireTurn].combatShips[selectedShipIter];
 								}
-								actionButtons[1].Active = !SelectedShip.Retreating;
+								actionButtons[1].Enabled = !SelectedShip.Retreating;
 								camera.CenterCamera(SelectedShip.X, SelectedShip.Y);
 							} break;
 						case 3:
@@ -343,7 +343,7 @@ namespace Beyond_Beyaan.Screens
 									shipsChecked++;
 								}
 								SelectedShip = fleetsInCombat[whichEmpireTurn].combatShips[selectedShipIter];
-								actionButtons[1].Active = !SelectedShip.Retreating;
+								actionButtons[1].Enabled = !SelectedShip.Retreating;
 								camera.CenterCamera(SelectedShip.X, SelectedShip.Y);
 							} break;
 						case 4:
@@ -367,7 +367,7 @@ namespace Beyond_Beyaan.Screens
 									shipsChecked++;
 								}
 								SelectedShip = fleetsInCombat[whichEmpireTurn].combatShips[selectedShipIter];
-								actionButtons[1].Active = !SelectedShip.Retreating;
+								actionButtons[1].Enabled = !SelectedShip.Retreating;
 								camera.CenterCamera(SelectedShip.X, SelectedShip.Y);
 							} break;
 						case 5:
@@ -397,7 +397,7 @@ namespace Beyond_Beyaan.Screens
 									}
 									SelectedShip = fleetsInCombat[whichEmpireTurn].combatShips[selectedShipIter];
 								}
-								actionButtons[1].Active = !SelectedShip.Retreating;
+								actionButtons[1].Enabled = !SelectedShip.Retreating;
 								camera.CenterCamera(SelectedShip.X, SelectedShip.Y);
 							} break;
 						case 6:
@@ -438,11 +438,11 @@ namespace Beyond_Beyaan.Screens
 						if (fleet == fleetsInCombat[whichEmpireTurn])
 						{
 							selectedShipIter = i;
-							actionButtons[1].Active = !SelectedShip.Retreating;
+							actionButtons[1].Enabled = !SelectedShip.Retreating;
 						}
 						else
 						{
-							actionButtons[1].Active = false;
+							actionButtons[1].Enabled = false;
 						}
 						return;
 					}
@@ -516,7 +516,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			selectedShipIter = 0;
 			SelectedShip = fleetsInCombat[whichEmpireTurn].combatShips[selectedShipIter];
-			actionButtons[1].Active = !selectedShip.Retreating;
+			actionButtons[1].Enabled = !selectedShip.Retreating;
 			camera.CenterCamera(SelectedShip.X, SelectedShip.Y);
 			if (retreatingShips.Count > 0)
 			{

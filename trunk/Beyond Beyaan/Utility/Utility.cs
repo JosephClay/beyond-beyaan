@@ -273,27 +273,6 @@ namespace Beyond_Beyaan
 			return String.Empty;
 		}
 
-		public static SpriteName PlanetTypeToSprite(PLANET_TYPE planetType)
-		{
-			switch (planetType)
-			{
-				case PLANET_TYPE.ARCTIC: return SpriteName.Arctic;
-				case PLANET_TYPE.NONE: return SpriteName.Asteroids;
-				case PLANET_TYPE.BADLAND: return SpriteName.Badlands;
-				case PLANET_TYPE.BARREN: return SpriteName.Barren;
-				case PLANET_TYPE.DEAD: return SpriteName.Dead;
-				case PLANET_TYPE.DESERT: return SpriteName.Desert;
-				case PLANET_TYPE.JUNGLE: return SpriteName.Jungle;
-				case PLANET_TYPE.OCEAN: return SpriteName.Ocean;
-				case PLANET_TYPE.RADIATED: return SpriteName.Radiated;
-				case PLANET_TYPE.STEPPE: return SpriteName.Steppe;
-				case PLANET_TYPE.TERRAN: return SpriteName.Terran;
-				case PLANET_TYPE.TOXIC: return SpriteName.Toxic;
-				case PLANET_TYPE.TUNDRA: return SpriteName.Tundra;
-				case PLANET_TYPE.VOLCANIC: return SpriteName.Volcanic;
-			}
-			return SpriteName.Terran;
-		}
 		public static SpriteName PlanetConstructionBonusToSprite(PLANET_CONSTRUCTION_BONUS bonus)
 		{
 			switch (bonus)

@@ -72,7 +72,7 @@ namespace Beyond_Beyaan.Data_Modules
 		{
 			if (path != null && path.Count > 0)
 			{
-				//Move to next point
+				//MoveTo to next point
 				if (X > path[0].X)
 				{
 					XOffset -= 16 * frameDeltaTime;
