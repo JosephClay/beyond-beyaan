@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Beyond_Beyaan
+﻿namespace Beyond_Beyaan
 {
 	class TaskBar
 	{
@@ -30,47 +25,47 @@ namespace Beyond_Beyaan
 			top = gameMain.ScreenHeight - 40;
 
 			TaskButtons[0] = new BBButton();
-			if (!TaskButtons[0].Initialize("GameMenuBG", "GameMenuFG", string.Empty, left, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[0].Initialize("GameMenuBG", "GameMenuFG", string.Empty, ButtonTextAlignment.CENTER, left, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[1] = new BBButton();
-			if (!TaskButtons[1].Initialize("GalaxyBG", "GalaxyFG", string.Empty, left + 40, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[1].Initialize("GalaxyBG", "GalaxyFG", string.Empty, ButtonTextAlignment.CENTER, left + 40, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[2] = new BBButton();
-			if (!TaskButtons[2].Initialize("DiplomacyBG", "DiplomacyFG", string.Empty, left + 80, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[2].Initialize("DiplomacyBG", "DiplomacyFG", string.Empty, ButtonTextAlignment.CENTER, left + 80, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[3] = new BBButton();
-			if (!TaskButtons[3].Initialize("FleetListBG", "FleetListFG", string.Empty, left + 120, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[3].Initialize("FleetListBG", "FleetListFG", string.Empty, ButtonTextAlignment.CENTER, left + 120, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[4] = new BBButton();
-			if (!TaskButtons[4].Initialize("DesignBG", "DesignFG", string.Empty, left + 160, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[4].Initialize("DesignBG", "DesignFG", string.Empty, ButtonTextAlignment.CENTER, left + 160, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[5] = new BBButton();
-			if (!TaskButtons[5].Initialize("FleetListBG", "FleetListFG", string.Empty, left + 200, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[5].Initialize("FleetListBG", "FleetListFG", string.Empty, ButtonTextAlignment.CENTER, left + 200, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[6] = new BBButton();
-			if (!TaskButtons[6].Initialize("PlanetsListBG", "PlanetsListFG", string.Empty, left + 240, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[6].Initialize("PlanetsListBG", "PlanetsListFG", string.Empty, ButtonTextAlignment.CENTER, left + 240, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[7] = new BBButton();
-			if (!TaskButtons[7].Initialize("ResearchBG", "ResearchFG", string.Empty, left + 280, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[7].Initialize("ResearchBG", "ResearchFG", string.Empty, ButtonTextAlignment.CENTER, left + 280, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[8] = new BBButton();
-			if (!TaskButtons[8].Initialize("EndTurnBG", "EndTurnFG", string.Empty, left + 320, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[8].Initialize("EndTurnBG", "EndTurnFG", string.Empty, ButtonTextAlignment.CENTER, left + 320, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}

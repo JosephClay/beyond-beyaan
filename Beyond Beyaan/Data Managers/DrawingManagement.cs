@@ -1,24 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using Drawing = System.Drawing;
-using GorgonLibrary;
 using GorgonLibrary.Graphics;
-using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan
 {
 	public enum SpriteName 
 	{ 
 		Interface,
-		Buttons,
 		HumanCpu,
 		ScrollNSlider,
-		Stars,
-		Planets,
 		Message,
 		TitlePlanet,
 		TitleName,
@@ -36,37 +29,10 @@ namespace Beyond_Beyaan
 		NewGame2,
 		Options2,
 		BattleItems,
-
 		NormalBackgroundButton,
 		NormalForegroundButton,
 		MiniBackgroundButton,
 		MiniForegroundButton,
-		UpBackgroundButton,
-		UpForegroundButton,
-		DownBackgroundButton,
-		DownForegroundButton,
-		GridCell00,
-		GridCell01,
-		GridCell02,
-		GridCell03,
-		GridCell04,
-		GridCell05,
-		GridCell06,
-		GridCell07,
-		GridCell08,
-		GridCell09,
-		GridCell10,
-		GridCell11,
-		GridCell12,
-		GridCell13,
-		GridCell14,
-		GridCell15,
-		MapStar,
-		Star,
-		SelectedStar,
-		Fleet,
-		SelectedFleet,
-		BlackHole,
 		Screen,
 		ScrollUpBackgroundButton,
 		ScrollUpForegroundButton,
@@ -87,31 +53,7 @@ namespace Beyond_Beyaan
 		SliderHorizontalBackgroundButton,
 		SliderHorizontalForegroundButton,
 		ControlBackground,
-		SelectCell,
 		Nebula,
-		GameMenu,
-		HighlightedGameMenu,
-		Diplomacy,
-		HighlightedDiplomacy,
-		FleetList,
-		HighlightedFleetList,
-		Design,
-		HighlightedDesign,
-		DesignList,
-		HighlightedDesignList,
-		PlanetsList,
-		HighlightedPlanetsList,
-		Research,
-		HighlightedResearch,
-		EOT,
-		HighlightedEOT,
-		Galaxy,
-		HighlightedGalaxy,
-		BeamIcon,
-		ParticleIcon,
-		MissileIcon,
-		TorpedoIcon,
-		BombIcon,
 		CancelBackground,
 		CancelForeground,
 		PlusBackground,
@@ -122,21 +64,6 @@ namespace Beyond_Beyaan
 		CPUPlayerIcon,
 		LockDisabled,
 		LockEnabled,
-		Terran,
-		Jungle,
-		Ocean,
-		Badlands,
-		Steppe,
-		Desert,
-		Arctic,
-		Barren,
-		Tundra,
-		Dead,
-		Volcanic,
-		Toxic,
-		Radiated,
-		Asteroids,
-		GasGiant,
 		PlanetIcons,
 		AgricultureIcon,
 		EnvironmentIcon,
@@ -261,23 +188,11 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			if (!LoadSpriteFromFile("Buttons", SpriteName.Buttons, directory + "\\buttons.png", false, out reason))
-			{
-				return false;
-			}
 			if (!LoadSpriteFromFile("HumanCpu", SpriteName.HumanCpu, directory + "\\human cpu.png", false, out reason))
 			{
 				return false;
 			}
 			if (!LoadSpriteFromFile("ScrollNSlider", SpriteName.ScrollNSlider, directory + "\\Scroll and slider.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("Stars", SpriteName.Stars, directory + "\\Stars old.png", false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromFile("Planets", SpriteName.Planets, directory + "\\planets.png", false, out reason))
 			{
 				return false;
 			}
@@ -363,10 +278,6 @@ namespace Beyond_Beyaan
 			}
 
 			//Load from loaded sprites
-			if (!LoadSpriteFromSprite("SelectCell", SpriteName.SelectCell, SpriteName.Interface, 175, 0, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
 			if (!LoadSpriteFromSprite("NormalBackgroundButton", SpriteName.NormalBackgroundButton, SpriteName.Interface, 0, 0, 175, 40, false, false, out reason))
 			{
 				return false;
@@ -380,30 +291,6 @@ namespace Beyond_Beyaan
 				return false;
 			}
 			if (!LoadSpriteFromSprite("MiniForegroundButton", SpriteName.MiniForegroundButton, SpriteName.Interface, 0, 369, 175, 25, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("UpBackgroundButton", SpriteName.UpBackgroundButton, SpriteName.Interface, 0, 280, 175, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("UpForegroundButton", SpriteName.UpForegroundButton, SpriteName.Interface, 0, 296, 175, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DownBackgroundButton", SpriteName.DownBackgroundButton, SpriteName.Interface, 0, 312, 175, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DownForegroundButton", SpriteName.DownForegroundButton, SpriteName.Interface, 0, 328, 175, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("MapStar", SpriteName.MapStar, SpriteName.Interface, 239, 0, 9, 9, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("GridCell00", SpriteName.GridCell00, SpriteName.Interface, 175, 0, 16, 16, false, false, out reason))
 			{
 				return false;
 			}
@@ -518,124 +405,7 @@ namespace Beyond_Beyaan
 				return false;
 			}
 
-			if (!LoadSpriteFromSprite("SelectedSystem", SpriteName.SelectedStar, SpriteName.Stars, 0, 96, 128, 128, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Star", SpriteName.Star, SpriteName.Stars, 32, 32, 64, 64, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("BlackHole", SpriteName.BlackHole, SpriteName.Stars, 160, 128, 64, 64, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Fleet", SpriteName.Fleet, SpriteName.Stars, 128, 32, 32, 32, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("SelectedFleet", SpriteName.SelectedFleet, SpriteName.Stars, 160, 0, 96, 96, false, false, out reason))
-			{
-				return false;
-			}
-
 			if (!LoadSpriteFromSprite("ControlBackground", SpriteName.ControlBackground, SpriteName.Interface, 0, 80, 175, 200, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Nebula", SpriteName.Nebula, SpriteName.SelectCell, 223, 48, 16, 16, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("GameMenu", SpriteName.GameMenu, SpriteName.Buttons, 0, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Galaxy", SpriteName.Galaxy, SpriteName.Buttons, 40, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Diplomacy", SpriteName.Diplomacy, SpriteName.Buttons, 80, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("FleetList", SpriteName.FleetList, SpriteName.Buttons, 120, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("PlanetsList", SpriteName.PlanetsList, SpriteName.Buttons, 160, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Design", SpriteName.Design, SpriteName.Buttons, 200, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Research", SpriteName.Research, SpriteName.Buttons, 240, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DesignList", SpriteName.DesignList, SpriteName.Buttons, 280, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("EOT", SpriteName.EOT, SpriteName.Buttons, 320, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("GameMenuHighlighted", SpriteName.HighlightedGameMenu, SpriteName.Buttons, 0, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("GalaxyHighlighted", SpriteName.HighlightedGalaxy, SpriteName.Buttons, 40, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DiplomacyHighlighted", SpriteName.HighlightedDiplomacy, SpriteName.Buttons, 80, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("FleetListHighlighted", SpriteName.HighlightedFleetList, SpriteName.Buttons, 120, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("PlanetsListHighlighted", SpriteName.HighlightedPlanetsList, SpriteName.Buttons, 160, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DesignHighlighted", SpriteName.HighlightedDesign, SpriteName.Buttons, 200, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ResearchHighlighted", SpriteName.HighlightedResearch, SpriteName.Buttons, 240, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("DesignListHighlighted", SpriteName.HighlightedDesignList, SpriteName.Buttons, 280, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("EOTHighlighted", SpriteName.HighlightedEOT, SpriteName.Buttons, 320, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("BeamIcon", SpriteName.BeamIcon, SpriteName.Interface, 40, 474, 16, 16, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("ParticleIcon", SpriteName.ParticleIcon, SpriteName.Interface, 56, 474, 16, 16, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("MissileIcon", SpriteName.MissileIcon, SpriteName.Interface, 72, 474, 16, 16, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("TorpedoIcon", SpriteName.TorpedoIcon, SpriteName.Interface, 88, 474, 16, 16, true, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("BombIcon", SpriteName.BombIcon, SpriteName.Interface, 104, 474, 16, 16, true, false, out reason))
 			{
 				return false;
 			}
@@ -645,67 +415,6 @@ namespace Beyond_Beyaan
 				return false;
 			}
 			if (!LoadSpriteFromSprite("CPUPlayerIcon", SpriteName.CPUPlayerIcon, SpriteName.HumanCpu, 25, 0, 25, 25, true, false, out reason))
-			{
-				return false;
-			}
-
-			if (!LoadSpriteFromSprite("Terran", SpriteName.Terran, SpriteName.Planets, 0, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Jungle", SpriteName.Jungle, SpriteName.Planets, 40, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Ocean", SpriteName.Ocean, SpriteName.Planets, 80, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Badlands", SpriteName.Badlands, SpriteName.Planets, 120, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Steppe", SpriteName.Steppe, SpriteName.Planets, 160, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Desert", SpriteName.Desert, SpriteName.Planets, 200, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Arctic", SpriteName.Arctic, SpriteName.Planets, 240, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Barren", SpriteName.Barren, SpriteName.Planets, 280, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Tundra", SpriteName.Tundra, SpriteName.Planets, 320, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Dead", SpriteName.Dead, SpriteName.Planets, 360, 0, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Volcanic", SpriteName.Volcanic, SpriteName.Planets, 0, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Toxic", SpriteName.Toxic, SpriteName.Planets, 40, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Radiated", SpriteName.Radiated, SpriteName.Planets, 80, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("Asteroids", SpriteName.Asteroids, SpriteName.Planets, 160, 40, 40, 40, false, false, out reason))
-			{
-				return false;
-			}
-			if (!LoadSpriteFromSprite("GasGiant", SpriteName.GasGiant, SpriteName.Planets, 120, 40, 40, 40, false, false, out reason))
 			{
 				return false;
 			}

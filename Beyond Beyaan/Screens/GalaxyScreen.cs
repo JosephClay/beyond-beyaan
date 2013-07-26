@@ -182,7 +182,7 @@ namespace Beyond_Beyaan.Screens
 					float x = (system.X - camera.CameraX) * camera.ZoomDistance;
 					x -= (system.StarName.GetWidth() / 2);
 					float y = ((system.Y + (system.Size * 16)) - camera.CameraY) * camera.ZoomDistance;
-					system.StarName.Move((int)x, (int)y);
+					system.StarName.MoveTo((int)x, (int)y);
 					if (system.DominantEmpire != null)
 					{
 						// TODO: Optimize this by moving the text sprite and color shader to StarSystem, where it's updated when ownership changes
@@ -191,7 +191,7 @@ namespace Beyond_Beyaan.Screens
 						starName.Width = (int)system.StarName.GetWidth();
 						starName.Height = (int)system.StarName.GetHeight();
 						GorgonLibrary.Gorgon.CurrentRenderTarget = starName;
-						system.StarName.Move(0, 0);
+						system.StarName.MoveTo(0, 0);
 						system.StarName.Draw();
 						GorgonLibrary.Gorgon.CurrentRenderTarget = oldTarget;
 						//GorgonLibrary.Gorgon.CurrentShader = _gameMain.NameShader;
