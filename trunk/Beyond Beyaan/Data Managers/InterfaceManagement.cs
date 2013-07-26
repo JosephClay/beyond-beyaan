@@ -657,7 +657,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, Random r, out string reason)
+		public bool Initialize(string buttonText, ButtonTextAlignment alignment, StretchableImageType background, StretchableImageType foreground, int xPos, int yPos, int width, int height, Random r, out string reason)
 		{
 			_xPos = xPos;
 			_yPos = yPos;
@@ -668,11 +668,11 @@ namespace Beyond_Beyaan
 			_backgroundImage = new BBStretchableImage();
 			_foregroundImage = new BBStretchableImage();
 
-			if (!_backgroundImage.Initialize(xPos, yPos, width, height, StretchableImageType.ThinBorderBG, r, out reason))
+			if (!_backgroundImage.Initialize(xPos, yPos, width, height, background, r, out reason))
 			{
 				return false;
 			}
-			if (!_foregroundImage.Initialize(xPos, yPos, width, height, StretchableImageType.ThinBorderFG, r, out reason))
+			if (!_foregroundImage.Initialize(xPos, yPos, width, height, foreground, r, out reason))
 			{
 				return false;
 			}
@@ -700,7 +700,7 @@ namespace Beyond_Beyaan
 			Selected = false;
 		}
 
-		public void SetButtonText(string text)
+		public void SetText(string text)
 		{
 			_label.SetText(text);
 			switch (_alignment)
@@ -715,6 +715,10 @@ namespace Beyond_Beyaan
 					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
 					break;
 			}
+		}
+		public void SetTextColor(Color color)
+		{
+			_label.SetColor(color);
 		}
 
 		public void MoveTo(int x, int y)
@@ -860,7 +864,7 @@ namespace Beyond_Beyaan
 		{
 			if (Enabled && (_visible || Selected))
 			{
-				if (_pressed)
+				if (_pressed || Selected)
 				{
 					_foregroundImage.Draw();
 				}
@@ -1076,6 +1080,7 @@ namespace Beyond_Beyaan
 
 	public class BBScrollBar
 	{
+		// TODO: Fix scrollbar so if I say 100 items, I don't need to specify 101 for amountOfItems
 		#region Member Variables
 		//Variables that are defined in constructor
 		private int xPos;
@@ -1400,12 +1405,9 @@ namespace Beyond_Beyaan
 					SetScrollButtonPosition();
 					return !(oldIndex == topIndex);
 				}
-				else
-				{
-					Up.MouseHover(x, y, frameDeltaTime);
-					Down.MouseHover(x, y, frameDeltaTime);
-					return false;
-				}
+				Up.MouseHover(x, y, frameDeltaTime);
+				Down.MouseHover(x, y, frameDeltaTime);
+				return false;
 			}
 			return false;
 		}
@@ -1913,6 +1915,8 @@ namespace Beyond_Beyaan
 		MediumBorder,
 		ThinBorderBG,
 		ThinBorderFG,
+		TinyButtonBG,
+		TinyButtonFG,
 		TextBox
 	}
 	public class BBStretchableImage
@@ -2144,6 +2148,144 @@ namespace Beyond_Beyaan
 						if (tempSprite == null)
 						{
 							reason = "Failed to get \"ThinBorderFGBR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+					} break;
+				case StretchableImageType.TinyButtonBG:
+					{
+						sectionWidth = 10;
+						sectionHeight = 10;
+						sections = new List<BBSprite>();
+						var tempSprite = SpriteManager.GetSprite("TinyButtonBGTL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGTL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonBGTC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGTC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonBGTR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGTR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonBGCL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGCL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonBGCC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGCC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonBGCR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGCR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonBGBL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGBL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonBGBC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGBC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonBGBR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonBGBR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+					} break;
+				case StretchableImageType.TinyButtonFG:
+					{
+						sectionWidth = 10;
+						sectionHeight = 10;
+						sections = new List<BBSprite>();
+						var tempSprite = SpriteManager.GetSprite("TinyButtonFGTL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGTL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonFGTC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGTC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonFGTR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGTR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonFGCL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGCL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonFGCC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGCC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonFGCR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGCR\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonFGBL", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGBL\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonFGBC", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGBC\" from sprites.xml.";
+							return false;
+						}
+						sections.Add(tempSprite);
+						tempSprite = SpriteManager.GetSprite("TinyButtonFGBR", r);
+						if (tempSprite == null)
+						{
+							reason = "Failed to get \"TinyButtonFGBR\" from sprites.xml.";
 							return false;
 						}
 						sections.Add(tempSprite);

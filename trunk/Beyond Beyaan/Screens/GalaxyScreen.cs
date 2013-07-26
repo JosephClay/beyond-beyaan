@@ -87,26 +87,6 @@ namespace Beyond_Beyaan.Screens
 		public void DrawGalaxy(DrawingManagement drawingManagement)
 		{
 			Empire currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
-			//GorgonLibrary.Graphics.Sprite nebula = _gameMain.Galaxy.Nebula;
-			/*GorgonLibrary.Graphics.Sprite influenceMap = currentEmpire.InfluenceMap;
-			influenceMap.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
-			influenceMap.SetScale(sizes[0], sizes[0]);
-			influenceMap.Draw();
-			foreach (Contact contact in currentEmpire.ContactManager.Contacts)
-			{
-				if (contact.Contacted)
-				{
-					influenceMap = contact.EmpireInContact.InfluenceMap;
-					influenceMap.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
-					influenceMap.SetScale(sizes[0], sizes[0]);
-					influenceMap.Draw();
-				}
-			}*/
-			//nebula.SetPosition(0 - (camera.CameraX * sizes[0] + (camera.XOffset * camera.Scale)), 0 - (camera.CameraY * sizes[0] + (camera.YOffset * camera.Scale)));
-			//nebula.SetScale(sizes[0], sizes[0]);
-			//nebula.Opacity = 200;
-			//nebula.Draw();
-
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
 			FleetGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
 			List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
@@ -342,67 +322,8 @@ namespace Beyond_Beyaan.Screens
 			if (selectedFleetGroup != null)
 			{
 				_fleetView.Draw();
-				/*drawingManagement.DrawSprite(SpriteName.SelectedFleet, (int)(((((selectedFleetGroup.Fleets[0].GalaxyX - 1) - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((selectedFleetGroup.Fleets[0].GalaxyY - 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 255, sizes[2], sizes[2], System.Drawing.Color.White);
-				if (selectedFleetGroup.FleetToSplit.TentativeNodes != null)
-				{
-					foreach (Point node in selectedFleetGroup.FleetToSplit.TentativeNodes)
-					{
-						if (_gameMain.Galaxy.GetGridCells()[node.X][node.Y].passable)
-						{
-							drawingManagement.DrawSprite(SpriteName.SelectCell, (int)((((node.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((node.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 150, sizes[0], sizes[0], System.Drawing.Color.LightGreen);
-						}
-					}
-					Point lastNode = selectedFleetGroup.FleetToSplit.TentativeNodes[selectedFleetGroup.FleetToSplit.TentativeNodes.Count - 1];
-					drawingManagement.DrawText("Arial", "ETA: " + selectedFleetGroup.FleetToSplit.TentativeETA + " Turns", (int)((((lastNode.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((lastNode.Y + 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), System.Drawing.Color.White);
-				}
-				if (selectedFleetGroup.FleetToSplit.TravelNodes != null)
-				{
-					foreach (Point node in selectedFleetGroup.FleetToSplit.TravelNodes)
-					{
-						if (_gameMain.Galaxy.GetGridCells()[node.X][node.Y].passable)
-						{
-							drawingManagement.DrawSprite(SpriteName.SelectCell, (int)((((node.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)((((node.Y - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), 150, sizes[0], sizes[0], System.Drawing.Color.Green);
-						}
-					}
-				}
-
-				drawingManagement.DrawSprite(SpriteName.ControlBackground, _gameMain.ScreenWidth - 207, 0, 255, 207, 460, System.Drawing.Color.White);
-				drawingManagement.DrawSprite(SpriteName.ControlBackground, _gameMain.ScreenWidth - 204, 6, 255, 200, 110, System.Drawing.Color.DarkGray);
-				int max = selectedFleetGroup.Fleets.Count > 4 ? 4 : selectedFleetGroup.Fleets.Count;
-
-				int x = _gameMain.ScreenWidth - 200;
-				if (selectedFleetGroup.Fleets.Count <= 4)
-				{
-					x += 10;
-				}
-				for (int i = 0; i < max; i++)
-				{
-					string travel = selectedFleetGroup.Fleets[i + selectedFleetGroup.FleetIndex].ETA > 0 ? " - ETA " + selectedFleetGroup.Fleets[i + selectedFleetGroup.FleetIndex].ETA :
-					" - Idling";
-					fleetButtons[i].Draw(drawingManagement);
-					drawingManagement.DrawText("Arial", selectedFleetGroup.Fleets[i + selectedFleetGroup.FleetIndex].Empire.EmpireName + " Fleet" + travel, x, 32 + (i * 20), selectedFleetGroup.Fleets[i + selectedFleetGroup.FleetIndex].Empire.EmpireColor);
-				}
-				if (selectedFleetGroup.Fleets.Count > 4)
-				{
-					fleetScrollBar.DrawScrollBar(drawingManagement);
-				}
-
-				drawingManagement.DrawText("Arial", "Fleets at this location", _gameMain.ScreenWidth - 200, 10, System.Drawing.Color.White);
-
-				x = _gameMain.ScreenWidth - 203;
-				if (selectedFleetGroup.Fleets[_gameMain.EmpireManager.CurrentEmpire.FleetSelected].Ships.Count <= 8)
-				{
-					x += 10;
-				}
-				else
-				{
-					shipSelectorScrollBar.DrawScrollBar(drawingManagement);
-				}
-				for (int i = 0; i < shipScrollBars.Length; i++)
-				{
-					shipScrollBars[i].DrawScrollBar(drawingManagement);
-					drawingManagement.DrawText("Arial", selectedFleetGroup.GetShipsForDisplay()[i].Name + " x " +  selectedFleetGroup.FleetToSplit.Ships[selectedFleetGroup.GetShipsForDisplay()[i]], x, 130 + i * 40, System.Drawing.Color.White);
-				}*/
+				/* TODO: Add ETA display
+				drawingManagement.DrawText("Arial", "ETA: " + selectedFleetGroup.FleetToSplit.TentativeETA + " Turns", (int)((((lastNode.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((lastNode.Y + 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), System.Drawing.Color.White);*/
 			}
 			if (selectedSystem != null)
 			{
@@ -428,44 +349,8 @@ namespace Beyond_Beyaan.Screens
 				{
 					return;
 				}
-				/*if (currentEmpire.SelectedFleetGroup.Fleets.Count > 4)
+				if (currentEmpire.SelectedFleetGroup.SelectedFleet.Empire == currentEmpire)
 				{
-					if (fleetScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
-					{
-						//When a fleet is selected, this may move the button up or down, need to update as needed
-						currentEmpire.SelectedFleetGroup.FleetIndex = fleetScrollBar.TopIndex;
-						foreach (Button button in fleetButtons)
-						{
-							button.Selected = false;
-						}
-						int adjustedIndex = currentEmpire.FleetSelected - fleetScrollBar.TopIndex;
-						if (adjustedIndex >= 0 && adjustedIndex < fleetButtons.Length)
-						{
-							fleetButtons[adjustedIndex].Selected = true;
-						}
-					}
-					foreach (Button button in fleetButtons)
-					{
-						button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-					}
-				}
-				if (currentEmpire.SelectedFleetGroup.Fleets[currentEmpire.FleetSelected].Empire == currentEmpire)
-				{
-					for (int i = 0; i < shipScrollBars.Length; i++)
-					{
-						if (shipScrollBars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
-						{
-							//incremented/decremented the amount of ships for moving
-							currentEmpire.SelectedFleetGroup.FleetToSplit.Ships[currentEmpire.SelectedFleetGroup.GetShipsForDisplay()[i]] = shipScrollBars[i].TopIndex;
-						}
-					}
-					if (shipSelectorScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
-					{
-						//update the list of ships
-						currentEmpire.SelectedFleetGroup.ShipIndex = shipSelectorScrollBar.TopIndex;
-						LoadSelectedFleetInfoIntoUI(currentEmpire.SelectedFleetGroup);
-						shipSelectorScrollBar.TopIndex = currentEmpire.SelectedFleetGroup.ShipIndex;
-					}
 					Point hoveringPoint = new Point();
 
 					hoveringPoint.X = (int)((mouseX / camera.ZoomDistance) + camera.CameraX);
@@ -474,10 +359,6 @@ namespace Beyond_Beyaan.Screens
 					StarSystem selectedSystem = _gameMain.Galaxy.GetStarAtPoint(hoveringPoint);
 					currentEmpire.SelectedFleetGroup.FleetToSplit.SetTentativePath(selectedSystem, currentEmpire.SelectedFleetGroup.FleetToSplit.HasReserveTanks, _gameMain.Galaxy);
 				}
-				if ((mouseX >= _gameMain.ScreenWidth - 207 && mouseX < _gameMain.ScreenWidth - 1) && (mouseY < 460 && mouseY > 0))
-				{
-					return;
-				}*/
 			}
 			camera.HandleUpdate(mouseX, mouseY, frameDeltaTime);
 		}
@@ -499,32 +380,6 @@ namespace Beyond_Beyaan.Screens
 					{
 						return;
 					}
-					/*if (x >= _gameMain.ScreenWidth - 250 && y < 720)
-					{
-						pressedInWindow = true;
-					}
-					if (fleetScrollBar.MouseDown(x, y))
-					{
-						return;
-					}
-					for (int i = 0; i < fleetButtons.Length; i++)
-					{
-						if (fleetButtons[i].MouseDown(x, y))
-						{
-							return;
-						}
-					}
-					if (shipSelectorScrollBar.MouseDown(x, y))
-					{
-						return;
-					}
-					for (int i = 0; i < shipScrollBars.Length; i++)
-					{
-						if (shipScrollBars[i].MouseDown(x, y))
-						{
-							return;
-						}
-					}*/
 				}
 			}
 		}
@@ -603,61 +458,7 @@ namespace Beyond_Beyaan.Screens
 					{
 						return;
 					}
-					/*if (fleetScrollBar.MouseUp(x, y))
-					{
-						_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetIndex = fleetScrollBar.TopIndex;
-						foreach (Button button in fleetButtons)
-						{
-							button.Selected = false;
-						}
-						int adjustedIndex = _gameMain.EmpireManager.CurrentEmpire.FleetSelected - fleetScrollBar.TopIndex;
-						if (adjustedIndex >= 0 && adjustedIndex < fleetButtons.Length)
-						{
-							fleetButtons[adjustedIndex].Selected = true;
-						}
-						pressedInWindow = false;
-					}
-					for (int i = 0; i < fleetButtons.Length; i++)
-					{
-						if (fleetButtons[i].MouseUp(x, y))
-						{
-							_gameMain.EmpireManager.CurrentEmpire.FleetSelected = i + _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetIndex;
-							_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.SelectFleet(_gameMain.EmpireManager.CurrentEmpire.FleetSelected);
-							LoadSelectedFleetInfoIntoUI(_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup);
-							foreach (Button fleetButton in fleetButtons)
-							{
-								fleetButton.Selected = false;
-							}
-							fleetButtons[i].Selected = true;
-							pressedInWindow = false;
-						}
-					}
-					if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.Ships.Count > 8 && shipSelectorScrollBar.MouseUp(x, y))
-					{
-						_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.ShipIndex = shipSelectorScrollBar.TopIndex;
-						LoadSelectedFleetInfoIntoUI(_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup);
-						shipSelectorScrollBar.TopIndex = _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.ShipIndex;
-						pressedInWindow = false;
-					}
-					for (int i = 0; i < shipScrollBars.Length; i++)
-					{
-						if (shipScrollBars[i].MouseUp(x, y))
-						{
-							_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.Ships[_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.GetShipsForDisplay()[i]] = shipScrollBars[i].TopIndex;
-							pressedInWindow = false;
-						}
-					}
-					if (x >= _gameMain.ScreenWidth - 207 && y < 460)
-					{
-						pressedInWindow = false;
-						return;
-					}*/
 				}
-				/*if (pressedInWindow)
-				{
-					pressedInWindow = false;
-					return;
-				}*/
 				//If a window is open, but the player didn't click on another system or fleet, the action is to close the current window
 				bool clearingUI = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null || _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null;
 				Point pointClicked = new Point();
@@ -685,8 +486,7 @@ namespace Beyond_Beyaan.Screens
 
 				if (selectedFleetGroup != null)
 				{
-					selectedFleetGroup.ShipIndex = 0;
-					LoadFleetInfoIntoUI(selectedFleetGroup);
+					_fleetView.LoadFleetGroup(selectedFleetGroup);
 					return;
 				}
 				if (!clearingUI)
@@ -696,12 +496,44 @@ namespace Beyond_Beyaan.Screens
 			}
 			else if (whichButton == 2)
 			{
-				if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null && _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.Empire == _gameMain.EmpireManager.CurrentEmpire)
+				var selectedFleetGroup = _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup;
+				if (selectedFleetGroup != null && selectedFleetGroup.FleetToSplit.Empire == _gameMain.EmpireManager.CurrentEmpire)
 				{
-					if (_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.FleetToSplit.ConfirmPath())
+					bool isIdling = selectedFleetGroup.SelectedFleet.AdjacentSystem != null;
+					bool hasDestination = selectedFleetGroup.SelectedFleet.TravelNodes != null;
+					if (selectedFleetGroup.FleetToSplit.ConfirmPath())
 					{
 						_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.SplitFleet(_gameMain.EmpireManager.CurrentEmpire);
-						LoadFleetInfoIntoUI(_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup);
+						_gameMain.EmpireManager.CurrentEmpire.FleetManager.MergeIdleFleets();
+						if (isIdling && !hasDestination) //Select the remaining idling ships on right of star
+						{
+							Point point = new Point((int)selectedFleetGroup.SelectedFleet.GalaxyX + 32, (int)selectedFleetGroup.SelectedFleet.GalaxyY);
+							selectedFleetGroup = _gameMain.EmpireManager.GetFleetsAtPoint(point.X, point.Y);
+							if (selectedFleetGroup == null) // No ships left, select the fleet on left of star
+							{
+								selectedFleetGroup = _gameMain.EmpireManager.GetFleetsAtPoint(point.X - 64, point.Y);
+							}
+						}
+						else if (isIdling)
+						{
+							if (selectedFleetGroup.SelectedFleet.TravelNodes == null) //cleared out movement order
+							{
+								selectedFleetGroup = _gameMain.EmpireManager.GetFleetsAtPoint((int)selectedFleetGroup.SelectedFleet.GalaxyX + 32, (int)selectedFleetGroup.SelectedFleet.GalaxyY);
+							}
+							else
+							{
+								selectedFleetGroup = _gameMain.EmpireManager.GetFleetsAtPoint((int)selectedFleetGroup.SelectedFleet.GalaxyX - 32, (int)selectedFleetGroup.SelectedFleet.GalaxyY);
+							}
+						}
+						else
+						{
+							selectedFleetGroup = _gameMain.EmpireManager.GetFleetsAtPoint((int)selectedFleetGroup.SelectedFleet.GalaxyX, (int)selectedFleetGroup.SelectedFleet.GalaxyY);
+						}
+						if (!selectedFleetGroup.IsSameAs(_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup))
+						{
+							_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup = selectedFleetGroup;
+							_fleetView.LoadFleetGroup(selectedFleetGroup);
+						}
 					}
 				}
 			}

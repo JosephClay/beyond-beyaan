@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Araneas" 
+      singularName="Aranea"
       neutralPortrait="AraneaNeutralPortrait" 
       happyPortrait="AraneaHappyPortrait" 
       angryPortrait="AraneaAngryPortrait" 

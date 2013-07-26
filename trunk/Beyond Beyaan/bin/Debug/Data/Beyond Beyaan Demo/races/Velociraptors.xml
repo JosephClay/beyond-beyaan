@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Velociraptors" 
+      singularName="Velociraptor"
       neutralPortrait="VelociraptorNeutralPortrait" 
       happyPortrait="VelociraptorHappyPortrait" 
       angryPortrait="VelociraptorAngryPortrait" 
