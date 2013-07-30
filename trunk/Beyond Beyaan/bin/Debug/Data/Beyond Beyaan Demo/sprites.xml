@@ -466,31 +466,31 @@
     <Frame x="673" y="65" width="30" height="13" />
   </Sprite>
   <Sprite name="ThinBorderFGTL" file="main.png">
-    <Frame x="640" y="79" width="30" height="13" />
+    <Frame x="640" y="109" width="30" height="13" />
   </Sprite>
   <Sprite name="ThinBorderFGTC" file="main.png">
-    <Frame x="671" y="79" width="1" height="13" />
+    <Frame x="671" y="109" width="1" height="13" />
   </Sprite>
   <Sprite name="ThinBorderFGTR" file="main.png">
-    <Frame x="673" y="79" width="30" height="13" />
+    <Frame x="673" y="109" width="30" height="13" />
   </Sprite>
   <Sprite name="ThinBorderFGCL" file="main.png">
-    <Frame x="640" y="93" width="30" height="1" />
+    <Frame x="640" y="123" width="30" height="1" />
   </Sprite>
   <Sprite name="ThinBorderFGCC" file="main.png">
-    <Frame x="671" y="93" width="1" height="1" />
+    <Frame x="671" y="123" width="1" height="1" />
   </Sprite>
   <Sprite name="ThinBorderFGCR" file="main.png">
-    <Frame x="673" y="93" width="30" height="1" />
+    <Frame x="673" y="123" width="30" height="1" />
   </Sprite>
   <Sprite name="ThinBorderFGBL" file="main.png">
-    <Frame x="640" y="95" width="30" height="13" />
+    <Frame x="640" y="125" width="30" height="13" />
   </Sprite>
   <Sprite name="ThinBorderFGBC" file="main.png">
-    <Frame x="671" y="95" width="1" height="13" />
+    <Frame x="671" y="125" width="1" height="13" />
   </Sprite>
   <Sprite name="ThinBorderFGBR" file="main.png">
-    <Frame x="673" y="95" width="30" height="13" />
+    <Frame x="673" y="125" width="30" height="13" />
   </Sprite>
   
   <!--Slider and Scrollbar images-->
