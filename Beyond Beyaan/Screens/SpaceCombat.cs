@@ -262,7 +262,7 @@ namespace Beyond_Beyaan.Screens
 
 			foreach (Button button in actionButtons)
 			{
-				button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				button.MouseHover(mouseX, mouseY, frameDeltaTime);
 			}
 			if (mouseX >= x && mouseX < x + 280 && mouseY >= y)
 			{

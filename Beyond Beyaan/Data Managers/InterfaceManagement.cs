@@ -1078,6 +1078,249 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
+	public class BBComboBox
+	{
+		#region Member Variables
+		//ComboBox drawing information
+		private BBSprite _downArrowSprite;
+		private int _xPos;
+		private int _yPos;
+		private int _width;
+		private int _height;
+		private List<string> _items;
+		private List<BBInvisibleStretchButton> _buttons;
+		private BBStretchableImage _dropBackground;
+		private BBScrollBar _scrollBar;
+
+		//ComboBox state information
+		private bool _dropped;
+		private bool _haveScroll;
+		private int _selectedIndex;
+
+		#endregion
+
+		#region Properties
+		public bool Enabled { get; set; }
+		public int SelectedIndex
+		{
+			get { return _selectedIndex; }
+			set { _selectedIndex = value; }
+		}
+		#endregion
+
+		#region Constructors
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="xPos"></param>
+		/// <param name="yPos"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="maxVisible"></param>
+		/// <param name="r"></param>
+		/// <param name="reason"></param>
+		public bool Initialize(List<string> items, int xPos, int yPos, int width, int height, int maxVisible, Random r, out string reason)
+		{
+			_items = items;
+			_xPos = xPos;
+			_yPos = yPos;
+			_width = width;
+			_height = height;
+
+			_selectedIndex = 0;
+			_dropped = false;
+			_downArrowSprite = SpriteManager.GetSprite("ScrollDownBGButton", r);
+
+			if (items.Count < maxVisible)
+			{
+				_haveScroll = false;
+				maxVisible = items.Count;
+			}
+			else if (items.Count > maxVisible)
+			{
+				_haveScroll = true;
+			}
+
+			Enabled = true;
+
+			_buttons = new List<BBInvisibleStretchButton>();
+			_dropBackground = new BBStretchableImage();
+			_scrollBar = new BBScrollBar();
+			
+			for (int i = 0; i <= maxVisible; i++)
+			{
+				BBInvisibleStretchButton button = new BBInvisibleStretchButton();
+				if (!button.Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos, _yPos + (i * height), _width, _height, r, out reason))
+				{
+					return false;
+				}
+				_buttons.Add(button);
+			}
+			if (!_dropBackground.Initialize(_xPos, _yPos, width, height, StretchableImageType.ThinBorderBG, r, out reason))
+			{
+				return false;
+			}
+			if (!_scrollBar.Initialize(_xPos + _width, _yPos + _height, maxVisible * _height, maxVisible, items.Count, false, false, r, out reason))
+			{
+				return false;
+			}
+			RefreshSelection();
+			RefreshLabels();
+			return true;
+		}
+		#endregion
+
+		#region Functions
+		public void MoveTo(int x, int y)
+		{
+			_xPos = x;
+			_yPos = y;
+
+			for (int i = 0; i < _buttons.Count; i++)
+			{
+				_buttons[i].MoveTo(x, y + (i * _height));
+			}
+
+			_scrollBar.MoveTo(_xPos + _width, _yPos + _height);
+			_dropBackground.MoveTo(_xPos, _yPos);
+		}
+
+		public void Draw()
+		{
+			if (_items.Count <= 0)
+			{
+				_buttons[0].Enabled = false;
+				_buttons[0].SetText(string.Empty);
+			}
+			else
+			{
+				_buttons[0].Enabled = Enabled;
+				_buttons[0].SetText(_items[_selectedIndex]);
+			}
+			if (!_dropped)
+			{
+				_dropBackground.Draw();
+				_buttons[0].Draw();
+				_downArrowSprite.Draw(_xPos + _width - 25, _yPos + (_height / 2) - (_downArrowSprite.Height / 2));
+			}
+			else
+			{
+				_dropBackground.Draw();
+				for (int i = 0; i < _buttons.Count; i++)
+				{
+					_buttons[i].Draw();
+				}
+				if (_haveScroll)
+				{
+					_scrollBar.Draw();
+				}
+			}
+		}
+
+		public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			if (Enabled)
+			{
+				if (!_dropped)
+				{
+					return _buttons[0].MouseHover(x, y, frameDeltaTime);
+				}
+				bool result = false;
+				foreach (var button in _buttons)
+				{
+					result = button.MouseHover(x, y, frameDeltaTime) || result;
+				}
+				if (_scrollBar.MouseHover(x, y, frameDeltaTime))
+				{
+					//Need to refresh the button text
+					RefreshLabels();
+					result = true;
+				}
+				return result;
+			}
+			return false;
+		}
+
+		public bool MouseDown(int x, int y)
+		{
+			if (Enabled)
+			{
+				if (!_dropped)
+				{
+					return _buttons[0].MouseDown(x, y);
+				}
+				for (int i = 0; i < _buttons.Count; i++)
+				{
+					if (_buttons[i].MouseDown(x, y))
+					{
+						return true;
+					}
+				}
+				return _scrollBar.MouseDown(x, y);
+			}
+			return false;
+		}
+
+		public bool MouseUp(int x, int y)
+		{
+			if (Enabled)
+			{
+				if (!_dropped)
+				{
+					if (_buttons[0].MouseUp(x, y))
+					{
+						_dropped = true;
+						_dropBackground.Resize(_width + 30, _height * _items.Count + 20);
+						_dropBackground.MoveTo(_xPos - 10, _yPos - 10);
+						return true;
+					}
+				}
+				else
+				{
+					for (int i = 0; i < _buttons.Count; i++)
+					{
+						if (_buttons[i].MouseUp(x, y))
+						{
+							if (i > 0)
+							{
+								_selectedIndex = i + _scrollBar.TopIndex - 1;
+							}
+							_dropped = false;
+							_dropBackground.Resize(_width, _height);
+							_dropBackground.MoveTo(_xPos, _yPos);
+							return true;
+						}
+					}
+					if (_scrollBar.MouseUp(x, y))
+					{
+						RefreshLabels();
+						return true;
+					}
+					//At this point, even if the mouse is not over the UI, we want to capture the mouse up so the user don't click on something else
+					_dropped = false;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private void RefreshLabels()
+		{
+			for (int i = 1; i < _buttons.Count; i++)
+			{
+				_buttons[i].SetText(_items[_scrollBar.TopIndex + (i - 1)]);
+			}
+		}
+		private void RefreshSelection()
+		{
+			_buttons[0].SetText(_items[_selectedIndex]);
+			_dropped = false;
+		}
+		#endregion
+	}
+
 	public class BBScrollBar
 	{
 		// TODO: Fix scrollbar so if I say 100 items, I don't need to specify 101 for amountOfItems

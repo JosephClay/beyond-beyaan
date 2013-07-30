@@ -9,9 +9,9 @@ namespace Beyond_Beyaan.Screens
 	{
 		private const int PLAYER_LIMIT = 16;
 
-		GameMain gameMain;
+		GameMain _gameMain;
 
-		ComboBox galaxyComboBox;
+		BBComboBox _galaxyComboBox;
 
 		Button[] buttons;
 
@@ -53,7 +53,7 @@ namespace Beyond_Beyaan.Screens
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			this.gameMain = gameMain;
+			this._gameMain = gameMain;
 
 			List<SpriteName> spriteNames = new List<SpriteName>();
 			spriteNames.Add(SpriteName.MiniBackgroundButton);
@@ -73,7 +73,12 @@ namespace Beyond_Beyaan.Screens
 			items.Add("Diamond");
 			items.Add("Star");
 
-			galaxyComboBox = new ComboBox(spriteNames, items, gameMain.ScreenWidth - 500, 596, 175, 25, 4);
+			//_galaxyComboBox = new ComboBox(spriteNames, items, gameMain.ScreenWidth - 500, 596, 175, 25, 4);
+			_galaxyComboBox = new BBComboBox();
+			if (!_galaxyComboBox.Initialize(items, gameMain.ScreenWidth - 500, 596, 175, 35, 4, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
 			List<string> names = new List<string>();
 			names.Add("Random");
@@ -167,12 +172,12 @@ namespace Beyond_Beyaan.Screens
 			minPlanets = 0;
 			maxPlanets = 6;
 
-			galaxySizeLabel = new Label(galaxySize + " x " + galaxySize, gameMain.ScreenWidth - 290, 600);
-			minPlanetsPerSystemLabel = new Label("Minimum planets per system:", gameMain.ScreenWidth - 500, 524);
-			maxPlanetsPerSystemLabel = new Label("Maximum planets per system:", gameMain.ScreenWidth - 500, 560);
-			minPlanetLabel = new Label(minPlanets.ToString(), gameMain.ScreenWidth - 240, 524);
-			maxPlanetLabel = new Label(maxPlanets.ToString(), gameMain.ScreenWidth - 240, 560);
-			numOfStarsLabel = new Label(string.Empty, gameMain.ScreenWidth - 185, 624);
+			galaxySizeLabel = new Label(galaxySize + " x " + galaxySize, _gameMain.ScreenWidth - 290, 600);
+			minPlanetsPerSystemLabel = new Label("Minimum planets per system:", _gameMain.ScreenWidth - 500, 524);
+			maxPlanetsPerSystemLabel = new Label("Maximum planets per system:", _gameMain.ScreenWidth - 500, 560);
+			minPlanetLabel = new Label(minPlanets.ToString(), _gameMain.ScreenWidth - 240, 524);
+			maxPlanetLabel = new Label(maxPlanets.ToString(), _gameMain.ScreenWidth - 240, 560);
+			numOfStarsLabel = new Label(string.Empty, _gameMain.ScreenWidth - 185, 624);
 
 			generatingGalaxy = -1;
 			generatingGalaxyLabel = new Label("Generating Galaxy", 0, 0);
@@ -205,9 +210,9 @@ namespace Beyond_Beyaan.Screens
 				removeButtons[i].Draw(drawingManagement);
 			}
 
-			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, gameMain.ScreenWidth - 320, 596, 255, 130, 25, System.Drawing.Color.White);
-			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, gameMain.ScreenWidth - 265, 520, 255, 75, 25, System.Drawing.Color.White);
-			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, gameMain.ScreenWidth - 265, 556, 255, 75, 25, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, _gameMain.ScreenWidth - 320, 596, 255, 130, 25, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, _gameMain.ScreenWidth - 265, 520, 255, 75, 25, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, _gameMain.ScreenWidth - 265, 556, 255, 75, 25, System.Drawing.Color.White);
 
 			galaxySizeLabel.Draw();
 			minPlanetsPerSystemLabel.Draw();
@@ -231,8 +236,8 @@ namespace Beyond_Beyaan.Screens
 			if (generatingGalaxy != -1)
 			{
 				generatingDrawn = true;
-				drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (gameMain.ScreenWidth / 2) - 150, (gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
-				generatingGalaxyLabel.Move((int)((gameMain.ScreenWidth / 2) - (generatingGalaxyLabel.GetWidth() / 2)), (int)((gameMain.ScreenHeight / 2) - (generatingGalaxyLabel.GetHeight() / 2)));
+				drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (_gameMain.ScreenWidth / 2) - 150, (_gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
+				generatingGalaxyLabel.Move((int)((_gameMain.ScreenWidth / 2) - (generatingGalaxyLabel.GetWidth() / 2)), (int)((_gameMain.ScreenHeight / 2) - (generatingGalaxyLabel.GetHeight() / 2)));
 				generatingGalaxyLabel.Draw();
 			}
 
@@ -248,7 +253,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			galaxyComboBox.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+			_galaxyComboBox.MouseHover(mouseX, mouseY, frameDeltaTime);
 
 			humanPlayer.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			aiPlayer.UpdateHovering(mouseX, mouseY, frameDeltaTime);
@@ -291,10 +296,10 @@ namespace Beyond_Beyaan.Screens
 						type = GALAXYTYPE.STAR;
 						break;
 				}
-				gameMain.Galaxy.GenerateGalaxy(type, 1, 1, galaxySize, 2, gameMain.Random, out reason);
-				camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, 500, 500);
+				_gameMain.Galaxy.GenerateGalaxy(type, 1, 1, galaxySize, 2, _gameMain.Random, out reason);
+				camera = new Camera(_gameMain.Galaxy.GalaxySize * 32, _gameMain.Galaxy.GalaxySize * 32, 500, 500);
 				camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
-				numOfStarsLabel.SetText("Number of stars: " + gameMain.Galaxy.GetAllStars().Count);
+				numOfStarsLabel.SetText("Number of stars: " + _gameMain.Galaxy.GetAllStars().Count);
 				generatingGalaxy = -1;
 				generatingDrawn = false;
 			}
@@ -302,7 +307,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			galaxyComboBox.MouseDown(x, y);
+			_galaxyComboBox.MouseDown(x, y);
 
 			humanPlayer.MouseDown(x, y);
 			aiPlayer.MouseDown(x, y);
@@ -358,7 +363,7 @@ namespace Beyond_Beyaan.Screens
 					return;
 				}
 			}
-			if (galaxyComboBox.MouseUp(x, y))
+			if (_galaxyComboBox.MouseUp(x, y))
 			{
 				return;
 			}
@@ -386,21 +391,21 @@ namespace Beyond_Beyaan.Screens
 				AI ai = null;
 				if (raceComboBox.SelectedIndex == 0)
 				{
-					race = gameMain.RaceManager.Races[r.Next(gameMain.RaceManager.Races.Count)];
+					race = _gameMain.RaceManager.Races[r.Next(_gameMain.RaceManager.Races.Count)];
 				}
 				else
 				{
-					race = gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1];
+					race = _gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1];
 				}
 				if (aiPlayer.Selected)
 				{
 					if (aiComboBox.SelectedIndex == 0)
 					{
-						ai = gameMain.AIManager.AIs[r.Next(gameMain.AIManager.AIs.Count)];
+						ai = _gameMain.AIManager.AIs[r.Next(_gameMain.AIManager.AIs.Count)];
 					}
 					else
 					{
-						ai = gameMain.AIManager.AIs[aiComboBox.SelectedIndex - 1];
+						ai = _gameMain.AIManager.AIs[aiComboBox.SelectedIndex - 1];
 					}
 				}
 				int id = 0;
@@ -416,7 +421,7 @@ namespace Beyond_Beyaan.Screens
 					empireNameTextBox.SetString(race.GetRandomEmperorName());
 				}
 				Empire newEmpire = new Empire(empireNameTextBox.Text, id, race, humanPlayer.Selected ? PlayerType.HUMAN : PlayerType.CPU, ai, 
-					System.Drawing.Color.FromArgb(255, r.Next(201) + 55, r.Next(201) + 55, r.Next(201) + 55), gameMain);
+					System.Drawing.Color.FromArgb(255, r.Next(201) + 55, r.Next(201) + 55, r.Next(201) + 55), _gameMain);
 				empires.Add(newEmpire);
 				empireNames[empires.Count - 1].SetText(empireNameTextBox.Text);
 				if (raceComboBox.SelectedIndex == 0)
@@ -434,7 +439,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (raceComboBox.SelectedIndex > 0)
 				{
-					miniAvatar = gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1].GetMiniAvatar();
+					miniAvatar = _gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1].GetMiniAvatar();
 				}
 				return;
 			}
@@ -450,12 +455,12 @@ namespace Beyond_Beyaan.Screens
 					switch(i)
 					{
 						case 0:
-							gameMain.ChangeToScreen(Screen.MainMenu);
+							_gameMain.ChangeToScreen(Screen.MainMenu);
 							break;
 						case 1:
-							if (gameMain.Galaxy.GalaxySize > 0)
+							if (_gameMain.Galaxy.GalaxySize > 0)
 							{
-								int habitableStars = gameMain.Galaxy.GetAllStars().Count;
+								int habitableStars = _gameMain.Galaxy.GetAllStars().Count;
 								if (empires.Count > habitableStars || empires.Count < 2)
 								{
 									return;
@@ -476,21 +481,21 @@ namespace Beyond_Beyaan.Screens
 								foreach (Empire empire in empires)
 								{
 									Planet homePlanet;
-									gameMain.EmpireManager.AddEmpire(empire);
-									StarSystem homeSystem = gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+									_gameMain.EmpireManager.AddEmpire(empire);
+									StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
 									empire.SetHomeSystem(homeSystem, homePlanet);
 								}
-								gameMain.EmpireManager.SetupContacts();
+								_gameMain.EmpireManager.SetupContacts();
 								//_gameMain.EmpireManager.UpdateInfluenceMaps(_gameMain.Galaxy);
-								gameMain.EmpireManager.SetInitialEmpireTurn();
+								_gameMain.EmpireManager.SetInitialEmpireTurn();
 								//_gameMain.EmpireManager.ProcessNextEmpire(); //This will process the AI players, then set the current empire to human controlled one
-								gameMain.RefreshSitRep();
+								_gameMain.RefreshSitRep();
 								//_gameMain.Galaxy.ConstructQuadTree();
-								gameMain.ChangeToScreen(Screen.Galaxy);
+								_gameMain.ChangeToScreen(Screen.Galaxy);
 							}
 							break;
 						case 2:
-							generatingGalaxy = galaxyComboBox.SelectedIndex;
+							generatingGalaxy = _galaxyComboBox.SelectedIndex;
 							break;
 						case 3:
 							galaxySize += 10;
@@ -545,7 +550,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
 		{
-			drawingManagement.DrawSprite(SpriteName.Screen, gameMain.ScreenWidth - 500, 0, 255, System.Drawing.Color.White);
+			drawingManagement.DrawSprite(SpriteName.Screen, _gameMain.ScreenWidth - 500, 0, 255, System.Drawing.Color.White);
 
 			/*GorgonLibrary.Graphics.Sprite nebula = _gameMain.Galaxy.Nebula;
 			if (nebula != null)
@@ -556,18 +561,18 @@ namespace Beyond_Beyaan.Screens
 				_gameMain.Galaxy.Nebula.Draw();
 			}*/
 
-			List<StarSystem> systems = gameMain.Galaxy.GetAllStars();
+			List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
 
-			galaxyComboBox.Draw(drawingManagement);
+			_galaxyComboBox.Draw();
 
 			if (systems.Count > 0)
 			{
 				foreach (StarSystem system in systems)
 				{
-					int x = (gameMain.ScreenWidth - 499) + (int)((system.X - camera.CameraX) * camera.ZoomDistance);
+					int x = (_gameMain.ScreenWidth - 499) + (int)((system.X - camera.CameraX) * camera.ZoomDistance);
 					int y = (int)((system.Y - camera.CameraY) * camera.ZoomDistance) + 1;
-					GorgonLibrary.Gorgon.CurrentShader = gameMain.StarShader;
-					gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+					GorgonLibrary.Gorgon.CurrentShader = _gameMain.StarShader;
+					_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
 					system.Sprite.Draw(x, y, 0.4f, 0.4f);
 					//drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 					GorgonLibrary.Gorgon.CurrentShader = null;
