@@ -152,6 +152,10 @@
     <Frame x="240" y="80" width="40" height="40" />
   </Sprite>
 
+  <Sprite name="RandomRace" file="random.png">
+    <Frame x="0" y="0" width="128" height="128" />
+  </Sprite>
+
   <!-- Main Menu Buttons-->
   <Sprite name="ContinueGameBG" file="continueBG.png">
     <Frame x="0" y="0" width="260" height="40" />
