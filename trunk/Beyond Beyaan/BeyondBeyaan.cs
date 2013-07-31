@@ -107,9 +107,17 @@ namespace Beyond_Beyaan
 				keyboard.Exclusive = false;
 				keyboard.KeyDown += keyboard_KeyDown;
 
+				string reason;
+				FileInfo fileInfo = new FileInfo(Path.Combine(dataset.FullName, "configuration.xml"));
+				if (!GameConfiguration.Initialize(fileInfo, out reason))
+				{
+					MessageBox.Show(string.Format("Error loading configuration, reason: {0}", reason));
+					Close();
+					return;
+				}
+
 				gameMain = new GameMain();
 
-				string reason;
 				if (!gameMain.Initalize(Gorgon.Screen.Width, Gorgon.Screen.Height, dataset, showTutorial, this, out reason))
 				{
 					MessageBox.Show(string.Format("Error loading game resources, error message: {0}", reason));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beyond_Beyaan.Data_Managers;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
 
@@ -9,11 +10,15 @@ namespace Beyond_Beyaan.Screens
 	{
 		private const int PLAYER_LIMIT = 16;
 
-		GameMain _gameMain;
+		private GameMain _gameMain;
 
-		BBComboBox _galaxyComboBox;
+		private BBComboBox _galaxyComboBox;
+		private BBStretchableImage _background;
+		private BBSprite _nebulaBackground;
 
-		Button[] buttons;
+		//private Camera camera;
+
+		/*Button[] buttons;
 
 		Button humanPlayer;
 		Button aiPlayer;
@@ -35,7 +40,7 @@ namespace Beyond_Beyaan.Screens
 		Label raceLabel;
 		Label handicapLabel;
 
-		private Camera camera;
+		
 
 		int galaxySize;
 		int minPlanets;
@@ -49,22 +54,11 @@ namespace Beyond_Beyaan.Screens
 		private ComboBox[] handicapComboBoxes;
 		private Button[] removeButtons;
 
-		private BBSprite miniAvatar;
+		private BBSprite miniAvatar;*/
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this._gameMain = gameMain;
-
-			List<SpriteName> spriteNames = new List<SpriteName>();
-			spriteNames.Add(SpriteName.MiniBackgroundButton);
-			spriteNames.Add(SpriteName.MiniForegroundButton);
-			spriteNames.Add(SpriteName.ScrollUpBackgroundButton);
-			spriteNames.Add(SpriteName.ScrollUpForegroundButton);
-			spriteNames.Add(SpriteName.ScrollVerticalBar);
-			spriteNames.Add(SpriteName.ScrollDownBackgroundButton);
-			spriteNames.Add(SpriteName.ScrollDownForegroundButton);
-			spriteNames.Add(SpriteName.ScrollVerticalBackgroundButton);
-			spriteNames.Add(SpriteName.ScrollVerticalForegroundButton);
 
 			List<string> items = new List<string>();
 			items.Add("Random");
@@ -73,14 +67,25 @@ namespace Beyond_Beyaan.Screens
 			items.Add("Diamond");
 			items.Add("Star");
 
-			//_galaxyComboBox = new ComboBox(spriteNames, items, gameMain.ScreenWidth - 500, 596, 175, 25, 4);
 			_galaxyComboBox = new BBComboBox();
 			if (!_galaxyComboBox.Initialize(items, gameMain.ScreenWidth - 500, 596, 175, 35, 4, gameMain.Random, out reason))
 			{
 				return false;
 			}
 
-			List<string> names = new List<string>();
+			_background = new BBStretchableImage();
+			_nebulaBackground = SpriteManager.GetSprite("TitleNebula", gameMain.Random);
+			if (_nebulaBackground == null)
+			{
+				reason = "TitleNebula sprite doesn't exist.";
+				return false;
+			}
+			if (!_background.Initialize((gameMain.ScreenWidth / 2) - 440, (gameMain.ScreenHeight / 2) - 340, 880, 680, StretchableImageType.ThickBorder, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
+			/*List<string> names = new List<string>();
 			names.Add("Random");
 			foreach (Race race in gameMain.RaceManager.Races)
 			{
@@ -157,7 +162,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			emperorNameLabel = new Label("Empire Name:", 10, 5);
 			raceLabel = new Label("Race:", 200, 5);
-			handicapLabel = new Label("Handicap:", 350, 5);
+			handicapLabel = new Label("Handicap:", 350, 5);*/
 
 			reason = null;
 			return true;
@@ -165,7 +170,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void Clear()
 		{
-			humanPlayer.Selected = true;
+			/*humanPlayer.Selected = true;
 			aiComboBox.Active = false;
 
 			galaxySize = 50;
@@ -190,14 +195,25 @@ namespace Beyond_Beyaan.Screens
 				this.races[i].SetText(string.Empty);
 				empireNames[i].SetText(string.Empty);
 				handicapComboBoxes[i].SelectedIndex = 5;
-			}
+			}*/
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
 		{
-			DrawGalaxyPreview(drawingManagement);
+			for (int i = 0; i < _gameMain.ScreenWidth; i += (int)_nebulaBackground.Width)
+			{
+				for (int j = 0; j < _gameMain.ScreenHeight; j += (int)_nebulaBackground.Height)
+				{
+					_nebulaBackground.Draw(i, j);
+				}
+			}
+			_background.Draw();
+			if (GameConfiguration.AllowGalaxyPreview)
+			{
+				DrawGalaxyPreview();
+			}
 
-			emperorNameLabel.Draw();
+			/*emperorNameLabel.Draw();
 			raceLabel.Draw();
 			handicapLabel.Draw();
 
@@ -248,12 +264,12 @@ namespace Beyond_Beyaan.Screens
 			else
 			{
 				drawingManagement.DrawSprite(SpriteName.CancelBackground, 10, 600, 255, 128, 128, System.Drawing.Color.White);
-			}
+			}*/
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			_galaxyComboBox.MouseHover(mouseX, mouseY, frameDeltaTime);
+			/*_galaxyComboBox.MouseHover(mouseX, mouseY, frameDeltaTime);
 
 			humanPlayer.UpdateHovering(mouseX, mouseY, frameDeltaTime);
 			aiPlayer.UpdateHovering(mouseX, mouseY, frameDeltaTime);
@@ -302,12 +318,12 @@ namespace Beyond_Beyaan.Screens
 				numOfStarsLabel.SetText("Number of stars: " + _gameMain.Galaxy.GetAllStars().Count);
 				generatingGalaxy = -1;
 				generatingDrawn = false;
-			}
+			}*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			_galaxyComboBox.MouseDown(x, y);
+			/*_galaxyComboBox.MouseDown(x, y);
 
 			humanPlayer.MouseDown(x, y);
 			aiPlayer.MouseDown(x, y);
@@ -338,12 +354,12 @@ namespace Beyond_Beyaan.Screens
 				{
 					return;
 				}
-			}
+			}*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			for (int i = 0; i < empires.Count; i++)
+			/*for (int i = 0; i < empires.Count; i++)
 			{
 				if (removeButtons[i].MouseUp(x, y))
 				{
@@ -533,7 +549,7 @@ namespace Beyond_Beyaan.Screens
 							} break;
 					}
 				}
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -542,24 +558,15 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-			if (empireNameTextBox.KeyDown(e))
+			/*if (empireNameTextBox.KeyDown(e))
 			{
 				return;
-			}
+			}*/
 		}
 
-		private void DrawGalaxyPreview(DrawingManagement drawingManagement)
+		private void DrawGalaxyPreview()
 		{
-			drawingManagement.DrawSprite(SpriteName.Screen, _gameMain.ScreenWidth - 500, 0, 255, System.Drawing.Color.White);
-
-			/*GorgonLibrary.Graphics.Sprite nebula = _gameMain.Galaxy.Nebula;
-			if (nebula != null)
-			{
-				nebula.SetPosition(_gameMain.ScreenWidth - 499, 1);
-				float scale = (498.0f / (_gameMain.Galaxy.GalaxySize + 3));
-				nebula.SetScale(scale, scale);
-				_gameMain.Galaxy.Nebula.Draw();
-			}*/
+			/*drawingManagement.DrawSprite(SpriteName.Screen, _gameMain.ScreenWidth - 500, 0, 255, System.Drawing.Color.White);
 
 			List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
 
@@ -578,8 +585,8 @@ namespace Beyond_Beyaan.Screens
 					GorgonLibrary.Gorgon.CurrentShader = null;
 				}
 
-				numOfStarsLabel.Draw();
-			}
+				//numOfStarsLabel.Draw();
+			}*/
 		}
 	}
 }
