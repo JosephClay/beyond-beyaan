@@ -309,7 +309,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				_isExplored = true;
 				var planet = currentSystem.Planets[0];
-				_name.SetString(currentSystem.Name);
+				_name.SetText(currentSystem.Name);
 				_isOwnedSystem = currentSystem.Planets[0].Owner == _gameMain.EmpireManager.CurrentEmpire;
 				_name.SetColor(currentSystem.Planets[0].Owner != null ? currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White);
 				_popLabel.SetText(currentSystem.Planets[0].Owner != null ? string.Format("{0}/{1} M", (int)currentSystem.Planets[0].TotalPopulation, currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", currentSystem.Planets[0].PopulationMax));
@@ -364,7 +364,7 @@ namespace Beyond_Beyaan.Screens
 			else
 			{
 				_isExplored = false;
-				_name.SetString("Unexplored");
+				_name.SetText("Unexplored");
 				_name.SetColor(System.Drawing.Color.White);
 				_generalPurposeText.SetText(currentSystem.Description);
 				_popLabel.SetText(string.Empty);

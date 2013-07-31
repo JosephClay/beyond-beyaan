@@ -2152,6 +2152,159 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
+	public class BBNumericUpDown
+	{
+		#region Member Variables
+		private BBButton _upButton;
+		private BBButton _downButton;
+		private int _minimum;
+		private int _maximum;
+		private BBLabel _valueLabel;
+		private int _incrementAmount;
+		private int _width;
+		#endregion
+
+		#region Properties
+
+		public int Value { get; private set; }
+
+		#endregion
+
+		#region Constructors
+		public bool Initialize(int xPos, int yPos, int width, int min, int max, int initialAmount, Random r, out string reason)
+		{
+			_width = width;
+
+			_upButton = new BBButton();
+			_downButton = new BBButton();
+			_valueLabel = new BBLabel();
+
+			if (!_upButton.Initialize("ScrollUpBGButton", "ScrollUpFGButton", string.Empty, ButtonTextAlignment.LEFT, xPos + width - 16, yPos, 16, 16, r, out reason))
+			{
+				return false;
+			}
+			if (!_downButton.Initialize("ScrollDownBGButton", "ScrollDownFGButton", string.Empty, ButtonTextAlignment.LEFT, xPos, yPos, 16, 16, r, out reason))
+			{
+				return false;
+			}
+			if (!_valueLabel.Initialize(xPos + width - 20, yPos, string.Empty, Color.White, out reason))
+			{
+				return false;
+			}
+			_valueLabel.SetAlignment(true);
+
+			_minimum = min;
+			_maximum = max;
+			Value = initialAmount;
+			CheckAmount(); //Just in case
+
+			_incrementAmount = 1;
+
+			return true;
+		}
+
+		public bool Initialize(int xPos, int yPos, int width, int min, int max, int initialAmount, int incrementAmount, Random r, out string reason)
+		{
+			if (!Initialize(xPos, yPos, width, min, max, initialAmount, r, out reason))
+			{
+				return false;
+			}
+			_incrementAmount = incrementAmount;
+			return true;
+		}
+		#endregion
+
+		#region Functions
+		public bool MouseUp(int x, int y)
+		{
+			if (_upButton.MouseUp(x, y))
+			{
+				Value += _incrementAmount;
+				CheckAmount();
+				return true;
+			}
+			if (_downButton.MouseUp(x, y))
+			{
+				Value -= _incrementAmount;
+				CheckAmount();
+				return true;
+			}
+			return false;
+		}
+
+		public bool MouseDown(int x, int y)
+		{
+			if (_upButton.MouseDown(x, y))
+			{
+				return true;
+			}
+			if (_downButton.MouseDown(x, y))
+			{
+				return true;
+			}
+			return false;
+		}
+		public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			bool result = false;
+			if (_upButton.MouseHover(x, y, frameDeltaTime))
+			{
+				result = true;
+			}
+			if (_downButton.MouseHover(x, y, frameDeltaTime))
+			{
+				result = true;
+			}
+			return result;
+		}
+
+		public void MoveTo(int x, int y)
+		{
+			_upButton.MoveTo(x + _width - 16, y);
+			_downButton.MoveTo(x, y);
+			_valueLabel.MoveTo(x + 20, y);
+		}
+
+		public void Draw()
+		{
+			_upButton.Draw();
+			_downButton.Draw();
+			_valueLabel.Draw();
+		}
+
+		public void SetMin(int min)
+		{
+			_minimum = min;
+			CheckAmount();
+		}
+
+		public void SetMax(int max)
+		{
+			_maximum = max;
+			CheckAmount();
+		}
+
+		public void SetValue(int value)
+		{
+			this.Value = value;
+			CheckAmount();
+		}
+
+		private void CheckAmount()
+		{
+			if (_minimum >= 0 && Value < _minimum)
+			{
+				Value = _minimum;
+			}
+			if (_maximum >= 0 && Value > _maximum)
+			{
+				Value = _maximum;
+			}
+			_valueLabel.SetText(Value.ToString());
+		}
+		#endregion
+	}
+
 	public enum StretchableImageType
 	{
 		ThickBorder,
@@ -3173,7 +3326,7 @@ namespace Beyond_Beyaan
 			text.Draw();
 		}
 
-		public void SetString(string text)
+		public void SetText(string text)
 		{
 			Text = text;
 			this.text.SetText(text);

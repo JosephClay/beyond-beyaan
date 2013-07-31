@@ -587,7 +587,7 @@ namespace Beyond_Beyaan.Screens
 							_gameMain.EmpireManager.CurrentEmpire.FleetManager.AddShipDesign(shipDesign);
 							NameGenerator generator = new NameGenerator();
 							shipDesign.Name = generator.GetName();
-							nameTextBox.SetString(shipDesign.Name);
+							nameTextBox.SetText(shipDesign.Name);
 						}
 						int count = shipDesign.weapons.Count > 13 ? 13 : shipDesign.weapons.Count;
 						for (int i = 0; i < count; i++)
@@ -746,7 +746,7 @@ namespace Beyond_Beyaan.Screens
 
 			string shipName = generator.GetName();
 			shipDesign.Name = shipName;
-			nameTextBox.SetString(shipName);
+			nameTextBox.SetText(shipName);
 
 			TechnologyManager techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
 

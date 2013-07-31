@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Beyond_Beyaan.Data_Managers;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
@@ -8,161 +8,180 @@ namespace Beyond_Beyaan.Screens
 {
 	public class NewGame : ScreenInterface
 	{
-		private const int PLAYER_LIMIT = 16;
-
 		private GameMain _gameMain;
 
-		private BBComboBox _galaxyComboBox;
+		private int _xPos;
+		private int _yPos;
+
 		private BBStretchableImage _background;
 		private BBSprite _nebulaBackground;
+		private BBSprite _randomRaceSprite;
 
+		private BBStretchableImage _playerBackground;
+		private BBStretchableImage _playerInfoBackground;
+		private BBStretchButton _playerRaceButton;
+		private BBSingleLineTextBox _playerEmperorName;
+		private BBSingleLineTextBox _playerHomeworldName;
+		private BBSprite _playerRaceSprite;
+		private BBTextBox _playerRaceDescription;
+		private BBLabel[] _playerLabels;
+		//private Race _playerRace;
+
+		private BBStretchableImage _AIBackground;
+		private BBStretchButton[] _AIRaceButtons;
+		private BBSprite[] _AIRaceSprites;
+		private Race[] _AIRaces;
+
+		private BBStretchableImage _galaxyBackground;
+		private BBComboBox _galaxyComboBox;
+
+		private BBLabel _difficultyLabel;
+		private BBComboBox _difficultyComboBox;
+
+		private BBLabel _numberOfAILabel;
+		private BBNumericUpDown _numericUpDownAI;
 		//private Camera camera;
-
-		/*Button[] buttons;
-
-		Button humanPlayer;
-		Button aiPlayer;
-		Button addPlayer;
-
-		ComboBox raceComboBox;
-		ComboBox aiComboBox;
-
-		BBSingleLineTextBox empireNameTextBox;
-
-		Label minPlanetLabel;
-		Label maxPlanetLabel;
-		Label galaxySizeLabel;
-		Label minPlanetsPerSystemLabel;
-		Label maxPlanetsPerSystemLabel;
-		Label numOfStarsLabel;
-		Label generatingGalaxyLabel;
-		Label emperorNameLabel;
-		Label raceLabel;
-		Label handicapLabel;
-
-		
-
-		int galaxySize;
-		int minPlanets;
-		int maxPlanets;
-		int generatingGalaxy;
-		bool generatingDrawn;
-
-		private List<Empire> empires;
-		private Label[] empireNames;
-		private Label[] races;
-		private ComboBox[] handicapComboBoxes;
-		private Button[] removeButtons;
-
-		private BBSprite miniAvatar;*/
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this._gameMain = gameMain;
 
-			List<string> items = new List<string>();
-			items.Add("Random");
-			items.Add("Cluster");
-			items.Add("Ring");
-			items.Add("Diamond");
-			items.Add("Star");
-
-			_galaxyComboBox = new BBComboBox();
-			if (!_galaxyComboBox.Initialize(items, gameMain.ScreenWidth - 500, 596, 175, 35, 4, gameMain.Random, out reason))
-			{
-				return false;
-			}
-
 			_background = new BBStretchableImage();
+			_playerBackground = new BBStretchableImage();
+			_playerInfoBackground = new BBStretchableImage();
+			_playerRaceButton = new BBStretchButton();
+			_playerRaceDescription = new BBTextBox();
+			_playerLabels = new BBLabel[3];
+			_playerEmperorName = new BBSingleLineTextBox();
+			_playerHomeworldName = new BBSingleLineTextBox();
+			_AIBackground = new BBStretchableImage();
+			_AIRaceButtons = new BBStretchButton[5];
+			_AIRaceSprites = new BBSprite[5];
+			_numberOfAILabel = new BBLabel();
+			_numericUpDownAI = new BBNumericUpDown();
+
+			_difficultyComboBox = new BBComboBox();
+			_difficultyLabel = new BBLabel();
+
 			_nebulaBackground = SpriteManager.GetSprite("TitleNebula", gameMain.Random);
+
+			_xPos = (gameMain.ScreenWidth / 2) - 440;
+			_yPos = (gameMain.ScreenHeight / 2) - 340;
 			if (_nebulaBackground == null)
 			{
 				reason = "TitleNebula sprite doesn't exist.";
 				return false;
 			}
-			if (!_background.Initialize((gameMain.ScreenWidth / 2) - 440, (gameMain.ScreenHeight / 2) - 340, 880, 680, StretchableImageType.ThickBorder, gameMain.Random, out reason))
+			if (!_background.Initialize(_xPos, _yPos, 880, 680, StretchableImageType.MediumBorder, gameMain.Random, out reason))
 			{
 				return false;
 			}
 
-			/*List<string> names = new List<string>();
-			names.Add("Random");
-			foreach (Race race in gameMain.RaceManager.Races)
-			{
-				names.Add(race.RaceName);
-			}
-			raceComboBox = new ComboBox(spriteNames, names, 200, 530, 175, 25, 6);
-
-			names = new List<string>();
-			names.Add("Random");
-			foreach (AI ai in gameMain.AIManager.AIs)
-			{
-				names.Add(ai.AIName);
-			}
-			aiComboBox = new ComboBox(spriteNames, names, 200, 560, 175, 25, 6);
-
-			humanPlayer = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Human", 10, 530, 175, 25);
-			aiPlayer = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Computer", 10, 560, 175, 25);
-			humanPlayer.Selected = true;
-
-			empireNameTextBox = new BBSingleLineTextBox();
-			if (!empireNameTextBox.Initialize(string.Empty, 395, 530, 110, 25, false, gameMain.Random, out reason))
+			if (!_playerBackground.Initialize(_xPos + 30, _yPos + 30, 820, 170, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			addPlayer = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Add Player", 395, 560, 110, 25);
-
-			aiComboBox.Active = false;
-
-			buttons = new Button[9];
-			buttons[0] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Back", 10, gameMain.ScreenHeight - 35, 175, 25);
-			buttons[1] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Next", gameMain.ScreenWidth - 185, gameMain.ScreenHeight - 35, 175, 25);
-			buttons[2] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Generate Galaxy", gameMain.ScreenWidth - 185, 596, 175, 25);
-			buttons[3] = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, "", gameMain.ScreenWidth - 210, 600, 16, 16);
-			buttons[4] = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, "", gameMain.ScreenWidth - 316, 600, 16, 16);
-			buttons[5] = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, "", gameMain.ScreenWidth - 210, 524, 16, 16);
-			buttons[6] = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, "", gameMain.ScreenWidth - 260, 524, 16, 16);
-			buttons[7] = new Button(SpriteName.PlusBackground, SpriteName.PlusForeground, "", gameMain.ScreenWidth - 210, 560, 16, 16);
-			buttons[8] = new Button(SpriteName.MinusBackground, SpriteName.MinusForeground, "", gameMain.ScreenWidth - 260, 560, 16, 16);
-
-			galaxySize = 50;
-			minPlanets = 0;
-			maxPlanets = 6;
-
-			galaxySizeLabel = new Label(galaxySize + " x " + galaxySize, gameMain.ScreenWidth - 290, 600);
-			minPlanetsPerSystemLabel = new Label("Minimum planets per system:", gameMain.ScreenWidth - 500, 524);
-			maxPlanetsPerSystemLabel = new Label("Maximum planets per system:", gameMain.ScreenWidth - 500, 560);
-			minPlanetLabel = new Label(minPlanets.ToString(), gameMain.ScreenWidth - 240, 524);
-			maxPlanetLabel = new Label(maxPlanets.ToString(), gameMain.ScreenWidth - 240, 560);
-			numOfStarsLabel = new Label(string.Empty, gameMain.ScreenWidth - 185, 624);
-
-			generatingGalaxy = -1;
-			generatingGalaxyLabel = new Label("Generating Galaxy", 0, 0);
-			generatingDrawn = false;
-
-			empires = new List<Empire>();
-			this.races = new Label[PLAYER_LIMIT];
-			empireNames = new Label[PLAYER_LIMIT];
-			handicapComboBoxes = new ComboBox[PLAYER_LIMIT];
-			removeButtons = new Button[PLAYER_LIMIT];
-
-			names = new List<string>();
-			for (int i = 5; i <= 20; i++)
+			if (!_playerInfoBackground.Initialize(_xPos + 40, _yPos + 60, 295, 130, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
-				names.Add((i * 10).ToString() + "%");
+				return false;
+			}
+			if (!_playerRaceButton.Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 340, _yPos + 40, 500, 150, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_playerRaceDescription.Initialize(_xPos + 485, _yPos + 51, 345, 130, true, "RaceDescriptionTextBox", gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_playerLabels[0] = new BBLabel();
+			if (!_playerLabels[0].Initialize(_xPos + 90, _yPos + 36, "Player Race Information", Color.White, out reason))
+			{
+				return false;
+			}
+			_playerLabels[1] = new BBLabel();
+			if (!_playerLabels[1].Initialize(_xPos + 45, _yPos + 70, "Emperor Name:", Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_playerEmperorName.Initialize(string.Empty, _xPos + 50, _yPos + 90, 275, 35, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_playerLabels[2] = new BBLabel();
+			if (!_playerLabels[2].Initialize(_xPos + 45, _yPos + 125, "Homeworld Name:", Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_playerHomeworldName.Initialize(string.Empty, _xPos + 50, _yPos + 145, 275, 35, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_playerRaceDescription.SetText("A random race will be chosen.  If the Emperor and/or Homeworld name fields are left blank, default race names for those will be used.");
+			_randomRaceSprite = SpriteManager.GetSprite("RandomRace", gameMain.Random);
+			if (_randomRaceSprite == null)
+			{
+				reason = "RandomRace sprite does not exist.";
+				return false;
+			}
+			_playerRaceSprite = _randomRaceSprite;
+			//_playerRace = null;
+			_AIRaces = new Race[5];
+
+			if (!_AIBackground.Initialize(_xPos + 30, _yPos + 205, 820, 220, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_difficultyLabel.Initialize(_xPos + 40, _yPos + 220, "Difficulty Level:", Color.White, out reason))
+			{
+				return false;
+			}
+			List<string> difficultyItems = new List<string>
+											{
+												"Extra Mild",
+												"Mild",
+												"Medium",
+												"Hot",
+												"Extra Hot"
+											};
+			if (!_difficultyComboBox.Initialize(difficultyItems, _xPos + 170, _yPos + 215, 200, 35, 5, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_numberOfAILabel.Initialize(_xPos + 430, _yPos + 220, "Number of Computer Players:", Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_numericUpDownAI.Initialize(_xPos + 615, _yPos + 222, 75, 1, 5, 5, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			for (int i = 0; i < _AIRaceButtons.Length; i++)
+			{
+				_AIRaceButtons[i] = new BBStretchButton();
+				if (!_AIRaceButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 40 + (i * 155), _yPos + 260, 150, 150, gameMain.Random, out reason))
+				{
+					return false;
+				}
+				_AIRaceSprites[i] = _randomRaceSprite;
 			}
 
-			for (int i = 0; i < PLAYER_LIMIT; i++)
+			_galaxyBackground = new BBStretchableImage();
+			_galaxyComboBox = new BBComboBox();
+
+			List<string> items = new List<string>();
+			items.Add("Small Galaxy");
+			items.Add("Medium Galaxy");
+			items.Add("Large Galaxy");
+			items.Add("Huge Galaxy");
+
+			if (!_galaxyBackground.Initialize(_xPos + 30, _yPos + 430, 240, 235, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
-				this.races[i] = new Label(string.Empty, 200, 30 + (i * 30));
-				empireNames[i] = new Label(string.Empty, 10, 30 + (i * 30));
-				handicapComboBoxes[i] = new ComboBox(spriteNames, names, 350, 30 + (i * 30), 75, 25, 6);
-				handicapComboBoxes[i].SelectedIndex = 5;
-				removeButtons[i] = new Button(SpriteName.CancelBackground, SpriteName.CancelForeground, string.Empty, 465, 30 + (i * 30), 25, 25);
+				return false;
 			}
-			emperorNameLabel = new Label("Empire Name:", 10, 5);
-			raceLabel = new Label("Race:", 200, 5);
-			handicapLabel = new Label("Handicap:", 350, 5);*/
+			if (!_galaxyComboBox.Initialize(items, _xPos + 30, _yPos + 430, 240, 35, 4, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
 			reason = null;
 			return true;
@@ -170,32 +189,16 @@ namespace Beyond_Beyaan.Screens
 
 		public void Clear()
 		{
-			/*humanPlayer.Selected = true;
-			aiComboBox.Active = false;
-
-			galaxySize = 50;
-			minPlanets = 0;
-			maxPlanets = 6;
-
-			galaxySizeLabel = new Label(galaxySize + " x " + galaxySize, _gameMain.ScreenWidth - 290, 600);
-			minPlanetsPerSystemLabel = new Label("Minimum planets per system:", _gameMain.ScreenWidth - 500, 524);
-			maxPlanetsPerSystemLabel = new Label("Maximum planets per system:", _gameMain.ScreenWidth - 500, 560);
-			minPlanetLabel = new Label(minPlanets.ToString(), _gameMain.ScreenWidth - 240, 524);
-			maxPlanetLabel = new Label(maxPlanets.ToString(), _gameMain.ScreenWidth - 240, 560);
-			numOfStarsLabel = new Label(string.Empty, _gameMain.ScreenWidth - 185, 624);
-
-			generatingGalaxy = -1;
-			generatingGalaxyLabel = new Label("Generating Galaxy", 0, 0);
-			generatingDrawn = false;
-
-			empires = new List<Empire>();
-
-			for (int i = 0; i < PLAYER_LIMIT; i++)
+			//_playerRace = null;
+			_AIRaces = new Race[5];
+			_numericUpDownAI.SetValue(1);
+			_playerEmperorName.SetText(string.Empty);
+			_playerHomeworldName.SetText(string.Empty);
+			_playerRaceSprite = _randomRaceSprite;
+			for (int i = 0; i < _AIRaceSprites.Length; i++)
 			{
-				this.races[i].SetText(string.Empty);
-				empireNames[i].SetText(string.Empty);
-				handicapComboBoxes[i].SelectedIndex = 5;
-			}*/
+				_AIRaceSprites[i] = _randomRaceSprite;
+			}
 		}
 
 		public void DrawScreen(DrawingManagement drawingManagement)
@@ -212,59 +215,34 @@ namespace Beyond_Beyaan.Screens
 			{
 				DrawGalaxyPreview();
 			}
-
-			/*emperorNameLabel.Draw();
-			raceLabel.Draw();
-			handicapLabel.Draw();
-
-			for (int i = empires.Count - 1; i >= 0; i--)
+			_playerBackground.Draw();
+			_playerInfoBackground.Draw();
+			for (int i = 0; i < _playerLabels.Length; i++)
 			{
-				races[i].Draw();
-				empireNames[i].Draw();
-				handicapComboBoxes[i].Draw(drawingManagement);
-				drawingManagement.DrawSprite(empires[i].Type == PlayerType.HUMAN ? SpriteName.HumanPlayerIcon : SpriteName.CPUPlayerIcon, 435, 30 + (i * 30), 255, 25, 25, System.Drawing.Color.White);
-				removeButtons[i].Draw(drawingManagement);
+				_playerLabels[i].Draw();
+			}
+			_playerRaceButton.Draw();
+			_playerRaceSprite.Draw(_xPos + 350, _yPos + 51);
+			_playerRaceDescription.Draw();
+			_playerEmperorName.Draw();
+			_playerHomeworldName.Draw();
+
+			_AIBackground.Draw();
+			_difficultyLabel.Draw();
+
+			_numberOfAILabel.Draw();
+			_numericUpDownAI.Draw();
+			for (int i = 0; i < _numericUpDownAI.Value; i++)
+			{
+				_AIRaceButtons[i].Draw();
+				_AIRaceSprites[i].Draw(_xPos + 51 + (i * 155), _yPos + 271);
 			}
 
-			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, _gameMain.ScreenWidth - 320, 596, 255, 130, 25, System.Drawing.Color.White);
-			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, _gameMain.ScreenWidth - 265, 520, 255, 75, 25, System.Drawing.Color.White);
-			drawingManagement.DrawSprite(SpriteName.MiniBackgroundButton, _gameMain.ScreenWidth - 265, 556, 255, 75, 25, System.Drawing.Color.White);
+			_galaxyBackground.Draw();
 
-			galaxySizeLabel.Draw();
-			minPlanetsPerSystemLabel.Draw();
-			maxPlanetsPerSystemLabel.Draw();
-			minPlanetLabel.Draw();
-			maxPlanetLabel.Draw();
-
-			for (int i = 0; i < buttons.Length; i++)
-			{
-				buttons[i].Draw(drawingManagement);
-			}
-
-			humanPlayer.Draw(drawingManagement);
-			aiPlayer.Draw(drawingManagement);
-			addPlayer.Draw(drawingManagement);
-			empireNameTextBox.Draw();
-
-			aiComboBox.Draw(drawingManagement);
-			raceComboBox.Draw(drawingManagement);
-
-			if (generatingGalaxy != -1)
-			{
-				generatingDrawn = true;
-				drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (_gameMain.ScreenWidth / 2) - 150, (_gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
-				generatingGalaxyLabel.Move((int)((_gameMain.ScreenWidth / 2) - (generatingGalaxyLabel.GetWidth() / 2)), (int)((_gameMain.ScreenHeight / 2) - (generatingGalaxyLabel.GetHeight() / 2)));
-				generatingGalaxyLabel.Draw();
-			}
-
-			if (raceComboBox.SelectedIndex > 0)
-			{
-				miniAvatar.Draw(10, 600);
-			}
-			else
-			{
-				drawingManagement.DrawSprite(SpriteName.CancelBackground, 10, 600, 255, 128, 128, System.Drawing.Color.White);
-			}*/
+			//Comboboxes should be drawn last, due to their "drop-down" feature
+			_galaxyComboBox.Draw();
+			_difficultyComboBox.Draw();
 		}
 
 		public void Update(int mouseX, int mouseY, float frameDeltaTime)
@@ -434,7 +412,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				if (string.IsNullOrEmpty(empireNameTextBox.Text))
 				{
-					empireNameTextBox.SetString(race.GetRandomEmperorName());
+					empireNameTextBox.SetText(race.GetRandomEmperorName());
 				}
 				Empire newEmpire = new Empire(empireNameTextBox.Text, id, race, humanPlayer.Selected ? PlayerType.HUMAN : PlayerType.CPU, ai, 
 					System.Drawing.Color.FromArgb(255, r.Next(201) + 55, r.Next(201) + 55, r.Next(201) + 55), _gameMain);
@@ -448,7 +426,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					races[empires.Count - 1].SetText(race.RaceName);
 				}
-				empireNameTextBox.SetString(string.Empty);
+				empireNameTextBox.SetText(string.Empty);
 			}
 
 			if (raceComboBox.MouseUp(x, y))

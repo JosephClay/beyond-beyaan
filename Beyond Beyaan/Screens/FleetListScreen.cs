@@ -399,12 +399,12 @@ namespace Beyond_Beyaan.Screens
 					if (i == (selectedShip + shipIndex))
 					{
 						shipSelected = ship.Key;
-						nameText.SetString(shipSelected.Name);
-						sizeText.SetString(Utility.ShipSizeToString(shipSelected.Size));
-						engineText.SetString(shipSelected.Engine.TechName);
-						computerText.SetString(shipSelected.Computer.TechName);
-						armorText.SetString(shipSelected.Armor.TechName);
-						shieldText.SetString(shipSelected.Shield.TechName);
+						nameText.SetText(shipSelected.Name);
+						sizeText.SetText(Utility.ShipSizeToString(shipSelected.Size));
+						engineText.SetText(shipSelected.Engine.TechName);
+						computerText.SetText(shipSelected.Computer.TechName);
+						armorText.SetText(shipSelected.Armor.TechName);
+						shieldText.SetText(shipSelected.Shield.TechName);
 						weaponIndex = 0;
 						UpdateWeaponSpecs();
 						LoadShipSprite(whichFleets[selectedFleet - fleetIndex].Empire, ship.Key);
@@ -420,8 +420,8 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				weaponTexts[i].SetString(shipSelected.weapons[i + weaponIndex].GetName());
-				mountsTexts[i].SetString(shipSelected.weapons[i + weaponIndex].Mounts.ToString());
+				weaponTexts[i].SetText(shipSelected.weapons[i + weaponIndex].GetName());
+				mountsTexts[i].SetText(shipSelected.weapons[i + weaponIndex].Mounts.ToString());
 			}
 		}
 
