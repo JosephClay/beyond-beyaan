@@ -25,6 +25,9 @@
     <Frame x="320" y="0" width="32" height="32" frameLength="250" axisX="16" axisY="16"/>
     <Frame x="352" y="0" width="32" height="32" frameLength="250" axisX="16" axisY="16"/>
   </Sprite>
+  <Sprite name="TitleNebula" file="Title nebula.png">
+    <Frame x="0" y="0" width="1024" height="600" />
+  </Sprite>
   <Sprite name="Nebula1" file="stars.png">
     <Frame x="0" y="32" width="128" height="128" axisX="64" axisY="64"/>
   </Sprite>

@@ -100,6 +100,7 @@
     <Compile Include="Screens\SituationReport.cs" />
     <Compile Include="Screens\SystemView.cs" />
     <Compile Include="Screens\WindowInterface.cs" />
+    <Compile Include="Utility\GameConfiguration.cs" />
     <Compile Include="Utility\NameGenerator.cs" />
     <Compile Include="Data Modules\Planet.cs" />
     <Compile Include="Data Managers\PlanetManager.cs" />
