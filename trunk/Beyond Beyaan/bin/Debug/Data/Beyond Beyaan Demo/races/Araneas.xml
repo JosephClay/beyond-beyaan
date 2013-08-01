@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Araneas" 
       singularName="Aranea"
+      raceDescription="Every arachnophobe's bane, those huge spiders are actually peaceful, except when they're hungry.  Due to their huge size, they're almost always hungry, so they're misunderstood as being aggressive."
       neutralPortrait="AraneaNeutralPortrait" 
       happyPortrait="AraneaHappyPortrait" 
       angryPortrait="AraneaAngryPortrait" 

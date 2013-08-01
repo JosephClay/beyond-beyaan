@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Velociraptors" 
       singularName="Velociraptor"
+      raceDescription="Velociraptors were originally thought to be extinct, but they left Earth after causing a world-wide extinction of all animals bigger than ferrets.  They are the bane of professional human hunters, making them look like kittens chasing a laser."
       neutralPortrait="VelociraptorNeutralPortrait" 
       happyPortrait="VelociraptorHappyPortrait" 
       angryPortrait="VelociraptorAngryPortrait" 

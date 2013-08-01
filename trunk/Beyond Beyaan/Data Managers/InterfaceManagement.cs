@@ -678,10 +678,11 @@ namespace Beyond_Beyaan
 			}
 
 			_label = new BBLabel();
-			if (!_label.Initialize(0, 0, buttonText, Color.White, out reason))
+			if (!_label.Initialize(0, 0, string.Empty, Color.White, out reason))
 			{
 				return false;
 			}
+			SetText(buttonText);
 
 			Reset();
 
@@ -1093,7 +1094,6 @@ namespace Beyond_Beyaan
 		private BBScrollBar _scrollBar;
 
 		//ComboBox state information
-		private bool _dropped;
 		private bool _haveScroll;
 		private int _selectedIndex;
 
@@ -1106,6 +1106,9 @@ namespace Beyond_Beyaan
 			get { return _selectedIndex; }
 			set { _selectedIndex = value; }
 		}
+
+		public bool Dropped { get; private set; }
+
 		#endregion
 
 		#region Constructors
@@ -1130,7 +1133,7 @@ namespace Beyond_Beyaan
 			_height = height;
 
 			_selectedIndex = 0;
-			_dropped = false;
+			Dropped = false;
 			_downArrowSprite = SpriteManager.GetSprite("ScrollDownBGButton", r);
 
 			if (items.Count < maxVisible)
@@ -1199,7 +1202,7 @@ namespace Beyond_Beyaan
 				_buttons[0].Enabled = Enabled;
 				_buttons[0].SetText(_items[_selectedIndex]);
 			}
-			if (!_dropped)
+			if (!Dropped)
 			{
 				_dropBackground.Draw();
 				_buttons[0].Draw();
@@ -1223,7 +1226,7 @@ namespace Beyond_Beyaan
 		{
 			if (Enabled)
 			{
-				if (!_dropped)
+				if (!Dropped)
 				{
 					return _buttons[0].MouseHover(x, y, frameDeltaTime);
 				}
@@ -1247,7 +1250,7 @@ namespace Beyond_Beyaan
 		{
 			if (Enabled)
 			{
-				if (!_dropped)
+				if (!Dropped)
 				{
 					return _buttons[0].MouseDown(x, y);
 				}
@@ -1267,12 +1270,12 @@ namespace Beyond_Beyaan
 		{
 			if (Enabled)
 			{
-				if (!_dropped)
+				if (!Dropped)
 				{
 					if (_buttons[0].MouseUp(x, y))
 					{
-						_dropped = true;
-						_dropBackground.Resize(_width + 30, _height * _items.Count + 20);
+						Dropped = true;
+						_dropBackground.Resize(_width + 30, _height * (_items.Count + 1) + 20);
 						_dropBackground.MoveTo(_xPos - 10, _yPos - 10);
 						return true;
 					}
@@ -1287,7 +1290,7 @@ namespace Beyond_Beyaan
 							{
 								_selectedIndex = i + _scrollBar.TopIndex - 1;
 							}
-							_dropped = false;
+							Dropped = false;
 							_dropBackground.Resize(_width, _height);
 							_dropBackground.MoveTo(_xPos, _yPos);
 							return true;
@@ -1299,7 +1302,7 @@ namespace Beyond_Beyaan
 						return true;
 					}
 					//At this point, even if the mouse is not over the UI, we want to capture the mouse up so the user don't click on something else
-					_dropped = false;
+					Dropped = false;
 					return true;
 				}
 			}
@@ -1316,7 +1319,7 @@ namespace Beyond_Beyaan
 		private void RefreshSelection()
 		{
 			_buttons[0].SetText(_items[_selectedIndex]);
-			_dropped = false;
+			Dropped = false;
 		}
 		#endregion
 	}
@@ -3638,42 +3641,27 @@ namespace Beyond_Beyaan
 
 		public bool MouseDown(int x, int y)
 		{
-			bool result = false;
 			if (_usingScrollBar && _scrollbarVisible)
 			{
-				result = _textScrollBar.MouseDown(x, y);
-			}
-			if (!result && x >= _x && x < _x + Width && y >= _y && y < _y + Height)
-			{
-				return true;
+				return _textScrollBar.MouseDown(x, y);
 			}
 			return false;
 		}
 
 		public bool MouseUp(int x, int y)
 		{
-			bool result = false;
 			if (_usingScrollBar && _scrollbarVisible)
 			{
-				result = _textScrollBar.MouseUp(x, y);
-			}
-			if (!result && x >= _x && x < _x + Width && y >= _y && y < _y + Height)
-			{
-				return true;
+				return _textScrollBar.MouseUp(x, y);
 			}
 			return false;
 		}
 
 		public bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			bool result = false;
 			if (_usingScrollBar && _scrollbarVisible)
 			{
-				result = _textScrollBar.MouseHover(x, y, frameDeltaTime);
-			}
-			if (!result && x >= _x && x < _x + Width && y >= _y && y < _y + Height)
-			{
-				return true;
+				return _textScrollBar.MouseHover(x, y, frameDeltaTime);
 			}
 			return false;
 		}

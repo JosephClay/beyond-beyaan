@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
 {
-	public enum GALAXYTYPE { RANDOM, CLUSTER, STAR, DIAMOND, RING };
+	public enum GALAXYTYPE { SMALL, MEDIUM, LARGE, HUGE/*, CLUSTER, STAR, DIAMOND, RING*/ };
 
 	public class Galaxy
 	{
 		public const int PARSEC_SIZE_IN_PIXELS = 60;
 
 		private List<StarSystem> starSystems = new List<StarSystem>();
+		private BackgroundWorker _bw = new BackgroundWorker();
+
+		public Action OnGenerateComplete;
 
 		/*#region Pathfinding values
 		private int Open_Value = 0;
@@ -22,6 +26,13 @@ namespace Beyond_Beyaan
 		int originalX = -1;
 		int originalY = -1;
 		#endregion*/
+		private class GalaxyArgs
+		{
+			public GALAXYTYPE GalaxyType { get; set; }
+			public int MinPlanets { get; set; }
+			public int MaxPlanets { get; set; }
+			public Random Random { get; set; }
+		}
 
 		public int GalaxySize { get; private set; }
 
@@ -31,15 +42,57 @@ namespace Beyond_Beyaan
 		/// <param name="galaxyType"></param>
 		/// <param name="minPlanets"></param>
 		/// <param name="maxPlanets"></param>
-		/// <param name="size"></param>
-		/// <param name="minDistance"></param>
-		/// <param name="spriteManager"></param>
 		/// <param name="r"></param>
 		/// <param name="reason"></param>
-		public bool GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, int size, int minDistance, Random r, out string reason)
+		public bool GenerateGalaxy(GALAXYTYPE galaxyType, int minPlanets, int maxPlanets, Random r, out string reason)
 		{
-			bool[][] grid = null;
-			switch (galaxyType)
+			if (_bw.IsBusy)
+			{
+				reason = "Already in process of generating a galaxy";
+				return false;
+			}
+			_bw.DoWork += GenerateGalaxyThread;
+			_bw.RunWorkerCompleted += GenerateGalaxyCompleted;
+			GalaxyArgs args = new GalaxyArgs();
+			args.GalaxyType = galaxyType;
+			args.MinPlanets = minPlanets;
+			args.MaxPlanets = maxPlanets;
+			args.Random = r;
+			_bw.RunWorkerAsync(args);
+
+			reason = null;
+			return true;
+		}
+
+		private void GenerateGalaxyCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			if (OnGenerateComplete != null)
+			{
+				OnGenerateComplete();
+			}
+		}
+
+		private void GenerateGalaxyThread(object sender, DoWorkEventArgs e)
+		{
+			GALAXYTYPE galaxyType;
+			int minPlanets;
+			int maxPlanets;
+			Random r;
+			try
+			{
+				GalaxyArgs args = (GalaxyArgs)e.Argument;
+				galaxyType = args.GalaxyType;
+				minPlanets = args.MinPlanets;
+				maxPlanets = args.MaxPlanets;
+				r = args.Random;
+			}
+			catch (Exception)
+			{
+				return;
+			}
+
+			bool[][] grid = GenerateRandom(galaxyType);
+			/*switch (galaxyType)
 			{
 				case GALAXYTYPE.RANDOM:
 					{
@@ -61,23 +114,27 @@ namespace Beyond_Beyaan
 					{
 						grid = GenerateRing(size);
 					} break;
-			}
+			}*/
 
 			GalaxySize = grid.Length;
-
-			if (!FillGalaxyWithStars(minDistance, minPlanets, maxPlanets, grid, r, out reason))
+			int numberOfStars = 0;
+			switch (galaxyType)
 			{
-				return false;
+				case GALAXYTYPE.SMALL:
+					numberOfStars = 24;
+					break;
+				case GALAXYTYPE.MEDIUM:
+					numberOfStars = 48;
+					break;
+				case GALAXYTYPE.LARGE:
+					numberOfStars = 70;
+					break;
+				case GALAXYTYPE.HUGE:
+					numberOfStars = 108;
+					break;
 			}
 
-			//SetBlackHoles(10, r);
-
-			//GenerateNebulaField(r);
-
-			//ConvertNebulaToSprite();
-
-			reason = null;
-			return true;
+			FillGalaxyWithStars(numberOfStars, minPlanets, maxPlanets, grid, r);
 		}
 
 		/*public void ConstructQuadTree()
@@ -127,12 +184,54 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Shape Functions
+		private static bool[][] GenerateRandom(GALAXYTYPE type)
+		{
+			int width = 0;
+			int height = 0;
+
+			switch (type)
+			{
+				case GALAXYTYPE.SMALL:
+				{
+					width = 21;
+					height = 15;
+				} break;
+				case GALAXYTYPE.MEDIUM:
+					{
+						width = 27;
+						height = 21;
+					} break;
+				case GALAXYTYPE.LARGE:
+					{
+						width = 33;
+						height = 24;
+					} break;
+				case GALAXYTYPE.HUGE:
+					{
+						width = 39;
+						height = 27;
+					} break;
+			}
+			bool[][] grid = new bool[width][];
+			for (int i = 0; i < grid.Length; i++)
+			{
+				grid[i] = new bool[height];
+				for (int j = 0; j < height; j++)
+				{
+					grid[i][j] = true;
+				}
+			}
+
+			return grid;
+		}
+
+		/*
 		private bool[][] GenerateCluster(int size)
 		{
 			//Size is actually a diameter, change to radius
 			return Utility.CalculateDisc(size / 2, 1);
 		}
-
+		
 		private bool[][] GenerateRing(int size)
 		{
 			//Size is actually a diameter, change to radius
@@ -239,11 +338,11 @@ namespace Beyond_Beyaan
 			}
 
 			return grid;
-		}
+		}*/
 		#endregion
 
 		#region Galaxy Filling Functions
-		private bool FillGalaxyWithStars(int minDistance, int minPlanets, int maxPlanets, bool[][] grid, Random r, out string reason)
+		private void FillGalaxyWithStars(int numberOfStars, int minPlanets, int maxPlanets, bool[][] grid, Random r)
 		{
 			starSystems = new List<StarSystem>();
 			NameGenerator nameGenerator = new NameGenerator();
@@ -253,7 +352,7 @@ namespace Beyond_Beyaan
 			//Set area where stars can be placed (circle, random, star, etc shaped galaxy)
 			for (int i = 0; i < grid.Length; i++)
 			{
-				for (int j = 0; j < grid.Length; j++)
+				for (int j = 0; j < grid[i].Length; j++)
 				{
 					if (!grid[i][j])
 					{
@@ -262,7 +361,7 @@ namespace Beyond_Beyaan
 				}
 			}
 
-			while (starTree.nodes.Count > 0)
+			while (starTree.nodes.Count > 0 && numberOfStars > 0)
 			{
 				int x;
 				int y;
@@ -296,25 +395,23 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * 32 + (r.Next(32)), y * 32 + (r.Next(32)), starColor, description, minPlanets, maxPlanets, r));
+				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), y * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), starColor, description, minPlanets, maxPlanets, r));
 
-				int adjustedMinDistance = minDistance + r.Next(4);
-
-				bool[][] invalidatedArea = Utility.CalculateDisc(adjustedMinDistance, 1);
+				bool[][] invalidatedArea = Utility.CalculateDisc(2, 1);
 
 				for (int i = 0; i < invalidatedArea.Length; i++)
 				{
 					for (int j = 0; j < invalidatedArea.Length; j++)
 					{
-						int xToInvalidate = (x - adjustedMinDistance) + i;
-						int yToInvalidate = (y - adjustedMinDistance) + j;
+						int xToInvalidate = (x - 2) + i;
+						int yToInvalidate = (y - 2) + j;
 
 						starTree.RemoveNodeAtPosition(xToInvalidate, yToInvalidate);
 					}
 				}
+
+				numberOfStars--;
 			}
-			reason = null;
-			return true;
 		}
 		#endregion
 
@@ -343,6 +440,7 @@ namespace Beyond_Beyaan
 		/// <param name="currentY">Fleet's Galaxy Y</param>
 		/// <param name="currentDestination">Fleet's current destination for when empire don't have hyperspace communications</param>
 		/// <param name="newDestination">New destination</param>
+		/// <param name="hasExtended"></param>
 		/// <param name="whichEmpire">For fuel range and other info</param>
 		/// <returns></returns>
 		public List<TravelNode> GetPath(float currentX, float currentY, StarSystem currentDestination, StarSystem newDestination, bool hasExtended, Empire whichEmpire)

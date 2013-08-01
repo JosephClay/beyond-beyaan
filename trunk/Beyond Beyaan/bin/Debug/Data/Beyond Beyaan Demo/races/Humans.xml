@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Humans" 
       singularName="Human"
+      raceDescription="Humans, the reason why the word humanoid was coined, their ego is surpassed only by their desire for power.  Their Encyclopedia Galactica is remarkable in that it contains nearly everything, except for their origin."
       neutralPortrait="HumanNeutralPortrait" 
       happyPortrait="HumanHappyPortrait" 
       angryPortrait="HumanAngryPortrait" 
