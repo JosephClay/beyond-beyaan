@@ -97,6 +97,7 @@
     <Compile Include="Data Managers\InterfaceManagement.cs" />
     <Compile Include="Screens\CustomRaceScreen.cs" />
     <Compile Include="Screens\FleetView.cs" />
+    <Compile Include="Screens\RaceSelection.cs" />
     <Compile Include="Screens\SituationReport.cs" />
     <Compile Include="Screens\SystemView.cs" />
     <Compile Include="Screens\WindowInterface.cs" />

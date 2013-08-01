@@ -22,15 +22,15 @@ namespace Beyond_Beyaan.Screens
 		private BBStretchButton _playerRaceButton;
 		private BBSingleLineTextBox _playerEmperorName;
 		private BBSingleLineTextBox _playerHomeworldName;
-		private BBSprite _playerRaceSprite;
 		private BBTextBox _playerRaceDescription;
 		private BBLabel[] _playerLabels;
-		//private Race _playerRace;
 
 		private BBStretchableImage _AIBackground;
 		private BBStretchButton[] _AIRaceButtons;
-		private BBSprite[] _AIRaceSprites;
-		private Race[] _AIRaces;
+
+		private Race[] _playerRaces;
+		private BBSprite[] _raceSprites;
+		private Color[] _playerColors;
 
 		private BBStretchableImage _galaxyBackground;
 		private BBComboBox _galaxyComboBox;
@@ -42,10 +42,14 @@ namespace Beyond_Beyaan.Screens
 		private BBNumericUpDown _numericUpDownAI;
 		//private Camera camera;
 
+		private RaceSelection _raceSelection;
+		private bool _showingSelection;
+
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this._gameMain = gameMain;
 
+			_showingSelection = false;
 			_background = new BBStretchableImage();
 			_playerBackground = new BBStretchableImage();
 			_playerInfoBackground = new BBStretchableImage();
@@ -56,7 +60,9 @@ namespace Beyond_Beyaan.Screens
 			_playerHomeworldName = new BBSingleLineTextBox();
 			_AIBackground = new BBStretchableImage();
 			_AIRaceButtons = new BBStretchButton[5];
-			_AIRaceSprites = new BBSprite[5];
+			_raceSprites = new BBSprite[6];
+			_playerRaces = new Race[6];
+			_playerColors = new Color[6];
 			_numberOfAILabel = new BBLabel();
 			_numericUpDownAI = new BBNumericUpDown();
 
@@ -64,6 +70,13 @@ namespace Beyond_Beyaan.Screens
 			_difficultyLabel = new BBLabel();
 
 			_nebulaBackground = SpriteManager.GetSprite("TitleNebula", gameMain.Random);
+
+			_playerColors[0] = Color.Red;
+			_playerColors[1] = Color.Blue;
+			_playerColors[2] = Color.Yellow;
+			_playerColors[3] = Color.Green;
+			_playerColors[4] = Color.Purple;
+			_playerColors[5] = Color.Orange;
 
 			_xPos = (gameMain.ScreenWidth / 2) - 440;
 			_yPos = (gameMain.ScreenHeight / 2) - 340;
@@ -123,9 +136,11 @@ namespace Beyond_Beyaan.Screens
 				reason = "RandomRace sprite does not exist.";
 				return false;
 			}
-			_playerRaceSprite = _randomRaceSprite;
-			//_playerRace = null;
-			_AIRaces = new Race[5];
+
+			for (int i = 0; i < _raceSprites.Length; i++)
+			{
+				_raceSprites[i] = _randomRaceSprite;
+			}
 
 			if (!_AIBackground.Initialize(_xPos + 30, _yPos + 205, 820, 220, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
@@ -162,7 +177,6 @@ namespace Beyond_Beyaan.Screens
 				{
 					return false;
 				}
-				_AIRaceSprites[i] = _randomRaceSprite;
 			}
 
 			_galaxyBackground = new BBStretchableImage();
@@ -183,6 +197,13 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
+			_raceSelection = new RaceSelection();
+			if (!_raceSelection.Initialize(gameMain, out reason))
+			{
+				return false;
+			}
+			_raceSelection.OnOkClick = OnRaceSelectionOKClick;
+
 			reason = null;
 			return true;
 		}
@@ -190,14 +211,13 @@ namespace Beyond_Beyaan.Screens
 		public void Clear()
 		{
 			//_playerRace = null;
-			_AIRaces = new Race[5];
+			_playerRaces = new Race[6];
 			_numericUpDownAI.SetValue(1);
 			_playerEmperorName.SetText(string.Empty);
 			_playerHomeworldName.SetText(string.Empty);
-			_playerRaceSprite = _randomRaceSprite;
-			for (int i = 0; i < _AIRaceSprites.Length; i++)
+			for (int i = 0; i < _raceSprites.Length; i++)
 			{
-				_AIRaceSprites[i] = _randomRaceSprite;
+				_raceSprites[i] = _randomRaceSprite;
 			}
 		}
 
@@ -222,7 +242,7 @@ namespace Beyond_Beyaan.Screens
 				_playerLabels[i].Draw();
 			}
 			_playerRaceButton.Draw();
-			_playerRaceSprite.Draw(_xPos + 350, _yPos + 51);
+			_raceSprites[0].Draw(_xPos + 350, _yPos + 51);
 			_playerRaceDescription.Draw();
 			_playerEmperorName.Draw();
 			_playerHomeworldName.Draw();
@@ -235,7 +255,7 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < _numericUpDownAI.Value; i++)
 			{
 				_AIRaceButtons[i].Draw();
-				_AIRaceSprites[i].Draw(_xPos + 51 + (i * 155), _yPos + 271);
+				_raceSprites[i + 1].Draw(_xPos + 51 + (i * 155), _yPos + 271);
 			}
 
 			_galaxyBackground.Draw();
@@ -243,204 +263,108 @@ namespace Beyond_Beyaan.Screens
 			//Comboboxes should be drawn last, due to their "drop-down" feature
 			_galaxyComboBox.Draw();
 			_difficultyComboBox.Draw();
+
+			if (_showingSelection)
+			{
+				_raceSelection.Draw();
+			}
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
-			/*_galaxyComboBox.MouseHover(mouseX, mouseY, frameDeltaTime);
-
-			humanPlayer.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			aiPlayer.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			addPlayer.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			empireNameTextBox.Update(frameDeltaTime);
-
-			raceComboBox.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			aiComboBox.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-
-			for (int i = 0; i < buttons.Length; i++)
+			if (_showingSelection)
 			{
-				buttons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				_raceSelection.MouseHover(x, y, frameDeltaTime);
+				return;
 			}
-
-			for (int i = 0; i < empires.Count; i++)
-			{
-				removeButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
-				handicapComboBoxes[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			}
+			_playerEmperorName.Update(frameDeltaTime);
+			_playerHomeworldName.Update(frameDeltaTime);
+			_galaxyComboBox.MouseHover(x, y, frameDeltaTime);
+			_difficultyComboBox.MouseHover(x, y, frameDeltaTime);
+			_playerRaceButton.MouseHover(x, y, frameDeltaTime);
 			
-			GALAXYTYPE type = GALAXYTYPE.RANDOM;
-			if (generatingGalaxy != -1 && generatingDrawn)
+			for (int i = 0; i < _numericUpDownAI.Value; i++)
 			{
-				string reason;
-				switch (generatingGalaxy)
-				{
-					case 0:
-						type = GALAXYTYPE.RANDOM;
-						break;
-					case 1:
-						type = GALAXYTYPE.CLUSTER;
-						break;
-					case 2:
-						type = GALAXYTYPE.RING;
-						break;
-					case 3:
-						type = GALAXYTYPE.DIAMOND;
-						break;
-					case 4:
-						type = GALAXYTYPE.STAR;
-						break;
-				}
-				_gameMain.Galaxy.GenerateGalaxy(type, 1, 1, galaxySize, 2, _gameMain.Random, out reason);
-				camera = new Camera(_gameMain.Galaxy.GalaxySize * 32, _gameMain.Galaxy.GalaxySize * 32, 500, 500);
-				camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
-				numOfStarsLabel.SetText("Number of stars: " + _gameMain.Galaxy.GetAllStars().Count);
-				generatingGalaxy = -1;
-				generatingDrawn = false;
-			}*/
+				_AIRaceButtons[i].MouseHover(x, y, frameDeltaTime);
+			}
+
+			_numericUpDownAI.MouseHover(x, y, frameDeltaTime);
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			/*_galaxyComboBox.MouseDown(x, y);
-
-			humanPlayer.MouseDown(x, y);
-			aiPlayer.MouseDown(x, y);
-			addPlayer.MouseDown(x, y);
-			empireNameTextBox.MouseDown(x, y);
-
-			for (int i = 0; i < empires.Count; i++)
+			if (whichButton != 1)
 			{
-				removeButtons[i].MouseDown(x, y);
-				if (handicapComboBoxes[i].MouseDown(x, y))
+				return;
+			}
+			if (_showingSelection)
+			{
+				_raceSelection.MouseDown(x, y);
+				return;
+			}
+			if (_galaxyComboBox.MouseDown(x, y))
+			{
+				return;
+			}
+			if (_difficultyComboBox.MouseDown(x, y))
+			{
+				return;
+			}
+			if (_playerEmperorName.MouseDown(x, y))
+			{
+				return;
+			}
+			if (_playerHomeworldName.MouseDown(x, y))
+			{
+				return;
+			}
+			if (_playerRaceButton.MouseDown(x, y))
+			{
+				return;
+			}
+			for (int i = 0; i < _numericUpDownAI.Value; i++)
+			{
+				if (_AIRaceButtons[i].MouseDown(x, y))
 				{
 					return;
 				}
 			}
-
-			if (raceComboBox.MouseDown(x, y))
-			{
-				return;
-			}
-			if (aiComboBox.MouseDown(x, y))
-			{
-				return;
-			}
-
-			for (int i = 0; i < buttons.Length; i++)
-			{
-				if (buttons[i].MouseDown(x, y))
-				{
-					return;
-				}
-			}*/
+			_numericUpDownAI.MouseDown(x, y);
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			/*for (int i = 0; i < empires.Count; i++)
+			if (whichButton != 1)
 			{
-				if (removeButtons[i].MouseUp(x, y))
-				{
-					for (int j = i; j < empires.Count; j++)
-					{
-						if (j < empires.Count - 1)
-						{
-							empireNames[j].SetText(empireNames[j + 1].Text);
-							races[j].SetText(races[j + 1].Text);
-						}
-					}
-					empires.RemoveAt(i);
-					return;
-				}
-				if (handicapComboBoxes[i].MouseUp(x, y))
-				{
-					return;
-				}
+				return;
 			}
+			if (_showingSelection)
+			{
+				_raceSelection.MouseUp(x, y);
+				return;
+			}
+			_playerEmperorName.MouseUp(x, y);
+			_playerHomeworldName.MouseUp(x, y);
+			_numericUpDownAI.MouseUp(x, y);
+			_difficultyComboBox.MouseUp(x, y);
 			if (_galaxyComboBox.MouseUp(x, y))
 			{
-				return;
+				//Update galaxy here
 			}
-			empireNameTextBox.MouseUp(x, y);
-			if (humanPlayer.MouseUp(x, y))
+			if (_playerRaceButton.MouseUp(x, y))
 			{
-				humanPlayer.Selected = true;
-				aiPlayer.Selected = false;
-				aiComboBox.Active = false;
+				_showingSelection = true;
+				_raceSelection.SetCurrentPlayerInfo(0, _playerRaces[0], _playerColors[0]);
 			}
-			if (aiPlayer.MouseUp(x, y))
+			for (int i = 0; i < _numericUpDownAI.Value; i++)
 			{
-				humanPlayer.Selected = false;
-				aiPlayer.Selected = true;
-				aiComboBox.Active = true;
+				if (_AIRaceButtons[i].MouseUp(x, y))
+				{
+					_showingSelection = true;
+					_raceSelection.SetCurrentPlayerInfo(i + 1, _playerRaces[i + 1], _playerColors[i + 1]);
+				}
 			}
-			if (addPlayer.MouseUp(x, y))
-			{
-				if (empires.Count >= PLAYER_LIMIT)
-				{
-					return;
-				}
-				Random r = new Random();
-				Race race;
-				AI ai = null;
-				if (raceComboBox.SelectedIndex == 0)
-				{
-					race = _gameMain.RaceManager.Races[r.Next(_gameMain.RaceManager.Races.Count)];
-				}
-				else
-				{
-					race = _gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1];
-				}
-				if (aiPlayer.Selected)
-				{
-					if (aiComboBox.SelectedIndex == 0)
-					{
-						ai = _gameMain.AIManager.AIs[r.Next(_gameMain.AIManager.AIs.Count)];
-					}
-					else
-					{
-						ai = _gameMain.AIManager.AIs[aiComboBox.SelectedIndex - 1];
-					}
-				}
-				int id = 0;
-				foreach (Empire empire in empires)
-				{
-					if (id <= empire.EmpireID)
-					{
-						id = empire.EmpireID + 1;
-					}
-				}
-				if (string.IsNullOrEmpty(empireNameTextBox.Text))
-				{
-					empireNameTextBox.SetText(race.GetRandomEmperorName());
-				}
-				Empire newEmpire = new Empire(empireNameTextBox.Text, id, race, humanPlayer.Selected ? PlayerType.HUMAN : PlayerType.CPU, ai, 
-					System.Drawing.Color.FromArgb(255, r.Next(201) + 55, r.Next(201) + 55, r.Next(201) + 55), _gameMain);
-				empires.Add(newEmpire);
-				empireNames[empires.Count - 1].SetText(empireNameTextBox.Text);
-				if (raceComboBox.SelectedIndex == 0)
-				{
-					races[empires.Count - 1].SetText("Random");
-				}
-				else
-				{
-					races[empires.Count - 1].SetText(race.RaceName);
-				}
-				empireNameTextBox.SetText(string.Empty);
-			}
-
-			if (raceComboBox.MouseUp(x, y))
-			{
-				if (raceComboBox.SelectedIndex > 0)
-				{
-					miniAvatar = _gameMain.RaceManager.Races[raceComboBox.SelectedIndex - 1].GetMiniAvatar();
-				}
-				return;
-			}
-			if (aiComboBox.MouseUp(x, y))
-			{
-				return;
-			}
+			/*		
 
 			for (int i = 0; i < buttons.Length; i++)
 			{
@@ -536,10 +460,14 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
-			/*if (empireNameTextBox.KeyDown(e))
+			if (_playerEmperorName.KeyDown(e))
 			{
 				return;
-			}*/
+			}
+			if (_playerHomeworldName.KeyDown(e))
+			{
+				return;
+			}
 		}
 
 		private void DrawGalaxyPreview()
@@ -565,6 +493,31 @@ namespace Beyond_Beyaan.Screens
 
 				//numOfStarsLabel.Draw();
 			}*/
+		}
+
+		private void OnRaceSelectionOKClick(int whichPlayer, Race whichRace, Color color)
+		{
+			_showingSelection = false;
+			for (int i = 0; i < _playerRaces.Length; i++)
+			{
+				if (i != whichPlayer && _playerRaces[i] == whichRace)
+				{
+					_playerRaces[i] = null;
+					_raceSprites[i] = _randomRaceSprite;
+					break;
+				}
+			}
+			_playerRaces[whichPlayer] = whichRace;
+			_raceSprites[whichPlayer] = whichRace.MiniAvatar;
+			for (int i = 0; i < _playerColors.Length; i++)
+			{
+				if (i != whichPlayer && _playerColors[i] == color)
+				{
+					_playerColors[i] = _playerColors[whichPlayer];
+					_playerColors[whichPlayer] = color;
+					break;
+				}
+			}
 		}
 	}
 }
