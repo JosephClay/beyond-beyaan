@@ -5,13 +5,13 @@ using System.Text;
 
 namespace Beyond_Beyaan
 {
-	class NameGenerator
+	public static class NameGenerator
 	{
-		Random rnd = null;
+		static Random rnd = null;
 
-		public List<StringGetter[]> Generator = null;
+		static public List<StringGetter[]> Generator = null;
 
-		private List<string> StarNames = new List<string>
+		private static List<string> StarNames = new List<string>
 		{
 			"Govik",
 			"Smeggit",
@@ -99,29 +99,29 @@ namespace Beyond_Beyaan
             "ei"
         });
 
-		public string NEC()
+		public static string NEC()
 		{
 			return NonEndingConsonantChunks[rnd.Next(NonEndingConsonantChunks.Count - 1)];
 		}
-		public string V()
+		public static string V()
 		{
 			return Vowelies[rnd.Next(Vowelies.Count - 1)];
 		}
-		public string EC()
+		public static string EC()
 		{
 			return EndingConsonantChunks[rnd.Next(EndingConsonantChunks.Count - 1)];
 		}
-		public string S()
+		public static string S()
 		{
 			return " ";
 		}
 
-		StringGetter[] Seq(params StringGetter[] arr)
+		static StringGetter[] Seq(params StringGetter[] arr)
 		{
 			return arr;
 		}
 
-		public NameGenerator()
+		static NameGenerator()
 		{
 			Generator = new List<StringGetter[]>();
 
@@ -138,7 +138,7 @@ namespace Beyond_Beyaan
 				);
 		}
 
-		public string GetStarName(Random r)
+		public static string GetStarName(Random r)
 		{
 			if (StarNames.Count > 0)
 			{
@@ -151,7 +151,7 @@ namespace Beyond_Beyaan
 		}
 
 		//Function to call to get a random name
-		public string GetName()
+		public static string GetName()
 		{
 			StringBuilder sb = new StringBuilder();
 			StringGetter[] Getters = Generator[rnd.Next(Generator.Count - 1)];
