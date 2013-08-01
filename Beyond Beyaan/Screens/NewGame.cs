@@ -467,7 +467,32 @@ namespace Beyond_Beyaan.Screens
 				}
 				else
 				{
+					List<Race> selectedRaces = new List<Race>();
+					foreach (Race race in _playerRaces)
+					{
+						if (race != null)
+						{
+							selectedRaces.Add(race);
+						}
+					}
+					while (_playerRaces[0] == null)
+					{
+						int random = _gameMain.Random.Next(_gameMain.RaceManager.Races.Count);
+						if (!selectedRaces.Contains(_gameMain.RaceManager.Races[random]))
+						{
+							_playerRaces[0] = _gameMain.RaceManager.Races[random];
+							selectedRaces.Add(_playerRaces[0]);
+						}
+					}
 					//Galaxy already generated, move on to player setup
+					string emperorName = string.IsNullOrEmpty(_playerEmperorName.Text) ? NameGenerator.GetName() : _playerEmperorName.Text;
+					string homeworldName = string.IsNullOrEmpty(_playerHomeworldName.Text) ? NameGenerator.GetName() : _playerHomeworldName.Text;
+					Empire empire = new Empire(emperorName, 0, _playerRaces[0], PlayerType.HUMAN, null, _playerColors[0], _gameMain);
+					Planet homePlanet;
+					StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+					homeSystem.Name = homeworldName;
+					empire.SetHomeSystem(homeSystem, homePlanet);
+					_gameMain.EmpireManager.AddEmpire(empire);
 				}
 			}
 		}
