@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Nurds" 
       singularName="Nurd"
+      raceDescription="The race where the word &quot;Nerd&quot; was derived from.  At first glance, they look like humans, except their heads are three times bigger, they have multiple randomly-placed pockets lined with pocket protectors, and have four literal eyes.  Nicknames includes four-eyes, dorks, and bookworms."
       neutralPortrait="NurdNeutralPortrait" 
       happyPortrait="NurdHappyPortrait" 
       angryPortrait="NurdAngryPortrait" 

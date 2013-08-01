@@ -43,6 +43,7 @@ namespace Beyond_Beyaan.Data_Modules
 
 		public string RaceName { get; private set; }
 		public string SingularRaceName { get; private set; }
+		public string RaceDescription { get; private set; }
 
 		public BBSprite NeutralAvatar { get; private set; }
 		public BBSprite AngryAvatar { get; private set; }
@@ -65,6 +66,7 @@ namespace Beyond_Beyaan.Data_Modules
 
 			RaceName = root.Attribute("name").Value;
 			SingularRaceName = root.Attribute("singularName").Value;
+			RaceDescription = root.Attribute("raceDescription").Value;
 			NeutralAvatar = SpriteManager.GetSprite(root.Attribute("neutralPortrait").Value, r);
 			HappyAvatar = SpriteManager.GetSprite(root.Attribute("happyPortrait").Value, r);
 			AngryAvatar = SpriteManager.GetSprite(root.Attribute("angryPortrait").Value, r);

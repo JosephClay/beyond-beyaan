@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Zero People" 
       singularName="Zero People"
+      raceDescription="Zero People were accidentally created one night by a group of computer science students trying to create a simple database query.  It gained sentience through luck, improbability, and a dash of spilled tea, and not much else need to be said except that they hate all living forms."
       neutralPortrait="ZeroPeopleNeutralPortrait" 
       happyPortrait="ZeroPeopleHappyPortrait" 
       angryPortrait="ZeroPeopleAngryPortrait" 

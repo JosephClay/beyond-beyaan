@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Space Hamsters" 
       singularName="Space Hamster"
+      raceDescription="Space Hamsters are hamsters in space.  Seriously.  One day they decided that spinning their little wheels aren't satisfactory enough, they want bigger wheels.  Frantic attempts to communicate with their owners failed, so they've decided to take matters in their own paws!"
       neutralPortrait="SpaceHamsterNeutralPortrait" 
       happyPortrait="SpaceHamsterHappyPortrait" 
       angryPortrait="SpaceHamsterAngryPortrait" 

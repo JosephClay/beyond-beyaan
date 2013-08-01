@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using Beyond_Beyaan.Data_Managers;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
@@ -13,6 +14,8 @@ namespace Beyond_Beyaan.Screens
 		private int _xPos;
 		private int _yPos;
 
+		private BBStretchableImage _busyImage;
+		private BBLabel _busyText;
 		private BBStretchableImage _background;
 		private BBSprite _nebulaBackground;
 		private BBSprite _randomRaceSprite;
@@ -40,7 +43,11 @@ namespace Beyond_Beyaan.Screens
 
 		private BBLabel _numberOfAILabel;
 		private BBNumericUpDown _numericUpDownAI;
-		//private Camera camera;
+		private Camera camera;
+		private bool _generatingGalaxy;
+
+		private BBStretchButton _okButton;
+		private BBStretchButton _cancelButton;
 
 		private RaceSelection _raceSelection;
 		private bool _showingSelection;
@@ -65,6 +72,10 @@ namespace Beyond_Beyaan.Screens
 			_playerColors = new Color[6];
 			_numberOfAILabel = new BBLabel();
 			_numericUpDownAI = new BBNumericUpDown();
+			_busyImage = new BBStretchableImage();
+			_busyText = new BBLabel();
+			_okButton = new BBStretchButton();
+			_cancelButton = new BBStretchButton();
 
 			_difficultyComboBox = new BBComboBox();
 			_difficultyLabel = new BBLabel();
@@ -204,6 +215,24 @@ namespace Beyond_Beyaan.Screens
 			}
 			_raceSelection.OnOkClick = OnRaceSelectionOKClick;
 
+			_generatingGalaxy = false;
+			if (!_busyImage.Initialize(gameMain.ScreenWidth / 2 - 100, gameMain.ScreenHeight / 2 - 50, 200, 100, StretchableImageType.MediumBorder, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_busyText.Initialize(gameMain.ScreenWidth / 2, gameMain.ScreenHeight / 2, string.Empty, Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_okButton.Initialize("Start Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 660, _yPos + 610, 200, 50, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_cancelButton.Initialize("Main Menu", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 450, _yPos + 610, 200, 50, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
 			reason = null;
 			return true;
 		}
@@ -231,10 +260,6 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 			_background.Draw();
-			if (GameConfiguration.AllowGalaxyPreview)
-			{
-				DrawGalaxyPreview();
-			}
 			_playerBackground.Draw();
 			_playerInfoBackground.Draw();
 			for (int i = 0; i < _playerLabels.Length; i++)
@@ -259,6 +284,13 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			_galaxyBackground.Draw();
+			//if (GameConfiguration.AllowGalaxyPreview)
+			{
+				DrawGalaxyPreview();
+			}
+
+			_okButton.Draw();
+			_cancelButton.Draw();
 
 			//Comboboxes should be drawn last, due to their "drop-down" feature
 			_galaxyComboBox.Draw();
@@ -268,10 +300,19 @@ namespace Beyond_Beyaan.Screens
 			{
 				_raceSelection.Draw();
 			}
+			if (_generatingGalaxy)
+			{
+				_busyImage.Draw();
+				_busyText.Draw();
+			}
 		}
 
 		public void Update(int x, int y, float frameDeltaTime)
 		{
+			if (_generatingGalaxy)
+			{
+				return;
+			}
 			if (_showingSelection)
 			{
 				_raceSelection.MouseHover(x, y, frameDeltaTime);
@@ -289,6 +330,9 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			_numericUpDownAI.MouseHover(x, y, frameDeltaTime);
+			_playerRaceDescription.MouseHover(x, y, frameDeltaTime);
+			_okButton.MouseHover(x, y, frameDeltaTime);
+			_cancelButton.MouseHover(x, y, frameDeltaTime);
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
@@ -297,9 +341,17 @@ namespace Beyond_Beyaan.Screens
 			{
 				return;
 			}
+			if (_generatingGalaxy)
+			{
+				return;
+			}
 			if (_showingSelection)
 			{
 				_raceSelection.MouseDown(x, y);
+				return;
+			}
+			if (_playerRaceDescription.MouseDown(x, y))
+			{
 				return;
 			}
 			if (_galaxyComboBox.MouseDown(x, y))
@@ -329,12 +381,24 @@ namespace Beyond_Beyaan.Screens
 					return;
 				}
 			}
+			if (_okButton.MouseDown(x, y))
+			{
+				return;
+			}
+			if (_cancelButton.MouseDown(x, y))
+			{
+				return;
+			}
 			_numericUpDownAI.MouseDown(x, y);
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
 			if (whichButton != 1)
+			{
+				return;
+			}
+			if (_generatingGalaxy)
 			{
 				return;
 			}
@@ -347,9 +411,26 @@ namespace Beyond_Beyaan.Screens
 			_playerHomeworldName.MouseUp(x, y);
 			_numericUpDownAI.MouseUp(x, y);
 			_difficultyComboBox.MouseUp(x, y);
+			if (_playerRaceDescription.MouseUp(x, y))
+			{
+				return;
+			}
 			if (_galaxyComboBox.MouseUp(x, y))
 			{
-				//Update galaxy here
+				if (!_galaxyComboBox.Dropped)
+				{
+					//Update galaxy here
+					_generatingGalaxy = true;
+					_busyText.SetText("Generating Galaxy");
+					_busyText.MoveTo((int)((_gameMain.ScreenWidth / 2) - (_busyText.GetWidth() / 2)), (int)((_gameMain.ScreenHeight / 2) - (_busyText.GetHeight() / 2)));
+					_gameMain.Galaxy.OnGenerateComplete += OnGalaxyGenerated;
+					string reason;
+					if (!_gameMain.Galaxy.GenerateGalaxy((GALAXYTYPE)_galaxyComboBox.SelectedIndex, 1, 1, _gameMain.Random, out reason))
+					{
+						MessageBox.Show(reason);
+						_generatingGalaxy = false;
+					}
+				}
 			}
 			if (_playerRaceButton.MouseUp(x, y))
 			{
@@ -364,94 +445,31 @@ namespace Beyond_Beyaan.Screens
 					_raceSelection.SetCurrentPlayerInfo(i + 1, _playerRaces[i + 1], _playerColors[i + 1]);
 				}
 			}
-			/*		
-
-			for (int i = 0; i < buttons.Length; i++)
+			if (_cancelButton.MouseUp(x, y))
 			{
-				if (buttons[i].MouseUp(x, y))
+				_gameMain.ChangeToScreen(Screen.MainMenu);
+			}
+			if (_okButton.MouseUp(x, y))
+			{
+				//See if the galaxy is generated.  If not, generate it now, then proceed to player setup
+				if (_gameMain.Galaxy.GetAllStars().Count == 0)
 				{
-					switch(i)
+					_generatingGalaxy = true;
+					_busyText.SetText("Generating Galaxy");
+					_busyText.MoveTo((int)((_gameMain.ScreenWidth / 2.0f) - (_busyText.GetWidth() / 2)), (int)((_gameMain.ScreenHeight / 2.0f) - (_busyText.GetHeight() / 2)));
+					_gameMain.Galaxy.OnGenerateComplete += OnGalaxyGeneratedThenPlayerStart;
+					string reason;
+					if (!_gameMain.Galaxy.GenerateGalaxy((GALAXYTYPE)_galaxyComboBox.SelectedIndex, 1, 1, _gameMain.Random, out reason))
 					{
-						case 0:
-							_gameMain.ChangeToScreen(Screen.MainMenu);
-							break;
-						case 1:
-							if (_gameMain.Galaxy.GalaxySize > 0)
-							{
-								int habitableStars = _gameMain.Galaxy.GetAllStars().Count;
-								if (empires.Count > habitableStars || empires.Count < 2)
-								{
-									return;
-								}
-								bool hasHuman = false;
-								foreach (Empire empire in empires)
-								{
-									if (empire.Type == PlayerType.HUMAN)
-									{
-										hasHuman = true;
-										break;
-									}
-								}
-								if (!hasHuman)
-								{
-									return;
-								}
-								foreach (Empire empire in empires)
-								{
-									Planet homePlanet;
-									_gameMain.EmpireManager.AddEmpire(empire);
-									StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
-									empire.SetHomeSystem(homeSystem, homePlanet);
-								}
-								_gameMain.EmpireManager.SetupContacts();
-								//_gameMain.EmpireManager.UpdateInfluenceMaps(_gameMain.Galaxy);
-								_gameMain.EmpireManager.SetInitialEmpireTurn();
-								//_gameMain.EmpireManager.ProcessNextEmpire(); //This will process the AI players, then set the current empire to human controlled one
-								_gameMain.RefreshSitRep();
-								//_gameMain.Galaxy.ConstructQuadTree();
-								_gameMain.ChangeToScreen(Screen.Galaxy);
-							}
-							break;
-						case 2:
-							generatingGalaxy = _galaxyComboBox.SelectedIndex;
-							break;
-						case 3:
-							galaxySize += 10;
-							galaxySizeLabel.SetText(galaxySize + " x " + galaxySize);
-							break;
-						case 4:
-							if (galaxySize > 50)
-							{
-								galaxySize -= 10;
-								galaxySizeLabel.SetText(galaxySize + " x " + galaxySize);
-							} break;
-						case 5:
-							if (minPlanets < maxPlanets)
-							{
-								minPlanets++;
-								minPlanetLabel.SetText(minPlanets.ToString());
-							} break;
-						case 6:
-							if (minPlanets > 0)
-							{
-								minPlanets--;
-								minPlanetLabel.SetText(minPlanets.ToString());
-							} break;
-						case 7:
-							if (maxPlanets < 10)
-							{
-								maxPlanets++;
-								maxPlanetLabel.SetText(maxPlanets.ToString());
-							} break;
-						case 8:
-							if (maxPlanets > minPlanets && maxPlanets > 1)
-							{
-								maxPlanets--;
-								maxPlanetLabel.SetText(maxPlanets.ToString());
-							} break;
+						MessageBox.Show(reason);
+						_generatingGalaxy = false;
 					}
 				}
-			}*/
+				else
+				{
+					//Galaxy already generated, move on to player setup
+				}
+			}
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -460,6 +478,10 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
+			if (_generatingGalaxy)
+			{
+				return;
+			}
 			if (_playerEmperorName.KeyDown(e))
 			{
 				return;
@@ -472,30 +494,46 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview()
 		{
-			/*drawingManagement.DrawSprite(SpriteName.Screen, _gameMain.ScreenWidth - 500, 0, 255, System.Drawing.Color.White);
-
+			if (_generatingGalaxy)
+			{
+				//Don't draw anything, the systems may get updated in middle of drawing, and cause an exception
+				return;
+			}
 			List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
 
-			_galaxyComboBox.Draw();
-
-			if (systems.Count > 0)
+			if (systems.Count > 0 && camera != null)
 			{
 				foreach (StarSystem system in systems)
 				{
-					int x = (_gameMain.ScreenWidth - 499) + (int)((system.X - camera.CameraX) * camera.ZoomDistance);
-					int y = (int)((system.Y - camera.CameraY) * camera.ZoomDistance) + 1;
 					GorgonLibrary.Gorgon.CurrentShader = _gameMain.StarShader;
+					//_xPos + 30, _yPos + 430, 240, 235
+					int x = _xPos + 60 + (int)((system.X - camera.CameraX) * camera.ZoomDistance);
+					int y = _yPos + 470 + (int)((system.Y - camera.CameraY) * camera.ZoomDistance);
 					_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
 					system.Sprite.Draw(x, y, 0.4f, 0.4f);
-					//drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 					GorgonLibrary.Gorgon.CurrentShader = null;
 				}
-
 				//numOfStarsLabel.Draw();
-			}*/
+			}
 		}
 
-		private void OnRaceSelectionOKClick(int whichPlayer, Race whichRace, Color color)
+		private void OnGalaxyGenerated()
+		{
+			_generatingGalaxy = false;
+			_gameMain.Galaxy.OnGenerateComplete = null;
+			camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, 190, 190);
+			camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
+		}
+
+		private void OnGalaxyGeneratedThenPlayerStart()
+		{
+			_generatingGalaxy = false;
+			_gameMain.Galaxy.OnGenerateComplete = null;
+			camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, 190, 190);
+			camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
+		}
+
+		private void OnRaceSelectionOKClick(int whichPlayer, Race whichRace)
 		{
 			_showingSelection = false;
 			for (int i = 0; i < _playerRaces.Length; i++)
@@ -504,18 +542,31 @@ namespace Beyond_Beyaan.Screens
 				{
 					_playerRaces[i] = null;
 					_raceSprites[i] = _randomRaceSprite;
+					if (i == 0)
+					{
+						_playerRaceDescription.SetText("A random race will be chosen.  If the Emperor and/or Homeworld name fields are left blank, default race names for those will be used.");
+					}
 					break;
 				}
 			}
 			_playerRaces[whichPlayer] = whichRace;
-			_raceSprites[whichPlayer] = whichRace.MiniAvatar;
-			for (int i = 0; i < _playerColors.Length; i++)
+			if (whichRace == null)
 			{
-				if (i != whichPlayer && _playerColors[i] == color)
+				_raceSprites[whichPlayer] = _randomRaceSprite;
+			}
+			else
+			{
+				_raceSprites[whichPlayer] = whichRace.MiniAvatar;
+			}
+			if (whichPlayer == 0)
+			{
+				if (whichRace == null)
 				{
-					_playerColors[i] = _playerColors[whichPlayer];
-					_playerColors[whichPlayer] = color;
-					break;
+					_playerRaceDescription.SetText("A random race will be chosen.  If the Emperor and/or Homeworld name fields are left blank, default race names for those will be used.");
+				}
+				else
+				{
+					_playerRaceDescription.SetText(whichRace.RaceDescription);
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Pyrrhans" 
       singularName="Pyrrhan"
+      raceDescription="Those parrots somehow managed to gain enough intelligence to build starships, but yet they still crave crackers and name their children Polly.  They also seek vengeance against pirates for abusing them for generations."
       neutralPortrait="PyrrhanNeutralPortrait" 
       happyPortrait="PyrrhanHappyPortrait" 
       angryPortrait="PyrrhanAngryPortrait" 

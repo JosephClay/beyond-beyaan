@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Race name="Salix Cybornia" 
       singularName="Salix Cybornia"
+      raceDescription="A long long time ago, they were tasked with protecting the environment, especially forests. After disposing of a bad wizard that was polluting their lands, and finding the females of their species, they proceeded to flourish. Eventually they decided that the best way to maintain the environment was to get rid of all parasites, which includes small people with furry feet, so they fought a war against the other inhabitats. Eventually they won, with the aid of a time machine, and now they've turned their eyes (or the equivalent thereof) to the stars. They will make every planet a paradise, or die trying!"
       neutralPortrait="SalixCyborniaNeutralPortrait" 
       happyPortrait="SalixCyborniaHappyPortrait" 
       angryPortrait="SalixCyborniaAngryPortrait" 
