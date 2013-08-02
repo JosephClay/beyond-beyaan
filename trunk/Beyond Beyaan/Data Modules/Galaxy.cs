@@ -345,7 +345,6 @@ namespace Beyond_Beyaan
 		private void FillGalaxyWithStars(int numberOfStars, int minPlanets, int maxPlanets, bool[][] grid, Random r)
 		{
 			starSystems = new List<StarSystem>();
-			NameGenerator nameGenerator = new NameGenerator();
 
 			StarNode starTree = new StarNode(0, 0, grid.Length - 1, grid.Length - 1);
 
@@ -395,7 +394,7 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(nameGenerator.GetStarName(r), x * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), y * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), starColor, description, minPlanets, maxPlanets, r));
+				starSystems.Add(new StarSystem(NameGenerator.GetStarName(r), x * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), y * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), starColor, description, minPlanets, maxPlanets, r));
 
 				bool[][] invalidatedArea = Utility.CalculateDisc(2, 1);
 
