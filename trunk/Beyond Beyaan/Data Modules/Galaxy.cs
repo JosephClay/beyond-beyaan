@@ -420,11 +420,54 @@ namespace Beyond_Beyaan
 			Random r = new Random();
 			while (true)
 			{
-				int starIter = r.Next(starSystems.Count);
-				if (starSystems[starIter].EmpiresWithPlanetsInThisSystem.Count == 0)
+				var potentialSystem = starSystems[r.Next(starSystems.Count)];
+				if (potentialSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
 				{
-					starSystems[starIter].SetHomeworld(empire, out homePlanet, r);
-					return starSystems[starIter];
+					continue;
+				}
+				//Validation checks
+				bool FourParsecsSystem = false;
+				bool SixParsecsSystem = false;
+				bool AtLeastSixParsecsAwayFromOthers = true;
+				foreach (StarSystem starSystem in starSystems)
+				{
+					if (potentialSystem != starSystem)
+					{
+						int x = potentialSystem.X - starSystem.X;
+						int y = potentialSystem.Y - starSystem.Y;
+						double distance = Math.Sqrt((x * x) + (y * y));
+						if (distance <= PARSEC_SIZE_IN_PIXELS * 4)
+						{
+							if (!FourParsecsSystem)
+							{
+								FourParsecsSystem = true;
+							}
+							else
+							{
+								//Already have another star system that's within 4 parsecs
+								SixParsecsSystem = true;
+							}
+							if (starSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
+							{
+								AtLeastSixParsecsAwayFromOthers = false;
+								break;
+							}
+						}
+						else if (distance <= PARSEC_SIZE_IN_PIXELS * 6)
+						{
+							SixParsecsSystem = true;
+							if (starSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
+							{
+								AtLeastSixParsecsAwayFromOthers = false;
+								break;
+							}
+						}
+					}
+				}
+				if (FourParsecsSystem && SixParsecsSystem && AtLeastSixParsecsAwayFromOthers)
+				{
+					potentialSystem.SetHomeworld(empire, out homePlanet, r);
+					return potentialSystem;
 				}
 			}
 		}
