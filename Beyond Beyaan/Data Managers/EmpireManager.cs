@@ -49,6 +49,11 @@ namespace Beyond_Beyaan
 			empires.Remove(empire);
 		}
 
+		public void Reset()
+		{
+			empires.Clear();
+		}
+
 		public void SetupContacts()
 		{
 			foreach (Empire empire in empires)
@@ -59,6 +64,11 @@ namespace Beyond_Beyaan
 
 		public void SetInitialEmpireTurn()
 		{
+			foreach (Empire empire in empires)
+			{
+				//Reset fleet movement and stuff
+				empire.FleetManager.ResetFleetMovements();
+			}
 			empireIter = 0;
 			//If first player isn't human, find the next one
 			for (int i = 0; i < empires.Count; i++)
@@ -156,19 +166,38 @@ namespace Beyond_Beyaan
 			return stillHaveMovement;
 		}
 
-		public void UpdateEmpires(Galaxy galaxy)
+		public void UpdateEmpires()
 		{
 			foreach (Empire empire in empires)
 			{
 				empire.SitRepManager.ClearItems();
-				//empire.FleetManager.ResetFleetMovements();
-				empire.CheckExploredSystems(galaxy);
-				empire.PlanetManager.UpdatePopGrowth();
 				empire.CheckForBuiltShips();
 				empire.UpdateResearchPoints();
 				empire.TechnologyManager.ProcessResearchTurn(empire.ResearchPoints, _gameMain.Random, empire.SitRepManager);
 				empire.ContactManager.UpdateContacts(empire.SitRepManager);
 			}
+		}
+
+		public void UpdatePopulationGrowth()
+		{
+			foreach (Empire empire in empires)
+			{
+				empire.PlanetManager.UpdatePopGrowth();
+			}
+		}
+
+		public Dictionary<Empire, List<StarSystem>> CheckExploredSystems(Galaxy galaxy)
+		{
+			Dictionary<Empire, List<StarSystem>> exploredSystems = new Dictionary<Empire, List<StarSystem>>();
+			foreach (Empire empire in empires)
+			{
+				List<StarSystem> temp = empire.CheckExploredSystems(galaxy);
+				if (empire.IsHumanPlayer && temp.Count > 0)
+				{
+					exploredSystems.Add(empire, temp);
+				}
+			}
+			return exploredSystems;
 		}
 
 		public void LookForCombat()

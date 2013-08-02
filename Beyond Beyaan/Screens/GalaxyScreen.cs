@@ -55,7 +55,7 @@ namespace Beyond_Beyaan.Screens
 			backBuffer.BlendingMode = BlendingModes.Modulated;
 
 			_systemView = new SystemView();
-			if (!_systemView.Initialize(_gameMain, out reason))
+			if (!_systemView.Initialize(_gameMain, "GalaxyScreen", out reason))
 			{
 				return false;
 			}

@@ -454,16 +454,7 @@ namespace Beyond_Beyaan.Screens
 				//See if the galaxy is generated.  If not, generate it now, then proceed to player setup
 				if (_gameMain.Galaxy.GetAllStars().Count == 0)
 				{
-					_generatingGalaxy = true;
-					_busyText.SetText("Generating Galaxy");
-					_busyText.MoveTo((int)((_gameMain.ScreenWidth / 2.0f) - (_busyText.GetWidth() / 2)), (int)((_gameMain.ScreenHeight / 2.0f) - (_busyText.GetHeight() / 2)));
-					_gameMain.Galaxy.OnGenerateComplete += OnGalaxyGeneratedThenPlayerStart;
-					string reason;
-					if (!_gameMain.Galaxy.GenerateGalaxy((GALAXYTYPE)_galaxyComboBox.SelectedIndex, 1, 1, _gameMain.Random, out reason))
-					{
-						MessageBox.Show(reason);
-						_generatingGalaxy = false;
-					}
+					SetUpGalaxy();
 				}
 				else
 				{
@@ -527,7 +518,22 @@ namespace Beyond_Beyaan.Screens
 
 		private void OnGalaxyGeneratedThenPlayerStart()
 		{
+			_gameMain.Galaxy.OnGenerateComplete = null;
 			SetUpEmpiresAndStart();
+		}
+
+		private void SetUpGalaxy()
+		{
+			_generatingGalaxy = true;
+			_busyText.SetText("Generating Galaxy");
+			_busyText.MoveTo((int)((_gameMain.ScreenWidth / 2.0f) - (_busyText.GetWidth() / 2)), (int)((_gameMain.ScreenHeight / 2.0f) - (_busyText.GetHeight() / 2)));
+			_gameMain.Galaxy.OnGenerateComplete += OnGalaxyGeneratedThenPlayerStart;
+			string reason;
+			if (!_gameMain.Galaxy.GenerateGalaxy((GALAXYTYPE)_galaxyComboBox.SelectedIndex, 1, 1, _gameMain.Random, out reason))
+			{
+				MessageBox.Show(reason);
+				_generatingGalaxy = false;
+			}
 		}
 
 		private void SetUpEmpiresAndStart()
@@ -555,6 +561,13 @@ namespace Beyond_Beyaan.Screens
 			Empire empire = new Empire(emperorName, 0, _playerRaces[0], PlayerType.HUMAN, null, _playerColors[0], _gameMain);
 			Planet homePlanet;
 			StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+			if (homeSystem == null)
+			{
+				_gameMain.EmpireManager.Reset();
+				//No valid systems, start again
+				SetUpGalaxy();
+				return;
+			}
 			homeSystem.Name = homeworldName;
 			empire.SetHomeSystem(homeSystem, homePlanet);
 			_gameMain.EmpireManager.AddEmpire(empire);
@@ -572,6 +585,13 @@ namespace Beyond_Beyaan.Screens
 				}
 				empire = new Empire(_playerRaces[i + 1].GetRandomEmperorName(), 0, _playerRaces[i + 1], PlayerType.CPU, null, _playerColors[i + 1], _gameMain);
 				homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+				if (homeSystem == null)
+				{
+					_gameMain.EmpireManager.Reset();
+					//No valid systems, start again
+					SetUpGalaxy();
+					return;
+				}
 				homeSystem.Name = NameGenerator.GetName();
 				empire.SetHomeSystem(homeSystem, homePlanet);
 				_gameMain.EmpireManager.AddEmpire(empire);
