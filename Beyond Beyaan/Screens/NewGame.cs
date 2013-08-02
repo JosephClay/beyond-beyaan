@@ -467,32 +467,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				else
 				{
-					List<Race> selectedRaces = new List<Race>();
-					foreach (Race race in _playerRaces)
-					{
-						if (race != null)
-						{
-							selectedRaces.Add(race);
-						}
-					}
-					while (_playerRaces[0] == null)
-					{
-						int random = _gameMain.Random.Next(_gameMain.RaceManager.Races.Count);
-						if (!selectedRaces.Contains(_gameMain.RaceManager.Races[random]))
-						{
-							_playerRaces[0] = _gameMain.RaceManager.Races[random];
-							selectedRaces.Add(_playerRaces[0]);
-						}
-					}
-					//Galaxy already generated, move on to player setup
-					string emperorName = string.IsNullOrEmpty(_playerEmperorName.Text) ? NameGenerator.GetName() : _playerEmperorName.Text;
-					string homeworldName = string.IsNullOrEmpty(_playerHomeworldName.Text) ? NameGenerator.GetName() : _playerHomeworldName.Text;
-					Empire empire = new Empire(emperorName, 0, _playerRaces[0], PlayerType.HUMAN, null, _playerColors[0], _gameMain);
-					Planet homePlanet;
-					StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
-					homeSystem.Name = homeworldName;
-					empire.SetHomeSystem(homeSystem, homePlanet);
-					_gameMain.EmpireManager.AddEmpire(empire);
+					SetUpEmpiresAndStart();
 				}
 			}
 		}
@@ -552,10 +527,58 @@ namespace Beyond_Beyaan.Screens
 
 		private void OnGalaxyGeneratedThenPlayerStart()
 		{
-			_generatingGalaxy = false;
-			_gameMain.Galaxy.OnGenerateComplete = null;
-			camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, 190, 190);
-			camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
+			SetUpEmpiresAndStart();
+		}
+
+		private void SetUpEmpiresAndStart()
+		{
+			List<Race> selectedRaces = new List<Race>();
+			foreach (Race race in _playerRaces)
+			{
+				if (race != null)
+				{
+					selectedRaces.Add(race);
+				}
+			}
+			while (_playerRaces[0] == null)
+			{
+				int random = _gameMain.Random.Next(_gameMain.RaceManager.Races.Count);
+				if (!selectedRaces.Contains(_gameMain.RaceManager.Races[random]))
+				{
+					_playerRaces[0] = _gameMain.RaceManager.Races[random];
+					selectedRaces.Add(_playerRaces[0]);
+				}
+			}
+			//Galaxy already generated, move on to player setup
+			string emperorName = string.IsNullOrEmpty(_playerEmperorName.Text) ? _playerRaces[0].GetRandomEmperorName() : _playerEmperorName.Text;
+			string homeworldName = string.IsNullOrEmpty(_playerHomeworldName.Text) ? NameGenerator.GetName() : _playerHomeworldName.Text;
+			Empire empire = new Empire(emperorName, 0, _playerRaces[0], PlayerType.HUMAN, null, _playerColors[0], _gameMain);
+			Planet homePlanet;
+			StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+			homeSystem.Name = homeworldName;
+			empire.SetHomeSystem(homeSystem, homePlanet);
+			_gameMain.EmpireManager.AddEmpire(empire);
+
+			for (int i = 0; i < _numericUpDownAI.Value; i++)
+			{
+				while (_playerRaces[i + 1] == null)
+				{
+					int random = _gameMain.Random.Next(_gameMain.RaceManager.Races.Count);
+					if (!selectedRaces.Contains(_gameMain.RaceManager.Races[random]))
+					{
+						_playerRaces[i + 1] = _gameMain.RaceManager.Races[random];
+						selectedRaces.Add(_playerRaces[i + 1]);
+					}
+				}
+				empire = new Empire(_playerRaces[i + 1].GetRandomEmperorName(), 0, _playerRaces[i + 1], PlayerType.CPU, null, _playerColors[i + 1], _gameMain);
+				homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+				homeSystem.Name = NameGenerator.GetName();
+				empire.SetHomeSystem(homeSystem, homePlanet);
+				_gameMain.EmpireManager.AddEmpire(empire);
+			}
+			_gameMain.EmpireManager.SetupContacts();
+			_gameMain.EmpireManager.SetInitialEmpireTurn();
+			_gameMain.ChangeToScreen(Screen.Galaxy);
 		}
 
 		private void OnRaceSelectionOKClick(int whichPlayer, Race whichRace)

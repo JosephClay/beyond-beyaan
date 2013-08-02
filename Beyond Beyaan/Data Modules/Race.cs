@@ -132,8 +132,7 @@ namespace Beyond_Beyaan.Data_Modules
 		public string GetRandomShipName()
 		{
 			// TODO: Add ship names to races
-			NameGenerator nameGenerator = new NameGenerator();
-			return nameGenerator.GetName();
+			return NameGenerator.GetName();
 		}
 
 		public BBSprite GetShip(int type, int whichBody)
@@ -168,8 +167,7 @@ namespace Beyond_Beyaan.Data_Modules
 		public string GetRandomEmperorName()
 		{
 			// TODO: Add potential emperor names
-			NameGenerator nameGenerator = new NameGenerator();
-			return nameGenerator.GetName();
+			return NameGenerator.GetName();
 		}
 	}
 }

@@ -48,7 +48,12 @@ namespace Beyond_Beyaan
 				if (width * maxZoom < windowWidth && height * maxZoom < windowHeight)
 				{
 					//Get a maxZoom that have the items fill the screen
-					maxZoom = windowWidth / (float)width;
+					float temp = windowWidth / (float)width;
+					maxZoom = windowHeight / (float)height;
+					if (temp < maxZoom)
+					{
+						maxZoom = temp;
+					}
 					break;
 				}
 				if (maxZoom <= 0)

@@ -150,6 +150,45 @@ namespace Beyond_Beyaan
 			return GetName();
 		}
 
+		public static void ResetStarNames()
+		{
+			//When starting a new game, need to reset star names
+			StarNames = new List<string>
+			{
+				"Govik",
+				"Smeggit",
+				"Starker",
+				"Sharpe",
+				"Drakknott",
+				"Hypatia",
+				"Tyson",
+				"Jerobynn",
+				"Drused",
+				"Xin",
+				"Moby",
+				"Zandalar",
+				"Solifugus",
+				"Boundless Butterfly Galaxy of Chase",
+				"Robynseye",
+				"Arouca",
+				"Aki Ohana",
+				"Predestination",
+				"Star's End",
+				"Kar Fimbul",
+				"Firefly",
+				"Boordin",
+				"Whichammer",
+				"Dyson Alpha",
+				"Feona",
+				"Oatams",
+				"Ersilia",
+				"Sarah's Sunflower",
+				"Bylon",
+				"Rangulus",
+				"Ptolemae",
+			};
+		}
+
 		//Function to call to get a random name
 		public static string GetName()
 		{

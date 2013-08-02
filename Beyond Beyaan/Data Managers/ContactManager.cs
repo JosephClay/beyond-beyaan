@@ -20,7 +20,7 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			thisEmpire = currentEmpire;
 			contacts = new List<Contact>();
-			foreach (Empire empire in allEmpires)
+			/*foreach (Empire empire in allEmpires)
 			{
 				if (empire != currentEmpire)
 				{
@@ -32,7 +32,7 @@ namespace Beyond_Beyaan.Data_Managers
 					newContact.IncomingMessage = MessageType.NONE;
 					contacts.Add(newContact);
 				}
-			}
+			}*/
 		}
 
 		public void EstablishContact(Empire empireContacted, SitRepManager sitRepManager)
