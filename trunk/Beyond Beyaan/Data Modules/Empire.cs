@@ -132,6 +132,11 @@ namespace Beyond_Beyaan
 			get { return sitRepManager; }
 		}
 
+		public bool IsHumanPlayer
+		{
+			get { return ai == null; }
+		}
+
 		/*public GorgonLibrary.Graphics.Sprite InfluenceMap
 		{
 			get { return influenceMap; }
@@ -272,8 +277,9 @@ namespace Beyond_Beyaan
 			selectedSystem = lastSelectedSystem;
 		}
 
-		public void CheckExploredSystems(Galaxy galaxy)
+		public List<StarSystem> CheckExploredSystems(Galaxy galaxy)
 		{
+			List<StarSystem> exploredSystems = new List<StarSystem>();
 			foreach (Fleet fleet in fleetManager.GetFleets())
 			{
 				if (fleet.TravelNodes == null || fleet.TravelNodes.Count == 0)
@@ -283,9 +289,11 @@ namespace Beyond_Beyaan
 					{
 						sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
 						systemExplored.AddEmpireExplored(this);
+						exploredSystems.Add(systemExplored);
 					}
 				}
 			}
+			return exploredSystems;
 		}
 
 		/*public void CreateInfluenceMapSprite(GridCell[][] gridCells)

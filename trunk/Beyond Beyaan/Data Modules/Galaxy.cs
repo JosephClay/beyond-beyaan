@@ -418,11 +418,18 @@ namespace Beyond_Beyaan
 		public StarSystem SetHomeworld(Empire empire, out Planet homePlanet)
 		{
 			Random r = new Random();
+			List<StarSystem> potentialSystems = new List<StarSystem>(starSystems);
 			while (true)
 			{
-				var potentialSystem = starSystems[r.Next(starSystems.Count)];
+				if (potentialSystems.Count == 0)
+				{
+					homePlanet = null;
+					return null;
+				}
+				var potentialSystem = potentialSystems[r.Next(potentialSystems.Count)];
 				if (potentialSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
 				{
+					potentialSystems.Remove(potentialSystem);
 					continue;
 				}
 				//Validation checks
@@ -469,6 +476,7 @@ namespace Beyond_Beyaan
 					potentialSystem.SetHomeworld(empire, out homePlanet, r);
 					return potentialSystem;
 				}
+				potentialSystems.Remove(potentialSystem);
 			}
 		}
 		#endregion
