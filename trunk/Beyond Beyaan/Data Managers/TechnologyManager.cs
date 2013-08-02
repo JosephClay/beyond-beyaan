@@ -307,7 +307,7 @@ namespace Beyond_Beyaan
 
 		public void ProcessResearchTurn(float researchPoints, Random r, SitRepManager sitRepManager)
 		{
-			if (ComputerPercentage == 0)
+			/*if (ComputerPercentage == 0)
 			{
 				if (ComputerResearchAmount > 0)
 				{
@@ -511,7 +511,7 @@ namespace Beyond_Beyaan
 				}
 			}
 
-			UpdateValues();
+			UpdateValues();*/
 		}
 
 		public void SetPercentage(TechField whichField, int amount)
