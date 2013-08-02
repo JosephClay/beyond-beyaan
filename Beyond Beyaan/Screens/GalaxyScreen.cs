@@ -80,7 +80,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void CenterScreenToPoint(Point point)
 		{
-			camera.CenterCamera(point.X * 32, point.Y * 32, camera.ZoomDistance);
+			camera.CenterCamera(point.X * 60, point.Y * 60, camera.ZoomDistance);
 		}
 
 		//Used when other non-combat screens are open, to fill in the blank areas
@@ -145,7 +145,6 @@ namespace Beyond_Beyaan.Screens
 			{
 				GorgonLibrary.Gorgon.CurrentShader = _gameMain.StarShader;
 				_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-				//drawingManagement.DrawSprite(SpriteName.Star, (int)(((system.X * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((system.Y * 32) - camera.CameraY) * camera.ZoomDistance), 255, system.Size * 32 * camera.ZoomDistance, system.Size * 32 * camera.ZoomDistance, System.Drawing.Color.White);
 				system.Sprite.Draw((int)((system.X - camera.CameraX) * camera.ZoomDistance), (int)((system.Y - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 

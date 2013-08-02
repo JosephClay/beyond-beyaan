@@ -15,7 +15,7 @@ namespace Beyond_Beyaan.Screens
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			_gameMain = gameMain;
-			camera = new Camera(gameMain.Galaxy.GalaxySize * 32, gameMain.Galaxy.GalaxySize * 32, gameMain.ScreenWidth, gameMain.ScreenHeight);
+			camera = new Camera(gameMain.Galaxy.GalaxySize * 60, gameMain.Galaxy.GalaxySize * 60, gameMain.ScreenWidth, gameMain.ScreenHeight);
 			camera.CenterCamera(camera.Width / 2, camera.Height / 2, camera.MaxZoom);
 
 			stillMoving = true;
@@ -34,7 +34,6 @@ namespace Beyond_Beyaan.Screens
 			foreach (StarSystem system in systems)
 			{
 				_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-				//drawingManagement.DrawSprite(SpriteName.Star, (int)(((system.X * 32) - camera.CameraX) * camera.ZoomDistance), (int)(((system.Y * 32) - camera.CameraY) * camera.ZoomDistance), 255, system.Size * 32 * camera.ZoomDistance, system.Size * 32 * camera.ZoomDistance, System.Drawing.Color.White);
 				system.Sprite.Draw((int)((system.X - camera.CameraX) * camera.ZoomDistance), (int)((system.Y - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance);
 			}
 			GorgonLibrary.Gorgon.CurrentShader = null;
