@@ -178,7 +178,7 @@ namespace Beyond_Beyaan
 		{
 			foreach (Empire empire in empires)
 			{
-				empire.FleetManager.MergeIdleFleets();
+				empire.FleetManager.ClearEmptyFleets();
 			}
 		}
 
@@ -199,6 +199,15 @@ namespace Beyond_Beyaan
 			foreach (Empire empire in empires)
 			{
 				empire.PlanetManager.UpdatePopGrowth();
+			}
+		}
+
+		public void LaunchTransports()
+		{
+			foreach (Empire empire in empires)
+			{
+				//go through each system and see if a system is sending out transports
+				empire.LaunchTransports();
 			}
 		}
 

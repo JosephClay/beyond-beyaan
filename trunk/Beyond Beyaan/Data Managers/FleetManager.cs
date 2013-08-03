@@ -193,15 +193,23 @@ namespace Beyond_Beyaan
 					{
 						if (fleets[j].TravelNodes == null && fleets[j].AdjacentSystem == fleets[i].AdjacentSystem)
 						{
-							foreach (KeyValuePair<Ship, int> ship in fleets[j].Ships)
+							//Merge only fleets of the same type (i.e. ships with ships, transports with transports
+							if (fleets[j].Ships.Count > 0 && fleets[i].Ships.Count > 0)
 							{
-								fleets[i].AddShips(ship.Key, ship.Value);
+								foreach (KeyValuePair<Ship, int> ship in fleets[j].Ships)
+								{
+									fleets[i].AddShips(ship.Key, ship.Value);
+								}
+								fleetsToRemove.Add(fleets[j]);
 							}
-							foreach (TransportShip ship in fleets[j].TransportShips)
+							else if (fleets[j].TransportShips.Count > 0 && fleets[i].TransportShips.Count > 0)
 							{
-								fleets[i].AddTransport(ship.raceOnShip, ship.amount);
+								foreach (TransportShip ship in fleets[j].TransportShips)
+								{
+									fleets[i].AddTransport(ship.raceOnShip, ship.amount);
+								}
+								fleetsToRemove.Add(fleets[j]);
 							}
-							fleetsToRemove.Add(fleets[j]);
 						}
 					}
 					foreach (Fleet fleet in fleetsToRemove)
@@ -217,7 +225,7 @@ namespace Beyond_Beyaan
 			List<Fleet> fleetsToRemove = new List<Fleet>();
 			for (int i = 0; i < fleets.Count; i++)
 			{
-				if (fleets[i].Ships.Count == 0)
+				if (fleets[i].Ships.Count == 0 && fleets[i].TransportShips.Count == 0)
 				{
 					fleetsToRemove.Add(fleets[i]);
 				}

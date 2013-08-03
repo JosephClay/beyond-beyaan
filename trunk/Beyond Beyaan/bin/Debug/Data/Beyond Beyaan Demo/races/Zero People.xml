@@ -11,7 +11,7 @@
       groundTroop="ZeroPeopleGroundTroop"
       dyingTroop="ZeroPeopleDyingTroop"
       fleetIcon="ZeroPeopleFleetIcon"
-      transportIcon="ZeroPeopleFleetIcon"
+      transportIcon="ZeroPeopleTransportIcon"
       >
   <ShipTypes>
     <Ship name="Small" space="40" width="32" height="32" >

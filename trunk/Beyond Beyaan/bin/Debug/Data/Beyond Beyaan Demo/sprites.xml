@@ -713,6 +713,9 @@
   <Sprite name="HumanFleetIcon" file="humans.png">
     <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
+  <Sprite name="HumanTransportIcon" file="humans.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
   <Sprite name="HumanGroundTroop" file="humans.png">
     <Frame x="192" y="0" width="32" height="32" />
   </Sprite>
@@ -833,6 +836,9 @@
   </Sprite>
   <Sprite name="SalixCyborniaFleetIcon" file="salix_cybornia.png">
     <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="SalixCyborniaTransportIcon" file="salix_cybornia.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
   <Sprite name="SalixCyborniaGroundTroop" file="salix_cybornia.png">
     <Frame x="192" y="0" width="32" height="32" />
@@ -955,6 +961,9 @@
   <Sprite name="SpaceHamsterFleetIcon" file="space_hamsters.png">
     <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
+  <Sprite name="SpaceHamsterTransportIcon" file="space_hamsters.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
   <Sprite name="SpaceHamsterGroundTroop" file="space_hamsters.png">
     <Frame x="192" y="0" width="32" height="32" />
   </Sprite>
@@ -1075,6 +1084,9 @@
   </Sprite>
   <Sprite name="ZeroPeopleFleetIcon" file="zero_people.png">
     <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZeroPeopleTransportIcon" file="zero_people.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
   <Sprite name="ZeroPeopleGroundTroop" file="zero_people.png">
     <Frame x="192" y="0" width="32" height="32" />
@@ -1197,6 +1209,9 @@
   <Sprite name="AraneaFleetIcon" file="Araneas.png">
     <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
+  <Sprite name="AraneaTransportIcon" file="Araneas.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
   <Sprite name="AraneaGroundTroop" file="Araneas.png">
     <Frame x="192" y="0" width="32" height="32" />
   </Sprite>
@@ -1317,6 +1332,9 @@
   </Sprite>
   <Sprite name="NurdFleetIcon" file="Nurds.png">
     <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="NurdTransportIcon" file="Nurds.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
   <Sprite name="NurdGroundTroop" file="Nurds.png">
     <Frame x="192" y="0" width="32" height="32" />
@@ -1439,6 +1457,9 @@
   <Sprite name="PyrrhanFleetIcon" file="Pyrrhans.png">
     <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
+  <Sprite name="PyrrhanTransportIcon" file="Pyrrhans.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
   <Sprite name="PyrrhanGroundTroop" file="Pyrrhans.png">
     <Frame x="192" y="0" width="32" height="32" />
   </Sprite>
@@ -1559,6 +1580,9 @@
   </Sprite>
   <Sprite name="VelociraptorFleetIcon" file="Velociraptors.png">
     <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="VelociraptorTransportIcon" file="Velociraptors.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
   </Sprite>
   <Sprite name="VelociraptorGroundTroop" file="Velociraptors.png">
     <Frame x="192" y="0" width="32" height="32" />

@@ -433,6 +433,25 @@ namespace Beyond_Beyaan
 			}
 		}*/
 
+		public void LaunchTransports()
+		{
+			foreach (var planet in planetManager.Planets)
+			{
+				if (planet.TransferSystem.Key.StarSystem != null)
+				{
+					Fleet newFleet = new Fleet();
+					newFleet.Empire = this;
+					newFleet.GalaxyX = planet.System.X;
+					newFleet.GalaxyY = planet.System.Y;
+					newFleet.AddTransport(planet.Races[0], planet.TransferSystem.Value);
+					newFleet.TravelNodes = new List<TravelNode> {planet.TransferSystem.Key };
+					planet.RemoveRacePopulation(planet.Races[0], planet.TransferSystem.Value);
+					planet.TransferSystem = new KeyValuePair<TravelNode,int>(new TravelNode(), 0);
+					fleetManager.AddFleet(newFleet);
+				}
+			}
+		}
+
 		public void CheckForBuiltShips()
 		{
 			foreach (Planet planet in planetManager.Planets)
