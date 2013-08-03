@@ -523,7 +523,7 @@ namespace Beyond_Beyaan
 				y = newDestination.Y - currentDestination.Y;
 				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
 				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
-				newNode.IsValid = IsDestinationValid(newDestination, hasExtended, whichEmpire);
+				newNode.IsValid = true; //IsDestinationValid(newDestination, hasExtended, whichEmpire);
 				nodes.Add(newNode);
 			}
 			else
@@ -534,7 +534,7 @@ namespace Beyond_Beyaan
 				float y = newDestination.Y - currentY;
 				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
 				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
-				newNode.IsValid = IsDestinationValid(newDestination, hasExtended, whichEmpire);
+				newNode.IsValid = true; // IsDestinationValid(newDestination, hasExtended, whichEmpire);
 				nodes.Add(newNode);
 			}
 			

@@ -434,6 +434,19 @@ namespace Beyond_Beyaan
 			}
 			return amount;
 		}
+
+		public void ColonizePlanet(Ship whichShip)
+		{
+			//This assumes that whichShip is not null, adjacentSystem is not null, and everything has already been validated (i.e. ship has correct colony pod)
+			ships[whichShip]--;
+			if (ships[whichShip] == 0)
+			{
+				//only one ship, so remove the entry for it
+				ships.Remove(whichShip);
+				orderedShips.Remove(whichShip);
+			}
+			adjacentSystem.Planets[0].Colonize(empire);
+		}
 		#endregion
 	}
 }

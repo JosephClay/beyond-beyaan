@@ -211,6 +211,22 @@ namespace Beyond_Beyaan
 				}
 			}
 		}
+		public void ClearEmptyFleets()
+		{
+			//Clear out any empty fleets left after colonizing, space combat, etc
+			List<Fleet> fleetsToRemove = new List<Fleet>();
+			for (int i = 0; i < fleets.Count; i++)
+			{
+				if (fleets[i].Ships.Count == 0)
+				{
+					fleetsToRemove.Add(fleets[i]);
+				}
+			}
+			foreach (var fleet in fleetsToRemove)
+			{
+				fleets.Remove(fleet);
+			}
+		}
 
 		public float GetExpenses()
 		{

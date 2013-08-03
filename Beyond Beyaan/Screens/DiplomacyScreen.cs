@@ -150,27 +150,27 @@ namespace Beyond_Beyaan.Screens
 			}
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
-			if (empireScrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+			if (empireScrollBar.UpdateHovering(x, y, frameDeltaTime))
 			{
 				RefreshContactList();
 			}
 			for (int i = 0; i < maxVisible; i++)
 			{
-				if (spyEffortScrollbars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
+				if (spyEffortScrollbars[i].UpdateHovering(x, y, frameDeltaTime))
 				{
 					empiresInContact[i + empireScrollBar.TopIndex].SpyEffort = spyEffortScrollbars[i].TopIndex;
 					return;
 				}
-				if (spyDefenseScrollbars[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
+				if (spyDefenseScrollbars[i].UpdateHovering(x, y, frameDeltaTime))
 				{
 					empiresInContact[i + empireScrollBar.TopIndex].AntiSpyEffort = spyDefenseScrollbars[i].TopIndex;
 					return;
 				}
 				if (empiresInContact[i + empireScrollBar.TopIndex].IncomingMessage != MessageType.NONE)
 				{
-					incomingMessages[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+					incomingMessages[i].UpdateHovering(x, y, frameDeltaTime);
 				}
 			}
 			if (whichContactSelected >= 0)
@@ -179,14 +179,14 @@ namespace Beyond_Beyaan.Screens
 				{
 					for (int i = 0; i < 8; i++)
 					{
-						messageOptions[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+						messageOptions[i].UpdateHovering(x, y, frameDeltaTime);
 					}
-					listOfEmpires.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+					listOfEmpires.UpdateHovering(x, y, frameDeltaTime);
 				}
 				else
 				{
-					messageOptions[ACCEPT].UpdateHovering(mouseX, mouseY, frameDeltaTime);
-					messageOptions[REJECT].UpdateHovering(mouseX, mouseY, frameDeltaTime);
+					messageOptions[ACCEPT].UpdateHovering(x, y, frameDeltaTime);
+					messageOptions[REJECT].UpdateHovering(x, y, frameDeltaTime);
 				}
 			}
 		}

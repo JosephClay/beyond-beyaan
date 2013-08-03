@@ -166,13 +166,13 @@ namespace Beyond_Beyaan.Screens
 			scrollBar.DrawScrollBar(drawingManagement);
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
-			ownedPlanetButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			neutralPlanetButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			otherPlanetButton.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+			ownedPlanetButton.UpdateHovering(x, y, frameDeltaTime);
+			neutralPlanetButton.UpdateHovering(x, y, frameDeltaTime);
+			otherPlanetButton.UpdateHovering(x, y, frameDeltaTime);
 
-			if (scrollBar.UpdateHovering(mouseX, mouseY, frameDeltaTime))
+			if (scrollBar.UpdateHovering(x, y, frameDeltaTime))
 			{
 				planetIndex = scrollBar.TopIndex;
 				RefreshLabels();
@@ -191,7 +191,7 @@ namespace Beyond_Beyaan.Screens
 			hoveringSystem = null;
 			for (int i = 0; i < maxVisible; i++)
 			{
-				if (planetButtons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime))
+				if (planetButtons[i].UpdateHovering(x, y, frameDeltaTime))
 				{
 					hoveringSystem = planetsShowing[i + planetIndex].System;
 				}

@@ -38,7 +38,7 @@
 		public const int BARREN_COLONY = 2;
 		public const int TUNDRA_COLONY = 3;
 		public const int DEAD_COLONY = 4;
-		public const int INFERNO_COLONY = 5;
+		public const int VOLCANIC_COLONY = 5;
 		public const int TOXIC_COLONY = 6;
 		public const int RADIATED_COLONY = 7;
 

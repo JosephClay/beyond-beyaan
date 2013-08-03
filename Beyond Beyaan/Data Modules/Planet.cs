@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -38,6 +36,37 @@ namespace Beyond_Beyaan
 		public PLANET_TYPE PlanetType
 		{
 			get { return planetType; }
+		}
+		public int ColonyRequirement
+		{
+			get
+			{
+				switch (planetType)
+				{
+					case PLANET_TYPE.TERRAN:
+					case PLANET_TYPE.OCEAN:
+					case PLANET_TYPE.JUNGLE:
+					case PLANET_TYPE.DESERT:
+					case PLANET_TYPE.BADLAND:
+					case PLANET_TYPE.STEPPE:
+					case PLANET_TYPE.ARCTIC:
+						return 1;
+					case PLANET_TYPE.BARREN:
+						return 2;
+					case PLANET_TYPE.TUNDRA:
+						return 3;
+					case PLANET_TYPE.DEAD:
+						return 4;
+					case PLANET_TYPE.VOLCANIC:
+						return 5;
+					case PLANET_TYPE.TOXIC:
+						return 6;
+					case PLANET_TYPE.RADIATED:
+						return 7;
+					default:
+						return int.MaxValue;
+				}
+			}
 		}
 		public string PlanetTypeString
 		{
@@ -775,6 +804,16 @@ namespace Beyond_Beyaan
 		{
 			racePopulations.Remove(whichRace);
 			races.Remove(whichRace);
+		}
+
+		public void Colonize(Empire whichEmpire)
+		{
+			owner = whichEmpire;
+			racePopulations = new Dictionary<Race, float>();
+			racePopulations.Add(whichEmpire.EmpireRace, 2);
+			races.Add(whichEmpire.EmpireRace);
+			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
+			System.UpdateOwners();
 		}
 	}
 }

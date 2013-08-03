@@ -176,13 +176,13 @@ namespace Beyond_Beyaan.Screens
 			}*/
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
 			/*int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			hoveringFleet = null;
 			for (int i = 0; i < maxVisible; i++)
 			{
-				if (fleetButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (fleetButtons[i].MouseHover(x, y, frameDeltaTime))
 				{
 					hoveringFleet = whichFleets[i + fleetIndex];
 				}
@@ -192,13 +192,13 @@ namespace Beyond_Beyaan.Screens
 				maxVisible = (whichFleets[selectedFleet + fleetIndex].Ships.Count > shipButtons.Length ? shipButtons.Length : whichFleets[selectedFleet + fleetIndex].Ships.Count);
 				for (int i = 0; i < maxVisible; i++)
 				{
-					shipButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+					shipButtons[i].MouseHover(x, y, frameDeltaTime);
 				}
 			}
-			scrapFleet.MouseHover(mouseX, mouseY, frameDeltaTime);
-			scrapShip.MouseHover(mouseX, mouseY, frameDeltaTime);
-			showOtherFleets.MouseHover(mouseX, mouseY, frameDeltaTime);
-			showOurFleets.MouseHover(mouseX, mouseY, frameDeltaTime);*/
+			scrapFleet.MouseHover(x, y, frameDeltaTime);
+			scrapShip.MouseHover(x, y, frameDeltaTime);
+			showOtherFleets.MouseHover(x, y, frameDeltaTime);
+			showOurFleets.MouseHover(x, y, frameDeltaTime);*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)

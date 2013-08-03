@@ -17,7 +17,7 @@ namespace Beyond_Beyaan.Screens
 		{
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
 		}
 		

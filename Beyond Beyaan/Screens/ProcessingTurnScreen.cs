@@ -10,16 +10,22 @@ namespace Beyond_Beyaan.Screens
 		private Camera _camera;
 		private int _updateStep;
 		private SystemInfoWindow _systemInfoWindow; //Notifications for such as explored system
+		private ColonizeScreen _colonizeScreen;
 		private SystemView _systemView; //Display the system in question
 		private RenderTarget _oldTarget;
 		private RenderImage _starName;
 
 		private Empire _whichEmpireFocusedOn;
 		private Dictionary<Empire, List<StarSystem>> _exploredSystemsThisTurn;
+		private Dictionary<Empire, List<Fleet>> _colonizableFleetsThisTurn; 
 
 		private bool StarNamesVisible
 		{
-			get { return _exploredSystemsThisTurn.Count > 0; }
+			get 
+			{ 
+				return	_exploredSystemsThisTurn.Count > 0 ||
+						_colonizableFleetsThisTurn.Count > 0; 
+			}
 		}
 
 		public bool Initialize(GameMain gameMain, out string reason)
@@ -30,6 +36,7 @@ namespace Beyond_Beyaan.Screens
 
 			_updateStep = 0;
 			_exploredSystemsThisTurn = new Dictionary<Empire, List<StarSystem>>();
+			_colonizableFleetsThisTurn = new Dictionary<Empire, List<Fleet>>();
 
 			_systemInfoWindow = new SystemInfoWindow();
 			if (!_systemInfoWindow.Initialize(gameMain, out reason))
@@ -43,6 +50,11 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
+			_colonizeScreen = new ColonizeScreen();
+			if (!_colonizeScreen.Initialize(gameMain, out reason))
+			{
+				return false;
+			}
 			_starName = new RenderImage("starNameProcessingTurnRendered", 1, 1, ImageBufferFormats.BufferRGB888A8);
 			_starName.BlendingMode = BlendingModes.Modulated;
 
@@ -113,20 +125,23 @@ namespace Beyond_Beyaan.Screens
 					fleet.Empire.EmpireRace.FleetIcon.Draw((int)((fleet.GalaxyX - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), 1, 1, fleet.Empire.EmpireColor);
 				}
 			}
-			if (_updateStep != -1)
-			{
-				//drawingManagement.DrawSprite(SpriteName.NormalBackgroundButton, (_gameMain.ScreenWidth / 2) - 150, (_gameMain.ScreenHeight / 2) - 20, 255, 300, 40, System.Drawing.Color.White);
-				//updateText.Draw();
-			}
 			if (_exploredSystemsThisTurn.Count > 0)
 			{
 				_systemView.Draw();
 				_systemInfoWindow.Draw();
 			}
+			if (_colonizableFleetsThisTurn.Count > 0)
+			{
+				_colonizeScreen.Draw();
+			}
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
+			if (_colonizableFleetsThisTurn.Count > 0)
+			{
+				_colonizeScreen.MouseHover(x, y, frameDeltaTime);
+			}
 			switch (_updateStep)
 			{
 				case 0:
@@ -171,7 +186,8 @@ namespace Beyond_Beyaan.Screens
 				case 5:
 					if (!_gameMain.EmpireManager.UpdateFleetMovement(frameDeltaTime))
 					{
-						//Finished moving
+						//Finished moving, merge fleets then move to next step
+						_gameMain.EmpireManager.MergeIdleFleets();
 						_updateStep++;
 					}
 					break;
@@ -214,8 +230,25 @@ namespace Beyond_Beyaan.Screens
 					}
 					break;
 				case 10:
-					// Show potential colonization
-					_updateStep++;
+					if (_colonizableFleetsThisTurn.Count == 0)
+					{
+						_colonizableFleetsThisTurn = _gameMain.EmpireManager.CheckColonizableSystems(_gameMain.Galaxy);
+						if (_colonizableFleetsThisTurn.Count > 0)
+						{
+							foreach (var keyPair in _colonizableFleetsThisTurn)
+							{
+								_whichEmpireFocusedOn = keyPair.Key;
+								break;
+							}
+							_colonizeScreen.LoadFleetAndSystem(_colonizableFleetsThisTurn[_whichEmpireFocusedOn][0]);
+							_colonizeScreen.Completed += OnColonizeComplete;
+							_camera.CenterCamera(_colonizableFleetsThisTurn[_whichEmpireFocusedOn][0].AdjacentSystem.X, _colonizableFleetsThisTurn[_whichEmpireFocusedOn][0].AdjacentSystem.Y, 1);
+						}
+					}
+					if (_colonizableFleetsThisTurn.Count == 0)
+					{
+						_updateStep++;
+					}
 					break;
 				case 11:
 					//Orbital bombardments
@@ -254,6 +287,7 @@ namespace Beyond_Beyaan.Screens
 					// Recalculate players' current technology levels
 					// Autosave game
 					_updateStep = 0;
+					_gameMain.EmpireManager.ClearEmptyFleets();
 					_gameMain.EmpireManager.SetInitialEmpireTurn();
 					_gameMain.ChangeToScreen(Screen.Galaxy);
 					break;
@@ -262,10 +296,22 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
+			if (whichButton != 1)
+			{
+				return;
+			}
+			if (_colonizableFleetsThisTurn.Count > 0)
+			{
+				_colonizeScreen.MouseDown(x, y);
+			}
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
+			if (whichButton != 1)
+			{
+				return;
+			}
 			if (_exploredSystemsThisTurn.Count > 0)
 			{
 				_exploredSystemsThisTurn[_whichEmpireFocusedOn].RemoveAt(0);
@@ -295,6 +341,10 @@ namespace Beyond_Beyaan.Screens
 					}
 				}
 			}
+			if (_colonizableFleetsThisTurn.Count > 0)
+			{
+				_colonizeScreen.MouseUp(x, y);
+			}
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -303,6 +353,38 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
+		}
+
+		private void OnColonizeComplete()
+		{
+			//Discard the current one, regardless of it colonized or not
+			_colonizableFleetsThisTurn[_whichEmpireFocusedOn].RemoveAt(0);
+			if (_colonizableFleetsThisTurn[_whichEmpireFocusedOn].Count > 0)
+			{
+				_colonizeScreen.LoadFleetAndSystem(_colonizableFleetsThisTurn[_whichEmpireFocusedOn][0]);
+				_camera.CenterCamera(_colonizableFleetsThisTurn[_whichEmpireFocusedOn][0].AdjacentSystem.X, _colonizableFleetsThisTurn[_whichEmpireFocusedOn][0].AdjacentSystem.Y, 1);
+			}
+			else
+			{
+				_colonizableFleetsThisTurn.Remove(_whichEmpireFocusedOn);
+				if (_colonizableFleetsThisTurn.Count > 0) //Hot seat humans
+				{
+					foreach (var keyPair in _colonizableFleetsThisTurn)
+					{
+						_whichEmpireFocusedOn = keyPair.Key;
+						break;
+					}
+
+					_colonizeScreen.LoadFleetAndSystem(_colonizableFleetsThisTurn[_whichEmpireFocusedOn][0]);
+					_camera.CenterCamera(_colonizableFleetsThisTurn[_whichEmpireFocusedOn][0].AdjacentSystem.X, _colonizableFleetsThisTurn[_whichEmpireFocusedOn][0].AdjacentSystem.Y, 1);
+				}
+				else
+				{
+					_camera.CenterCamera(_camera.Width / 2, _camera.Height / 2, _camera.MaxZoom);
+					_colonizeScreen.Completed = null;
+					_updateStep++;
+				}
+			}
 		}
 	}
 }
