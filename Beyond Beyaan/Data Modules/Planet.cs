@@ -813,6 +813,7 @@ namespace Beyond_Beyaan
 			racePopulations.Add(whichEmpire.EmpireRace, 2);
 			races.Add(whichEmpire.EmpireRace);
 			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
+			shipBeingBuilt = whichEmpire.FleetManager.CurrentDesigns[0];
 			System.UpdateOwners();
 		}
 	}
