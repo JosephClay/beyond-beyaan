@@ -296,6 +296,34 @@ namespace Beyond_Beyaan
 			return exploredSystems;
 		}
 
+		public List<Fleet> CheckColonizableSystems(Galaxy galaxy)
+		{
+			List<Fleet> colonizingFleets = new List<Fleet>();
+			foreach (Fleet fleet in fleetManager.GetFleets())
+			{
+				if (fleet.TravelNodes == null || fleet.TravelNodes.Count == 0)
+				{
+					if (fleet.AdjacentSystem.Planets[0].Owner != null)
+					{
+						continue;
+					}
+					int colonyReq = fleet.AdjacentSystem.Planets[0].ColonyRequirement;
+					foreach (Ship ship in fleet.OrderedShips)
+					{
+						foreach (var special in ship.Specials)
+						{
+							if (special.Colony >= colonyReq)
+							{
+								colonizingFleets.Add(fleet);
+								break;
+							}
+						}
+					}
+				}
+			}
+			return colonizingFleets;
+		}
+
 		/*public void CreateInfluenceMapSprite(GridCell[][] gridCells)
 		{
 			int squaredSize = 2;

@@ -322,37 +322,37 @@ namespace Beyond_Beyaan.Screens
 			}*/
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
 			/*switch (displayingTechOption)
 			{
 				case NONE:
 					{
 						nameTextBox.Update(frameDeltaTime);
-						sizeComboBox.MouseHover(mouseX, mouseY, frameDeltaTime);
-						engineButton.MouseHover(mouseX, mouseY, frameDeltaTime);
-						computerButton.MouseHover(mouseX, mouseY, frameDeltaTime);
-						armorButton.MouseHover(mouseX, mouseY, frameDeltaTime);
-						shieldButton.MouseHover(mouseX, mouseY, frameDeltaTime);
-						nextShip.MouseHover(mouseX, mouseY, frameDeltaTime);
-						prevShip.MouseHover(mouseX, mouseY, frameDeltaTime);
-						confirm.MouseHover(mouseX, mouseY, frameDeltaTime);
-						clear.MouseHover(mouseX, mouseY, frameDeltaTime);
-						addWeapon.MouseHover(mouseX, mouseY, frameDeltaTime);
+						sizeComboBox.MouseHover(x, y, frameDeltaTime);
+						engineButton.MouseHover(x, y, frameDeltaTime);
+						computerButton.MouseHover(x, y, frameDeltaTime);
+						armorButton.MouseHover(x, y, frameDeltaTime);
+						shieldButton.MouseHover(x, y, frameDeltaTime);
+						nextShip.MouseHover(x, y, frameDeltaTime);
+						prevShip.MouseHover(x, y, frameDeltaTime);
+						confirm.MouseHover(x, y, frameDeltaTime);
+						clear.MouseHover(x, y, frameDeltaTime);
+						addWeapon.MouseHover(x, y, frameDeltaTime);
 						int count = shipDesign.weapons.Count > 13 ? 13 : shipDesign.weapons.Count;
 						for (int i = 0; i < count; i++)
 						{
-							removeButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+							removeButtons[i].MouseHover(x, y, frameDeltaTime);
 							if (shipDesign.weapons[i + shipWeaponIndex].Mounts > 0)
 							{
-								mountUpButton[i].MouseHover(mouseX, mouseY, frameDeltaTime);
-								mountDownButton[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+								mountUpButton[i].MouseHover(x, y, frameDeltaTime);
+								mountDownButton[i].MouseHover(x, y, frameDeltaTime);
 							}
 						}
 					} break;
 				case ENGINE:
 					{
-						if (techScrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+						if (techScrollBar.MouseHover(x, y, frameDeltaTime))
 						{
 							RefreshTechOptions();
 							break;
@@ -360,12 +360,12 @@ namespace Beyond_Beyaan.Screens
 						int count = availableEngines.Count > 15 ? 15 : availableEngines.Count;
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+							techButtons[i].MouseHover(x, y, frameDeltaTime);
 						}
 					} break;
 				case COMPUTER:
 					{
-						if (techScrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+						if (techScrollBar.MouseHover(x, y, frameDeltaTime))
 						{
 							RefreshTechOptions();
 							break;
@@ -373,12 +373,12 @@ namespace Beyond_Beyaan.Screens
 						int count = availableComputers.Count > 15 ? 15 : availableComputers.Count;
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+							techButtons[i].MouseHover(x, y, frameDeltaTime);
 						}
 					} break;
 				case ARMOR:
 					{
-						if (techScrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+						if (techScrollBar.MouseHover(x, y, frameDeltaTime))
 						{
 							RefreshTechOptions();
 							break;
@@ -386,12 +386,12 @@ namespace Beyond_Beyaan.Screens
 						int count = availableArmors.Count > 15 ? 15 : availableArmors.Count;
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+							techButtons[i].MouseHover(x, y, frameDeltaTime);
 						}
 					} break;
 				case SHIELD:
 					{
-						if (techScrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+						if (techScrollBar.MouseHover(x, y, frameDeltaTime))
 						{
 							RefreshTechOptions();
 							break;
@@ -399,12 +399,12 @@ namespace Beyond_Beyaan.Screens
 						int count = availableShields.Count > 15 ? 15 : availableShields.Count;
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+							techButtons[i].MouseHover(x, y, frameDeltaTime);
 						}
 					} break;
 				case WEAPON:
 					{
-						if (techScrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+						if (techScrollBar.MouseHover(x, y, frameDeltaTime))
 						{
 							RefreshTechOptions();
 							break;
@@ -412,7 +412,7 @@ namespace Beyond_Beyaan.Screens
 						int count = availableWeapons.Count > 15 ? 15 : availableWeapons.Count;
 						for (int i = 0; i < count; i++)
 						{
-							techButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+							techButtons[i].MouseHover(x, y, frameDeltaTime);
 						}
 					} break;
 			}*/

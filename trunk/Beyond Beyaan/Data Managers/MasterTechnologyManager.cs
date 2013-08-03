@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Beyond_Beyaan.Data_Managers
 {
@@ -148,7 +145,7 @@ namespace Beyond_Beyaan.Data_Managers
 			PlanetologyTechs.Add(new Technology("Terraforming +20", "Increases maximum colonist units on the terraformed planet by 20, for a cost of 100 BC.", 9, terraforming: 20));
 			PlanetologyTechs.Add(new Technology("Controlled Dead Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a dead or better environment.", 10, colony: Technology.DEAD_COLONY));
 			PlanetologyTechs.Add(new Technology("Death Spores", "Ship weapon that reduces the maximum population of a planet by 1 each time it is fired. This is not affected by shields.", 11, bioWeapon: Technology.DEATH_SPORES));
-			PlanetologyTechs.Add(new Technology("Controlled Inferno Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a inferno or better environment.", 12, colony: Technology.INFERNO_COLONY));
+			PlanetologyTechs.Add(new Technology("Controlled Inferno Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a inferno or better environment.", 12, colony: Technology.VOLCANIC_COLONY));
 			PlanetologyTechs.Add(new Technology("Enhanced Ecological Restoration", "Eliminates 5 units of pollution for 1 BC.", 13, ecoCleanup: 5));
 			PlanetologyTechs.Add(new Technology("Terraforming +30", "Increases maximum colonist units on the terraformed planet by 30, for a cost of 150 BC.", 14, terraforming: 30));
 			PlanetologyTechs.Add(new Technology("Controlled Toxic Environment", "Allows ships equipped with this to sacrifice themselves to create a colony on a planet with a Toxic or better environment.", 15, colony: Technology.TOXIC_COLONY));

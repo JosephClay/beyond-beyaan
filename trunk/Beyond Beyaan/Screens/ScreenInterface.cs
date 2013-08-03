@@ -12,7 +12,7 @@ namespace Beyond_Beyaan.Screens
 
 		void DrawScreen(DrawingManagement drawingManagement);
 
-		void Update(int mouseX, int mouseY, float frameDeltaTime);
+		void Update(int x, int y, float frameDeltaTime);
 
 		void MouseDown(int x, int y, int whichButton);
 

@@ -95,11 +95,11 @@ namespace Beyond_Beyaan.Screens
 			researchPointsLabel.Draw();*/
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
 			/*for (int i = 0; i < techScrollBars.Length; i++)
 			{
-				if (techScrollBars[i].MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (techScrollBars[i].MouseHover(x, y, frameDeltaTime))
 				{
 					switch (i)
 					{
@@ -136,7 +136,7 @@ namespace Beyond_Beyaan.Screens
 					}
 				}
 			}
-			if (availableScrollBar.MouseHover(mouseX, mouseY, frameDeltaTime))
+			if (availableScrollBar.MouseHover(x, y, frameDeltaTime))
 			{
 				techIndex = availableScrollBar.TopIndex;
 				RefreshAvailableTechs();
@@ -144,15 +144,15 @@ namespace Beyond_Beyaan.Screens
 			}
 			for (int i = 0; i < lockedButtons.Length; i++)
 			{
-				lockedButtons[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+				lockedButtons[i].MouseHover(x, y, frameDeltaTime);
 			}
 			for (int i = 0; i < researchingTechNames.Length; i++)
 			{
-				researchingTechNames[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+				researchingTechNames[i].MouseHover(x, y, frameDeltaTime);
 			}
 			for (int i = 0; i < maxVisible; i++)
 			{
-				availableTechs[i].MouseHover(mouseX, mouseY, frameDeltaTime);
+				availableTechs[i].MouseHover(x, y, frameDeltaTime);
 			}*/
 		}
 

@@ -330,21 +330,21 @@ namespace Beyond_Beyaan.Screens
 			}
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
 			pathSprite.Update(frameDeltaTime, _gameMain.Random);
 			_gameMain.Galaxy.Update(frameDeltaTime, _gameMain.Random);
 			Empire currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 			if (currentEmpire.SelectedSystem != null)
 			{
-				if (_systemView.MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (_systemView.MouseHover(x, y, frameDeltaTime))
 				{
 					return;
 				}
 			}
 			if (currentEmpire.SelectedFleetGroup != null)
 			{
-				if (_fleetView.MouseHover(mouseX, mouseY, frameDeltaTime))
+				if (_fleetView.MouseHover(x, y, frameDeltaTime))
 				{
 					return;
 				}
@@ -352,14 +352,14 @@ namespace Beyond_Beyaan.Screens
 				{
 					Point hoveringPoint = new Point();
 
-					hoveringPoint.X = (int)((mouseX / camera.ZoomDistance) + camera.CameraX);
-					hoveringPoint.Y = (int)((mouseY / camera.ZoomDistance) + camera.CameraY);
+					hoveringPoint.X = (int)((x / camera.ZoomDistance) + camera.CameraX);
+					hoveringPoint.Y = (int)((y / camera.ZoomDistance) + camera.CameraY);
 
 					StarSystem selectedSystem = _gameMain.Galaxy.GetStarAtPoint(hoveringPoint);
 					currentEmpire.SelectedFleetGroup.FleetToSplit.SetTentativePath(selectedSystem, currentEmpire.SelectedFleetGroup.FleetToSplit.HasReserveTanks, _gameMain.Galaxy);
 				}
 			}
-			camera.HandleUpdate(mouseX, mouseY, frameDeltaTime);
+			camera.HandleUpdate(x, y, frameDeltaTime);
 		}
 
 		public void MouseDown(int x, int y, int whichButton)

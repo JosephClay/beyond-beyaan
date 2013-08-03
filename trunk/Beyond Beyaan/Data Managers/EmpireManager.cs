@@ -166,6 +166,22 @@ namespace Beyond_Beyaan
 			return stillHaveMovement;
 		}
 
+		public void MergeIdleFleets()
+		{
+			foreach (Empire empire in empires)
+			{
+				empire.FleetManager.MergeIdleFleets();
+			}
+		}
+
+		public void ClearEmptyFleets()
+		{
+			foreach (Empire empire in empires)
+			{
+				empire.FleetManager.MergeIdleFleets();
+			}
+		}
+
 		public void UpdateEmpires()
 		{
 			foreach (Empire empire in empires)
@@ -198,6 +214,20 @@ namespace Beyond_Beyaan
 				}
 			}
 			return exploredSystems;
+		}
+
+		public Dictionary<Empire, List<Fleet>> CheckColonizableSystems(Galaxy galaxy)
+		{
+			Dictionary<Empire, List<Fleet>> colonizableSystems = new Dictionary<Empire, List<Fleet>>();
+			foreach (Empire empire in empires)
+			{
+				List<Fleet> temp = empire.CheckColonizableSystems(galaxy);
+				if (empire.IsHumanPlayer && temp.Count > 0)
+				{
+					colonizableSystems.Add(empire, temp);
+				}
+			}
+			return colonizableSystems;
 		}
 
 		public void LookForCombat()

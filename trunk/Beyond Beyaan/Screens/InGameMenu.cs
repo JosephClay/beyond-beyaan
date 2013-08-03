@@ -35,11 +35,11 @@ namespace Beyond_Beyaan.Screens
 			version.Draw();
 		}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void Update(int x, int y, float frameDeltaTime)
 		{
 			foreach (Button button in buttons)
 			{
-				button.UpdateHovering(mouseX, mouseY, frameDeltaTime);
+				button.UpdateHovering(x, y, frameDeltaTime);
 			}
 		}
 
