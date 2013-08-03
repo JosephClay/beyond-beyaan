@@ -107,22 +107,23 @@ namespace Beyond_Beyaan.Screens
 			}
 			foreach (Fleet fleet in _gameMain.EmpireManager.GetFleetsWithinArea(_camera.CameraX, _camera.CameraY, _gameMain.ScreenWidth / _camera.ZoomDistance, _gameMain.ScreenHeight / _camera.ZoomDistance))
 			{
+				var fleetIcon = fleet.Ships.Count > 0 ? fleet.Empire.EmpireRace.FleetIcon : fleet.Empire.EmpireRace.TransportIcon;
 				if (fleet.AdjacentSystem != null)
 				{
 					if (fleet.TravelNodes != null && fleet.TravelNodes.Count > 0)
 					{
 						//Adjacent to a system, but is heading to another system
-						fleet.Empire.EmpireRace.FleetIcon.Draw((int)(((fleet.GalaxyX - 32) - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), 1, 1, fleet.Empire.EmpireColor);
+						fleetIcon.Draw((int)(((fleet.GalaxyX - 32) - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), 1, 1, fleet.Empire.EmpireColor);
 					}
 					else
 					{
 						//Adjacent to a system, just chilling
-						fleet.Empire.EmpireRace.FleetIcon.Draw((int)(((fleet.GalaxyX + 32) - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), 1, 1, fleet.Empire.EmpireColor);
+						fleetIcon.Draw((int)(((fleet.GalaxyX + 32) - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), 1, 1, fleet.Empire.EmpireColor);
 					}
 				}
 				else
 				{
-					fleet.Empire.EmpireRace.FleetIcon.Draw((int)((fleet.GalaxyX - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), 1, 1, fleet.Empire.EmpireColor);
+					fleetIcon.Draw((int)((fleet.GalaxyX - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), 1, 1, fleet.Empire.EmpireColor);
 				}
 			}
 			if (_exploredSystemsThisTurn.Count > 0)
@@ -153,6 +154,7 @@ namespace Beyond_Beyaan.Screens
 					_updateStep++;
 					break;
 				case 1:
+					_gameMain.EmpireManager.LaunchTransports();
 					// Transports are launched into orbit around their planet of departure and the cost is deducted
 					// Production is executed
 					_gameMain.EmpireManager.UpdatePopulationGrowth();

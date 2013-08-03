@@ -268,6 +268,7 @@ namespace Beyond_Beyaan.Screens
 				bool visible = fleet.Empire == _gameMain.EmpireManager.CurrentEmpire;
 				if (visible)
 				{
+					BBSprite fleetIcon = fleet.Ships.Count > 0 ? fleet.Empire.EmpireRace.FleetIcon : fleet.Empire.EmpireRace.TransportIcon;
 					if (fleet.AdjacentSystem != null)
 					{
 						if (fleet.TravelNodes != null && fleet.TravelNodes.Count > 0)
@@ -280,7 +281,7 @@ namespace Beyond_Beyaan.Screens
 								selectionSprites[3].Draw(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
 							}
 							//Adjacent to a system, but is heading to another system
-							fleet.Empire.EmpireRace.FleetIcon.Draw((int)(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
+							fleetIcon.Draw((int)(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 						}
 						else
 						{
@@ -292,7 +293,7 @@ namespace Beyond_Beyaan.Screens
 								selectionSprites[3].Draw(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
 							}
 							//Adjacent to a system, just chilling
-							fleet.Empire.EmpireRace.FleetIcon.Draw((int)(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
+							fleetIcon.Draw((int)(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 						}
 					}
 					else
@@ -304,7 +305,7 @@ namespace Beyond_Beyaan.Screens
 							selectionSprites[2].Draw(((fleet.GalaxyX - 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
 							selectionSprites[3].Draw(((fleet.GalaxyX) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
 						}
-						fleet.Empire.EmpireRace.FleetIcon.Draw((int)((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
+						fleetIcon.Draw((int)((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
 					}
 				}
 			}

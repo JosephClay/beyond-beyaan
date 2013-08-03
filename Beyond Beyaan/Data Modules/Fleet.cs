@@ -105,6 +105,10 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
+				if (HasTransports)
+				{
+					return false;
+				}
 				foreach (var ship in ships)
 				{
 					if (ship.Value == 0)
@@ -324,7 +328,9 @@ namespace Beyond_Beyaan
 				TransportShip transport = new TransportShip();
 				transport.raceOnShip = race;
 				transport.amount = amount;
+				transportShips.Add(transport);
 			}
+			maxSpeed = 1;
 		}
 
 		public void SubtractTransport(Race race, int amount)

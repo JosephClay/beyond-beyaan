@@ -346,7 +346,7 @@ namespace Beyond_Beyaan.Screens
 					_constructionLockButton.Selected = planet.ConstructionLocked;
 					_constructionSlider.SetEnabledState(!planet.ConstructionLocked);
 
-					if (_currentSystem.Planets[0].TransferSystem.Key.StarSystem != _currentSystem)
+					if (_currentSystem.Planets[0].TransferSystem.Key.StarSystem != null)
 					{
 						_transferLabel.SetText("Moving " + _currentSystem.Planets[0].TransferSystem.Value + " Pop");
 						_transferLabel.MoveTo(xPos + 10, yPos + 440);
@@ -444,7 +444,7 @@ namespace Beyond_Beyaan.Screens
 						_transferToButton.Draw();
 						_relocateToButton.DrawToolTip();
 						_transferToButton.DrawToolTip();
-						if (_currentSystem.Planets[0].TransferSystem.Key.StarSystem != _currentSystem)
+						if (_currentSystem.Planets[0].TransferSystem.Key.StarSystem != null)
 						{
 							_transferLabel.Draw();
 						}
@@ -602,7 +602,14 @@ namespace Beyond_Beyaan.Screens
 				{
 					if (TransferSystem.IsValid)
 					{
-						_currentSystem.Planets[0].TransferSystem = new KeyValuePair<TravelNode, int>(TransferSystem, _popTransferSlider.TopIndex);
+						if (TransferSystem.StarSystem == _currentSystem)
+						{
+							_currentSystem.Planets[0].TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode(), 0);
+						}
+						else
+						{
+							_currentSystem.Planets[0].TransferSystem = new KeyValuePair<TravelNode, int>(TransferSystem, _popTransferSlider.TopIndex);
+						}
 						_transferLabel.SetText("Moving " + _currentSystem.Planets[0].TransferSystem.Value + " Pop");
 						_transferLabel.MoveTo(xPos + 10, yPos + 440);
 						IsTransferring = false;
