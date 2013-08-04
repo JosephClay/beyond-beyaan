@@ -130,6 +130,45 @@
   <Sprite name="AsteroidsPlanetSmall" file="planets.png">
     <Frame x="160" y="40" width="40" height="40" />
   </Sprite>
+  <Sprite name="TerranGround" file="terran.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="JungleGround" file="jungle.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="OceanicGround" file="ocean.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="BadlandsGround" file="badland.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="ArcticGround" file="arctic.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="BarrenGround" file="barren.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="DesertGround" file="desert.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="DeadGround" file="dead.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="RadiatedGround" file="radiated.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="SteppeGround" file="steppe.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="ToxicGround" file="toxic.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="TundraGround" file="tundra.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
+  <Sprite name="VolcanicGround" file="volcano.png">
+    <Frame x="0" y="0" width="800" height="600" />
+  </Sprite>
   <Sprite name="MilitaryIcon" file="planets.png">
     <Frame x="0" y="80" width="40" height="40" />
   </Sprite>
