@@ -355,6 +355,10 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
+			if (_colonizableFleetsThisTurn.Count > 0)
+			{
+				_colonizeScreen.KeyDown(e);
+			}
 		}
 
 		private void OnColonizeComplete()

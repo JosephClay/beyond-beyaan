@@ -73,6 +73,7 @@ namespace Beyond_Beyaan
 			get { return planetTypeString; }
 		}
 		public BBSprite SmallSprite { get; private set; }
+		public BBSprite GroundSprite { get; private set; }
 		public string Name
 		{
 			get { return name; }
@@ -296,47 +297,55 @@ namespace Beyond_Beyaan
 				{
 					planetType = PLANET_TYPE.RADIATED;
 					SmallSprite = SpriteManager.GetSprite("RadiatedPlanetSmall", r);
+					GroundSprite = SpriteManager.GetSprite("RadiatedGround", r);
 					industryBonusAdjustment = 500;
 				}
 				else if (populationMax <= 15)
 				{
 					planetType = PLANET_TYPE.TOXIC;
 					SmallSprite = SpriteManager.GetSprite("ToxicPlanetSmall", r);
+					GroundSprite = SpriteManager.GetSprite("ToxicGround", r);
 					industryBonusAdjustment = 300;
 				}
 				else if (populationMax <= 20)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.ARCTIC : PLANET_TYPE.VOLCANIC;
 					SmallSprite = isWetClimate ? SpriteManager.GetSprite("ArcticPlanetSmall", r) : SpriteManager.GetSprite("VolcanicPlanetSmall", r);
+					GroundSprite = isWetClimate ? SpriteManager.GetSprite("ArcticGround", r) : SpriteManager.GetSprite("VolcanicGround", r);
 					industryBonusAdjustment = 200;
 				}
 				else if (populationMax <= 30)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.DEAD : PLANET_TYPE.BARREN;
 					SmallSprite = isWetClimate ? SpriteManager.GetSprite("DeadPlanetSmall", r) : SpriteManager.GetSprite("BarrenPlanetSmall", r);
+					GroundSprite = isWetClimate ? SpriteManager.GetSprite("DeadGround", r) : SpriteManager.GetSprite("BarrenGround", r);
 					industryBonusAdjustment = 100;
 				}
 				else if (populationMax <= 40)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.TUNDRA : PLANET_TYPE.BADLAND;
 					SmallSprite = isWetClimate ? SpriteManager.GetSprite("TundraPlanetSmall", r) : SpriteManager.GetSprite("BadlandsPlanetSmall", r);
+					GroundSprite = isWetClimate ? SpriteManager.GetSprite("TundraGround", r) : SpriteManager.GetSprite("BadlandsGround", r);
 				}
 				else if (populationMax <= 70)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.OCEAN : PLANET_TYPE.DESERT;
 					SmallSprite = isWetClimate ? SpriteManager.GetSprite("OceanicPlanetSmall", r) : SpriteManager.GetSprite("DesertPlanetSmall", r);
+					GroundSprite = isWetClimate ? SpriteManager.GetSprite("OceanicGround", r) : SpriteManager.GetSprite("DesertGround", r);
 					fertilityBonusAdjustment = 200;
 				}
 				else if (populationMax <= 90)
 				{
 					planetType = isWetClimate ? PLANET_TYPE.JUNGLE : PLANET_TYPE.STEPPE;
 					SmallSprite = isWetClimate ? SpriteManager.GetSprite("JunglePlanetSmall", r) : SpriteManager.GetSprite("SteppePlanetSmall", r);
+					GroundSprite = isWetClimate ? SpriteManager.GetSprite("JungleGround", r) : SpriteManager.GetSprite("SteppeGround", r);
 					fertilityBonusAdjustment = 300;
 				}
 				else
 				{
 					planetType = PLANET_TYPE.TERRAN;
 					SmallSprite = SpriteManager.GetSprite("TerranPlanetSmall", r);
+					GroundSprite = SpriteManager.GetSprite("TerranGround", r);
 					fertilityBonusAdjustment = 500;
 				}
 
