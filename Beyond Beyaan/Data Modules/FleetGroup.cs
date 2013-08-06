@@ -105,6 +105,10 @@ namespace Beyond_Beyaan
 				{
 					fleetToSplit.AddShips(ship.Key, ship.Value);
 				}
+				foreach (var transport in selectedFleet.TransportShips)
+				{
+					fleetToSplit.AddTransport(transport.raceOnShip, transport.amount);
+				}
 				ShipIndex = 0;
 			}
 		}
@@ -126,14 +130,22 @@ namespace Beyond_Beyaan
 					fleet.AddShips(ship.Key, ship.Value);
 				}
 			}
+			foreach (var transport in fleetToSplit.TransportShips)
+			{
+				if (transport.amount > 0)
+				{
+					selectedFleet.SubtractTransport(transport.raceOnShip, transport.amount);
+					fleet.AddTransport(transport.raceOnShip, transport.amount);
+				}
+			}
 			selectedFleet.ClearEmptyShips();
 			fleet.ClearEmptyShips();
-			if (selectedFleet.Ships.Count == 0)
+			if (selectedFleet.Ships.Count == 0 && selectedFleet.TransportShips.Count == 0)
 			{
 				fleets.Remove(selectedFleet);
 				empire.FleetManager.RemoveFleet(selectedFleet);
 			}
-			if (fleet.Ships.Count > 0)
+			if (fleet.Ships.Count > 0 || fleet.TransportShips.Count > 0)
 			{
 				fleets.Add(fleet);
 				empire.FleetManager.AddFleet(fleet);
@@ -157,11 +169,6 @@ namespace Beyond_Beyaan
 				}
 			}
 			return true;
-		}
-
-		public List<Ship> GetShipsForDisplay()
-		{
-			return ships;
 		}
 		#endregion
 	}

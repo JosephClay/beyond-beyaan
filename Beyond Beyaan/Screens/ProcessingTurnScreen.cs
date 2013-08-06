@@ -253,6 +253,8 @@ namespace Beyond_Beyaan.Screens
 					}
 					break;
 				case 11:
+					//Todo: resolve combat
+					_gameMain.EmpireManager.LandTransports();
 					//Orbital bombardments
 					//Transports land and ground combat is resolved
 					_updateStep++;
