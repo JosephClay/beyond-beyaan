@@ -211,6 +211,16 @@ namespace Beyond_Beyaan
 			}
 		}
 
+		public void LandTransports()
+		{
+			//TODO: Get list of conflict transports
+			foreach (Empire empire in empires)
+			{
+				//go through each system and see if transports has arrived.  Return any combat conflicts (non-combats are landed automatically)
+				empire.LandTransports();
+			}
+		}
+
 		public Dictionary<Empire, List<StarSystem>> CheckExploredSystems(Galaxy galaxy)
 		{
 			Dictionary<Empire, List<StarSystem>> exploredSystems = new Dictionary<Empire, List<StarSystem>>();

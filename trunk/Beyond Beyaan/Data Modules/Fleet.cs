@@ -184,20 +184,20 @@ namespace Beyond_Beyaan
 		private void UpdateSpeed()
 		{
 			maxSpeed = int.MaxValue;
-			foreach (Ship ship in orderedShips)
+			if (orderedShips.Count > 0)
 			{
-				if (ship.Engine.Speed < maxSpeed)
+				foreach (Ship ship in orderedShips)
 				{
-					maxSpeed = ship.Engine.Speed;
+					if (ship.Engine.Speed < maxSpeed)
+					{
+						maxSpeed = ship.Engine.Speed;
+					}
 				}
 			}
-			if (transportShips.Count > 0)
+			else
 			{
-				maxSpeed -= 1;
-				if (maxSpeed == 0)
-				{
-					maxSpeed = 1;
-				}
+				//Placeholder for now til I add technology check for best engine speed
+				maxSpeed = 1;
 			}
 			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 		}
@@ -367,6 +367,18 @@ namespace Beyond_Beyaan
 			{
 				ships.Remove(ship);
 				orderedShips.Remove(ship);
+			}
+			List<TransportShip> transportsToRemove = new List<TransportShip>();
+			foreach (var transport in transportShips)
+			{
+				if (transport.amount <= 0)
+				{
+					transportsToRemove.Add(transport);
+				}
+			}
+			foreach (var transport in transportsToRemove)
+			{
+				transportShips.Remove(transport);
 			}
 			UpdateSpeed();
 		}

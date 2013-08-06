@@ -447,8 +447,32 @@ namespace Beyond_Beyaan
 					newFleet.TravelNodes = new List<TravelNode> {planet.TransferSystem.Key };
 					planet.RemoveRacePopulation(planet.Races[0], planet.TransferSystem.Value);
 					planet.TransferSystem = new KeyValuePair<TravelNode,int>(new TravelNode(), 0);
+					newFleet.ResetMove();
 					fleetManager.AddFleet(newFleet);
 				}
+			}
+		}
+
+		public void LandTransports()
+		{
+			List<Fleet> fleetsToRemove = new List<Fleet>();
+			foreach (var fleet in fleetManager.GetFleets())
+			{
+				if (fleet.TransportShips.Count > 0 && (fleet.TravelNodes == null || fleet.TravelNodes.Count == 0) && fleet.AdjacentSystem != null)
+				{
+					if (fleet.AdjacentSystem.Planets[0].Owner == this)
+					{
+						foreach (var transport in fleet.TransportShips)
+						{
+							fleet.AdjacentSystem.Planets[0].AddRacePopulation(transport.raceOnShip, transport.amount);
+						}
+						fleetsToRemove.Add(fleet);
+					}
+				}
+			}
+			foreach (var fleet in fleetsToRemove)
+			{
+				fleetManager.RemoveFleet(fleet);
 			}
 		}
 
