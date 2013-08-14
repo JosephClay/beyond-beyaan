@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan
 {
@@ -188,10 +190,31 @@ namespace Beyond_Beyaan
 			{
 				empire.SitRepManager.ClearItems();
 				empire.CheckForBuiltShips();
-				empire.UpdateResearchPoints();
-				empire.TechnologyManager.ProcessResearchTurn(empire.ResearchPoints, _gameMain.Random, empire.SitRepManager);
 				empire.ContactManager.UpdateContacts(empire.SitRepManager);
 			}
+		}
+
+		public void AccureResearch()
+		{
+			foreach (Empire empire in empires)
+			{
+				empire.UpdateResearchPoints();
+				empire.TechnologyManager.AccureResearch(empire.ResearchPoints);
+			}
+		}
+
+		public Dictionary<Empire, List<TechField>> RollForDiscoveries(Random r)
+		{
+			Dictionary<Empire, List<TechField>> itemsNeedingSelection = new Dictionary<Empire, List<TechField>>();
+			foreach (Empire empire in empires)
+			{
+				var items = empire.TechnologyManager.RollForDiscoveries(r, empire.SitRepManager);
+				if (empire.IsHumanPlayer && items.Count > 0)
+				{
+					itemsNeedingSelection.Add(empire, items);
+				}
+			}
+			return itemsNeedingSelection;
 		}
 
 		public void UpdatePopulationGrowth()
