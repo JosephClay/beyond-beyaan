@@ -9,15 +9,19 @@ namespace Beyond_Beyaan.Screens
 		private GameMain _gameMain;
 		private Camera _camera;
 		private int _updateStep;
+
 		private SystemInfoWindow _systemInfoWindow; //Notifications for such as explored system
 		private ColonizeScreen _colonizeScreen;
 		private SystemView _systemView; //Display the system in question
+		private ResearchPrompt _researchPrompt;
+		
 		private RenderTarget _oldTarget;
 		private RenderImage _starName;
 
 		private Empire _whichEmpireFocusedOn;
 		private Dictionary<Empire, List<StarSystem>> _exploredSystemsThisTurn;
-		private Dictionary<Empire, List<Fleet>> _colonizableFleetsThisTurn; 
+		private Dictionary<Empire, List<Fleet>> _colonizableFleetsThisTurn;
+		private Dictionary<Empire, List<TechField>> _newResearchTopicsNeeded; 
 
 		private bool StarNamesVisible
 		{
@@ -35,8 +39,10 @@ namespace Beyond_Beyaan.Screens
 			_camera.CenterCamera(_camera.Width / 2, _camera.Height / 2, _camera.MaxZoom);
 
 			_updateStep = 0;
+
 			_exploredSystemsThisTurn = new Dictionary<Empire, List<StarSystem>>();
 			_colonizableFleetsThisTurn = new Dictionary<Empire, List<Fleet>>();
+			_newResearchTopicsNeeded = new Dictionary<Empire, List<TechField>>();
 
 			_systemInfoWindow = new SystemInfoWindow();
 			if (!_systemInfoWindow.Initialize(gameMain, out reason))
@@ -55,6 +61,13 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+
+			_researchPrompt = new ResearchPrompt();
+			if (!_researchPrompt.Initialize(gameMain, out reason))
+			{
+				return false;
+			}
+
 			_starName = new RenderImage("starNameProcessingTurnRendered", 1, 1, ImageBufferFormats.BufferRGB888A8);
 			_starName.BlendingMode = BlendingModes.Modulated;
 
@@ -135,6 +148,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				_colonizeScreen.Draw();
 			}
+			if (_newResearchTopicsNeeded.Count > 0)
+			{
+				_researchPrompt.Draw();
+			}
 		}
 
 		public void Update(int x, int y, float frameDeltaTime)
@@ -143,46 +160,49 @@ namespace Beyond_Beyaan.Screens
 			{
 				_colonizeScreen.MouseHover(x, y, frameDeltaTime);
 			}
+			if (_newResearchTopicsNeeded.Count > 0)
+			{
+				_researchPrompt.MouseHover(x, y, frameDeltaTime);
+			}
 			switch (_updateStep)
 			{
 				case 0:
 					//Process AI's Turn here
-					// AI checks for peace treaties, and plans accordingly
-					// AI plan movement on basis of need to expand, to press attack, or to defend
-					// AI designs any new ships, done randomly every 6-15 turns
-					// AI plans production strategy and set their ratio bars
+					//  TODO: AI checks for peace treaties, and plans accordingly
+					//  TODO: AI plan movement on basis of need to expand, to press attack, or to defend
+					//  TODO: AI designs any new ships, done randomly every 6-15 turns
+					//  TODO: AI plans production strategy and set their ratio bars
 					_updateStep++;
 					break;
 				case 1:
 					_gameMain.EmpireManager.LaunchTransports();
-					// Transports are launched into orbit around their planet of departure and the cost is deducted
-					// Production is executed
+					//  TODO: Deduct cost for transports
+					//  TODO: Production is executed
 					_gameMain.EmpireManager.UpdatePopulationGrowth();
-					// Research points accure any interest they have earned
-					// New research points are added into research totals
-					// Trade growth occurs
-					// New spies are added
+					_gameMain.EmpireManager.AccureResearch();
+					//  TODO: Trade growth occurs
+					//  TODO: New spies are added
 					_gameMain.EmpireManager.UpdateEmpires();
 					_updateStep++;
 					break;
 				case 2:
 					//Diplomacy update:
-					// Love nub move towards natural state if no treaty or war
-					// Points added if there's trade, non-agg, or alliance
-					// Points subtracted for military buildup, or owning more than 1/4 of map
-					// Temp modifiers are adjusted toward 0 by 10 points each
+					//  TODO: Love nub move towards natural state if no treaty or war
+					//  TODO: Points added if there's trade, non-agg, or alliance
+					//  TODO: Points subtracted for military buildup, or owning more than 1/4 of map
+					//  TODO: Temp modifiers are adjusted toward 0 by 10 points each
 					_updateStep++;
 					break;
 				case 3:
-					// New ships and bases
-					// New missile bases/shields added here
-					// New ships added
+					//  TODO: New ships and bases
+					//  TODO: New missile bases/shields added here
+					//  TODO: New ships added
 					_updateStep++;
 					break;
 				case 4:
-					// Economic adjustments
-					// Collect Tax and surplus industry spending and put into reserves
-					// New factories are built
+					//  TODO: Economic adjustments
+					//  TODO: Collect Tax and surplus industry spending and put into reserves
+					//  TODO: New factories are built
 					_updateStep++;
 					break;
 				case 5:
@@ -194,20 +214,37 @@ namespace Beyond_Beyaan.Screens
 					}
 					break;
 				case 6:
-					//Space combat
+					// TODO: Space combat
 					_updateStep++;
 					break;
 				case 7:
-					//Spies do stuff if not hiding
+					// TODO: Spies do stuff if not hiding
 					_updateStep++;
 					break;
 				case 8:
-					// Roll for tech discoveries here
-					// If computer player gets a new research item, it reevaluates its need to spy on other races here
-					_updateStep++;
+					if (_newResearchTopicsNeeded.Count == 0)
+					{
+						_newResearchTopicsNeeded = _gameMain.EmpireManager.RollForDiscoveries(_gameMain.Random);
+						if (_newResearchTopicsNeeded.Count > 0)
+						{
+							foreach (var keyPair in _newResearchTopicsNeeded)
+							{
+								//How else to get the first key?
+								_whichEmpireFocusedOn = keyPair.Key;
+								break;
+							}
+
+							_researchPrompt.LoadEmpire(_whichEmpireFocusedOn, _newResearchTopicsNeeded[_whichEmpireFocusedOn]);
+							_researchPrompt.Completed += OnResearchPromptComplete;
+						}
+					}
+					if (_newResearchTopicsNeeded.Count == 0)
+					{
+						_updateStep++;
+					}
+					// TODO: If computer player gets a new research item, it reevaluates its need to spy on other races here
 					break;
 				case 9:
-					//To prevent skipping out next update.
 					if (_exploredSystemsThisTurn.Count == 0)
 					{
 						_exploredSystemsThisTurn = _gameMain.EmpireManager.CheckExploredSystems(_gameMain.Galaxy);
@@ -253,43 +290,43 @@ namespace Beyond_Beyaan.Screens
 					}
 					break;
 				case 11:
-					//Todo: resolve combat
+					// TODO: resolve combat
 					_gameMain.EmpireManager.LandTransports();
-					//Orbital bombardments
-					//Transports land and ground combat is resolved
+					// TODO: Orbital bombardments
+					// TODO: Transports land and ground combat is resolved
 					_updateStep++;
 					break;
 				case 12:
-					//BNN checks for genocide, and if only one player remains, it is hailed as winner of game
+					// TODO: BNN checks for genocide, and if only one player remains, it is hailed as winner of game
 					_updateStep++;
 					break;
 				case 13:
-					//Random events
+					// TODO: Random events
 					// Add 2% to cumulative probability chance, multipled by game difficulty modifier, rolls d100 die to see if an event occurs
 					// If event occurs, randomly select from those that haven't occured yet, and reset probability to 0.  Target player determined and event takes effect
 					_updateStep++;
 					break;
 				case 14:
-					//First contacts, if either race is not in contact, but overlaps one of two's colonies with their fuel range, establish contact
+					// TODO: First contacts, if either race is not in contact, but overlaps one of two's colonies with their fuel range, establish contact
 					_updateStep++;
 					break;
 				case 15:
-					// All computer-initiated diplomacy initiated
-					// High council convences if criterias are met.
-					// Messages from computer players are delivered to human player
-					// If contact is broken, notification occurs
+					//  TODO: All computer-initiated diplomacy initiated
+					//  TODO: High council convences if criterias are met.
+					//  TODO: Messages from computer players are delivered to human player
+					//  TODO: If contact is broken, notification occurs
 					_updateStep++;
 					break;
 				case 16:
-					// Planetary production/completion messages are displayed (i.e. shield built).  Slider bars can be adjusted
-					// Production numbers for next turn are calculated
+					//  TODO: Planetary production/completion messages are displayed (i.e. shield built).  Slider bars can be adjusted
+					//  TODO: Production numbers for next turn are calculated
 					_updateStep++;
 					break;
 				case 17:
-					// Any star systems within advanced space scanner range of colonies/ships is updated
-					// Turn advances by 1
-					// Recalculate players' current technology levels
-					// Autosave game
+					//  TODO: Any star systems within advanced space scanner range of colonies/ships is updated
+					//  TODO: Turn advances by 1
+					//  TODO: Recalculate players' current technology levels
+					//  TODO: Autosave game
 					_updateStep = 0;
 					_gameMain.EmpireManager.ClearEmptyFleets();
 					_gameMain.EmpireManager.SetInitialEmpireTurn();
@@ -307,6 +344,10 @@ namespace Beyond_Beyaan.Screens
 			if (_colonizableFleetsThisTurn.Count > 0)
 			{
 				_colonizeScreen.MouseDown(x, y);
+			}
+			if (_newResearchTopicsNeeded.Count > 0)
+			{
+				_researchPrompt.MouseDown(x, y);
 			}
 		}
 
@@ -348,6 +389,10 @@ namespace Beyond_Beyaan.Screens
 			if (_colonizableFleetsThisTurn.Count > 0)
 			{
 				_colonizeScreen.MouseUp(x, y);
+			}
+			if (_newResearchTopicsNeeded.Count > 0)
+			{
+				_researchPrompt.MouseUp(x, y);
 			}
 		}
 
@@ -392,6 +437,26 @@ namespace Beyond_Beyaan.Screens
 					_colonizeScreen.Completed = null;
 					_updateStep++;
 				}
+			}
+		}
+
+		private void OnResearchPromptComplete()
+		{
+			_newResearchTopicsNeeded.Remove(_whichEmpireFocusedOn);
+			if (_newResearchTopicsNeeded.Count > 0)
+			{
+				foreach (var keyPair in _newResearchTopicsNeeded)
+				{
+					_whichEmpireFocusedOn = keyPair.Key;
+					break;
+				}
+
+				_researchPrompt.LoadEmpire(_whichEmpireFocusedOn, _newResearchTopicsNeeded[_whichEmpireFocusedOn]);
+			}
+			else
+			{
+				_researchPrompt.Completed = null;
+				_updateStep++;
 			}
 		}
 	}

@@ -305,9 +305,9 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public void ProcessResearchTurn(float researchPoints, Random r, SitRepManager sitRepManager)
+		public void AccureResearch(float researchPoints)
 		{
-			/*if (ComputerPercentage == 0)
+			if (ComputerPercentage == 0)
 			{
 				if (ComputerResearchAmount > 0)
 				{
@@ -325,20 +325,6 @@ namespace Beyond_Beyaan
 					interest = newPoints * 2;
 				}
 				ComputerResearchAmount += (newPoints + interest);
-				//See if it is discovered this turn
-				int researchPointsRequired = (int)(WhichComputerBeingResearched.ResearchPoints * DifficultyModifier * ComputerRaceModifier);
-				if (ComputerResearchAmount > researchPointsRequired) //We now have a chance of discovering it
-				{
-					int chance = (int)((ComputerResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
-					if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
-					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichComputerBeingResearched.TechName + " has been discovered."));
-						ResearchedComputerTechs.Add(WhichComputerBeingResearched);
-						UnresearchedComputerTechs.Remove(WhichComputerBeingResearched);
-						WhichComputerBeingResearched = null;
-						ComputerResearchAmount = 0;
-					}
-				}
 			}
 
 			if (ConstructionPercentage == 0)
@@ -359,20 +345,6 @@ namespace Beyond_Beyaan
 					interest = newPoints * 2;
 				}
 				ConstructionResearchAmount += (newPoints + interest);
-				//See if it is discovered this turn
-				int researchPointsRequired = (int)(WhichConstructionBeingResearched.ResearchPoints * DifficultyModifier * ConstructionRaceModifier);
-				if (ConstructionResearchAmount > researchPointsRequired) //We now have a chance of discovering it
-				{
-					int chance = (int)((ConstructionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
-					if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
-					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichConstructionBeingResearched.TechName + " has been discovered."));
-						ResearchedConstructionTechs.Add(WhichConstructionBeingResearched);
-						UnresearchedConstructionTechs.Remove(WhichConstructionBeingResearched);
-						WhichConstructionBeingResearched = null;
-						ConstructionResearchAmount = 0;
-					}
-				}
 			}
 
 			if (ForceFieldPercentage == 0)
@@ -393,20 +365,6 @@ namespace Beyond_Beyaan
 					interest = newPoints * 2;
 				}
 				ForceFieldResearchAmount += (newPoints + interest);
-				//See if it is discovered this turn
-				int researchPointsRequired = (int)(WhichForceFieldBeingResearched.ResearchPoints * DifficultyModifier * ForceFieldRaceModifier);
-				if (ForceFieldResearchAmount > researchPointsRequired) //We now have a chance of discovering it
-				{
-					int chance = (int)((ForceFieldResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
-					if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
-					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichForceFieldBeingResearched.TechName + " has been discovered."));
-						ResearchedForceFieldTechs.Add(WhichForceFieldBeingResearched);
-						UnresearchedForceFieldTechs.Remove(WhichForceFieldBeingResearched);
-						WhichForceFieldBeingResearched = null;
-						ForceFieldResearchAmount = 0;
-					}
-				}
 			}
 
 			if (PlanetologyPercentage == 0)
@@ -427,20 +385,6 @@ namespace Beyond_Beyaan
 					interest = newPoints * 2;
 				}
 				PlanetologyResearchAmount += (newPoints + interest);
-				//See if it is discovered this turn
-				int researchPointsRequired = (int)(WhichPlanetologyBeingResearched.ResearchPoints * DifficultyModifier * PlanetologyRaceModifier);
-				if (PlanetologyResearchAmount > researchPointsRequired) //We now have a chance of discovering it
-				{
-					int chance = (int)((PlanetologyResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
-					if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
-					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichPlanetologyBeingResearched.TechName + " has been discovered."));
-						ResearchedPlanetologyTechs.Add(WhichPlanetologyBeingResearched);
-						UnresearchedPlanetologyTechs.Remove(WhichPlanetologyBeingResearched);
-						WhichPlanetologyBeingResearched = null;
-						PlanetologyResearchAmount = 0;
-					}
-				}
 			}
 
 			if (PropulsionPercentage == 0)
@@ -461,20 +405,6 @@ namespace Beyond_Beyaan
 					interest = newPoints * 2;
 				}
 				PropulsionResearchAmount += (newPoints + interest);
-				//See if it is discovered this turn
-				int researchPointsRequired = (int)(WhichPropulsionBeingResearched.ResearchPoints * DifficultyModifier * PropulsionRaceModifier);
-				if (PropulsionResearchAmount > researchPointsRequired) //We now have a chance of discovering it
-				{
-					int chance = (int)((PropulsionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
-					if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
-					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichPropulsionBeingResearched.TechName + " has been discovered."));
-						ResearchedPropulsionTechs.Add(WhichPropulsionBeingResearched);
-						UnresearchedPropulsionTechs.Remove(WhichPropulsionBeingResearched);
-						WhichPropulsionBeingResearched = null;
-						PropulsionResearchAmount = 0;
-					}
-				}
 			}
 
 			if (WeaponPercentage == 0)
@@ -495,23 +425,166 @@ namespace Beyond_Beyaan
 					interest = newPoints * 2;
 				}
 				WeaponResearchAmount += (newPoints + interest);
-				//See if it is discovered this turn
-				int researchPointsRequired = (int)(WhichWeaponBeingResearched.ResearchPoints * DifficultyModifier * WeaponRaceModifier);
-				if (WeaponResearchAmount > researchPointsRequired) //We now have a chance of discovering it
+			}
+		}
+
+		//Returns a list of fields that needs a new item to be researched
+		public List<TechField> RollForDiscoveries(Random r, SitRepManager sitRepManager)
+		{
+			List<TechField> fieldsNeedingNewItems = new List<TechField>();
+			//Only items being currently researched have a chance of being discovered, otherwise they degrade (handled in AccureResearch function)
+			if (ComputerPercentage > 0)
+			{
+				if (WhichComputerBeingResearched == null && UnresearchedComputerTechs.Count > 0 && ComputerResearchAmount > 0)
 				{
-					int chance = (int)((WeaponResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
-					if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
+					fieldsNeedingNewItems.Add(TechField.COMPUTER);
+				}
+				else if (WhichComputerBeingResearched != null)
+				{
+					int researchPointsRequired = (int)(WhichComputerBeingResearched.ResearchPoints * DifficultyModifier * ComputerRaceModifier);
+					if (ComputerResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichWeaponBeingResearched.TechName + " has been discovered."));
-						ResearchedWeaponTechs.Add(WhichWeaponBeingResearched);
-						UnresearchedWeaponTechs.Remove(WhichWeaponBeingResearched);
-						WhichWeaponBeingResearched = null;
-						WeaponResearchAmount = 0;
+						int chance = (int)((ComputerResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
+						{
+							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichComputerBeingResearched.TechName + " has been discovered."));
+							ResearchedComputerTechs.Add(WhichComputerBeingResearched);
+							UnresearchedComputerTechs.Remove(WhichComputerBeingResearched);
+							ComputerResearchAmount = 0;
+							fieldsNeedingNewItems.Add(TechField.COMPUTER);
+						}
+					}
+				}
+			}
+			
+
+			if (ConstructionPercentage > 0)
+			{
+				if (WhichConstructionBeingResearched == null && UnresearchedConstructionTechs.Count > 0 && ConstructionResearchAmount > 0)
+				{
+					fieldsNeedingNewItems.Add(TechField.CONSTRUCTION);
+				}
+				else if (WhichConstructionBeingResearched != null)
+				{
+					//See if it is discovered this turn
+					int researchPointsRequired = (int)(WhichConstructionBeingResearched.ResearchPoints * DifficultyModifier * ConstructionRaceModifier);
+					if (ConstructionResearchAmount > researchPointsRequired) //We now have a chance of discovering it
+					{
+						int chance = (int)((ConstructionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
+						{
+							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichConstructionBeingResearched.TechName + " has been discovered."));
+							ResearchedConstructionTechs.Add(WhichConstructionBeingResearched);
+							UnresearchedConstructionTechs.Remove(WhichConstructionBeingResearched);
+							ConstructionResearchAmount = 0;
+							fieldsNeedingNewItems.Add(TechField.CONSTRUCTION);
+						}
 					}
 				}
 			}
 
-			UpdateValues();*/
+			if (ForceFieldPercentage > 0)
+			{
+				if (WhichForceFieldBeingResearched == null && UnresearchedForceFieldTechs.Count > 0 && ForceFieldResearchAmount > 0)
+				{
+					fieldsNeedingNewItems.Add(TechField.FORCE_FIELD);
+				}
+				else if (WhichForceFieldBeingResearched != null)
+				{
+					int researchPointsRequired = (int)(WhichForceFieldBeingResearched.ResearchPoints * DifficultyModifier * ForceFieldRaceModifier);
+					if (ForceFieldResearchAmount > researchPointsRequired) //We now have a chance of discovering it
+					{
+						int chance = (int)((ForceFieldResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
+						{
+							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichForceFieldBeingResearched.TechName + " has been discovered."));
+							ResearchedForceFieldTechs.Add(WhichForceFieldBeingResearched);
+							UnresearchedForceFieldTechs.Remove(WhichForceFieldBeingResearched);
+							ForceFieldResearchAmount = 0;
+							fieldsNeedingNewItems.Add(TechField.FORCE_FIELD);
+						}
+					}
+				}
+			}
+
+			if (PlanetologyPercentage > 0)
+			{
+				if (WhichPlanetologyBeingResearched == null && UnresearchedPlanetologyTechs.Count > 0 && PlanetologyResearchAmount > 0)
+				{
+					fieldsNeedingNewItems.Add(TechField.PLANETOLOGY);
+				}
+				else if (WhichPlanetologyBeingResearched != null)
+				{
+					//See if it is discovered this turn
+					int researchPointsRequired = (int)(WhichPlanetologyBeingResearched.ResearchPoints * DifficultyModifier * PlanetologyRaceModifier);
+					if (PlanetologyResearchAmount > researchPointsRequired) //We now have a chance of discovering it
+					{
+						int chance = (int)((PlanetologyResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
+						{
+							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichPlanetologyBeingResearched.TechName + " has been discovered."));
+							ResearchedPlanetologyTechs.Add(WhichPlanetologyBeingResearched);
+							UnresearchedPlanetologyTechs.Remove(WhichPlanetologyBeingResearched);
+							PlanetologyResearchAmount = 0;
+							fieldsNeedingNewItems.Add(TechField.PLANETOLOGY);
+						}
+					}
+				}
+			}
+
+			if (PropulsionPercentage > 0)
+			{
+				if (WhichPropulsionBeingResearched == null && UnresearchedPropulsionTechs.Count > 0 && PropulsionResearchAmount > 0)
+				{
+					fieldsNeedingNewItems.Add(TechField.PROPULSION);
+				}
+				else if (WhichPropulsionBeingResearched != null)
+				{
+					//See if it is discovered this turn
+					int researchPointsRequired = (int)(WhichPropulsionBeingResearched.ResearchPoints * DifficultyModifier * PropulsionRaceModifier);
+					if (PropulsionResearchAmount > researchPointsRequired) //We now have a chance of discovering it
+					{
+						int chance = (int)((PropulsionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
+						{
+							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichPropulsionBeingResearched.TechName + " has been discovered."));
+							ResearchedPropulsionTechs.Add(WhichPropulsionBeingResearched);
+							UnresearchedPropulsionTechs.Remove(WhichPropulsionBeingResearched);
+							PropulsionResearchAmount = 0;
+							fieldsNeedingNewItems.Add(TechField.PROPULSION);
+						}
+					}
+				}
+			}
+
+			if (WeaponPercentage > 0)
+			{
+				if (WhichWeaponBeingResearched == null && UnresearchedWeaponTechs.Count > 0 && WeaponResearchAmount > 0)
+				{
+					fieldsNeedingNewItems.Add(TechField.WEAPON);
+				}
+				else if (WhichWeaponBeingResearched != null)
+				{
+					//See if it is discovered this turn
+					int researchPointsRequired = (int)(WhichWeaponBeingResearched.ResearchPoints * DifficultyModifier * WeaponRaceModifier);
+					if (WeaponResearchAmount > researchPointsRequired) //We now have a chance of discovering it
+					{
+						int chance = (int)((WeaponResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
+						{
+							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichWeaponBeingResearched.TechName + " has been discovered."));
+							ResearchedWeaponTechs.Add(WhichWeaponBeingResearched);
+							UnresearchedWeaponTechs.Remove(WhichWeaponBeingResearched);
+							WeaponResearchAmount = 0;
+							fieldsNeedingNewItems.Add(TechField.WEAPON);
+						}
+					}
+				}
+			}
+
+			UpdateValues();
+
+			return fieldsNeedingNewItems;
 		}
 
 		public void SetPercentage(TechField whichField, int amount)
