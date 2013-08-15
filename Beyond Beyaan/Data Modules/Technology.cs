@@ -9,7 +9,7 @@
 
 		public const int TITANIUM_ARMOR = 1;
 		public const int DURALLOY_ARMOR = 2;
-		public const int ZORITUM_ARMOR = 3;
+		public const int ZORTRIUM_ARMOR = 3;
 		public const int ANDRIUM_ARMOR = 4;
 		public const int TRITANIUM_ARMOR = 5;
 		public const int ADAMANTIUM_ARMOR = 6;
@@ -106,6 +106,31 @@
 		public bool InertialNullifier { get; private set; }
 		public bool DisplacementDevice { get; private set; }
 
+		//Space/Cost/Power requirements for ship.  Generic means ship's size don't matter
+		public float SmallSize { get; private set; }
+		public float SmallCost { get; private set; }
+		public float SmallPower { get; private set; }
+		public float SmallHP { get; private set; } //Armor points for ship
+
+		public float MediumSize { get; private set; }
+		public float MediumCost { get; private set; }
+		public float MediumPower { get; private set; }
+		public float MediumHP { get; private set; }
+
+		public float LargeSize { get; private set; }
+		public float LargeCost { get; private set; }
+		public float LargePower { get; private set; }
+		public float LargeHP { get; private set; }
+
+		public float HugeSize { get; private set; }
+		public float HugeCost { get; private set; }
+		public float HugePower { get; private set; }
+		public float HugeHP { get; private set; }
+
+		public float GenericSize { get; private set; }
+		public float GenericCost { get; private set; }
+		public float GenericPower { get; private set; }
+
 		public Technology(string name, string desc, int level,
 						//Optional arguments goes here
 						int roboticControl = 0,
@@ -150,7 +175,26 @@
 						bool subspaceInterdictor = false,
 						bool combatTransporters = false,
 						bool inertialNullifier = false,
-						bool displacementDevice = false
+						bool displacementDevice = false,
+						float smallSize = 0,
+						float smallCost = 0,
+						float smallPower = 0,
+						float smallHP = 0,
+						float mediumSize = 0,
+						float mediumCost = 0,
+						float mediumPower = 0,
+						float mediumHP = 0,
+						float largeSize = 0,
+						float largeCost = 0,
+						float largePower = 0,
+						float largeHP = 0,
+						float hugeSize = 0,
+						float hugeCost = 0,
+						float hugePower = 0,
+						float hugeHP = 0,
+						float genericSize = 0,
+						float genericCost = 0,
+						float genericPower = 0
 						)
 		{
 			TechLevel = level;
@@ -198,6 +242,28 @@
 			CombatTransporters = combatTransporters;
 			InertialNullifier = inertialNullifier;
 			DisplacementDevice = displacementDevice;
+			Stargate = stargate;
+
+			//Ship component info
+			SmallSize = smallSize;
+			SmallCost = smallCost;
+			SmallPower = smallPower;
+			SmallHP = smallHP;
+			MediumSize = mediumSize;
+			MediumCost = mediumCost;
+			MediumPower = mediumPower;
+			MediumHP = mediumHP;
+			LargeSize = largeSize;
+			LargeCost = largeCost;
+			LargePower = largePower;
+			LargeHP = largeHP;
+			HugeSize = hugeSize;
+			HugeCost = hugeCost;
+			HugePower = hugePower;
+			HugeHP = hugeHP;
+			GenericSize = genericSize;
+			GenericCost = genericCost;
+			GenericPower = genericPower;
 		}
 	}
 }
