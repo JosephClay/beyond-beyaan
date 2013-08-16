@@ -51,10 +51,17 @@
 
 		public const int SOIL_ENRICHMENT = 1;
 		public const int ADV_SOIL_ENRICHMENT = 2;
+
+		public const int BEAM_WEAPON = 1;
+		public const int BOMB_WEAPON = 2;
+		public const int BIOLOGICAL_WEAPON = 3;
+		public const int MISSILE_WEAPON = 4;
+		public const int TORPEDO_WEAPON = 5;
 		#endregion
 
 		public int TechLevel { get; private set; }
 		public string TechName { get; private set; }
+		public string TechSecondaryName { get; private set; } //Used for technologies that are either armor or weapons with heavy weapon variant
 		public string TechDescription { get; private set; }
 		public int ResearchPoints
 		{
@@ -112,26 +119,65 @@
 		public float SmallPower { get; private set; }
 		public float SmallHP { get; private set; } //Armor points for ship
 
+		public float SmallSecondarySize { get; private set; } //Used for double hulled armor
+		public float SmallSecondaryCost { get; private set; }
+		public float SmallSecondaryPower { get; private set; }
+		public float SmallSecondaryHP { get; private set; }
+
 		public float MediumSize { get; private set; }
 		public float MediumCost { get; private set; }
 		public float MediumPower { get; private set; }
 		public float MediumHP { get; private set; }
+
+		public float MediumSecondarySize { get; private set; }
+		public float MediumSecondaryCost { get; private set; }
+		public float MediumSecondaryPower { get; private set; }
+		public float MediumSecondaryHP { get; private set; }
 
 		public float LargeSize { get; private set; }
 		public float LargeCost { get; private set; }
 		public float LargePower { get; private set; }
 		public float LargeHP { get; private set; }
 
+		public float LargeSecondarySize { get; private set; }
+		public float LargeSecondaryCost { get; private set; }
+		public float LargeSecondaryPower { get; private set; }
+		public float LargeSecondaryHP { get; private set; }
+
 		public float HugeSize { get; private set; }
 		public float HugeCost { get; private set; }
 		public float HugePower { get; private set; }
 		public float HugeHP { get; private set; }
 
+		public float HugeSecondarySize { get; private set; }
+		public float HugeSecondaryCost { get; private set; }
+		public float HugeSecondaryPower { get; private set; }
+		public float HugeSecondaryHP { get; private set; }
+
 		public float GenericSize { get; private set; }
 		public float GenericCost { get; private set; }
 		public float GenericPower { get; private set; }
 
+		public float GenericSecondarySize { get; private set; } //Used for heavy weapons
+		public float GenericSecondaryCost { get; private set; }
+		public float GenericSecondaryPower { get; private set; }
+
+		public int WeaponType { get; private set; }
+		public int MinimumWeaponDamage { get; private set; }
+		public int MinimumSecondaryWeaponDamage { get; private set; }
+		public int MaximumWeaponDamage { get; private set; }
+		public int MaximumSecondaryWeaponDamage { get; private set; }
+		public bool ShieldPiercing { get; private set; }
+		public int WeaponRange { get; private set; }
+		public int SecondaryWeaponRange { get; private set; }
+		public int NumberOfShots { get; private set; }
+		public bool Streaming { get; private set; }
+		public int TargetingBonus { get; private set; }
+		public bool Enveloping { get; private set; }
+		public bool Dissipating { get; private set; } //Used only for plasma torpedoes
+
 		public Technology(string name, string desc, int level,
+						string secondaryName = "",
 						//Optional arguments goes here
 						int roboticControl = 0,
 						int battleComputer = 0,
@@ -194,12 +240,45 @@
 						float hugeHP = 0,
 						float genericSize = 0,
 						float genericCost = 0,
-						float genericPower = 0
+						float genericPower = 0,
+						float smallSecondarySize = 0,
+						float smallSecondaryCost = 0,
+						float smallSecondaryPower = 0,
+						float smallSecondaryHP = 0,
+						float mediumSecondarySize = 0,
+						float mediumSecondaryCost = 0,
+						float mediumSecondaryPower = 0,
+						float mediumSecondaryHP = 0,
+						float largeSecondarySize = 0,
+						float largeSecondaryCost = 0,
+						float largeSecondaryPower = 0,
+						float largeSecondaryHP = 0,
+						float hugeSecondarySize = 0,
+						float hugeSecondaryCost = 0,
+						float hugeSecondaryPower = 0,
+						float hugeSecondaryHP = 0,
+						float genericSecondarySize = 0,
+						float genericSecondaryCost = 0,
+						float genericSecondaryPower = 0,
+						int weaponType = 0,
+						int minimumWeaponDamage = 0,
+						int minimumSecondaryWeaponDamage = 0,
+						int maximumWeaponDamage = 0,
+						int maximumSecondaryWeaponDamage = 0,
+						bool shieldPiercing = false,
+						int weaponRange = 0,
+						int secondaryWeaponRange = 0,
+						int numberOfShots = 0,
+						bool streaming = false,
+						int targetingBonus = 0,
+						bool enveloping = false,
+						bool dissipating = false
 						)
 		{
 			TechLevel = level;
 			TechName = name;
 			TechDescription = desc;
+			TechSecondaryName = secondaryName;
 			RoboticControl = roboticControl;
 			BattleComputer = battleComputer;
 			BattleScanner = battleScanner;
@@ -264,6 +343,39 @@
 			GenericSize = genericSize;
 			GenericCost = genericCost;
 			GenericPower = genericPower;
+			SmallSecondarySize = smallSecondarySize;
+			SmallSecondaryCost = smallSecondaryCost;
+			SmallSecondaryPower = smallSecondaryPower;
+			SmallSecondaryHP = smallSecondaryHP;
+			MediumSecondarySize = mediumSecondarySize;
+			MediumSecondaryCost = mediumSecondaryCost;
+			MediumSecondaryPower = mediumSecondaryPower;
+			MediumSecondaryHP = mediumSecondaryHP;
+			LargeSecondarySize = largeSecondarySize;
+			LargeSecondaryCost = largeSecondaryCost;
+			LargeSecondaryPower = largeSecondaryPower;
+			LargeSecondaryHP = largeSecondaryHP;
+			HugeSecondarySize = hugeSecondarySize;
+			HugeSecondaryCost = hugeSecondaryCost;
+			HugeSecondaryPower = hugeSecondaryPower;
+			HugeSecondaryHP = hugeSecondaryHP;
+			GenericSecondarySize = genericSecondarySize;
+			GenericSecondaryCost = genericSecondaryCost;
+			GenericSecondaryPower = genericSecondaryPower;
+
+			WeaponType = weaponType;
+			MinimumWeaponDamage = minimumWeaponDamage;
+			MinimumSecondaryWeaponDamage = minimumSecondaryWeaponDamage;
+			MaximumWeaponDamage = maximumWeaponDamage;
+			MaximumSecondaryWeaponDamage = maximumSecondaryWeaponDamage;
+			ShieldPiercing = shieldPiercing;
+			WeaponRange = weaponRange;
+			SecondaryWeaponRange = secondaryWeaponRange;
+			NumberOfShots = numberOfShots;
+			Streaming = streaming;
+			TargetingBonus = targetingBonus;
+			Enveloping = enveloping;
+			Dissipating = dissipating;
 		}
 	}
 }
