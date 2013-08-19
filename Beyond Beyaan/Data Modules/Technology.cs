@@ -89,7 +89,7 @@
 		public int BioAntidote { get; private set; }
 		public int Enrichment { get; private set; }
 		public int Speed { get; private set; }
-		public int ManeuverSpeed { get; private set; }
+		public float ManeuverSpeed { get; private set; }
 		public int FuelRange { get; private set; }
 
 		public bool ReserveFuelTanks { get; private set; }
@@ -209,7 +209,7 @@
 						int bioAntidote = 0,
 						int enrichment = 0,
 						int speed = 0,
-						int maneuverSpeed = 0,
+						float maneuverSpeed = 0,
 						int fuelRange = 0,
 						bool inertialstabilizer = false,
 						bool energypulsar = false,
