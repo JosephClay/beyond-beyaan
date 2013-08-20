@@ -427,7 +427,6 @@ namespace Beyond_Beyaan.Screens
 					string reason;
 					if (!_gameMain.Galaxy.GenerateGalaxy((GALAXYTYPE)_galaxyComboBox.SelectedIndex, 1, 1, _gameMain.Random, out reason))
 					{
-						MessageBox.Show(reason);
 						_generatingGalaxy = false;
 					}
 				}
@@ -531,7 +530,6 @@ namespace Beyond_Beyaan.Screens
 			string reason;
 			if (!_gameMain.Galaxy.GenerateGalaxy((GALAXYTYPE)_galaxyComboBox.SelectedIndex, 1, 1, _gameMain.Random, out reason))
 			{
-				MessageBox.Show(reason);
 				_generatingGalaxy = false;
 			}
 		}
