@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Beyond_Beyaan.Data_Managers;
+using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -7,13 +9,27 @@ namespace Beyond_Beyaan.Screens
 	{
 		public Action Completed;
 
+		private BBSprite _techIcon;
+
 		private List<Technology> _discoveredTechs;
 		private List<TechField> _fieldsNeedingNewTopics;
 		private Dictionary<TechField, List<Technology>> _availableTopics;
+		private TechField _currentTechField;
+
+		private BBStretchableImage _techDescriptionBackground;
+		private BBStretchableImage _availableTechsToResearchBackground;
+		private BBInvisibleStretchButton[] _availableTechsToResearchButtons;
+		private BBScrollBar _scrollBar;
+		private int _maxVisible;
+
+		private BBLabel _instructionLabel;
+		private BBTextBox _techDescription;
+
+		private Empire _currentEmpire;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			if (!this.Initialize(gameMain.ScreenWidth / 2 - 330, gameMain.ScreenHeight / 2 - 330, 660, 660, StretchableImageType.MediumBorder, gameMain, false, gameMain.Random, out reason))
+			if (!this.Initialize(gameMain.ScreenWidth / 2 - 230, gameMain.ScreenHeight / 2 - 180, 460, 360, StretchableImageType.MediumBorder, gameMain, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -22,11 +38,87 @@ namespace Beyond_Beyaan.Screens
 			_fieldsNeedingNewTopics = new List<TechField>();
 			_availableTopics = new Dictionary<TechField, List<Technology>>();
 
+			_techDescriptionBackground = new BBStretchableImage();
+			_availableTechsToResearchBackground = new BBStretchableImage();
+			_instructionLabel = new BBLabel();
+			_techDescription = new BBTextBox();
+			_scrollBar = new BBScrollBar();
+			_availableTechsToResearchButtons = new BBInvisibleStretchButton[4];
+
+			if (!_techDescriptionBackground.Initialize(xPos + 20, yPos + 20, 420, 170, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_availableTechsToResearchBackground.Initialize(xPos + 20, yPos + 220, 420, 120, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_instructionLabel.Initialize(xPos + 20, yPos + 195, "Please select an item to research", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_techDescription.Initialize(xPos + 165, yPos + 33, 265, 150, true, "TechDescriptionTextBox", gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_scrollBar.Initialize(xPos + 385, yPos + 230, 100, 4, 4, false, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			for (int i = 0; i < _availableTechsToResearchButtons.Length; i++)
+			{
+				_availableTechsToResearchButtons[i] = new BBInvisibleStretchButton();
+				if (!_availableTechsToResearchButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, xPos + 30, yPos + 230 + (i * 25), 355, 25, gameMain.Random, out reason))
+				{
+					return false;
+				}
+				if (!_availableTechsToResearchButtons[i].SetToolTip("ItemToResearch" + i + "ToolTip", string.Empty, gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+				{
+					return false;
+				}
+			}
+
 			return true;
+		}
+
+		public override void Draw()
+		{
+			base.Draw();
+			_techDescriptionBackground.Draw();
+			_availableTechsToResearchBackground.Draw();
+			_techIcon.Draw(xPos + 35, yPos + 38);
+			_techDescription.Draw();
+			_instructionLabel.Draw();
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				_availableTechsToResearchButtons[i].Draw();
+			}
+			_scrollBar.Draw();
+
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				_availableTechsToResearchButtons[i].DrawToolTip();
+			}
+		}
+
+		public override bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			bool result = _techDescription.MouseHover(x, y, frameDeltaTime);
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				result = _availableTechsToResearchButtons[i].MouseHover(x, y, frameDeltaTime) || result;
+			}
+			if (_scrollBar.MouseHover(x, y, frameDeltaTime))
+			{
+				//TODO: Update the tech buttons
+				result = true;
+			}
+			return result;
 		}
 
 		public void LoadEmpire(Empire empire, List<TechField> fields)
 		{
+			_currentEmpire = empire;
 			_discoveredTechs.Clear();
 			_fieldsNeedingNewTopics = new List<TechField>(fields);
 			_availableTopics.Clear();
@@ -37,6 +129,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					case TechField.COMPUTER:
 					{
+						_availableTopics.Add(techField, new List<Technology>());
 						if (empire.TechnologyManager.WhichComputerBeingResearched != null)
 						{
 							_discoveredTechs.Add(empire.TechnologyManager.WhichComputerBeingResearched);
@@ -46,7 +139,6 @@ namespace Beyond_Beyaan.Screens
 						{
 							break;
 						}
-						_availableTopics.Add(techField, new List<Technology>());
 						//Now find the next tier of techs
 						int highestTech = 0;
 						foreach (var tech in empire.TechnologyManager.ResearchedComputerTechs)
@@ -67,6 +159,7 @@ namespace Beyond_Beyaan.Screens
 					} break;
 					case TechField.CONSTRUCTION:
 						{
+							_availableTopics.Add(techField, new List<Technology>());
 							if (empire.TechnologyManager.WhichConstructionBeingResearched != null)
 							{
 								_discoveredTechs.Add(empire.TechnologyManager.WhichConstructionBeingResearched);
@@ -76,7 +169,6 @@ namespace Beyond_Beyaan.Screens
 							{
 								break;
 							}
-							_availableTopics.Add(techField, new List<Technology>());
 							//Now find the next tier of techs
 							int highestTech = 0;
 							foreach (var tech in empire.TechnologyManager.ResearchedConstructionTechs)
@@ -97,6 +189,7 @@ namespace Beyond_Beyaan.Screens
 						} break;
 					case TechField.FORCE_FIELD:
 						{
+							_availableTopics.Add(techField, new List<Technology>());
 							if (empire.TechnologyManager.WhichForceFieldBeingResearched != null)
 							{
 								_discoveredTechs.Add(empire.TechnologyManager.WhichForceFieldBeingResearched);
@@ -106,7 +199,6 @@ namespace Beyond_Beyaan.Screens
 							{
 								break;
 							}
-							_availableTopics.Add(techField, new List<Technology>());
 							//Now find the next tier of techs
 							int highestTech = 0;
 							foreach (var tech in empire.TechnologyManager.ResearchedForceFieldTechs)
@@ -127,6 +219,7 @@ namespace Beyond_Beyaan.Screens
 						} break;
 					case TechField.PLANETOLOGY:
 						{
+							_availableTopics.Add(techField, new List<Technology>());
 							if (empire.TechnologyManager.WhichPlanetologyBeingResearched != null)
 							{
 								_discoveredTechs.Add(empire.TechnologyManager.WhichPlanetologyBeingResearched);
@@ -136,7 +229,6 @@ namespace Beyond_Beyaan.Screens
 							{
 								break;
 							}
-							_availableTopics.Add(techField, new List<Technology>());
 							//Now find the next tier of techs
 							int highestTech = 0;
 							foreach (var tech in empire.TechnologyManager.ResearchedPlanetologyTechs)
@@ -157,6 +249,7 @@ namespace Beyond_Beyaan.Screens
 						} break;
 					case TechField.PROPULSION:
 						{
+							_availableTopics.Add(techField, new List<Technology>());
 							if (empire.TechnologyManager.WhichPropulsionBeingResearched != null)
 							{
 								_discoveredTechs.Add(empire.TechnologyManager.WhichPropulsionBeingResearched);
@@ -166,7 +259,6 @@ namespace Beyond_Beyaan.Screens
 							{
 								break;
 							}
-							_availableTopics.Add(techField, new List<Technology>());
 							//Now find the next tier of techs
 							int highestTech = 0;
 							foreach (var tech in empire.TechnologyManager.ResearchedPropulsionTechs)
@@ -187,6 +279,7 @@ namespace Beyond_Beyaan.Screens
 						} break;
 					case TechField.WEAPON:
 						{
+							_availableTopics.Add(techField, new List<Technology>());
 							if (empire.TechnologyManager.WhichWeaponBeingResearched != null)
 							{
 								_discoveredTechs.Add(empire.TechnologyManager.WhichWeaponBeingResearched);
@@ -196,7 +289,6 @@ namespace Beyond_Beyaan.Screens
 							{
 								break;
 							}
-							_availableTopics.Add(techField, new List<Technology>());
 							//Now find the next tier of techs
 							int highestTech = 0;
 							foreach (var tech in empire.TechnologyManager.ResearchedWeaponTechs)
@@ -215,6 +307,158 @@ namespace Beyond_Beyaan.Screens
 								}
 							}
 						} break;
+				}
+			}
+			LoadNextTech();
+		}
+
+		private void LoadNextTech()
+		{
+			//Go in order from Computer, Construction, Force Field, Planetology, Propulsion, to Weapon
+			if (_availableTopics.ContainsKey(TechField.COMPUTER))
+			{
+				_currentTechField = TechField.COMPUTER;
+				//Check to see if there's a researched item
+				bool hasDiscovered = false;
+				foreach (var researchedItem in _discoveredTechs)
+				{
+					if (_currentEmpire.TechnologyManager.ResearchedComputerTechs.Contains(researchedItem))
+					{
+						_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+						_techDescription.SetText(researchedItem.TechName + "\n\r\n\r" + researchedItem.TechDescription);
+						hasDiscovered = true;
+						break;
+					}
+				}
+				if (!hasDiscovered)
+				{
+					_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+					_techDescription.SetText("Computer technologies help with increasing number of factories, better scanners, improving your attack and missile defense on ships, and spying efforts benefits from higher computer tech level.");
+				}
+			}
+			else if (_availableTopics.ContainsKey(TechField.CONSTRUCTION))
+			{
+				_currentTechField = TechField.CONSTRUCTION;
+				//Check to see if there's a researched item
+				bool hasDiscovered = false;
+				foreach (var researchedItem in _discoveredTechs)
+				{
+					if (_currentEmpire.TechnologyManager.ResearchedConstructionTechs.Contains(researchedItem))
+					{
+						_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+						_techDescription.SetText(researchedItem.TechName + "\n\r\n\r" + researchedItem.TechDescription);
+						hasDiscovered = true;
+						break;
+					}
+				}
+				if (!hasDiscovered)
+				{
+					_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+					_techDescription.SetText("Construction technologies gives you better armor, cheaper factories, reduced pollution, and higher construction tech levels gives you more room on ships.");
+				}
+			}
+			else if (_availableTopics.ContainsKey(TechField.FORCE_FIELD))
+			{
+				_currentTechField = TechField.FORCE_FIELD;
+				//Check to see if there's a researched item
+				bool hasDiscovered = false;
+				foreach (var researchedItem in _discoveredTechs)
+				{
+					if (_currentEmpire.TechnologyManager.ResearchedForceFieldTechs.Contains(researchedItem))
+					{
+						_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+						_techDescription.SetText(researchedItem.TechName + "\n\r\n\r" + researchedItem.TechDescription);
+						hasDiscovered = true;
+						break;
+					}
+				}
+				if (!hasDiscovered)
+				{
+					_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+					_techDescription.SetText("Force field technologies gives you better shields, as well as planetary shields and nifty special items.");
+				}
+			}
+			else if (_availableTopics.ContainsKey(TechField.PLANETOLOGY))
+			{
+				_currentTechField = TechField.PLANETOLOGY;
+				//Check to see if there's a researched item
+				bool hasDiscovered = false;
+				foreach (var researchedItem in _discoveredTechs)
+				{
+					if (_currentEmpire.TechnologyManager.ResearchedPlanetologyTechs.Contains(researchedItem))
+					{
+						_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+						_techDescription.SetText(researchedItem.TechName + "\n\r\n\r" + researchedItem.TechDescription);
+						hasDiscovered = true;
+						break;
+					}
+				}
+				if (!hasDiscovered)
+				{
+					_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+					_techDescription.SetText("Planetology technologies gives you terraforming and bigger planets, cheaper pollution cleanup, as well as expanding the number of planets you can colonize.  Also includes biological warfare.");
+				}
+			}
+			else if (_availableTopics.ContainsKey(TechField.PROPULSION))
+			{
+				_currentTechField = TechField.PROPULSION;
+				//Check to see if there's a researched item
+				bool hasDiscovered = false;
+				foreach (var researchedItem in _discoveredTechs)
+				{
+					if (_currentEmpire.TechnologyManager.ResearchedPropulsionTechs.Contains(researchedItem))
+					{
+						_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+						_techDescription.SetText(researchedItem.TechName + "\n\r\n\r" + researchedItem.TechDescription);
+						hasDiscovered = true;
+						break;
+					}
+				}
+				if (!hasDiscovered)
+				{
+					_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+					_techDescription.SetText("Propulsion technologies gives you faster engines, expanded range, and powerful special equipment.");
+				}
+			}
+			else if (_availableTopics.ContainsKey(TechField.WEAPON))
+			{
+				_currentTechField = TechField.WEAPON;
+				//Check to see if there's a researched item
+				bool hasDiscovered = false;
+				foreach (var researchedItem in _discoveredTechs)
+				{
+					if (_currentEmpire.TechnologyManager.ResearchedWeaponTechs.Contains(researchedItem))
+					{
+						_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+						_techDescription.SetText(researchedItem.TechName + "\n\r\n\r" + researchedItem.TechDescription);
+						hasDiscovered = true;
+						break;
+					}
+				}
+				if (!hasDiscovered)
+				{
+					_techIcon = SpriteManager.GetSprite("RandomRace", _gameMain.Random);
+					_techDescription.SetText("Weapon technologies gives you weapons. A lot of weapons.");
+				}
+			}
+			if (_availableTopics[_currentTechField].Count > 0)
+			{
+				if (_availableTopics[_currentTechField].Count > _availableTechsToResearchButtons.Length)
+				{
+					_maxVisible = _availableTechsToResearchButtons.Length;
+					_scrollBar.SetEnabledState(true);
+					_scrollBar.SetAmountOfItems(_availableTopics[_currentTechField].Count);
+				}
+				else
+				{
+					_maxVisible = _availableTopics[_currentTechField].Count;
+					_scrollBar.SetAmountOfItems(_availableTechsToResearchButtons.Length);
+					_scrollBar.SetEnabledState(false);
+				}
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					_availableTechsToResearchButtons[i].SetText(_availableTopics[_currentTechField][i].TechName);
+					_availableTechsToResearchButtons[i].SetToolTipText(_availableTopics[_currentTechField][i].TechDescription);
 				}
 			}
 		}

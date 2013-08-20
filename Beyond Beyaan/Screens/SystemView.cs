@@ -600,7 +600,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				if (_transferToButton.MouseUp(x, y))
 				{
-					if (TransferSystem.IsValid)
+					if (TransferSystem != null && TransferSystem.IsValid)
 					{
 						if (TransferSystem.StarSystem == _currentSystem)
 						{
@@ -612,10 +612,10 @@ namespace Beyond_Beyaan.Screens
 						}
 						_transferLabel.SetText("Moving " + _currentSystem.Planets[0].TransferSystem.Value + " Pop");
 						_transferLabel.MoveTo(xPos + 10, yPos + 440);
-						IsTransferring = false;
 						TransferSystem = null;
 						//Done setting transfer
 					}
+					IsTransferring = false;
 					return true;
 				}
 			}

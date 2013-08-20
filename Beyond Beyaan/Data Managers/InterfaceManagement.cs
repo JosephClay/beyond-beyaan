@@ -12,7 +12,7 @@ namespace Beyond_Beyaan
 	public class BBButton
 	{
 		#region Member Variables
-		private BBToolTip toolTip;
+		private BBToolTip _toolTip;
 		private BBSprite backgroundSprite;
 		private BBSprite foregroundSprite;
 		private int _xPos;
@@ -89,8 +89,8 @@ namespace Beyond_Beyaan
 		}
 		public bool SetToolTip(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
 		{
-			toolTip = new BBToolTip();
-			if (!toolTip.Initialize(name, text, screenWidth, screenHeight, r, out reason))
+			_toolTip = new BBToolTip();
+			if (!_toolTip.Initialize(name, text, screenWidth, screenHeight, r, out reason))
 			{
 				return false;
 			}
@@ -150,10 +150,10 @@ namespace Beyond_Beyaan
 						}
 					}
 				}
-				if (toolTip != null)
+				if (_toolTip != null)
 				{
-					toolTip.SetShowing(true);
-					toolTip.MouseHover(x, y, frameDeltaTime);
+					_toolTip.SetShowing(true);
+					_toolTip.MouseHover(x, y, frameDeltaTime);
 				}
 				return true;
 			}
@@ -165,9 +165,9 @@ namespace Beyond_Beyaan
 					pulse = 0;
 				}
 			}
-			if (toolTip != null)
+			if (_toolTip != null)
 			{
-				toolTip.SetShowing(false);
+				_toolTip.SetShowing(false);
 			}
 			return false;
 		}
@@ -176,9 +176,9 @@ namespace Beyond_Beyaan
 		{
 			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 			{
-				if (toolTip != null)
+				if (_toolTip != null)
 				{
-					toolTip.SetShowing(false);
+					_toolTip.SetShowing(false);
 				}
 				if (Active)
 				{
@@ -193,9 +193,9 @@ namespace Beyond_Beyaan
 		{
 			if (Active && pressed)
 			{
-				if (toolTip != null)
+				if (_toolTip != null)
 				{
-					toolTip.SetShowing(false);
+					_toolTip.SetShowing(false);
 				}
 				pressed = false;
 				if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
@@ -238,9 +238,9 @@ namespace Beyond_Beyaan
 		}
 		public void DrawToolTip()
 		{
-			if (toolTip != null)
+			if (_toolTip != null)
 			{
-				toolTip.Draw();
+				_toolTip.Draw();
 			}
 		}
 		#endregion
@@ -635,6 +635,7 @@ namespace Beyond_Beyaan
 	public class BBStretchButton
 	{
 		#region Member Variables
+		private BBToolTip _toolTip;
 		protected BBStretchableImage _backgroundImage;
 		protected BBStretchableImage _foregroundImage;
 		protected BBLabel _label;
@@ -717,6 +718,19 @@ namespace Beyond_Beyaan
 					break;
 			}
 		}
+		public bool SetToolTip(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
+		{
+			_toolTip = new BBToolTip();
+			if (!_toolTip.Initialize(name, text, screenWidth, screenHeight, r, out reason))
+			{
+				return false;
+			}
+			return true;
+		}
+		public void SetToolTipText(string text)
+		{
+			_toolTip.SetText(text);
+		}
 		public void SetTextColor(Color color)
 		{
 			_label.SetColor(color);
@@ -779,6 +793,11 @@ namespace Beyond_Beyaan
 						}
 					}
 				}
+				if (_toolTip != null)
+				{
+					_toolTip.SetShowing(true);
+					_toolTip.MouseHover(x, y, frameDeltaTime);
+				}
 				return true;
 			}
 			if (_pulse > 0)
@@ -789,6 +808,10 @@ namespace Beyond_Beyaan
 					_pulse = 0;
 				}
 			}
+			if (_toolTip != null)
+			{
+				_toolTip.SetShowing(false);
+			}
 			return false;
 		}
 
@@ -796,6 +819,10 @@ namespace Beyond_Beyaan
 		{
 			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 			{
+				if (_toolTip != null)
+				{
+					_toolTip.SetShowing(false);
+				}
 				if (Enabled)
 				{
 					_pressed = true;
@@ -809,6 +836,10 @@ namespace Beyond_Beyaan
 		{
 			if (Enabled && _pressed)
 			{
+				if (_toolTip != null)
+				{
+					_toolTip.SetShowing(false);
+				}
 				_pressed = false;
 				if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 				{
@@ -846,6 +877,13 @@ namespace Beyond_Beyaan
 			if (_label.Text.Length > 0)
 			{
 				_label.Draw();
+			}
+		}
+		public void DrawToolTip()
+		{
+			if (_toolTip != null)
+			{
+				_toolTip.Draw();
 			}
 		}
 		#endregion
@@ -3600,6 +3638,10 @@ namespace Beyond_Beyaan
 
 		public void SetText(string text)
 		{
+			if (string.IsNullOrEmpty(text))
+			{
+				text = "Missing Text!";
+			}
 			_textSprite.Text = text;
 			if (_usingScrollBar)
 			{
@@ -3721,6 +3763,15 @@ namespace Beyond_Beyaan
 			return true;
 		}
 
+		public void SetText(string text)
+		{
+			_text.SetText(text);
+
+			_totalHeight = _text.Height + 10;
+
+			_background.Resize(WIDTH, _totalHeight);
+		}
+
 		public void Draw()
 		{
 			if (_showing && _delayBeforeShowing >= 1)
@@ -3736,9 +3787,9 @@ namespace Beyond_Beyaan
 			{
 				int modifiedX = 0;
 				int modifiedY = 0;
-				if (x < _screenWidth - WIDTH)
+				if (x < _screenWidth - (WIDTH + 24))
 				{
-					modifiedX = x;
+					modifiedX = x + 24;
 				}
 				else
 				{

@@ -286,58 +286,58 @@
     <Frame x="891" y="65" width="60" height="13" />
   </Sprite>
   <Sprite name="TinyButtonBGTL" file="main.png">
-    <Frame x="65" y="275" width="10" height="10" />
+    <Frame x="448" y="568" width="10" height="10" />
   </Sprite>
   <Sprite name="TinyButtonBGTC" file="main.png">
-    <Frame x="76" y="275" width="1" height="10" />
+    <Frame x="459" y="568" width="1" height="10" />
   </Sprite>
   <Sprite name="TinyButtonBGTR" file="main.png">
-    <Frame x="78" y="275" width="10" height="10" />
+    <Frame x="461" y="568" width="10" height="10" />
   </Sprite>
   <Sprite name="TinyButtonBGCL" file="main.png">
-    <Frame x="65" y="286" width="10" height="1" />
+    <Frame x="448" y="579" width="10" height="1" />
   </Sprite>
   <Sprite name="TinyButtonBGCC" file="main.png">
-    <Frame x="76" y="286" width="1" height="1" />
+    <Frame x="459" y="579" width="1" height="1" />
   </Sprite>
   <Sprite name="TinyButtonBGCR" file="main.png">
-    <Frame x="78" y="286" width="10" height="1" />
+    <Frame x="461" y="579" width="10" height="1" />
   </Sprite>
   <Sprite name="TinyButtonBGBL" file="main.png">
-    <Frame x="65" y="288" width="10" height="10" />
+    <Frame x="448" y="581" width="10" height="10" />
   </Sprite>
   <Sprite name="TinyButtonBGBC" file="main.png">
-    <Frame x="76" y="288" width="1" height="10" />
+    <Frame x="459" y="581" width="1" height="10" />
   </Sprite>
   <Sprite name="TinyButtonBGBR" file="main.png">
-    <Frame x="78" y="288" width="10" height="10" />
+    <Frame x="461" y="581" width="10" height="10" />
   </Sprite>
   <Sprite name="TinyButtonFGTL" file="main.png">
-    <Frame x="89" y="275" width="10" height="10" />
+    <Frame x="448" y="544" width="10" height="10" />
   </Sprite>
   <Sprite name="TinyButtonFGTC" file="main.png">
-    <Frame x="100" y="275" width="1" height="10" />
+    <Frame x="459" y="544" width="1" height="10" />
   </Sprite>
   <Sprite name="TinyButtonFGTR" file="main.png">
-    <Frame x="102" y="275" width="10" height="10" />
+    <Frame x="461" y="544" width="10" height="10" />
   </Sprite>
   <Sprite name="TinyButtonFGCL" file="main.png">
-    <Frame x="89" y="286" width="10" height="1" />
+    <Frame x="448" y="555" width="10" height="1" />
   </Sprite>
   <Sprite name="TinyButtonFGCC" file="main.png">
-    <Frame x="100" y="286" width="1" height="1" />
+    <Frame x="459" y="555" width="1" height="1" />
   </Sprite>
   <Sprite name="TinyButtonFGCR" file="main.png">
-    <Frame x="102" y="286" width="10" height="1" />
+    <Frame x="461" y="555" width="10" height="1" />
   </Sprite>
   <Sprite name="TinyButtonFGBL" file="main.png">
-    <Frame x="89" y="288" width="10" height="10" />
+    <Frame x="448" y="557" width="10" height="10" />
   </Sprite>
   <Sprite name="TinyButtonFGBC" file="main.png">
-    <Frame x="100" y="288" width="1" height="10" />
+    <Frame x="459" y="557" width="1" height="10" />
   </Sprite>
   <Sprite name="TinyButtonFGBR" file="main.png">
-    <Frame x="102" y="288" width="10" height="10" />
+    <Frame x="461" y="557" width="10" height="10" />
   </Sprite>
   <Sprite name="DownBG" file="main.png">
     <Frame x="528" y="80" width="16" height="16" />
