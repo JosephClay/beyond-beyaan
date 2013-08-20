@@ -142,9 +142,9 @@ namespace Beyond_Beyaan.Data_Managers
 			PlanetologyTechs.Add(new Technology("Controlled Barren Environment", "Permits the colonization of barren planets.", 3, colony: Technology.BARREN_COLONY, genericCost: 375, genericSize: 700));
 			PlanetologyTechs.Add(new Technology("Improved Ecological Restoration", "Eliminates 3 units of industrial waste for a cost of 1 BC.", 5, ecoCleanup: 3));
 			PlanetologyTechs.Add(new Technology("Controlled Tundra Environment", "Permits the colonization of tundra planets.", 6, colony: Technology.TUNDRA_COLONY, genericCost: 400, genericSize: 700));
-			PlanetologyTechs.Add(new Technology("Terraforming +20", "Increases the population capacity of planets by 20M for a cost of 5 BC per million.", 9, terraforming: 20));
-			PlanetologyTechs.Add(new Technology("Controlled Dead Environment", "Permits the colonization of dead planets.", 10, colony: Technology.DEAD_COLONY, genericCost: 425, genericSize: 700));
-			PlanetologyTechs.Add(new Technology("Death Spores", "Horrible biological weapons capable of reducing the maximum planetary populations by 1 million per attack.", 11, bioWeapon: Technology.DEATH_SPORES));
+			PlanetologyTechs.Add(new Technology("Terraforming +20", "Increases the population capacity of planets by 20M for a cost of 5 BC per million.", 8, terraforming: 20));
+			PlanetologyTechs.Add(new Technology("Controlled Dead Environment", "Permits the colonization of dead planets.", 9, colony: Technology.DEAD_COLONY, genericCost: 425, genericSize: 700));
+			PlanetologyTechs.Add(new Technology("Death Spores", "Horrible biological weapons capable of reducing the maximum planetary populations by 1 million per attack.", 10, bioWeapon: Technology.DEATH_SPORES));
 			PlanetologyTechs.Add(new Technology("Controlled Inferno Environment", "Permits the colonization of inferno planets.", 12, colony: Technology.VOLCANIC_COLONY, genericCost: 450, genericSize: 700));
 			PlanetologyTechs.Add(new Technology("Enhanced Ecological Restoration", "Eliminates 5 units of industrial waste for a cost of 1 BC.", 13, ecoCleanup: 5));
 			PlanetologyTechs.Add(new Technology("Terraforming +30", "Increases the population capacity of planets by 30M for a cost of 4 BC per million.", 14, terraforming: 30));
@@ -172,7 +172,7 @@ namespace Beyond_Beyaan.Data_Managers
 		private void LoadPropulsionTechs()
 		{
 			PropulsionTechs.Add(new Technology("Retro Engines", "Moves ships at warp one (1 parsecs per turn), and allows a maximum maneuverability of class I in combat.", 1, speed: 1, maneuverSpeed: 1, genericCost: 2, genericSize: 10));
-			PropulsionTechs.Add(new Technology("Hydrogen Fuel Cells", "Fuel reserves allow ships to move up to 4 parsecs away from colony planets.", 2, fuelRange: 4));
+			PropulsionTechs.Add(new Technology("Hydrogen Fuel Cells", "Fuel reserves allow ships to move up to 4 parsecs away from colony planets.", 3, fuelRange: 4));
 			PropulsionTechs.Add(new Technology("Deutrium Fuel Cells", "Fuel reserves allow ships to move up to 5 parsecs away from colony planets.", 5, fuelRange: 5));
 			PropulsionTechs.Add(new Technology("Nuclear Engines", "Moves ships at warp two (2 parsecs per turn), and allows a maximum maneuverability of class II in combat.", 6, speed: 2, maneuverSpeed: 1, genericCost: 4, genericSize: 18));
 			PropulsionTechs.Add(new Technology("Irridium Fuel Cells", "Fuel reserves allow ships to move up to 6 parsecs away from colony planets.", 9, fuelRange: 6));
@@ -239,6 +239,7 @@ namespace Beyond_Beyaan.Data_Managers
 			WeaponTechs.Add(new Technology("Particle Beam", "High intensity particle accelerators capable of striking enemy ships for 10-20 points of damage and halving the effectiveness of deflector shields.", 33, minimumWeaponDamage: 10, maximumWeaponDamage: 20, weaponRange: 1, genericCost: 15, genericSize: 90, genericPower: 75, shieldPiercing: true, weaponType: Technology.BEAM_WEAPON));
 			WeaponTechs.Add(new Technology("Hercular Missiles", "Highly advanced missile that explodes for 25 points of damage. The hercular missile moves at speed 4.5 and is controlled by a +5 level targeting computer.", 34, maximumWeaponDamage: 25, weaponRange: 9, genericCost: 26, genericSize: 220, genericPower: 40, targetingBonus: 5, maneuverSpeed: 4.5f, weaponType: Technology.MISSILE_WEAPON));
 			WeaponTechs.Add(new Technology("Plasma Cannon", "Fires intense bolts of energy that inflict 6-30 points of damage.", 35, minimumWeaponDamage: 6, maximumWeaponDamage: 30, weaponRange: 1, genericCost: 12, genericSize: 30, genericPower: 110, weaponType: Technology.BEAM_WEAPON));
+			//WeaponTechs.Add(new Technology("Death Ray", "An ancient weapon of unbelievably destructive power that inflicts 200 to 1000 points of damage and has a one-space range.", 36, minimumWeaponDamage: 200, maximumWeaponDamage: 1000, weaponRange: 1, genericCost: 12, genericSize: 30, genericPower: 110, weaponType: Technology.BEAM_WEAPON));
 			WeaponTechs.Add(new Technology("Disruptor", "Unleashes tremendous bolts of pure energy that can strike enemy targets up to 2 spaces away for 10-40 points of damage.", 37, minimumWeaponDamage: 10, maximumWeaponDamage: 40, weaponRange: 2, genericCost: 21, genericSize: 70, genericPower: 160, weaponType: Technology.BEAM_WEAPON));
 			WeaponTechs.Add(new Technology("Pulse Phasor", "An advanced phasor capable of firing three bursts per turn for 5-20 points of damage with each hit.", 38, minimumWeaponDamage: 5, maximumWeaponDamage: 20, weaponRange: 1, genericCost: 25, genericSize: 40, genericPower: 120, numberOfShots: 3, weaponType: Technology.BEAM_WEAPON));
 			WeaponTechs.Add(new Technology("Neutronium Bomb", "Devastating bombs that explode for 40-70 points of damage on planets only.", 39, minimumWeaponDamage: 40, maximumWeaponDamage: 70, weaponRange: 1, genericCost: 10, genericSize: 200, genericPower: 10, numberOfShots: 10, weaponType: Technology.BOMB_WEAPON));
