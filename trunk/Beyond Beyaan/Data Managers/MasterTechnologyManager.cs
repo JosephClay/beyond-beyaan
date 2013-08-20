@@ -131,7 +131,6 @@ namespace Beyond_Beyaan.Data_Managers
 			ForceFieldTechs.Add(new Technology("Class XIII Deflector Shield", "Absorbs 13 points of damage from all attacks.", 44, shield: 13, smallCost: 8, smallPower: 50, smallSize: 50, mediumCost: 46, mediumPower: 155, mediumSize: 155, largeCost: 300, largePower: 330, largeSize: 330, hugeCost: 1875, hugePower: 1375, hugeSize: 1375));
 			ForceFieldTechs.Add(new Technology("Lightning Shield", "An energy field that destroys incoming enemy missiles and torpedoes 100% of the time, -1% per technology level of the missile.", 46, missileShield: Technology.LIGHTNING_SHIELD, smallCost: 20, smallSize: 6, smallPower: 15, mediumCost: 30, mediumSize: 30, mediumPower: 70, largeCost: 40, largeSize: 150, largePower: 350, hugeCost: 50, hugeSize: 750, hugePower: 1750));
 			ForceFieldTechs.Add(new Technology("Class XV Deflector Shield", "Absorbs 15 points of damage from all attacks.", 50, shield: 15, smallCost: 9, smallPower: 55, smallSize: 55, mediumCost: 49, mediumPower: 160, mediumSize: 160, largeCost: 320, largePower: 360, largeSize: 360, hugeCost: 2000, hugePower: 1500, hugeSize: 1500));
-
 		}
 
 		private void LoadPlanetologyTechs()
@@ -260,44 +259,66 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			while (true)
 			{
-				bool isValid = false; //Must include at least one robotic factory tech
+				//Must include at least one robotic factory tech, and at least one tech from each tier
 				List<Technology> randomList = new List<Technology>();
-				foreach (var tech in ComputerTechs)
+				for (int i = 0; i < 10; i++)
 				{
-					if (tech.TechLevel == 1)
+					bool hasAtLeastOneTierTech = false;
+					List<Technology> randomTierList = new List<Technology>();
+					while (!hasAtLeastOneTierTech)
 					{
-						//Include starting levels
-						randomList.Add(tech);
-					}
-					else if (_gameMain.Random.Next(100) < 50)
-					{
-						randomList.Add(tech);
-						if (tech.RoboticControl > 2)
+						randomTierList = new List<Technology>();
+						foreach (var tech in ComputerTechs)
 						{
-							isValid = true;
+							if (tech.TechLevel == 1)
+							{
+								//Include starting levels
+								randomTierList.Add(tech);
+							}
+							else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
+							{
+								randomTierList.Add(tech);
+								hasAtLeastOneTierTech = true;
+							}
 						}
 					}
+					randomList.AddRange(randomTierList);
 				}
-				if (isValid)
+				foreach (var tech in randomList)
 				{
-					return randomList;
+					if (tech.RoboticControl > 2)
+					{
+						return randomList;
+					}
 				}
 			}
 		}
 		public List<Technology> GetRandomizedConstructionTechs()
 		{
+			//Must include at least one tech from each tier
 			List<Technology> randomList = new List<Technology>();
-			foreach (var tech in ConstructionTechs)
+			for (int i = 0; i < 10; i++)
 			{
-				if (tech.TechLevel == 1)
+				bool hasAtLeastOneTierTech = false;
+				List<Technology> randomTierList = new List<Technology>();
+				while (!hasAtLeastOneTierTech)
 				{
-					//Include starting levels
-					randomList.Add(tech);
+					randomTierList = new List<Technology>();
+					foreach (var tech in ConstructionTechs)
+					{
+						if (tech.TechLevel == 1)
+						{
+							//Include starting levels
+							randomTierList.Add(tech);
+						}
+						else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
+						{
+							randomTierList.Add(tech);
+							hasAtLeastOneTierTech = true;
+						}
+					}
 				}
-				else if (_gameMain.Random.Next(100) < 50)
-				{
-					randomList.Add(tech);
-				}
+				randomList.AddRange(randomTierList);
 			}
 			return randomList;
 		}
@@ -305,44 +326,66 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			while (true)
 			{
-				bool isValid = false; //Must include at least one planetary shield tech
+				//Must include at least one planetary shield tech, and at least one tech from each tier
 				List<Technology> randomList = new List<Technology>();
-				foreach (var tech in ForceFieldTechs)
+				for (int i = 0; i < 10; i++)
 				{
-					if (tech.TechLevel == 1)
+					bool hasAtLeastOneTierTech = false;
+					List<Technology> randomTierList = new List<Technology>();
+					while (!hasAtLeastOneTierTech)
 					{
-						//Include starting levels
-						randomList.Add(tech);
-					}
-					else if (_gameMain.Random.Next(100) < 50)
-					{
-						randomList.Add(tech);
-						if (tech.PlanetaryShield > 0)
+						randomTierList = new List<Technology>();
+						foreach (var tech in ForceFieldTechs)
 						{
-							isValid = true;
+							if (tech.TechLevel == 1)
+							{
+								//Include starting levels
+								randomTierList.Add(tech);
+							}
+							else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
+							{
+								randomTierList.Add(tech);
+								hasAtLeastOneTierTech = true;
+							}
 						}
 					}
+					randomList.AddRange(randomTierList);
 				}
-				if (isValid)
+				foreach (var tech in randomList)
 				{
-					return randomList;
+					if (tech.PlanetaryShield > 0)
+					{
+						return randomList;
+					}
 				}
 			}
 		}
 		public List<Technology> GetRandomizedPlanetologyTechs()
 		{
+			//Must include at least one tech from each tier
 			List<Technology> randomList = new List<Technology>();
-			foreach (var tech in PlanetologyTechs)
+			for (int i = 0; i < 10; i++)
 			{
-				if (tech.TechLevel == 1)
+				bool hasAtLeastOneTierTech = false;
+				List<Technology> randomTierList = new List<Technology>();
+				while (!hasAtLeastOneTierTech)
 				{
-					//Include starting levels
-					randomList.Add(tech);
+					randomTierList = new List<Technology>();
+					foreach (var tech in PlanetologyTechs)
+					{
+						if (tech.TechLevel == 1)
+						{
+							//Include starting levels
+							randomTierList.Add(tech);
+						}
+						else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
+						{
+							randomTierList.Add(tech);
+							hasAtLeastOneTierTech = true;
+						}
+					}
 				}
-				else if (_gameMain.Random.Next(100) < 50)
-				{
-					randomList.Add(tech);
-				}
+				randomList.AddRange(randomTierList);
 			}
 			return randomList;
 		}
@@ -350,27 +393,37 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			while (true)
 			{
-				bool isValid = false; //Must include at least one planetary shield tech
+				//Must include at least one of 4 or 5 fuel range, and at least one tech from each tier
 				List<Technology> randomList = new List<Technology>();
-				foreach (var tech in PropulsionTechs)
+				for (int i = 0; i < 10; i++)
 				{
-					if (tech.TechLevel == 1)
+					bool hasAtLeastOneTierTech = false;
+					List<Technology> randomTierList = new List<Technology>();
+					while (!hasAtLeastOneTierTech)
 					{
-						//Include starting levels
-						randomList.Add(tech);
-					}
-					else if (_gameMain.Random.Next(100) < 50)
-					{
-						randomList.Add(tech);
-						if (tech.FuelRange == 4 || tech.FuelRange == 5)
+						randomTierList = new List<Technology>();
+						foreach (var tech in PropulsionTechs)
 						{
-							isValid = true;
+							if (tech.TechLevel == 1)
+							{
+								//Include starting levels
+								randomTierList.Add(tech);
+							}
+							else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
+							{
+								randomTierList.Add(tech);
+								hasAtLeastOneTierTech = true;
+							}
 						}
 					}
+					randomList.AddRange(randomTierList);
 				}
-				if (isValid)
+				foreach (var tech in randomList)
 				{
-					return randomList;
+					if (tech.FuelRange == 4 || tech.FuelRange == 5)
+					{
+						return randomList;
+					}
 				}
 			}
 		}
@@ -378,27 +431,37 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			while (true)
 			{
-				bool isValid = false; //Must include at least one planetary shield tech
+				//Must include at least one missile or torpedo weapon, and at least one tech from each tier
 				List<Technology> randomList = new List<Technology>();
-				foreach (var tech in WeaponTechs)
+				for (int i = 0; i < 10; i++)
 				{
-					if (tech.TechLevel == 1)
+					bool hasAtLeastOneTierTech = false;
+					List<Technology> randomTierList = new List<Technology>();
+					while (!hasAtLeastOneTierTech)
 					{
-						//Include starting levels
-						randomList.Add(tech);
-					}
-					else if (_gameMain.Random.Next(100) < 50)
-					{
-						randomList.Add(tech);
-						if (tech.TechName.Contains("Missile") || tech.TechName.Contains("Torpedo") || tech.TechName.Contains("Hyper"))
+						randomTierList = new List<Technology>();
+						foreach (var tech in WeaponTechs)
 						{
-							isValid = true;
+							if (tech.TechLevel == 1)
+							{
+								//Include starting levels
+								randomTierList.Add(tech);
+							}
+							else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
+							{
+								randomTierList.Add(tech);
+								hasAtLeastOneTierTech = true;
+							}
 						}
 					}
+					randomList.AddRange(randomTierList);
 				}
-				if (isValid)
+				foreach (var tech in randomList)
 				{
-					return randomList;
+					if (tech.WeaponType == Technology.MISSILE_WEAPON || tech.WeaponType == Technology.TORPEDO_WEAPON)
+					{
+						return randomList;
+					}
 				}
 			}
 		}
