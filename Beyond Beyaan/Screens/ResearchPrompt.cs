@@ -61,14 +61,14 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_scrollBar.Initialize(xPos + 385, yPos + 230, 100, 4, 4, false, false, gameMain.Random, out reason))
+			if (!_scrollBar.Initialize(xPos + 415, yPos + 230, 100, 4, 4, false, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			for (int i = 0; i < _availableTechsToResearchButtons.Length; i++)
 			{
 				_availableTechsToResearchButtons[i] = new BBInvisibleStretchButton();
-				if (!_availableTechsToResearchButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, xPos + 30, yPos + 230 + (i * 25), 355, 25, gameMain.Random, out reason))
+				if (!_availableTechsToResearchButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, xPos + 30, yPos + 230 + (i * 25), 385, 25, gameMain.Random, out reason))
 				{
 					return false;
 				}
@@ -110,10 +110,73 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (_scrollBar.MouseHover(x, y, frameDeltaTime))
 			{
-				//TODO: Update the tech buttons
+				RefreshTechButtons();
 				result = true;
 			}
 			return result;
+		}
+
+		public override bool MouseDown(int x, int y)
+		{
+			bool result = _techDescription.MouseDown(x, y);
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				result = _availableTechsToResearchButtons[i].MouseDown(x, y) || result;
+			}
+			result = _scrollBar.MouseDown(x, y) || result;
+
+			return result;
+		}
+
+		public override bool MouseUp(int x, int y)
+		{
+			if (_techDescription.MouseUp(x, y))
+			{
+				return true;
+			}
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				if (_availableTechsToResearchButtons[i].MouseUp(x, y))
+				{
+					switch (_currentTechField)
+					{
+						case TechField.COMPUTER:
+							_currentEmpire.TechnologyManager.WhichComputerBeingResearched = _availableTopics[_currentTechField][i + _scrollBar.TopIndex];
+							break;
+						case TechField.CONSTRUCTION:
+							_currentEmpire.TechnologyManager.WhichConstructionBeingResearched = _availableTopics[_currentTechField][i + _scrollBar.TopIndex];
+							break;
+						case TechField.FORCE_FIELD:
+							_currentEmpire.TechnologyManager.WhichForceFieldBeingResearched = _availableTopics[_currentTechField][i + _scrollBar.TopIndex];
+							break;
+						case TechField.PLANETOLOGY:
+							_currentEmpire.TechnologyManager.WhichPlanetologyBeingResearched = _availableTopics[_currentTechField][i + _scrollBar.TopIndex];
+							break;
+						case TechField.PROPULSION:
+							_currentEmpire.TechnologyManager.WhichPropulsionBeingResearched = _availableTopics[_currentTechField][i + _scrollBar.TopIndex];
+							break;
+						case TechField.WEAPON:
+							_currentEmpire.TechnologyManager.WhichWeaponBeingResearched = _availableTopics[_currentTechField][i + _scrollBar.TopIndex];
+							break;
+					}
+					_availableTopics.Remove(_currentTechField);
+					if (_availableTopics.Count > 0)
+					{
+						LoadNextTech();
+					}
+					else if (Completed != null)
+					{
+						Completed();
+					}
+					return true;
+				}
+			}
+			if (_scrollBar.MouseUp(x, y))
+			{
+				RefreshTechButtons();
+				return true;
+			}
+			return false;
 		}
 
 		public void LoadEmpire(Empire empire, List<TechField> fields)
@@ -148,7 +211,7 @@ namespace Beyond_Beyaan.Screens
 								highestTech = tech.TechLevel;
 							}
 						}
-						highestTech = ((highestTech / 5) + (highestTech % 5 > 0 ? 1 : 0)) * 5;
+						highestTech = highestTech == 1 ? 5 : (((highestTech / 5) + (highestTech % 5 > 0 ? 2 : 1)) * 5);
 						foreach (var tech in empire.TechnologyManager.UnresearchedComputerTechs)
 						{
 							if (tech.TechLevel <= highestTech)
@@ -178,7 +241,7 @@ namespace Beyond_Beyaan.Screens
 									highestTech = tech.TechLevel;
 								}
 							}
-							highestTech = ((highestTech / 5) + (highestTech % 5 > 0 ? 1 : 0)) * 5;
+							highestTech = highestTech == 1 ? 5 : (((highestTech / 5) + (highestTech % 5 > 0 ? 2 : 1)) * 5);
 							foreach (var tech in empire.TechnologyManager.UnresearchedConstructionTechs)
 							{
 								if (tech.TechLevel <= highestTech)
@@ -208,7 +271,7 @@ namespace Beyond_Beyaan.Screens
 									highestTech = tech.TechLevel;
 								}
 							}
-							highestTech = ((highestTech / 5) + (highestTech % 5 > 0 ? 1 : 0)) * 5;
+							highestTech = highestTech == 1 ? 5 : (((highestTech / 5) + (highestTech % 5 > 0 ? 2 : 1)) * 5);
 							foreach (var tech in empire.TechnologyManager.UnresearchedForceFieldTechs)
 							{
 								if (tech.TechLevel <= highestTech)
@@ -238,7 +301,7 @@ namespace Beyond_Beyaan.Screens
 									highestTech = tech.TechLevel;
 								}
 							}
-							highestTech = ((highestTech / 5) + (highestTech % 5 > 0 ? 1 : 0)) * 5;
+							highestTech = highestTech == 1 ? 5 : (((highestTech / 5) + (highestTech % 5 > 0 ? 2 : 1)) * 5);
 							foreach (var tech in empire.TechnologyManager.UnresearchedPlanetologyTechs)
 							{
 								if (tech.TechLevel <= highestTech)
@@ -268,7 +331,7 @@ namespace Beyond_Beyaan.Screens
 									highestTech = tech.TechLevel;
 								}
 							}
-							highestTech = ((highestTech / 5) + (highestTech % 5 > 0 ? 1 : 0)) * 5;
+							highestTech = highestTech == 1 ? 5 : (((highestTech / 5) + (highestTech % 5 > 0 ? 2 : 1)) * 5);
 							foreach (var tech in empire.TechnologyManager.UnresearchedPropulsionTechs)
 							{
 								if (tech.TechLevel <= highestTech)
@@ -298,7 +361,7 @@ namespace Beyond_Beyaan.Screens
 									highestTech = tech.TechLevel;
 								}
 							}
-							highestTech = ((highestTech / 5) + (highestTech % 5 > 0 ? 1 : 0)) * 5;
+							highestTech = highestTech == 1 ? 5 : (((highestTech / 5) + (highestTech % 5 > 0 ? 2 : 1)) * 5);
 							foreach (var tech in empire.TechnologyManager.UnresearchedWeaponTechs)
 							{
 								if (tech.TechLevel <= highestTech)
@@ -455,11 +518,16 @@ namespace Beyond_Beyaan.Screens
 					_scrollBar.SetAmountOfItems(_availableTechsToResearchButtons.Length);
 					_scrollBar.SetEnabledState(false);
 				}
-				for (int i = 0; i < _maxVisible; i++)
-				{
-					_availableTechsToResearchButtons[i].SetText(_availableTopics[_currentTechField][i].TechName);
-					_availableTechsToResearchButtons[i].SetToolTipText(_availableTopics[_currentTechField][i].TechDescription);
-				}
+				RefreshTechButtons();
+			}
+		}
+
+		private void RefreshTechButtons()
+		{
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				_availableTechsToResearchButtons[i].SetText(_availableTopics[_currentTechField][i + _scrollBar.TopIndex].TechName);
+				_availableTechsToResearchButtons[i].SetToolTipText(_availableTopics[_currentTechField][i + _scrollBar.TopIndex].TechDescription);
 			}
 		}
 	}

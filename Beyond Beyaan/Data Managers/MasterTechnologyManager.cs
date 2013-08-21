@@ -270,9 +270,9 @@ namespace Beyond_Beyaan.Data_Managers
 						randomTierList = new List<Technology>();
 						foreach (var tech in ComputerTechs)
 						{
-							if (tech.TechLevel == 1)
+							if (tech.TechLevel == 1 && i == 0)
 							{
-								//Include starting levels
+								//Include starting levels if on first tier
 								randomTierList.Add(tech);
 							}
 							else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
@@ -306,9 +306,9 @@ namespace Beyond_Beyaan.Data_Managers
 					randomTierList = new List<Technology>();
 					foreach (var tech in ConstructionTechs)
 					{
-						if (tech.TechLevel == 1)
+						if (tech.TechLevel == 1 && i == 0)
 						{
-							//Include starting levels
+							//Include starting levels if on first tier
 							randomTierList.Add(tech);
 						}
 						else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
@@ -337,9 +337,9 @@ namespace Beyond_Beyaan.Data_Managers
 						randomTierList = new List<Technology>();
 						foreach (var tech in ForceFieldTechs)
 						{
-							if (tech.TechLevel == 1)
+							if (tech.TechLevel == 1 && i == 0)
 							{
-								//Include starting levels
+								//Include starting levels if on first tier
 								randomTierList.Add(tech);
 							}
 							else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
@@ -373,9 +373,9 @@ namespace Beyond_Beyaan.Data_Managers
 					randomTierList = new List<Technology>();
 					foreach (var tech in PlanetologyTechs)
 					{
-						if (tech.TechLevel == 1)
+						if (tech.TechLevel == 1 && i == 0)
 						{
-							//Include starting levels
+							//Include starting levels if on first tier
 							randomTierList.Add(tech);
 						}
 						else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
@@ -404,9 +404,9 @@ namespace Beyond_Beyaan.Data_Managers
 						randomTierList = new List<Technology>();
 						foreach (var tech in PropulsionTechs)
 						{
-							if (tech.TechLevel == 1)
+							if (tech.TechLevel == 1 && i == 0)
 							{
-								//Include starting levels
+								//Include starting levels if on first tier
 								randomTierList.Add(tech);
 							}
 							else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
@@ -442,9 +442,9 @@ namespace Beyond_Beyaan.Data_Managers
 						randomTierList = new List<Technology>();
 						foreach (var tech in WeaponTechs)
 						{
-							if (tech.TechLevel == 1)
+							if (tech.TechLevel == 1 && i == 0)
 							{
-								//Include starting levels
+								//Include starting levels if on first tier
 								randomTierList.Add(tech);
 							}
 							else if (tech.TechLevel > (i * 5) && tech.TechLevel <= (i + 1) * 5 && _gameMain.Random.Next(100) < 50)
