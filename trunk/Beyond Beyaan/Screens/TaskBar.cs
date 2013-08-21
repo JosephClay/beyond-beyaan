@@ -1,6 +1,6 @@
 ﻿namespace Beyond_Beyaan
 {
-	class TaskBar
+	public class TaskBar
 	{
 		GameMain gameMain;
 		BBButton[] TaskButtons;
@@ -19,9 +19,9 @@
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
-			TaskButtons = new BBButton[9];
+			TaskButtons = new BBButton[8];
 
-			left = (gameMain.ScreenWidth / 2) - 180;
+			left = (gameMain.ScreenWidth / 2) - 160;
 			top = gameMain.ScreenHeight - 40;
 
 			TaskButtons[0] = new BBButton();
@@ -50,22 +50,17 @@
 				return false;
 			}
 			TaskButtons[5] = new BBButton();
-			if (!TaskButtons[5].Initialize("FleetListBG", "FleetListFG", string.Empty, ButtonTextAlignment.CENTER, left + 200, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[5].Initialize("PlanetsListBG", "PlanetsListFG", string.Empty, ButtonTextAlignment.CENTER, left + 200, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[6] = new BBButton();
-			if (!TaskButtons[6].Initialize("PlanetsListBG", "PlanetsListFG", string.Empty, ButtonTextAlignment.CENTER, left + 240, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[6].Initialize("ResearchBG", "ResearchFG", string.Empty, ButtonTextAlignment.CENTER, left + 240, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			TaskButtons[7] = new BBButton();
-			if (!TaskButtons[7].Initialize("ResearchBG", "ResearchFG", string.Empty, ButtonTextAlignment.CENTER, left + 280, top, 40, 40, gameMain.Random, out reason))
-			{
-				return false;
-			}
-			TaskButtons[8] = new BBButton();
-			if (!TaskButtons[8].Initialize("EndTurnBG", "EndTurnFG", string.Empty, ButtonTextAlignment.CENTER, left + 320, top, 40, 40, gameMain.Random, out reason))
+			if (!TaskButtons[7].Initialize("EndTurnBG", "EndTurnFG", string.Empty, ButtonTextAlignment.CENTER, left + 280, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -89,7 +84,7 @@
 			}
 		}
 
-		public bool Update(int mouseX, int mouseY, float frameDeltaTime)
+		public bool MouseHover(int mouseX, int mouseY, float frameDeltaTime)
 		{
 			if (hide)
 			{
@@ -142,7 +137,7 @@
 				{
 					switch (i)
 					{
-						case 0: gameMain.ChangeToScreen(Screen.InGameMenu);
+						/*case 0: gameMain.ChangeToScreen(Screen.InGameMenu);
 							break;
 						case 1: gameMain.ChangeToScreen(Screen.Galaxy);
 							break;
@@ -152,11 +147,11 @@
 							break;
 						case 4: gameMain.ChangeToScreen(Screen.Design);
 							break;
-						case 6: gameMain.ChangeToScreen(Screen.Planets);
+						case 5: gameMain.ChangeToScreen(Screen.Planets);
 							break;
-						case 7: gameMain.ChangeToScreen(Screen.Research);
-							break;
-						case 8: gameMain.ChangeToScreen(Screen.ProcessTurn);
+						case 6: gameMain.ChangeToScreen(Screen.Research);
+							break;*/
+						case 7: gameMain.ChangeToScreen(Screen.ProcessTurn);
 							gameMain.HideSitRep();
 							break;
 					}

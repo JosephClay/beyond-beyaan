@@ -225,7 +225,7 @@ namespace Beyond_Beyaan.Screens
 			}*/
 		/*}
 
-		public void Update(int mouseX, int mouseY, float frameDeltaTime)
+		public void MouseHover(int mouseX, int mouseY, float frameDeltaTime)
 		{
 			/*if (processRetreating)
 			{
