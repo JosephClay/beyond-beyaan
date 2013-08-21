@@ -1,88 +1,198 @@
-﻿using GorgonLibrary.InputDevices;
+﻿using System;
+using System.Collections.Generic;
+using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	public class InGameMenu : ScreenInterface
+	public class InGameMenu : WindowInterface
 	{
-		GameMain gameMain;
-		Button[] buttons;
-		Label version;
+		public Action CloseWindow;
+
+		private BBStretchButton[] _buttons;
+		private BBStretchableImage _saveGameListBackground;
+		private BBInvisibleStretchButton[] _saveGameButtons;
+		private BBScrollBar _scrollBar;
+		private int _maxVisible;
+		private int _selectedGame;
+
+		private List<string> _fileNames;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			this.gameMain = gameMain;
+			if (!base.Initialize((gameMain.ScreenWidth / 2) - 200, (gameMain.ScreenHeight / 2) - 250, 400, 500, StretchableImageType.MediumBorder, gameMain, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
-			buttons = new Button[5];
+			_buttons = new BBStretchButton[4];
 
-			buttons[0] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Save Game", 400, 200, 175, 25);
-			buttons[1] = new Button(SpriteName.NewGame, SpriteName.NewGame, string.Empty, 400, 275, 260, 40);
-			buttons[2] = new Button(SpriteName.LoadGame, SpriteName.LoadGame, string.Empty, 400, 350, 260, 40);
-			buttons[3] = new Button(SpriteName.Options, SpriteName.Options, string.Empty, 400, 500, 260, 40);
-			buttons[4] = new Button(SpriteName.Exit, SpriteName.Exit, string.Empty, 400, 575, 260, 40);
+			_buttons[0] = new BBStretchButton();
+			if (!_buttons[0].Initialize("New Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 20, yPos + 20, 170, 35, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_buttons[1] = new BBStretchButton();
+			if (!_buttons[1].Initialize("Save Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 20, yPos + 60, 170, 35, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_buttons[2] = new BBStretchButton();
+			if (!_buttons[2].Initialize("Load Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 20, yPos + 100, 170, 35, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_buttons[2].Enabled = false;
 
-			version = new Label("Version 0.4", 5, gameMain.ScreenHeight - 25);
+			_buttons[3] = new BBStretchButton();
+			if (!_buttons[3].Initialize("Exit Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 20, yPos + 140, 170, 35, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
-			reason = null;
+			_saveGameListBackground = new BBStretchableImage();
+			if (!_saveGameListBackground.Initialize(xPos + 200, yPos + 20, 180, 440, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
+			_saveGameButtons = new BBInvisibleStretchButton[14];
+			for (int i = 0; i < _saveGameButtons.Length; i++)
+			{
+				_saveGameButtons[i] = new BBInvisibleStretchButton();
+				if (!_saveGameButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, xPos + 210, yPos + 30 + (i * 30), 140, 30, gameMain.Random, out reason))
+				{
+					return false;
+				}
+			}
+
+			_scrollBar = new BBScrollBar();
+			if (!_scrollBar.Initialize(xPos + 350, yPos + 30, 420, 14, 14, false, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
+			_maxVisible = 0;
+			_selectedGame = -1;
+			_fileNames = new List<string>();
+
 			return true;
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public override void Draw()
 		{
-			foreach (Button button in buttons)
-			{
-				button.Draw(drawingManagement);
-			}
-			version.Draw();
-		}
+			base.Draw();
 
-		public void Update(int x, int y, float frameDeltaTime)
-		{
-			foreach (Button button in buttons)
+			for (int i = 0; i < _buttons.Length; i++)
 			{
-				button.UpdateHovering(x, y, frameDeltaTime);
+				_buttons[i].Draw();
 			}
-		}
 
-		public void MouseDown(int x, int y, int whichButton)
-		{
-			foreach (Button button in buttons)
+			_saveGameListBackground.Draw();
+
+			for (int i = 0; i < _maxVisible; i++)
 			{
-				button.MouseDown(x, y);
+				_saveGameButtons[i].Draw();
 			}
 		}
 
-		public void MouseUp(int x, int y, int whichButton)
+		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			for (int i = 0; i < buttons.Length; i++)
+			bool result = false;
+			for (int i = 0; i < _buttons.Length; i++)
 			{
-				if (buttons[i].MouseUp(x, y))
+				result = _buttons[i].MouseHover(x, y, frameDeltaTime) || result;
+			}
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				result = _saveGameButtons[i].MouseHover(x, y, frameDeltaTime) || result;
+			}
+			if (_scrollBar.MouseHover(x, y, frameDeltaTime))
+			{
+				result = true;
+				RefreshSaveButtons();
+			}
+			return result;
+		}
+
+		public override bool MouseDown(int x, int y)
+		{
+			bool result = _scrollBar.MouseDown(x, y);
+			for (int i = 0; i < _buttons.Length; i++)
+			{
+				result = _buttons[i].MouseDown(x, y) || result;
+			}
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				result = _saveGameButtons[i].MouseDown(x, y) || result;
+			}
+			return result;
+		}
+
+		public override bool MouseUp(int x, int y)
+		{
+			if (_scrollBar.MouseUp(x, y))
+			{
+				RefreshSaveButtons();
+				return true;
+			}
+			if (_buttons[0].MouseUp(x, y))
+			{
+				_gameMain.ClearAll();
+				_gameMain.ChangeToScreen(Screen.NewGame);
+				return true;
+			}
+			if (_buttons[1].MouseUp(x, y))
+			{
+				//TODO: Add a prompt for save file name
+				//_gameMain.SaveGame(saveFileName);
+				return true;
+			}
+			if (_buttons[2].MouseUp(x, y))
+			{
+				//StartLoadGameCommand
+				//_gameMain.LoadGame(saveFileName);
+				//FinishLoadGameCommand
+				return true;
+			}
+			if (_buttons[3].MouseUp(x, y))
+			{
+				//TODO: Add prompt to ensure user really want to exit
+				_gameMain.ExitGame();
+				return true;
+			}
+
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				if (_saveGameButtons[i].MouseUp(x, y))
 				{
-					switch (i)
+					foreach (var button in _saveGameButtons)
 					{
-						case 1:
-							gameMain.ClearAll();
-							gameMain.ChangeToScreen(Screen.NewGame);
-							break;
-						case 4:
-							gameMain.ClearAll();
-							gameMain.ChangeToScreen(Screen.MainMenu);
-							break;
-						default:
-							break;
+						button.Selected = false;
 					}
+					_saveGameButtons[i].Selected = true;
+					_selectedGame = i + _scrollBar.TopIndex;
+					return true;
 				}
 			}
-		}
 
-		public void MouseScroll(int direction, int x, int y)
-		{
-		}
-
-		public void KeyDown(KeyboardInputEventArgs e)
-		{
-			if (e.Key == KeyboardKeys.Escape)
+			if (!base.MouseUp(x, y))
 			{
-				gameMain.ChangeToScreen(Screen.Galaxy);
+				//Clicked outside the window, close this window
+				
+			}
+			return false;
+		}
+
+		private void RefreshSaveButtons()
+		{
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				_saveGameButtons[i].SetText(_fileNames[i + _scrollBar.TopIndex]);
+				_saveGameButtons[i].Selected = false;
+				if (i + _scrollBar.TopIndex == _selectedGame)
+				{
+					_saveGameButtons[i].Selected = true;
+				}
 			}
 		}
 	}

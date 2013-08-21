@@ -25,7 +25,7 @@ namespace Beyond_Beyaan
 		private ResearchScreen _researchScreen;
 		private ProcessingTurnScreen _processingTurnScreen;
 		//private SpaceCombat _spaceCombat;
-		private TaskBar _taskBar;
+		
 		private SituationReport _situationReport;
 		private Screen _currentScreen;
 		#endregion
@@ -107,11 +107,6 @@ namespace Beyond_Beyaan
 			_screenInterface = _mainGameMenu;
 			_currentScreen = Screen.MainMenu;
 
-			_taskBar = new TaskBar();
-			if (!_taskBar.Initialize(this, out reason))
-			{
-				return false;
-			}
 			_situationReport = new SituationReport(this);
 
 			Cursor = SpriteManager.GetSprite("Cursor", Random);
@@ -128,7 +123,6 @@ namespace Beyond_Beyaan
 		public void ClearAll()
 		{
 			//Used when exiting out of current game (new game for example)
-			_taskBar.SetToScreen(Screen.MainMenu);
 			EmpireManager = new EmpireManager(this);
 			AIManager = new AIManager();
 			RaceManager = new RaceManager();
@@ -146,10 +140,6 @@ namespace Beyond_Beyaan
 			}
 			if (handleTaskBar)
 			{
-				if (_taskBar.Update(MousePos.X, MousePos.Y, frameDeltaTime))
-				{
-					skipUpdate = true;
-				}
 				if (_situationReport.Update(MousePos.X, MousePos.Y, frameDeltaTime))
 				{
 					skipUpdate = true;
@@ -162,7 +152,6 @@ namespace Beyond_Beyaan
 			_screenInterface.DrawScreen(DrawingManagement);
 			if (handleTaskBar)
 			{
-				_taskBar.Draw();
 				_situationReport.DrawSitRep(DrawingManagement);
 			}
 			Cursor.Draw(MousePos.X, MousePos.Y);
@@ -194,10 +183,6 @@ namespace Beyond_Beyaan
 			}
 			if (handleTaskBar)
 			{
-				if (_taskBar.MouseDown(e.X, e.Y, whichButton))
-				{
-					return;
-				}
 				if (_situationReport.MouseDown(e.X, e.Y))
 				{
 					return;
@@ -231,10 +216,6 @@ namespace Beyond_Beyaan
 			}
 			if (handleTaskBar)
 			{
-				if (_taskBar.MouseUp(e.X, e.Y, whichButton))
-				{
-					return;
-				}
 				if (_situationReport.MouseUp(e.X, e.Y))
 				{
 					return;
@@ -299,10 +280,8 @@ namespace Beyond_Beyaan
 							_parentForm.Close();
 						}
 					}
-					_taskBar.Hide = false;
 					_galaxyScreen.CenterScreen();
 					_screenInterface = _galaxyScreen;
-					_taskBar.SetToScreen(Screen.Galaxy);
 					break;
 				case Screen.InGameMenu:
 					if (_inGameMenu == null)
@@ -316,7 +295,6 @@ namespace Beyond_Beyaan
 						}
 					}
 					_screenInterface = _inGameMenu;
-					_taskBar.SetToScreen(Screen.InGameMenu);
 					break;
 				case Screen.Diplomacy:
 					if (_diplomacyScreen == null)
@@ -331,7 +309,6 @@ namespace Beyond_Beyaan
 					}
 					_diplomacyScreen.SetupScreen();
 					_screenInterface = _diplomacyScreen;
-					_taskBar.SetToScreen(Screen.Diplomacy);
 					break;
 				case Screen.FleetList:
 					if (_fleetListScreen == null)
@@ -346,7 +323,6 @@ namespace Beyond_Beyaan
 					}
 					_fleetListScreen.LoadScreen();
 					_screenInterface = _fleetListScreen;
-					_taskBar.SetToScreen(Screen.FleetList);
 					break;
 				case Screen.Design:
 					if (_designScreen == null)
@@ -361,7 +337,6 @@ namespace Beyond_Beyaan
 					}
 					_screenInterface = _designScreen;
 					_designScreen.LoadScreen();
-					_taskBar.SetToScreen(Screen.Design);
 					break;
 				case Screen.Planets:
 					if (_planetsScreen == null)
@@ -376,7 +351,6 @@ namespace Beyond_Beyaan
 					}
 					_screenInterface = _planetsScreen;
 					_planetsScreen.LoadScreen();
-					_taskBar.SetToScreen(Screen.Planets);
 					break;
 				case Screen.Research:
 					EmpireManager.CurrentEmpire.UpdateResearchPoints();
@@ -392,7 +366,6 @@ namespace Beyond_Beyaan
 					}
 					_researchScreen.LoadPoints(EmpireManager.CurrentEmpire.ResearchPoints);
 					_screenInterface = _researchScreen;
-					_taskBar.SetToScreen(Screen.Research);
 					break;
 				case Screen.ProcessTurn:
 					EmpireManager.CurrentEmpire.ClearTurnData();
@@ -412,9 +385,7 @@ namespace Beyond_Beyaan
 						ChangeToScreen(Screen.Galaxy);
 						break;
 					}
-					_taskBar.SetToScreen(Screen.ProcessTurn);
 					_screenInterface = _processingTurnScreen;
-					_taskBar.Hide = true;
 					break;
 				case Screen.Battle:
 					/*if (_spaceCombat == null)

@@ -19,6 +19,8 @@ namespace Beyond_Beyaan.Screens
 		private SystemView _systemView;
 		private FleetView _fleetView;
 
+		private TaskBar _taskBar;
+
 		//private int maxVisible;
 		private BBSprite pathSprite;
 		private BBSprite fuelCircle;
@@ -61,6 +63,12 @@ namespace Beyond_Beyaan.Screens
 			}
 			_fleetView = new FleetView();
 			if (!_fleetView.Initialize(_gameMain, out reason))
+			{
+				return false;
+			}
+
+			_taskBar = new TaskBar();
+			if (!_taskBar.Initialize(_gameMain, out reason))
 			{
 				return false;
 			}
@@ -319,6 +327,8 @@ namespace Beyond_Beyaan.Screens
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
 			FleetGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
 
+			_taskBar.Draw();
+
 			if (selectedFleetGroup != null)
 			{
 				_fleetView.Draw();
@@ -360,6 +370,11 @@ namespace Beyond_Beyaan.Screens
 					currentEmpire.SelectedFleetGroup.FleetToSplit.SetTentativePath(selectedSystem, currentEmpire.SelectedFleetGroup.FleetToSplit.HasReserveTanks, _gameMain.Galaxy);
 				}
 			}
+			if (_taskBar.MouseHover(x, y, frameDeltaTime))
+			{
+				return;
+			}
+			
 			camera.HandleUpdate(x, y, frameDeltaTime);
 		}
 
@@ -380,6 +395,10 @@ namespace Beyond_Beyaan.Screens
 					{
 						return;
 					}
+				}
+				if (_taskBar.MouseDown(x, y, whichButton))
+				{
+					return;
 				}
 			}
 		}
@@ -489,6 +508,10 @@ namespace Beyond_Beyaan.Screens
 					_fleetView.LoadFleetGroup(selectedFleetGroup);
 					return;
 				}
+				if (_taskBar.MouseUp(x, y, whichButton))
+				{
+					return;
+				}
 				if (!clearingUI)
 				{
 					camera.CenterCamera(pointClicked.X, pointClicked.Y, camera.ZoomDistance);
@@ -566,51 +589,5 @@ namespace Beyond_Beyaan.Screens
 				_gameMain.ToggleSitRep();
 			}
 		}
-
-		private void LoadFleetInfoIntoUI(FleetGroup fleetGroup)
-		{
-			/*int maxVisible = fleetGroup.Fleets.Count > 4 ? 4 : fleetGroup.Fleets.Count;
-			fleetButtons = new Button[maxVisible];
-			int x = _gameMain.ScreenWidth - 200;
-			if (fleetGroup.Fleets.Count <= 4)
-			{
-				x += 10;
-			}
-			for (int i = 0; i < maxVisible; i++)
-			{
-				fleetButtons[i] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, fleetGroup.Fleets[i + fleetGroup.FleetIndex].Empire.EmpireName + " Fleet" + travel"", x, 30 + (20 * i), 175, 20);
-			}
-			fleetScrollBar.SetAmountOfItems(fleetGroup.Fleets.Count);
-			fleetScrollBar.TopIndex = 0;
-			fleetButtons[0].Selected = true;
-			_gameMain.EmpireManager.CurrentEmpire.FleetSelected = 0;
-			_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup.SelectFleet(0);
-			LoadSelectedFleetInfoIntoUI(fleetGroup);*/
-		}
-
-		/*private void LoadSelectedFleetInfoIntoUI(FleetGroup fleetGroup)
-		{
-			Fleet selectedFleet = fleetGroup.Fleets[_gameMain.EmpireManager.CurrentEmpire.FleetSelected];
-			bool isEnabled = selectedFleet.Empire == _gameMain.EmpireManager.CurrentEmpire;
-			int x = _gameMain.ScreenWidth - 203;
-			if (selectedFleet.Ships.Count <= 8)
-			{
-				x += 10;
-			}
-
-			List<Ship> ships = fleetGroup.GetShipsForDisplay();
-			shipScrollBars = new ScrollBar[ships.Count];
-
-			for (int i = 0; i < ships.Count; i++)
-			{
-				int itemSize = (int)(168.0f / selectedFleet.Ships[ships[i]]);
-				shipScrollBars[i] = new ScrollBar(x, 150 + i * 40, 16, 148, 1, selectedFleet.Ships[ships[i]] + 1, true, true, SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton,
-					SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, SpriteName.SliderHorizontalBackgroundButton,
-					SpriteName.SliderHorizontalForegroundButton, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
-				shipScrollBars[i].TopIndex = selectedFleet.Ships[ships[i]];
-				shipScrollBars[i].SetEnabledState(isEnabled);
-			}
-			shipSelectorScrollBar.SetAmountOfItems(fleetGroup.Fleets[_gameMain.EmpireManager.CurrentEmpire.FleetSelected].Ships.Count);
-		}*/
 	}
 }
