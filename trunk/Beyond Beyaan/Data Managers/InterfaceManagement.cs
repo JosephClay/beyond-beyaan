@@ -1720,9 +1720,9 @@ namespace Beyond_Beyaan
 			if (!isSlider)
 			{
 				scrollButtonLength = (int)(((float)amountVisible / amountOfItems) * scrollBarLength);
-				if (scrollButtonLength < 8)
+				if (scrollButtonLength < 16)
 				{
-					scrollButtonLength = 8;
+					scrollButtonLength = 16;
 				}
 				if (isHorizontal)
 				{

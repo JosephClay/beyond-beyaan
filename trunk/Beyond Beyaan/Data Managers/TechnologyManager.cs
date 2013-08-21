@@ -214,6 +214,13 @@ namespace Beyond_Beyaan
 			PropulsionPercentage = 20;
 			WeaponPercentage = 20;
 
+			ComputerRaceModifier = 1;
+			ConstructionRaceModifier = 1;
+			ForceFieldRaceModifier = 1;
+			PlanetologyRaceModifier = 1;
+			PropulsionRaceModifier = 1;
+			WeaponRaceModifier = 1;
+
 			ResearchedComputerTechs = new List<Technology>();
 			ResearchedConstructionTechs = new List<Technology>();
 			ResearchedForceFieldTechs = new List<Technology>();
@@ -444,7 +451,7 @@ namespace Beyond_Beyaan
 					int researchPointsRequired = (int)(WhichComputerBeingResearched.ResearchPoints * DifficultyModifier * ComputerRaceModifier);
 					if (ComputerResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 					{
-						int chance = (int)((ComputerResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						int chance = (int)(((ComputerResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
 						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
 						{
 							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichComputerBeingResearched.TechName + " has been discovered."));
@@ -470,7 +477,7 @@ namespace Beyond_Beyaan
 					int researchPointsRequired = (int)(WhichConstructionBeingResearched.ResearchPoints * DifficultyModifier * ConstructionRaceModifier);
 					if (ConstructionResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 					{
-						int chance = (int)((ConstructionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						int chance = (int)(((ConstructionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
 						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
 						{
 							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichConstructionBeingResearched.TechName + " has been discovered."));
@@ -494,7 +501,7 @@ namespace Beyond_Beyaan
 					int researchPointsRequired = (int)(WhichForceFieldBeingResearched.ResearchPoints * DifficultyModifier * ForceFieldRaceModifier);
 					if (ForceFieldResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 					{
-						int chance = (int)((ForceFieldResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						int chance = (int)(((ForceFieldResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
 						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
 						{
 							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichForceFieldBeingResearched.TechName + " has been discovered."));
@@ -519,7 +526,7 @@ namespace Beyond_Beyaan
 					int researchPointsRequired = (int)(WhichPlanetologyBeingResearched.ResearchPoints * DifficultyModifier * PlanetologyRaceModifier);
 					if (PlanetologyResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 					{
-						int chance = (int)((PlanetologyResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						int chance = (int)(((PlanetologyResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
 						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
 						{
 							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichPlanetologyBeingResearched.TechName + " has been discovered."));
@@ -544,7 +551,7 @@ namespace Beyond_Beyaan
 					int researchPointsRequired = (int)(WhichPropulsionBeingResearched.ResearchPoints * DifficultyModifier * PropulsionRaceModifier);
 					if (PropulsionResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 					{
-						int chance = (int)((PropulsionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						int chance = (int)(((PropulsionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
 						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
 						{
 							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichPropulsionBeingResearched.TechName + " has been discovered."));
@@ -569,7 +576,7 @@ namespace Beyond_Beyaan
 					int researchPointsRequired = (int)(WhichWeaponBeingResearched.ResearchPoints * DifficultyModifier * WeaponRaceModifier);
 					if (WeaponResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 					{
-						int chance = (int)((WeaponResearchAmount - researchPointsRequired) / (researchPointsRequired * 2));
+						int chance = (int)(((WeaponResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
 						if ((r.Next(100) + 1) < chance) //Eureka!  We've discovered the tech!  +1 is to change from 0-99 to 1-100
 						{
 							sitRepManager.AddItem(new SitRepItem(Screen.Research, null, null, new Point(), WhichWeaponBeingResearched.TechName + " has been discovered."));

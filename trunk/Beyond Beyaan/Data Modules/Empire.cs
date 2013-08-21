@@ -218,13 +218,14 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public Empire(string emperorName, int empireID, Race race, PlayerType type, AI ai, Color color, GameMain gameMain)
+		public Empire(string emperorName, int empireID, Race race, PlayerType type, AI ai, int difficultyModifier, Color color, GameMain gameMain)
 		{
 			this.empireName = emperorName;
 			this.empireID = empireID;
 			this.type = type;
 			EmpireColor = color;
 			technologyManager = new TechnologyManager();
+			technologyManager.DifficultyModifier = difficultyModifier;
 			try
 			{
 				technologyManager.SetComputerTechs(gameMain.MasterTechnologyManager.GetRandomizedComputerTechs());
