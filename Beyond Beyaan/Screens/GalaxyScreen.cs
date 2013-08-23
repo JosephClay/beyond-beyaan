@@ -20,6 +20,9 @@ namespace Beyond_Beyaan.Screens
 		private FleetView _fleetView;
 
 		private TaskBar _taskBar;
+		private InGameMenu _inGameMenu;
+
+		private WindowInterface _windowShowing;
 
 		//private int maxVisible;
 		private BBSprite pathSprite;
@@ -72,6 +75,15 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			_inGameMenu = new InGameMenu();
+			if (!_inGameMenu.Initialize(_gameMain, out reason))
+			{
+				return false;
+			}
+			_inGameMenu.CloseWindow = CloseWindow;
+
+			_taskBar.ShowGameMenu = ShowInGameMenu;
+
 			reason = null;
 			return true;
 		}
@@ -339,12 +351,23 @@ namespace Beyond_Beyaan.Screens
 			{
 				_systemView.Draw();
 			}
+			if (_windowShowing != null)
+			{
+				_windowShowing.Draw();
+			}
 		}
 
 		public void Update(int x, int y, float frameDeltaTime)
 		{
 			pathSprite.Update(frameDeltaTime, _gameMain.Random);
 			_gameMain.Galaxy.Update(frameDeltaTime, _gameMain.Random);
+
+			if (_windowShowing != null)
+			{
+				_windowShowing.MouseHover(x, y, frameDeltaTime);
+				return;
+			}
+
 			Empire currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 			if (currentEmpire.SelectedSystem != null)
 			{
@@ -382,6 +405,11 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (whichButton == 1)
 			{
+				if (_windowShowing != null)
+				{
+					_windowShowing.MouseDown(x, y);
+					return;
+				}
 				if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null)
 				{
 					if (_systemView.MouseDown(x, y))
@@ -407,6 +435,11 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (whichButton == 1)
 			{
+				if (_windowShowing != null)
+				{
+					_windowShowing.MouseUp(x, y);
+					return;
+				}
 				var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 				if (currentEmpire.SelectedSystem != null)
 				{
@@ -519,6 +552,10 @@ namespace Beyond_Beyaan.Screens
 			}
 			else if (whichButton == 2)
 			{
+				if (_windowShowing != null)
+				{
+					return;
+				}
 				var selectedFleetGroup = _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup;
 				if (selectedFleetGroup != null && selectedFleetGroup.FleetToSplit.Empire == _gameMain.EmpireManager.CurrentEmpire)
 				{
@@ -564,11 +601,20 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseScroll(int direction, int x, int y)
 		{
+			if (_windowShowing != null)
+			{
+				return;
+			}
 			camera.MouseWheel(direction, x, y);
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
+			if (_windowShowing != null)
+			{
+				_windowShowing.KeyDown(e);
+				return;
+			}
 			if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null)
 			{
 				if (_systemView.KeyDown(e))
@@ -588,6 +634,18 @@ namespace Beyond_Beyaan.Screens
 			{
 				_gameMain.ToggleSitRep();
 			}
+		}
+
+		private void CloseWindow()
+		{
+			_windowShowing = null;
+			_taskBar.Clear();
+		}
+
+		private void ShowInGameMenu()
+		{
+			_windowShowing = _inGameMenu;
+			_inGameMenu.GetSaveList();
 		}
 	}
 }

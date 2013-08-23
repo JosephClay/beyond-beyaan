@@ -1,9 +1,13 @@
-﻿namespace Beyond_Beyaan
+﻿using System;
+
+namespace Beyond_Beyaan
 {
 	public class TaskBar
 	{
-		GameMain gameMain;
-		BBButton[] TaskButtons;
+		private GameMain _gameMain;
+		private BBButton[] _taskButtons;
+
+		public Action ShowGameMenu;
 
 		private int left;
 		private int top;
@@ -18,54 +22,53 @@
 		#region Constructors
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			this.gameMain = gameMain;
-			TaskButtons = new BBButton[8];
+			_gameMain = gameMain;
+			_taskButtons = new BBButton[8];
 
 			left = (gameMain.ScreenWidth / 2) - 160;
 			top = gameMain.ScreenHeight - 40;
 
-			TaskButtons[0] = new BBButton();
-			if (!TaskButtons[0].Initialize("GameMenuBG", "GameMenuFG", string.Empty, ButtonTextAlignment.CENTER, left, top, 40, 40, gameMain.Random, out reason))
+			_taskButtons[0] = new BBButton();
+			if (!_taskButtons[0].Initialize("GameMenuBG", "GameMenuFG", string.Empty, ButtonTextAlignment.CENTER, left, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			TaskButtons[1] = new BBButton();
-			if (!TaskButtons[1].Initialize("GalaxyBG", "GalaxyFG", string.Empty, ButtonTextAlignment.CENTER, left + 40, top, 40, 40, gameMain.Random, out reason))
+			_taskButtons[1] = new BBButton();
+			if (!_taskButtons[1].Initialize("GalaxyBG", "GalaxyFG", string.Empty, ButtonTextAlignment.CENTER, left + 40, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			TaskButtons[2] = new BBButton();
-			if (!TaskButtons[2].Initialize("DiplomacyBG", "DiplomacyFG", string.Empty, ButtonTextAlignment.CENTER, left + 80, top, 40, 40, gameMain.Random, out reason))
+			_taskButtons[2] = new BBButton();
+			if (!_taskButtons[2].Initialize("DiplomacyBG", "DiplomacyFG", string.Empty, ButtonTextAlignment.CENTER, left + 80, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			TaskButtons[3] = new BBButton();
-			if (!TaskButtons[3].Initialize("FleetListBG", "FleetListFG", string.Empty, ButtonTextAlignment.CENTER, left + 120, top, 40, 40, gameMain.Random, out reason))
+			_taskButtons[3] = new BBButton();
+			if (!_taskButtons[3].Initialize("FleetListBG", "FleetListFG", string.Empty, ButtonTextAlignment.CENTER, left + 120, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			TaskButtons[4] = new BBButton();
-			if (!TaskButtons[4].Initialize("DesignBG", "DesignFG", string.Empty, ButtonTextAlignment.CENTER, left + 160, top, 40, 40, gameMain.Random, out reason))
+			_taskButtons[4] = new BBButton();
+			if (!_taskButtons[4].Initialize("DesignBG", "DesignFG", string.Empty, ButtonTextAlignment.CENTER, left + 160, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			TaskButtons[5] = new BBButton();
-			if (!TaskButtons[5].Initialize("PlanetsListBG", "PlanetsListFG", string.Empty, ButtonTextAlignment.CENTER, left + 200, top, 40, 40, gameMain.Random, out reason))
+			_taskButtons[5] = new BBButton();
+			if (!_taskButtons[5].Initialize("PlanetsListBG", "PlanetsListFG", string.Empty, ButtonTextAlignment.CENTER, left + 200, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			TaskButtons[6] = new BBButton();
-			if (!TaskButtons[6].Initialize("ResearchBG", "ResearchFG", string.Empty, ButtonTextAlignment.CENTER, left + 240, top, 40, 40, gameMain.Random, out reason))
+			_taskButtons[6] = new BBButton();
+			if (!_taskButtons[6].Initialize("ResearchBG", "ResearchFG", string.Empty, ButtonTextAlignment.CENTER, left + 240, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			TaskButtons[7] = new BBButton();
-			if (!TaskButtons[7].Initialize("EndTurnBG", "EndTurnFG", string.Empty, ButtonTextAlignment.CENTER, left + 280, top, 40, 40, gameMain.Random, out reason))
+			_taskButtons[7] = new BBButton();
+			if (!_taskButtons[7].Initialize("EndTurnBG", "EndTurnFG", string.Empty, ButtonTextAlignment.CENTER, left + 280, top, 40, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
 
-			TaskButtons[1].Selected = true;
 			hide = false;
 			reason = null;
 			return true;
@@ -78,7 +81,7 @@
 			{
 				return;
 			}
-			foreach (BBButton button in TaskButtons)
+			foreach (BBButton button in _taskButtons)
 			{
 				button.Draw();
 			}
@@ -90,7 +93,7 @@
 			{
 				return false;
 			}
-			foreach (BBButton button in TaskButtons)
+			foreach (BBButton button in _taskButtons)
 			{
 				button.MouseHover(mouseX, mouseY, frameDeltaTime);
 			}
@@ -111,7 +114,7 @@
 			{
 				return false;
 			}
-			foreach (BBButton button in TaskButtons)
+			foreach (BBButton button in _taskButtons)
 			{
 				if (button.MouseDown(mouseX, mouseY))
 				{
@@ -131,28 +134,35 @@
 			{
 				return false;
 			}
-			for (int i = 0; i < TaskButtons.Length; i++)
+			for (int i = 0; i < _taskButtons.Length; i++)
 			{
-				if (TaskButtons[i].MouseUp(mouseX, mouseY))
+				if (_taskButtons[i].MouseUp(mouseX, mouseY))
 				{
 					switch (i)
 					{
-						/*case 0: gameMain.ChangeToScreen(Screen.InGameMenu);
+						case 0:
+						{
+							if (ShowGameMenu != null)
+							{
+								ShowGameMenu();
+								SetToScreen(Screen.InGameMenu);
+							}
 							break;
-						case 1: gameMain.ChangeToScreen(Screen.Galaxy);
+						}
+						/*case 1: _gameMain.ChangeToScreen(Screen.Galaxy);
 							break;
-						case 2: gameMain.ChangeToScreen(Screen.Diplomacy);
+						case 2: _gameMain.ChangeToScreen(Screen.Diplomacy);
 							break;
-						case 3: gameMain.ChangeToScreen(Screen.FleetList);
+						case 3: _gameMain.ChangeToScreen(Screen.FleetList);
 							break;
-						case 4: gameMain.ChangeToScreen(Screen.Design);
+						case 4: _gameMain.ChangeToScreen(Screen.Design);
 							break;
-						case 5: gameMain.ChangeToScreen(Screen.Planets);
+						case 5: _gameMain.ChangeToScreen(Screen.Planets);
 							break;
-						case 6: gameMain.ChangeToScreen(Screen.Research);
+						case 6: _gameMain.ChangeToScreen(Screen.Research);
 							break;*/
-						case 7: gameMain.ChangeToScreen(Screen.ProcessTurn);
-							gameMain.HideSitRep();
+						case 7: _gameMain.ChangeToScreen(Screen.ProcessTurn);
+							_gameMain.HideSitRep();
 							break;
 					}
 					return true;
@@ -163,36 +173,41 @@
 
 		public void SetToScreen(Screen whichScreen)
 		{
-			foreach (BBButton button in TaskButtons)
-			{
-				button.Selected = false;
-			}
+			Clear();
 			switch (whichScreen)
 			{
 				case Screen.InGameMenu:
-					TaskButtons[0].Selected = true;
+					_taskButtons[0].Selected = true;
 					break;
 				case Screen.Galaxy:
-					TaskButtons[1].Selected = true;
+					_taskButtons[1].Selected = true;
 					break;
 				case Screen.Diplomacy:
-					TaskButtons[2].Selected = true;
+					_taskButtons[2].Selected = true;
 					break;
 				case Screen.FleetList:
-					TaskButtons[3].Selected = true;
+					_taskButtons[3].Selected = true;
 					break;
 				case Screen.Design:
-					TaskButtons[4].Selected = true;
+					_taskButtons[4].Selected = true;
 					break;
 				case Screen.Planets:
-					TaskButtons[6].Selected = true;
+					_taskButtons[6].Selected = true;
 					break;
 				case Screen.Research:
-					TaskButtons[7].Selected = true;
+					_taskButtons[7].Selected = true;
 					break;
 				case Screen.ProcessTurn:
-					TaskButtons[8].Selected = true;
+					_taskButtons[8].Selected = true;
 					break;
+			}
+		}
+
+		public void Clear()
+		{
+			foreach (BBButton button in _taskButtons)
+			{
+				button.Selected = false;
 			}
 		}
 	}
