@@ -40,12 +40,7 @@ namespace Beyond_Beyaan
 					}
 					foreach (var directory in di.GetDirectories())
 					{
-						//To-do - Devise a mechanism where it detects modified files and update to the newer files
-						if (Directory.Exists(Path.Combine(target.FullName, directory.Name)))
-						{
-							Directory.Delete(Path.Combine(target.FullName, directory.Name), true);
-						}
-						CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
+						CopyOrUpdateDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
 					}
 					//Get list of available datasets from general application data folder
 					foreach (var directory in target.GetDirectories())
@@ -134,19 +129,39 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		private static void CopyDirectory(DirectoryInfo source, DirectoryInfo target)
+		private static void CopyOrUpdateDirectory(DirectoryInfo source, DirectoryInfo target)
 		{
 			if (!target.Exists)
 			{
 				target.Create();
 			}
+			var files = target.GetFiles();
 			foreach (var file in source.GetFiles())
 			{
-				file.CopyTo(Path.Combine(target.FullName, file.Name));
+				bool fileExists = false;
+				foreach (var existingFile in files)
+				{
+					if (string.Compare(file.Name, existingFile.Name, StringComparison.CurrentCultureIgnoreCase) == 0)
+					{
+						//File exists, check to see if source is newer than the destination file
+						if (file.CreationTime > existingFile.CreationTime || file.LastWriteTime > existingFile.LastWriteTime)
+						{
+							//It is newer, so replace
+							file.CopyTo(Path.Combine(target.FullName, file.Name), true);
+						}
+						fileExists = true;
+						break;
+					}
+				}
+				if (!fileExists)
+				{
+					//Didn't exist, copy over the file.
+					file.CopyTo(Path.Combine(target.FullName, file.Name));
+				}
 			}
 			foreach (var directory in source.GetDirectories())
 			{
-				CopyDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
+				CopyOrUpdateDirectory(directory, new DirectoryInfo(Path.Combine(target.FullName, directory.Name)));
 			}
 		}
 

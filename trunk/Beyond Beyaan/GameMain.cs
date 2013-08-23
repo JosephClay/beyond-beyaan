@@ -17,7 +17,6 @@ namespace Beyond_Beyaan
 		private MainGameMenu _mainGameMenu;
 		private NewGame _newGame;
 		private GalaxyScreen _galaxyScreen;
-		private InGameMenu _inGameMenu;
 		private DiplomacyScreen _diplomacyScreen;
 		private FleetListScreen _fleetListScreen;
 		private DesignScreen _designScreen;
@@ -282,19 +281,6 @@ namespace Beyond_Beyaan
 					}
 					_galaxyScreen.CenterScreen();
 					_screenInterface = _galaxyScreen;
-					break;
-				case Screen.InGameMenu:
-					if (_inGameMenu == null)
-					{
-						_inGameMenu = new InGameMenu();
-						string reason;
-						if (!_inGameMenu.Initialize(this, out reason))
-						{
-							MessageBox.Show("Exception in loading In-Game Menu. Reason: " + reason);
-							_parentForm.Close();
-						}
-					}
-					_screenInterface = _inGameMenu;
 					break;
 				case Screen.Diplomacy:
 					if (_diplomacyScreen == null)
