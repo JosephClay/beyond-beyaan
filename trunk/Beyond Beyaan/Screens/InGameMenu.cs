@@ -147,7 +147,7 @@ namespace Beyond_Beyaan.Screens
 			if (_buttons[1].MouseUp(x, y))
 			{
 				//TODO: Add a prompt for save file name
-				//_gameMain.SaveGame(saveFileName);
+				_gameMain.SaveGame("TestSave");
 				return true;
 			}
 			if (_buttons[2].MouseUp(x, y))

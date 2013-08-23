@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Linq;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
@@ -409,6 +411,33 @@ namespace Beyond_Beyaan
 		{
 			//dispose of any resources in use
 			_parentForm.Close();
+		}
+
+		public void SaveGame(string filename)
+		{
+			XDocument saveGame = new XDocument();
+			using (XmlWriter writer = saveGame.CreateWriter())
+			{
+				writer.WriteStartDocument();
+				writer.WriteStartElement("SaveGameData");
+				EmpireManager.Save(writer);
+				writer.WriteEndElement();
+				writer.WriteEndDocument();
+			}
+			try
+			{
+				string path = Path.Combine(GameDataSet.FullName, "Saves");
+				if (!Directory.Exists(path))
+				{
+					Directory.CreateDirectory(path);
+				}
+				path = Path.Combine(path, filename + ".BB");
+				saveGame.Save(path);
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show("Failed to save file, reason: " + e.Message);
+			}
 		}
 	}
 }

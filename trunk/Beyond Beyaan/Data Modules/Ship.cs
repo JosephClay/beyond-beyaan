@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
@@ -15,6 +16,7 @@ namespace Beyond_Beyaan
 
 		#region Properties
 		public string Name { get; set; }
+		public int DesignID { get; set; }
 		public Empire Owner { get; set; }
 		public int Size { get; set; }
 		public int WhichStyle { get; set; }
@@ -103,6 +105,7 @@ namespace Beyond_Beyaan
 		public Ship(Ship shipToCopy)
 		{
 			Name = shipToCopy.Name;
+			DesignID = shipToCopy.DesignID;
 			Owner = shipToCopy.Owner;
 			Size = shipToCopy.Size;
 			WhichStyle = shipToCopy.WhichStyle;
@@ -115,6 +118,33 @@ namespace Beyond_Beyaan
 			Specials = new List<Technology>(shipToCopy.Specials);
 		}
 		#endregion
+
+		public void Save(XmlWriter writer)
+		{
+			writer.WriteStartElement("ShipDesign");
+			writer.WriteAttributeString("Name", Name);
+			writer.WriteAttributeString("DesignID", DesignID.ToString());
+			writer.WriteAttributeString("Size", Size.ToString());
+			writer.WriteAttributeString("WhichStyle", WhichStyle.ToString());
+			writer.WriteAttributeString("Engine", Engine.TechName);
+			writer.WriteAttributeString("Armor", Armor.TechName);
+			writer.WriteAttributeString("Shield", Shield == null ? "" : Shield.TechName);
+			writer.WriteAttributeString("Computer", Computer == null ? "" : Computer.TechName);
+			writer.WriteAttributeString("ECM", ECM == null ? "" : ECM.TechName);
+			foreach (var weapon in Weapons)
+			{
+				writer.WriteStartElement("Weapon");
+				writer.WriteAttributeString("Name", weapon.TechName);
+				writer.WriteEndElement();
+			}
+			foreach (var special in Specials)
+			{
+				writer.WriteStartElement("Special");
+				writer.WriteAttributeString("Name", special.TechName);
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
+		}
 	}
 
 	public class TransportShip

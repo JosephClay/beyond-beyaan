@@ -360,6 +360,7 @@ namespace Beyond_Beyaan
 				}
 			}
 
+			int starId = 0;
 			while (starTree.nodes.Count > 0 && numberOfStars > 0)
 			{
 				int x;
@@ -394,7 +395,7 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(NameGenerator.GetStarName(r), x * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), y * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), starColor, description, minPlanets, maxPlanets, r));
+				starSystems.Add(new StarSystem(NameGenerator.GetStarName(r), starId, x * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), y * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), starColor, description, minPlanets, maxPlanets, r));
 
 				bool[][] invalidatedArea = Utility.CalculateDisc(2, 1);
 
@@ -410,6 +411,7 @@ namespace Beyond_Beyaan
 				}
 
 				numberOfStars--;
+				starId++;
 			}
 		}
 		#endregion
