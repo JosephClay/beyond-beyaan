@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
@@ -464,6 +465,29 @@ namespace Beyond_Beyaan
 				orderedShips.Remove(whichShip);
 			}
 			adjacentSystem.Planets[0].Colonize(empire);
+		}
+
+		public void Save(XmlWriter writer)
+		{
+			writer.WriteStartElement("Fleet");
+			writer.WriteAttributeString("X", galaxyX.ToString());
+			writer.WriteAttributeString("Y", galaxyY.ToString());
+			writer.WriteAttributeString("AdjacentSystem", adjacentSystem == null ? "-1" : adjacentSystem.ID.ToString());
+			foreach (var ship in ships)
+			{
+				writer.WriteStartElement("Ship");
+				writer.WriteAttributeString("ShipDesign", ship.Key.DesignID.ToString());
+				writer.WriteAttributeString("NumberOfShips", ship.Value.ToString());
+				writer.WriteEndElement();
+			}
+			foreach (var transport in transportShips)
+			{
+				writer.WriteStartElement("Transport");
+				writer.WriteAttributeString("Race", transport.raceOnShip.RaceName);
+				writer.WriteAttributeString("Count", transport.amount.ToString());
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
 		}
 		#endregion
 	}

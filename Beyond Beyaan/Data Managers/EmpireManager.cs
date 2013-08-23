@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan
@@ -473,6 +474,15 @@ namespace Beyond_Beyaan
 				system.UpdateOwners();
 			}
 		}*/
+		public void Save(XmlWriter writer)
+		{
+			writer.WriteStartElement("Empires");
+			foreach (var empire in empires)
+			{
+				empire.Save(writer);
+			}
+			writer.WriteEndElement();
+		}
 		#endregion
 	}
 }

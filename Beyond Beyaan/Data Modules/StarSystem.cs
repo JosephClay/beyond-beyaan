@@ -63,6 +63,7 @@ namespace Beyond_Beyaan
 		{
 			get { return planets; }
 		}
+		public int ID { get; private set; }
 		public string Description { get; private set; }
 		/*public StarType Type
 		{
@@ -79,13 +80,14 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int x, int y, Color color, string description, int minPlanets, int maxPlanets, Random r)
+		public StarSystem(string name, int id, int x, int y, Color color, string description, int minPlanets, int maxPlanets, Random r)
 		{
 			this.Sprite = SpriteManager.GetSprite("Star", r);
 			this.name = name;
 			this.x = x;
 			this.y = y;
 			this.size = 1;
+			ID = id;
 
 			this.color = new float[]
 				{

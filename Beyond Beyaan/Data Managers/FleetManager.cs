@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml;
 
 namespace Beyond_Beyaan
 {
@@ -9,6 +10,7 @@ namespace Beyond_Beyaan
 		private List<Ship> obsoleteShipDesigns;
 		private List<Fleet> fleets;
 		private Empire empire;
+		private int _currentShipDesignID;
 		#endregion
 
 		#region Properties
@@ -28,6 +30,7 @@ namespace Beyond_Beyaan
 		public FleetManager(Empire empire)
 		{
 			this.empire = empire;
+			_currentShipDesignID = 0;
 			fleets = new List<Fleet>();
 			currentShipDesigns = new List<Ship>();
 			obsoleteShipDesigns = new List<Ship>();
@@ -66,7 +69,9 @@ namespace Beyond_Beyaan
 					break;
 				}
 			}
+			scout.DesignID = _currentShipDesignID;
 			currentShipDesigns.Add(scout);
+			_currentShipDesignID++;
 
 			Ship colonyShip = new Ship();
 			colonyShip.Name = "Colony Ship";
@@ -83,7 +88,9 @@ namespace Beyond_Beyaan
 					break;
 				}
 			}
+			colonyShip.DesignID = _currentShipDesignID;
 			currentShipDesigns.Add(colonyShip);
+			_currentShipDesignID++;
 
 			LastShipDesign = new Ship(scout); //Make a copy so we don't accidentally modify the original ship
 		}
@@ -151,6 +158,8 @@ namespace Beyond_Beyaan
 		public void AddShipDesign(Ship newShipDesign)
 		{
 			Ship ship = new Ship(newShipDesign); //Make a copy so it don't get modified by accident
+			ship.DesignID = _currentShipDesignID;
+			_currentShipDesignID++;
 			currentShipDesigns.Add(ship);
 		}
 
@@ -244,6 +253,28 @@ namespace Beyond_Beyaan
 				amount += fleet.GetExpenses();
 			}
 			return amount;
+		}
+
+		public void Save(XmlWriter writer)
+		{
+			writer.WriteStartElement("CurrentShipDesigns");
+			foreach (var ship in currentShipDesigns)
+			{
+				ship.Save(writer);
+			}
+			writer.WriteEndElement();
+			writer.WriteStartElement("ObsoleteShipDesigns");
+			foreach (var ship in obsoleteShipDesigns)
+			{
+				ship.Save(writer);
+			}
+			writer.WriteEndElement();
+			writer.WriteStartElement("Fleets");
+			foreach (var fleet in fleets)
+			{
+				fleet.Save(writer);
+			}
+			writer.WriteEndElement();
 		}
 	}
 }

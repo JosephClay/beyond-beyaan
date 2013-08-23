@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml;
 using GorgonLibrary.Graphics;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
@@ -528,6 +529,19 @@ namespace Beyond_Beyaan
 
 		public void HandleAIEmpire()
 		{
+		}
+
+		public void Save(XmlWriter writer)
+		{
+			writer.WriteStartElement("Empire");
+			writer.WriteAttributeString("ID", empireID.ToString());
+			writer.WriteAttributeString("Name", empireName);
+			writer.WriteAttributeString("Color", empireColor.ToArgb().ToString());
+			writer.WriteAttributeString("Race", race.RaceName);
+			writer.WriteAttributeString("SelectedSystem", this.lastSelectedSystem.ID.ToString());
+			fleetManager.Save(writer);
+			//sitRepManager.Save(writer);
+			writer.WriteEndElement();
 		}
 		#endregion
 	}
