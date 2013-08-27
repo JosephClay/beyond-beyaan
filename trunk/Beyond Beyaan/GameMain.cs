@@ -420,6 +420,7 @@ namespace Beyond_Beyaan
 			{
 				writer.WriteStartDocument();
 				writer.WriteStartElement("SaveGameData");
+				Galaxy.Save(writer);
 				EmpireManager.Save(writer);
 				writer.WriteEndElement();
 				writer.WriteEndDocument();

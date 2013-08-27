@@ -539,6 +539,7 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("Color", empireColor.ToArgb().ToString());
 			writer.WriteAttributeString("Race", race.RaceName);
 			writer.WriteAttributeString("SelectedSystem", this.lastSelectedSystem.ID.ToString());
+			technologyManager.Save(writer);
 			fleetManager.Save(writer);
 			//sitRepManager.Save(writer);
 			writer.WriteEndElement();

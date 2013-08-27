@@ -22,7 +22,6 @@ namespace Beyond_Beyaan
 		private float infrastructure;
 		private Dictionary<Race, float> racePopulations;
 		private List<Race> races;
-		private int shipSelected;
 		private Ship shipBeingBuilt;
 		private float constructionTotal;
 		private bool isWetClimate;
@@ -116,11 +115,6 @@ namespace Beyond_Beyaan
 		{
 			get { return populationMax; }
 		}
-		public int ShipSelected
-		{
-			get { return shipSelected; }
-			set { shipSelected = value; }
-		}
 		public Ship ShipBeingBuilt
 		{
 			get { return shipBeingBuilt; }
@@ -139,6 +133,10 @@ namespace Beyond_Beyaan
 				float remaining = (shipBeingBuilt.Cost - constructionTotal);
 				return remaining / (ConstructionAmount * 0.01f * ActualProduction);
 			}
+		}
+		public float ShipConstructionAmount
+		{
+			get { return constructionTotal; }
 		}
 
 		public PLANET_CONSTRUCTION_BONUS ConstructionBonus

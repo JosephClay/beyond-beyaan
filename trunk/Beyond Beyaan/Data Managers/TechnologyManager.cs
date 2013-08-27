@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Xml;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -869,6 +870,114 @@ namespace Beyond_Beyaan
 					FuelRange = tech.FuelRange;
 				}
 			}
+		}
+
+		public void Save(XmlWriter writer)
+		{
+			writer.WriteStartElement("Technologies");
+			writer.WriteStartElement("Computer");
+			writer.WriteAttributeString("Researching", WhichComputerBeingResearched == null ? string.Empty : WhichComputerBeingResearched.TechName);
+			writer.WriteAttributeString("Percentage", ComputerPercentage.ToString());
+			writer.WriteAttributeString("Locked", ComputerLocked ? "True" : "False");
+			writer.WriteStartElement("Researched");
+			foreach (var tech in ResearchedComputerTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteStartElement("Unresearched");
+			foreach (var tech in UnresearchedComputerTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+			writer.WriteStartElement("Construction");
+			writer.WriteAttributeString("Researching", WhichConstructionBeingResearched == null ? string.Empty : WhichConstructionBeingResearched.TechName);
+			writer.WriteAttributeString("Percentage", ConstructionPercentage.ToString());
+			writer.WriteAttributeString("Locked", ConstructionLocked ? "True" : "False");
+			writer.WriteStartElement("Researched");
+			foreach (var tech in ResearchedConstructionTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteStartElement("Unresearched");
+			foreach (var tech in UnresearchedConstructionTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+			writer.WriteStartElement("ForceField");
+			writer.WriteAttributeString("Researching", WhichForceFieldBeingResearched == null ? string.Empty : WhichForceFieldBeingResearched.TechName);
+			writer.WriteAttributeString("Percentage", ForceFieldPercentage.ToString());
+			writer.WriteAttributeString("Locked", ForceFieldLocked ? "True" : "False");
+			writer.WriteStartElement("Researched");
+			foreach (var tech in ResearchedForceFieldTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteStartElement("Unresearched");
+			foreach (var tech in UnresearchedForceFieldTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+			writer.WriteStartElement("Planetology");
+			writer.WriteAttributeString("Researching", WhichPlanetologyBeingResearched == null ? string.Empty : WhichPlanetologyBeingResearched.TechName);
+			writer.WriteAttributeString("Percentage", PlanetologyPercentage.ToString());
+			writer.WriteAttributeString("Locked", PlanetologyLocked ? "True" : "False");
+			writer.WriteStartElement("Researched");
+			foreach (var tech in ResearchedPlanetologyTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteStartElement("Unresearched");
+			foreach (var tech in UnresearchedPlanetologyTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+			writer.WriteStartElement("Propulsion");
+			writer.WriteAttributeString("Researching", WhichPropulsionBeingResearched == null ? string.Empty : WhichPropulsionBeingResearched.TechName);
+			writer.WriteAttributeString("Percentage", PropulsionPercentage.ToString());
+			writer.WriteAttributeString("Locked", PropulsionLocked ? "True" : "False");
+			writer.WriteStartElement("Researched");
+			foreach (var tech in ResearchedPropulsionTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteStartElement("Unresearched");
+			foreach (var tech in UnresearchedPropulsionTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+			writer.WriteStartElement("Weapon");
+			writer.WriteAttributeString("Researching", WhichWeaponBeingResearched == null ? string.Empty : WhichWeaponBeingResearched.TechName);
+			writer.WriteAttributeString("Percentage", WeaponPercentage.ToString());
+			writer.WriteAttributeString("Locked", WeaponLocked ? "True" : "False");
+			writer.WriteStartElement("Researched");
+			foreach (var tech in ResearchedWeaponTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteStartElement("Unresearched");
+			foreach (var tech in UnresearchedWeaponTechs)
+			{
+				writer.WriteElementString("Technology", tech.TechName);
+			}
+			writer.WriteEndElement();
+			writer.WriteEndElement();
+			writer.WriteEndElement();
 		}
 		#endregion
 	}
