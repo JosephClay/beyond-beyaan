@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Xml;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -573,6 +574,62 @@ namespace Beyond_Beyaan
 			{
 				system.Sprite.Update(frameDeltaTime, r);
 			}
+		}
+
+		public void Save(XmlWriter writer)
+		{
+			writer.WriteStartElement("Galaxy");
+			writer.WriteStartElement("Stars");
+			foreach (var star in starSystems)
+			{
+				writer.WriteStartElement("Star");
+				writer.WriteAttributeString("ID", star.ID.ToString());
+				writer.WriteAttributeString("Name", star.Name);
+				writer.WriteAttributeString("XPos", star.X.ToString());
+				writer.WriteAttributeString("YPos", star.Y.ToString());
+				writer.WriteAttributeString("Color", star.StarColor[0] + "," + star.StarColor[1] + "," + star.StarColor[2] + "," + star.StarColor[3]);
+				foreach (var planet in star.Planets)
+				{
+					writer.WriteStartElement("Planet");
+					writer.WriteAttributeString("Name", planet.Name);
+					writer.WriteAttributeString("Owner", planet.Owner == null ? string.Empty : planet.Owner.EmpireID.ToString());
+					writer.WriteAttributeString("MaxPopulation", planet.PopulationMax.ToString());
+					writer.WriteAttributeString("Buildings", planet.InfrastructureTotal.ToString());
+					writer.WriteAttributeString("EnvironmentPercentage", planet.EnvironmentAmount.ToString());
+					writer.WriteAttributeString("InfrastructurePercentage", planet.InfrastructureAmount.ToString());
+					writer.WriteAttributeString("DefensePercentage", planet.DefenseAmount.ToString());
+					writer.WriteAttributeString("ConstructionPercentage", planet.ConstructionAmount.ToString());
+					writer.WriteAttributeString("ResearchPercentage", planet.ResearchAmount.ToString());
+					writer.WriteAttributeString("EnvironmentLocked", planet.EnvironmentLocked.ToString());
+					writer.WriteAttributeString("InfrastructureLocked", planet.InfrastructureLocked.ToString());
+					writer.WriteAttributeString("DefenseLocked", planet.DefenseLocked.ToString());
+					writer.WriteAttributeString("ConstructionLocked", planet.ConstructionLocked.ToString());
+					writer.WriteAttributeString("ResearchLocked", planet.ResearchLocked.ToString());
+					writer.WriteAttributeString("ShipBuilding", planet.ShipBeingBuilt == null ? string.Empty : planet.ShipBeingBuilt.DesignID.ToString());
+					writer.WriteAttributeString("AmountBuilt", planet.ShipConstructionAmount.ToString());
+					writer.WriteAttributeString("RelocatingTo", planet.RelocateToSystem == null ? string.Empty : planet.RelocateToSystem.StarSystem.ID.ToString());
+					if (planet.TransferSystem.Key.StarSystem != null)
+					{
+						writer.WriteStartElement("TransferTo");
+						writer.WriteAttributeString("StarSystem", planet.TransferSystem.Key.StarSystem.ID.ToString());
+						writer.WriteAttributeString("Amount", planet.TransferSystem.Value.ToString());
+						writer.WriteEndElement();
+					}
+					writer.WriteStartElement("Races");
+					foreach (var race in planet.Races)
+					{
+						writer.WriteStartElement("Race");
+						writer.WriteAttributeString("RaceName", race.RaceName);
+						writer.WriteAttributeString("Amount", planet.GetRacePopulation(race).ToString());
+						writer.WriteEndElement();
+					}
+					writer.WriteEndElement();
+					writer.WriteEndElement();
+				}
+				writer.WriteEndElement();
+			}
+			writer.WriteEndElement();
+			writer.WriteEndElement();
 		}
 	}
 
