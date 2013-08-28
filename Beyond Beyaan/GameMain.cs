@@ -440,5 +440,33 @@ namespace Beyond_Beyaan
 				MessageBox.Show("Failed to save file, reason: " + e.Message);
 			}
 		}
+
+		public bool LoadGame(string filename)
+		{
+			string path = Path.Combine(GameDataSet.FullName, "Saves");
+			if (!Directory.Exists(path))
+			{
+				//No folder exists, impossible to load anything
+				return false;
+			}
+			try
+			{
+				XDocument doc = XDocument.Load(Path.Combine(path, filename));
+				XElement root = doc.Root;
+				/*if (!EmpireManager.Load(root))
+				{
+					return false;
+				}*/
+				if (!Galaxy.Load(root, this))
+				{
+					return false;
+				}
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
 	}
 }

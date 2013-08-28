@@ -266,14 +266,12 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
+		public Planet(string name, string type, float maxPop, Empire owner, StarSystem system, Random r)
+		{
+			SetValues(name, type, maxPop, system, owner, r);
+		}
 		public Planet(string name, Random r, StarSystem system)
 		{
-			whichSystem = system;
-			this.name = name;
-			races = new List<Race>();
-			racePopulations = new Dictionary<Race, float>();
-			TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode(), 0);
-
 			isWetClimate = r.Next(2) == 0;
 			populationMax = r.Next(0, 150) - 25;
 
@@ -281,130 +279,206 @@ namespace Beyond_Beyaan
 			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
 			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 
-			try //So I can use finally block
+			int industryBonusAdjustment = 0;
+			int fertilityBonusAdjustment = 0;
+			string type;
+			if (populationMax < 5)
 			{
-				int industryBonusAdjustment = 0;
-				int fertilityBonusAdjustment = 0;
-				if (populationMax < 5)
-				{
-					planetType = PLANET_TYPE.NONE;
-					SmallSprite = SpriteManager.GetSprite("AsteroidsPlanetSmall", r);
-					populationMax = 0;
-				}
-				else if (populationMax <= 10)
-				{
-					planetType = PLANET_TYPE.RADIATED;
-					SmallSprite = SpriteManager.GetSprite("RadiatedPlanetSmall", r);
-					GroundSprite = SpriteManager.GetSprite("RadiatedGround", r);
-					industryBonusAdjustment = 500;
-				}
-				else if (populationMax <= 15)
-				{
-					planetType = PLANET_TYPE.TOXIC;
-					SmallSprite = SpriteManager.GetSprite("ToxicPlanetSmall", r);
-					GroundSprite = SpriteManager.GetSprite("ToxicGround", r);
-					industryBonusAdjustment = 300;
-				}
-				else if (populationMax <= 20)
-				{
-					planetType = isWetClimate ? PLANET_TYPE.ARCTIC : PLANET_TYPE.VOLCANIC;
-					SmallSprite = isWetClimate ? SpriteManager.GetSprite("ArcticPlanetSmall", r) : SpriteManager.GetSprite("VolcanicPlanetSmall", r);
-					GroundSprite = isWetClimate ? SpriteManager.GetSprite("ArcticGround", r) : SpriteManager.GetSprite("VolcanicGround", r);
-					industryBonusAdjustment = 200;
-				}
-				else if (populationMax <= 30)
-				{
-					planetType = isWetClimate ? PLANET_TYPE.DEAD : PLANET_TYPE.BARREN;
-					SmallSprite = isWetClimate ? SpriteManager.GetSprite("DeadPlanetSmall", r) : SpriteManager.GetSprite("BarrenPlanetSmall", r);
-					GroundSprite = isWetClimate ? SpriteManager.GetSprite("DeadGround", r) : SpriteManager.GetSprite("BarrenGround", r);
-					industryBonusAdjustment = 100;
-				}
-				else if (populationMax <= 40)
-				{
-					planetType = isWetClimate ? PLANET_TYPE.TUNDRA : PLANET_TYPE.BADLAND;
-					SmallSprite = isWetClimate ? SpriteManager.GetSprite("TundraPlanetSmall", r) : SpriteManager.GetSprite("BadlandsPlanetSmall", r);
-					GroundSprite = isWetClimate ? SpriteManager.GetSprite("TundraGround", r) : SpriteManager.GetSprite("BadlandsGround", r);
-				}
-				else if (populationMax <= 70)
-				{
-					planetType = isWetClimate ? PLANET_TYPE.OCEAN : PLANET_TYPE.DESERT;
-					SmallSprite = isWetClimate ? SpriteManager.GetSprite("OceanicPlanetSmall", r) : SpriteManager.GetSprite("DesertPlanetSmall", r);
-					GroundSprite = isWetClimate ? SpriteManager.GetSprite("OceanicGround", r) : SpriteManager.GetSprite("DesertGround", r);
-					fertilityBonusAdjustment = 200;
-				}
-				else if (populationMax <= 90)
-				{
-					planetType = isWetClimate ? PLANET_TYPE.JUNGLE : PLANET_TYPE.STEPPE;
-					SmallSprite = isWetClimate ? SpriteManager.GetSprite("JunglePlanetSmall", r) : SpriteManager.GetSprite("SteppePlanetSmall", r);
-					GroundSprite = isWetClimate ? SpriteManager.GetSprite("JungleGround", r) : SpriteManager.GetSprite("SteppeGround", r);
-					fertilityBonusAdjustment = 300;
-				}
-				else
-				{
-					planetType = PLANET_TYPE.TERRAN;
-					SmallSprite = SpriteManager.GetSprite("TerranPlanetSmall", r);
-					GroundSprite = SpriteManager.GetSprite("TerranGround", r);
-					fertilityBonusAdjustment = 500;
-				}
-
-				//Get the construction bonus
-				int number = r.Next(1000) + industryBonusAdjustment;
-				if (!isWetClimate)
-				{
-					number += 25;
-				}
-				if (number < 50)
-				{
-					ConstructionBonus = PLANET_CONSTRUCTION_BONUS.DEARTH;
-				}
-				else if (number < 200)
-				{
-					ConstructionBonus = PLANET_CONSTRUCTION_BONUS.POOR;
-				}
-				else if (number >= 950)
-				{
-					ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
-				}
-				else if (number >= 800)
-				{
-					ConstructionBonus = PLANET_CONSTRUCTION_BONUS.COPIOUS;
-				}
-
-				//Get the environment bonus
-				number = r.Next(1000) + fertilityBonusAdjustment;
-				if (isWetClimate)
-				{
-					number += 25;
-				}
-				if (number < 200)
-				{
-					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.INFERTILE;
-				}
-				else if (number >= 950)
-				{
-					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.LUSH;
-				}
-				else if (number >= 800)
-				{
-					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
-				}
-
-				//Get the research bonus
-				number = r.Next(1000);
-				if (number >= 950)
-				{
-					ResearchBonus = PLANET_RESEARCH_BONUS.EXCITING;
-				}
-				else if (number >= 800)
-				{
-					ResearchBonus = PLANET_RESEARCH_BONUS.SENSATIONAL;
-				}
+				type = "None";
+				populationMax = 0;
 			}
-			finally
+			else if (populationMax <= 10)
 			{
-				planetTypeString = Utility.PlanetTypeToString(planetType);
+				type = "Radiated";
+				industryBonusAdjustment = 500;
 			}
+			else if (populationMax <= 15)
+			{
+				type = "Toxic";
+				industryBonusAdjustment = 300;
+			}
+			else if (populationMax <= 20)
+			{
+				type = isWetClimate ? "Arctic" : "Volcanic";
+				industryBonusAdjustment = 200;
+			}
+			else if (populationMax <= 30)
+			{
+				type = isWetClimate ? "Dead" : "Barren";
+				industryBonusAdjustment = 100;
+			}
+			else if (populationMax <= 40)
+			{
+				type = isWetClimate ? "Tundra" : "Badlands";
+			}
+			else if (populationMax <= 70)
+			{
+				type = isWetClimate ? "Oceanic" : "Desert";
+				fertilityBonusAdjustment = 200;
+			}
+			else if (populationMax <= 90)
+			{
+				type = isWetClimate ? "Jungle" : "Steppe";
+				fertilityBonusAdjustment = 300;
+			}
+			else
+			{
+				type = "Terran";
+				fertilityBonusAdjustment = 500;
+			}
+
+			//Get the construction bonus
+			int number = r.Next(1000) + industryBonusAdjustment;
+			if (!isWetClimate)
+			{
+				number += 25;
+			}
+			if (number < 50)
+			{
+				ConstructionBonus = PLANET_CONSTRUCTION_BONUS.DEARTH;
+			}
+			else if (number < 200)
+			{
+				ConstructionBonus = PLANET_CONSTRUCTION_BONUS.POOR;
+			}
+			else if (number >= 950)
+			{
+				ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+			}
+			else if (number >= 800)
+			{
+				ConstructionBonus = PLANET_CONSTRUCTION_BONUS.COPIOUS;
+			}
+
+			//Get the environment bonus
+			number = r.Next(1000) + fertilityBonusAdjustment;
+			if (isWetClimate)
+			{
+				number += 25;
+			}
+			if (number < 200)
+			{
+				EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.INFERTILE;
+			}
+			else if (number >= 950)
+			{
+				EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.LUSH;
+			}
+			else if (number >= 800)
+			{
+				EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
+			}
+
+			//Get the research bonus
+			number = r.Next(1000);
+			if (number >= 950)
+			{
+				ResearchBonus = PLANET_RESEARCH_BONUS.EXCITING;
+			}
+			else if (number >= 800)
+			{
+				ResearchBonus = PLANET_RESEARCH_BONUS.SENSATIONAL;
+			}
+
+			SetValues(name, type, populationMax, system, null, r);
+		}
+		private void SetValues(string name, string type, float maxPop, StarSystem system, Empire empire, Random r)
+		{
+			whichSystem = system;
+			this.name = name;
+			races = new List<Race>();
+			racePopulations = new Dictionary<Race, float>();
+			TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode(), 0);
 			RelocateToSystem = null;
+			Owner = empire;
+			populationMax = maxPop;
+
+			switch (type)
+			{
+				case "Arctic":
+					{
+						planetType = PLANET_TYPE.ARCTIC;
+						SmallSprite = SpriteManager.GetSprite("ArcticPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("ArcticGround", r);
+					} break;
+				case "Badlands":
+					{
+						planetType = PLANET_TYPE.BADLAND;
+						SmallSprite = SpriteManager.GetSprite("BadlandsPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("BadlandsGround", r);
+					} break;
+				case "Barren":
+					{
+						planetType = PLANET_TYPE.BARREN;
+						SmallSprite = SpriteManager.GetSprite("BarrenPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("BarrenGround", r);
+					} break;
+				case "Dead":
+					{
+						planetType = PLANET_TYPE.DEAD;
+						SmallSprite = SpriteManager.GetSprite("DeadPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("DeadGround", r);
+					} break;
+				case "Desert":
+					{
+						planetType = PLANET_TYPE.DESERT;
+						SmallSprite = SpriteManager.GetSprite("DesertPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("DesertGround", r);
+					} break;
+				case "Jungle":
+					{
+						planetType = PLANET_TYPE.JUNGLE;
+						SmallSprite = SpriteManager.GetSprite("JunglePlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("JungleGround", r);
+					} break;
+				case "None":
+					{
+						planetType = PLANET_TYPE.NONE;
+						SmallSprite = SpriteManager.GetSprite("AsteroidsPlanetSmall", r);
+					} break;
+				case "Oceanic":
+					{
+						planetType = PLANET_TYPE.OCEAN;
+						SmallSprite = SpriteManager.GetSprite("OceanicPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("OceanicGround", r);
+					} break;
+				case "Radiated":
+					{
+						planetType = PLANET_TYPE.RADIATED;
+						SmallSprite = SpriteManager.GetSprite("RadiatedPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("RadiatedGround", r);
+					} break;
+				case "Steppe":
+					{
+						planetType = PLANET_TYPE.STEPPE;
+						SmallSprite = SpriteManager.GetSprite("SteppePlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("SteppeGround", r);
+					} break;
+				case "Terran":
+					{
+						planetType = PLANET_TYPE.TERRAN;
+						SmallSprite = SpriteManager.GetSprite("TerranPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("TerranGround", r);
+					} break;
+				case "Toxic":
+					{
+						planetType = PLANET_TYPE.TOXIC;
+						SmallSprite = SpriteManager.GetSprite("ToxicPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("ToxicGround", r);
+					} break;
+				case "Tundra":
+					{
+						planetType = PLANET_TYPE.TUNDRA;
+						SmallSprite = SpriteManager.GetSprite("TundraPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("TundraGround", r);
+					} break;
+				case "Volcanic":
+					{
+						planetType = PLANET_TYPE.VOLCANIC;
+						SmallSprite = SpriteManager.GetSprite("VolcanicPlanetSmall", r);
+						GroundSprite = SpriteManager.GetSprite("VolcanicGround", r);
+					} break;
+			}
 		}
 		#endregion
 
