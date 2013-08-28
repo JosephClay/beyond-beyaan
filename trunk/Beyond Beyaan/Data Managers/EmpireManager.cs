@@ -52,6 +52,18 @@ namespace Beyond_Beyaan
 			empires.Remove(empire);
 		}
 
+		public Empire GetEmpire(int empireId)
+		{
+			foreach (Empire empire in empires)
+			{
+				if (empire.EmpireID == empireId)
+				{
+					return empire;
+				}
+			}
+			return null;
+		}
+
 		public void Reset()
 		{
 			empires.Clear();

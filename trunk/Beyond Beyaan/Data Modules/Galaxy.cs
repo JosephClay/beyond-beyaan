@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Xml;
+using System.Xml.Linq;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -585,13 +586,22 @@ namespace Beyond_Beyaan
 				writer.WriteStartElement("Star");
 				writer.WriteAttributeString("ID", star.ID.ToString());
 				writer.WriteAttributeString("Name", star.Name);
+				writer.WriteAttributeString("Description", star.Description);
 				writer.WriteAttributeString("XPos", star.X.ToString());
 				writer.WriteAttributeString("YPos", star.Y.ToString());
 				writer.WriteAttributeString("Color", star.StarColor[0] + "," + star.StarColor[1] + "," + star.StarColor[2] + "," + star.StarColor[3]);
+				string exploredByList = string.Empty;
+				foreach (var exploredBy in star.ExploredBy)
+				{
+					exploredByList = exploredByList + exploredBy.EmpireID + ",";
+				}
+				exploredByList = exploredByList.TrimEnd(new[] {','});
+				writer.WriteAttributeString("ExploredBy", exploredByList);
 				foreach (var planet in star.Planets)
 				{
 					writer.WriteStartElement("Planet");
 					writer.WriteAttributeString("Name", planet.Name);
+					writer.WriteAttributeString("Type", planet.PlanetTypeString);
 					writer.WriteAttributeString("Owner", planet.Owner == null ? string.Empty : planet.Owner.EmpireID.ToString());
 					writer.WriteAttributeString("MaxPopulation", planet.PopulationMax.ToString());
 					writer.WriteAttributeString("Buildings", planet.InfrastructureTotal.ToString());
@@ -628,8 +638,53 @@ namespace Beyond_Beyaan
 				}
 				writer.WriteEndElement();
 			}
+			//When neutral stuff are added, like space crystals, put them here
 			writer.WriteEndElement();
 			writer.WriteEndElement();
+		}
+
+		public bool Load(XElement root, GameMain gameMain)
+		{
+			var galaxyElement = root.Element("Galaxy");
+			if (galaxyElement == null)
+			{
+				return false;
+			}
+			starSystems = new List<StarSystem>();
+			var starsElement = galaxyElement.Element("Stars");
+			foreach (var star in starsElement.Elements())
+			{
+				string name = star.Attribute("Name").Value;
+				string description = star.Attribute("Description").Value;
+				int id = int.Parse(star.Attribute("ID").Value);
+				int xPos = int.Parse(star.Attribute("XPos").Value);
+				int yPos = int.Parse(star.Attribute("YPos").Value);
+				string[] color = star.Attribute("Color").Value.Split(new[] {','});
+				float[] starColor = new float[4];
+				for (int i = 0; i < 4; i++)
+				{
+					starColor[i] = float.Parse(color[i]);
+				}
+				StarSystem newStar = new StarSystem(name, id, xPos, yPos, Color.FromArgb((int)(255 * starColor[0]), (int)(255 * starColor[1]), (int)(255 * starColor[2]), (int)(255 * starColor[3])), description, gameMain.Random);
+				string[] exploredBy = star.Attribute("ExploredBy").Value.Split(new [] {','});
+				foreach (var explored in exploredBy)
+				{
+					newStar.AddEmpireExplored(gameMain.EmpireManager.GetEmpire(int.Parse(explored)));
+				}
+				foreach (var planetElement in star.Elements())
+				{
+					string planetName = planetElement.Attribute("Name").Value;
+					string type = planetElement.Attribute("Type").Value;
+					Empire owner = null;
+					if (!string.IsNullOrEmpty(planetElement.Attribute("Owner").Value))
+					{
+						owner = gameMain.EmpireManager.GetEmpire(int.Parse(planetElement.Attribute("Owner").Value));
+					}
+					float populationMax = float.Parse(planetElement.Attribute("MaxPopulation").Value);
+					newStar.Planets.Add(new Planet(planetName, type, populationMax, owner, newStar, gameMain.Random));
+				}
+			}
+			return true;
 		}
 	}
 

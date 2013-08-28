@@ -63,6 +63,10 @@ namespace Beyond_Beyaan
 		{
 			get { return planets; }
 		}
+		public List<Empire> ExploredBy
+		{
+			get { return exploredBy; }
+		}
 		public int ID { get; private set; }
 		public string Description { get; private set; }
 		/*public StarType Type
@@ -80,7 +84,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public StarSystem(string name, int id, int x, int y, Color color, string description, int minPlanets, int maxPlanets, Random r)
+		public StarSystem(string name, int id, int x, int y, Color color, string description, Random r)
 		{
 			this.Sprite = SpriteManager.GetSprite("Star", r);
 			this.name = name;
@@ -101,6 +105,17 @@ namespace Beyond_Beyaan
 
 			//type = StarType.NORMAL;
 
+			string reason;
+			StarName = new BBLabel();
+			StarName.Initialize(0, 0, name, Color.White, out reason);
+			EmpiresWithFleetAdjacentLastTurn = new List<Empire>();
+			EmpiresWithFleetAdjacentThisTurn = new List<Empire>();
+			EmpiresWithPlanetsInThisSystem = new List<Empire>();
+			OwnerPercentage = new Dictionary<Empire, float>();
+			Description = description;
+		}
+		public StarSystem(string name, int id, int x, int y, Color color, string description, int minPlanets, int maxPlanets, Random r) : this (name, id, x, y, color, description, r)
+		{
 			int amountOfPlanets = r.Next(maxPlanets - minPlanets) + minPlanets;
 			planets = new List<Planet>();
 			for (int i = 0; i < amountOfPlanets; i++)
@@ -111,14 +126,6 @@ namespace Beyond_Beyaan
 				sb.Append(Utility.ConvertNumberToRomanNumberical(i + 1));
 				planets.Add(new Planet(sb.ToString(), r, this));
 			}
-			string reason;
-			StarName = new BBLabel();
-			StarName.Initialize(0, 0, name, Color.White, out reason);
-			EmpiresWithFleetAdjacentLastTurn = new List<Empire>();
-			EmpiresWithFleetAdjacentThisTurn = new List<Empire>();
-			EmpiresWithPlanetsInThisSystem = new List<Empire>();
-			OwnerPercentage = new Dictionary<Empire, float>();
-			Description = description;
 		}
 		#endregion
 
