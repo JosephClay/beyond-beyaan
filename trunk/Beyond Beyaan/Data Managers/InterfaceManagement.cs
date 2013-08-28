@@ -3383,6 +3383,17 @@ namespace Beyond_Beyaan
 			text.SetColor(color);
 		}
 
+		public void Select()
+		{
+			//Sets the text field to be selected and editable
+			if (isReadOnly)
+			{
+				return;
+			}
+			blink = true;
+			isSelected = true;
+		}
+
 		#region Keys
 		public bool KeyDown(KeyboardInputEventArgs e)
 		{
