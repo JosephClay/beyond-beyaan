@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
@@ -15,11 +17,34 @@ namespace Beyond_Beyaan.Screens
 		private int _maxVisible;
 		private int _selectedGame;
 
-		private List<string> _fileNames;
+		private BBStretchableImage _saveGameNamePromptBackground;
+		private BBLabel _saveGameNamePromptInstructionLabel;
+		private BBSingleLineTextBox _saveGameNameField;
+		private bool _promptShowing;
+
+		private List<FileInfo> _files;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			if (!base.Initialize((gameMain.ScreenWidth / 2) - 250, (gameMain.ScreenHeight / 2) - 200, 500, 400, StretchableImageType.MediumBorder, gameMain, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
+			int x = (gameMain.ScreenWidth / 2) - 150;
+			int y = (gameMain.ScreenHeight / 2) - 50;
+			_saveGameNamePromptBackground = new BBStretchableImage();
+			if (!_saveGameNamePromptBackground.Initialize(x, y, 300, 100, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_saveGameNamePromptInstructionLabel = new BBLabel();
+			if (!_saveGameNamePromptInstructionLabel.Initialize(x + 20, y + 10, "Please input name for the save:", Color.White, out reason))
+			{
+				return false;
+			}
+			_saveGameNameField = new BBSingleLineTextBox();
+			if (!_saveGameNameField.Initialize(string.Empty, x + 20, y + 40, 250, 40, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -74,7 +99,8 @@ namespace Beyond_Beyaan.Screens
 			_maxVisible = 0;
 			_scrollBar.SetEnabledState(false);
 			_selectedGame = -1;
-			_fileNames = new List<string>();
+			_files = new List<FileInfo>();
+			_promptShowing = false;
 
 			return true;
 		}
@@ -96,10 +122,22 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			_scrollBar.Draw();
+
+			if (_promptShowing)
+			{
+				_saveGameNamePromptBackground.Draw();
+				_saveGameNamePromptInstructionLabel.Draw();
+				_saveGameNameField.Draw();
+			}
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
+			if (_promptShowing)
+			{
+				_saveGameNameField.Update(frameDeltaTime);
+				return true;
+			}
 			bool result = false;
 			for (int i = 0; i < _buttons.Length; i++)
 			{
@@ -119,6 +157,10 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseDown(int x, int y)
 		{
+			if (_promptShowing)
+			{
+				return _saveGameNameField.MouseDown(x, y);
+			}
 			bool result = _scrollBar.MouseDown(x, y);
 			for (int i = 0; i < _buttons.Length; i++)
 			{
@@ -133,6 +175,15 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseUp(int x, int y)
 		{
+			if (_promptShowing)
+			{
+				if (!_saveGameNameField.MouseUp(x, y) && !string.IsNullOrEmpty(_saveGameNameField.Text))
+				{
+					_promptShowing = false;
+					_gameMain.SaveGame(_saveGameNameField.Text);
+					GetSaveList(); //Refresh the list after saving
+				}
+			}
 			if (_scrollBar.MouseUp(x, y))
 			{
 				RefreshSaveButtons();
@@ -146,8 +197,23 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (_buttons[1].MouseUp(x, y))
 			{
-				//TODO: Add a prompt for save file name
-				_gameMain.SaveGame("TestSave");
+				_promptShowing = true;
+				bool selected = false;
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					if (_saveGameButtons[i].Selected)
+					{
+						//Fill in current selected save game's name into the field
+						_saveGameNameField.SetText(_files[i + _scrollBar.TopIndex].Name.Substring(0, _files[i + _scrollBar.TopIndex].Name.Length - _files[i + _scrollBar.TopIndex].Extension.Length));
+						selected = true;
+						break;
+					}
+				}
+				if (!selected)
+				{
+					_saveGameNameField.SetText(string.Empty);
+				}
+				_saveGameNameField.Select();
 				return true;
 			}
 			if (_buttons[2].MouseUp(x, y))
@@ -189,16 +255,63 @@ namespace Beyond_Beyaan.Screens
 			return false;
 		}
 
+		public override bool KeyDown(KeyboardInputEventArgs e)
+		{
+			if (_promptShowing)
+			{
+				bool result = _saveGameNameField.KeyDown(e);
+				if (e.Key == KeyboardKeys.Enter || e.Key == KeyboardKeys.Return)
+				{
+					result = true;
+					_promptShowing = false;
+					_gameMain.SaveGame(_saveGameNameField.Text);
+					GetSaveList(); //Refresh the list after saving
+				}
+				return result;
+			}
+			return false;
+		}
+
 		public void GetSaveList()
 		{
-			//TODO: Retrieve a list of save games here
+			_maxVisible = 0;
+
+			string path = Path.Combine(_gameMain.GameDataSet.FullName, "Saves");
+			DirectoryInfo di = new DirectoryInfo(path);
+			if (!di.Exists)
+			{
+				return;
+			}
+			try
+			{
+				_files = new List<FileInfo>(di.GetFiles("*.BB"));
+			}
+			catch
+			{
+				return;
+			}
+			if (_files.Count > _saveGameButtons.Length)
+			{
+				_maxVisible = _saveGameButtons.Length;
+				_scrollBar.SetEnabledState(true);
+				_scrollBar.SetAmountOfItems(_files.Count);
+			}
+			else
+			{
+				_maxVisible = _files.Count;
+				_scrollBar.SetEnabledState(false);
+				_scrollBar.SetAmountOfItems(_saveGameButtons.Length);
+			}
+			_selectedGame = -1;
+			RefreshSaveButtons();
 		}
 
 		private void RefreshSaveButtons()
 		{
 			for (int i = 0; i < _maxVisible; i++)
 			{
-				_saveGameButtons[i].SetText(_fileNames[i + _scrollBar.TopIndex]);
+				var file = _files[i + _scrollBar.TopIndex];
+				_saveGameButtons[i].SetText(file.Name.Substring(0, file.Name.Length - file.Extension.Length) + " - (" + file.LastWriteTime.ToString() + ")");
 				_saveGameButtons[i].Selected = false;
 				if (i + _scrollBar.TopIndex == _selectedGame)
 				{
