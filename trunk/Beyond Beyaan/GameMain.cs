@@ -453,14 +453,17 @@ namespace Beyond_Beyaan
 			{
 				XDocument doc = XDocument.Load(Path.Combine(path, filename));
 				XElement root = doc.Root;
-				/*if (!EmpireManager.Load(root))
-				{
-					return false;
-				}*/
 				if (!Galaxy.Load(root, this))
 				{
 					return false;
 				}
+				if (!EmpireManager.Load(root))
+				{
+					return false;
+				}
+				/*
+				 * Reconcile the data between galaxy and empire manager here
+				 */
 				return true;
 			}
 			catch

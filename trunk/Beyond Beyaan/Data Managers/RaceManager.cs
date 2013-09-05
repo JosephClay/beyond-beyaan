@@ -43,5 +43,17 @@ namespace Beyond_Beyaan.Data_Managers
 				return false;
 			}
 		}
+
+		public Race GetRace(string raceName)
+		{
+			foreach (var race in Races)
+			{
+				if (string.Compare(raceName, race.RaceName, StringComparison.CurrentCulture) == 0)
+				{
+					return race;
+				}
+			}
+			throw new Exception("Race not found: " + raceName);
+		}
 	}
 }

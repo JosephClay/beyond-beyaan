@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan
@@ -8,7 +9,7 @@ namespace Beyond_Beyaan
 	class EmpireManager
 	{
 		#region Variables
-		private List<Empire> empires;
+		private List<Empire> _empires;
 		//private List<CombatToProcess> combatsToProcess;
 		private Empire currentEmpire;
 		private int empireIter;
@@ -35,7 +36,7 @@ namespace Beyond_Beyaan
 		public EmpireManager(GameMain gameMain)
 		{
 			_gameMain = gameMain;
-			empires = new List<Empire>();
+			_empires = new List<Empire>();
 			empireIter = -1;
 			//combatsToProcess = new List<CombatToProcess>();
 		}
@@ -44,17 +45,17 @@ namespace Beyond_Beyaan
 		#region Functions
 		public void AddEmpire(Empire empire)
 		{
-			empires.Add(empire);
+			_empires.Add(empire);
 		}
 
 		public void RemoveEmpire(Empire empire)
 		{
-			empires.Remove(empire);
+			_empires.Remove(empire);
 		}
 
 		public Empire GetEmpire(int empireId)
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				if (empire.EmpireID == empireId)
 				{
@@ -66,35 +67,35 @@ namespace Beyond_Beyaan
 
 		public void Reset()
 		{
-			empires.Clear();
+			_empires.Clear();
 		}
 
 		public void SetupContacts()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
-				empire.SetUpContacts(empires);
+				empire.SetUpContacts(_empires);
 			}
 		}
 
 		public void SetInitialEmpireTurn()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				//Reset fleet movement and stuff
 				empire.FleetManager.ResetFleetMovements();
 			}
 			empireIter = 0;
 			//If first player isn't human, find the next one
-			for (int i = 0; i < empires.Count; i++)
+			for (int i = 0; i < _empires.Count; i++)
 			{
-				if (empires[i].Type != PlayerType.HUMAN)
+				if (_empires[i].Type != PlayerType.HUMAN)
 				{
-					empires[i].HandleAIEmpire();
+					_empires[i].HandleAIEmpire();
 				}
 				else
 				{
-					currentEmpire = empires[i];
+					currentEmpire = _empires[i];
 					empireIter = i;
 					break;
 				}
@@ -103,19 +104,19 @@ namespace Beyond_Beyaan
 
 		public bool ProcessNextEmpire()
 		{
-			if (empireIter + 1 == empires.Count)
+			if (empireIter + 1 == _empires.Count)
 			{
 				//It've reached teh end
 				return true;
 			}
 			//This will update each empire if they're AI.  If an empire is human-controlled, it stops and waits for the player to press end of turn
-			for (int i = empireIter + 1; i < empires.Count; i++)
+			for (int i = empireIter + 1; i < _empires.Count; i++)
 			{
 				empireIter = i;
-				if (empires[i].Type != PlayerType.HUMAN)
+				if (_empires[i].Type != PlayerType.HUMAN)
 				{
-					empires[i].HandleAIEmpire();
-					if (i + 1 == empires.Count)
+					_empires[i].HandleAIEmpire();
+					if (i + 1 == _empires.Count)
 					{
 						//reached end of list with CPU player as last player
 						return true;
@@ -123,7 +124,7 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					currentEmpire = empires[i];
+					currentEmpire = _empires[i];
 					break;
 				}
 			}
@@ -133,7 +134,7 @@ namespace Beyond_Beyaan
 		public List<Fleet> GetFleetsWithinArea(float left, float top, float width, float height)
 		{
 			List<Fleet> fleets = new List<Fleet>();
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				foreach (Fleet fleet in empire.FleetManager.GetFleets())
 				{
@@ -150,7 +151,7 @@ namespace Beyond_Beyaan
 		public FleetGroup GetFleetsAtPoint(int x, int y)
 		{
 			List<Fleet> fleets = new List<Fleet>();
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				foreach (Fleet fleet in empire.FleetManager.ReturnFleetAtPoint(x, y))
 				{
@@ -162,7 +163,7 @@ namespace Beyond_Beyaan
 
 		public void ResetFleetMovement()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				empire.FleetManager.ResetFleetMovements();
 			}
@@ -171,7 +172,7 @@ namespace Beyond_Beyaan
 		public bool UpdateFleetMovement(float frameDeltaTime)
 		{
 			bool stillHaveMovement = false;
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				if (empire.FleetManager.MoveFleets(frameDeltaTime))
 				{
@@ -183,7 +184,7 @@ namespace Beyond_Beyaan
 
 		public void MergeIdleFleets()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				empire.FleetManager.MergeIdleFleets();
 			}
@@ -191,7 +192,7 @@ namespace Beyond_Beyaan
 
 		public void ClearEmptyFleets()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				empire.FleetManager.ClearEmptyFleets();
 			}
@@ -199,7 +200,7 @@ namespace Beyond_Beyaan
 
 		public void UpdateEmpires()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				empire.SitRepManager.ClearItems();
 				empire.CheckForBuiltShips();
@@ -209,7 +210,7 @@ namespace Beyond_Beyaan
 
 		public void AccureResearch()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				empire.UpdateResearchPoints();
 				empire.TechnologyManager.AccureResearch(empire.ResearchPoints);
@@ -219,7 +220,7 @@ namespace Beyond_Beyaan
 		public Dictionary<Empire, List<TechField>> RollForDiscoveries(Random r)
 		{
 			Dictionary<Empire, List<TechField>> itemsNeedingSelection = new Dictionary<Empire, List<TechField>>();
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				var items = empire.TechnologyManager.RollForDiscoveries(r, empire.SitRepManager);
 				if (empire.IsHumanPlayer && items.Count > 0)
@@ -232,7 +233,7 @@ namespace Beyond_Beyaan
 
 		public void UpdatePopulationGrowth()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				empire.PlanetManager.UpdatePopGrowth();
 			}
@@ -240,7 +241,7 @@ namespace Beyond_Beyaan
 
 		public void LaunchTransports()
 		{
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				//go through each system and see if a system is sending out transports
 				empire.LaunchTransports();
@@ -250,7 +251,7 @@ namespace Beyond_Beyaan
 		public void LandTransports()
 		{
 			//TODO: Get list of conflict transports
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				//go through each system and see if transports has arrived.  Return any combat conflicts (non-combats are landed automatically)
 				empire.LandTransports();
@@ -260,7 +261,7 @@ namespace Beyond_Beyaan
 		public Dictionary<Empire, List<StarSystem>> CheckExploredSystems(Galaxy galaxy)
 		{
 			Dictionary<Empire, List<StarSystem>> exploredSystems = new Dictionary<Empire, List<StarSystem>>();
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				List<StarSystem> temp = empire.CheckExploredSystems(galaxy);
 				if (empire.IsHumanPlayer && temp.Count > 0)
@@ -274,7 +275,7 @@ namespace Beyond_Beyaan
 		public Dictionary<Empire, List<Fleet>> CheckColonizableSystems(Galaxy galaxy)
 		{
 			Dictionary<Empire, List<Fleet>> colonizableSystems = new Dictionary<Empire, List<Fleet>>();
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				List<Fleet> temp = empire.CheckColonizableSystems(galaxy);
 				if (empire.IsHumanPlayer && temp.Count > 0)
@@ -288,7 +289,7 @@ namespace Beyond_Beyaan
 		public void LookForCombat()
 		{
 			/*List<Fleet> fleets = new List<Fleet>();
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				foreach (Fleet fleet in empire.FleetManager.GetFleets())
 				{
@@ -416,7 +417,7 @@ namespace Beyond_Beyaan
 				}
 			}
 			List<Fleet> allFleets = GetFleetsWithinArea(-1, -1, galaxy.GalaxySize + 2, galaxy.GalaxySize + 2);
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				//empire.CreateInfluenceMapSprite(gridCells);
 
@@ -441,7 +442,7 @@ namespace Beyond_Beyaan
 		/*public void UpdateMigration(Galaxy galaxy)
 		{
 			GridCell[][] gridCells = galaxy.GetGridCells();
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				empire.SystemsUnderInfluence = new List<StarSystem>();
 			}
@@ -476,7 +477,7 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
-			foreach (Empire empire in empires)
+			foreach (Empire empire in _empires)
 			{
 				//Now that we know which systems are claimed by which empires, time to process the actual migration
 				empire.UpdateMigration(galaxy);
@@ -489,11 +490,22 @@ namespace Beyond_Beyaan
 		public void Save(XmlWriter writer)
 		{
 			writer.WriteStartElement("Empires");
-			foreach (var empire in empires)
+			foreach (var empire in _empires)
 			{
 				empire.Save(writer);
 			}
 			writer.WriteEndElement();
+		}
+		public bool Load(XElement root)
+		{
+			var empires = root.Element("Empires");
+			foreach (var empire in empires.Elements())
+			{
+				var newEmpire = new Empire();
+				newEmpire.Load(empire, _gameMain);
+				_empires.Add(newEmpire);
+			}
+			return true;
 		}
 		#endregion
 	}

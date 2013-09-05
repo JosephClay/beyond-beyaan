@@ -6,6 +6,7 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using GorgonLibrary.Graphics;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
@@ -219,7 +220,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public Empire(string emperorName, int empireID, Race race, PlayerType type, AI ai, int difficultyModifier, Color color, GameMain gameMain)
+		public Empire(string emperorName, int empireID, Race race, PlayerType type, AI ai, int difficultyModifier, Color color, GameMain gameMain) : this()
 		{
 			this.empireName = emperorName;
 			this.empireID = empireID;
@@ -240,15 +241,19 @@ namespace Beyond_Beyaan
 			{
 				MessageBox.Show(e.Message);
 			}
+			
+			this.ai = ai;
+			this.race = race;
+			//this.handicap = 1.0f;
+		}
+		public Empire()
+		{
 			fleetManager = new FleetManager(this);
 			planetManager = new PlanetManager();
 			sitRepManager = new SitRepManager();
 			//reserves = 0;
 			//expenses = 0;
 			visibleOtherFleets = new List<Fleet>();
-			this.ai = ai;
-			this.race = race;
-			//this.handicap = 1.0f;
 			Refresh = true;
 		}
 		#endregion
@@ -543,6 +548,11 @@ namespace Beyond_Beyaan
 			fleetManager.Save(writer);
 			//sitRepManager.Save(writer);
 			writer.WriteEndElement();
+		}
+		public bool Load(XElement empireToLoad, GameMain gameMain)
+		{
+
+			return true;
 		}
 		#endregion
 	}
