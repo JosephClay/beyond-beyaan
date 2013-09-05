@@ -602,7 +602,7 @@ namespace Beyond_Beyaan
 					writer.WriteStartElement("Planet");
 					writer.WriteAttributeString("Name", planet.Name);
 					writer.WriteAttributeString("Type", planet.PlanetTypeString);
-					writer.WriteAttributeString("Owner", planet.Owner == null ? string.Empty : planet.Owner.EmpireID.ToString());
+					writer.WriteAttributeString("Owner", planet.Owner == null ? "-1" : planet.Owner.EmpireID.ToString());
 					writer.WriteAttributeString("MaxPopulation", planet.PopulationMax.ToString());
 					writer.WriteAttributeString("Buildings", planet.InfrastructureTotal.ToString());
 					writer.WriteAttributeString("EnvironmentPercentage", planet.EnvironmentAmount.ToString());
@@ -615,9 +615,9 @@ namespace Beyond_Beyaan
 					writer.WriteAttributeString("DefenseLocked", planet.DefenseLocked.ToString());
 					writer.WriteAttributeString("ConstructionLocked", planet.ConstructionLocked.ToString());
 					writer.WriteAttributeString("ResearchLocked", planet.ResearchLocked.ToString());
-					writer.WriteAttributeString("ShipBuilding", planet.ShipBeingBuilt == null ? string.Empty : planet.ShipBeingBuilt.DesignID.ToString());
+					writer.WriteAttributeString("ShipBuilding", planet.ShipBeingBuilt == null ? "-1" : planet.ShipBeingBuilt.DesignID.ToString());
 					writer.WriteAttributeString("AmountBuilt", planet.ShipConstructionAmount.ToString());
-					writer.WriteAttributeString("RelocatingTo", planet.RelocateToSystem == null ? string.Empty : planet.RelocateToSystem.StarSystem.ID.ToString());
+					writer.WriteAttributeString("RelocatingTo", planet.RelocateToSystem == null ? "-1" : planet.RelocateToSystem.StarSystem.ID.ToString());
 					if (planet.TransferSystem.Key.StarSystem != null)
 					{
 						writer.WriteStartElement("TransferTo");
@@ -652,6 +652,7 @@ namespace Beyond_Beyaan
 			}
 			starSystems = new List<StarSystem>();
 			var starsElement = galaxyElement.Element("Stars");
+			Dictionary<int, StarSystem> quickLookupSystems = new Dictionary<int, StarSystem>();
 			foreach (var star in starsElement.Elements())
 			{
 				string name = star.Attribute("Name").Value;
@@ -675,13 +676,57 @@ namespace Beyond_Beyaan
 				{
 					string planetName = planetElement.Attribute("Name").Value;
 					string type = planetElement.Attribute("Type").Value;
-					Empire owner = null;
+					int owner = -1;
 					if (!string.IsNullOrEmpty(planetElement.Attribute("Owner").Value))
 					{
-						owner = gameMain.EmpireManager.GetEmpire(int.Parse(planetElement.Attribute("Owner").Value));
+						owner = int.Parse(planetElement.Attribute("Owner").Value);
 					}
 					float populationMax = float.Parse(planetElement.Attribute("MaxPopulation").Value);
-					newStar.Planets.Add(new Planet(planetName, type, populationMax, owner, newStar, gameMain.Random));
+					var newPlanet = new Planet(planetName, type, populationMax, null, newStar, gameMain.Random);
+					newPlanet.OwnerID = owner;
+					newPlanet.InfrastructureTotal = float.Parse(planetElement.Attribute("Buildings").Value);
+					newPlanet.EnvironmentAmount = int.Parse(planetElement.Attribute("EnvironmentPercentage").Value);
+					newPlanet.InfrastructureAmount = int.Parse(planetElement.Attribute("InfrastructurePercentage").Value);
+					newPlanet.DefenseAmount = int.Parse(planetElement.Attribute("DefensePercentage").Value);
+					newPlanet.ConstructionAmount = int.Parse(planetElement.Attribute("ConstructionPercentage").Value);
+					newPlanet.ResearchAmount = int.Parse(planetElement.Attribute("ResearchPercentage").Value);
+					newPlanet.EnvironmentLocked = bool.Parse(planetElement.Attribute("EnvironmentLocked").Value);
+					newPlanet.InfrastructureLocked = bool.Parse(planetElement.Attribute("InfrastructureLocked").Value);
+					newPlanet.DefenseLocked = bool.Parse(planetElement.Attribute("DefenseLocked").Value);
+					newPlanet.ConstructionLocked = bool.Parse(planetElement.Attribute("ConstructionLocked").Value);
+					newPlanet.ResearchLocked = bool.Parse(planetElement.Attribute("ResearchLocked").Value);
+					newPlanet.ShipBeingBuiltID = int.Parse(planetElement.Attribute("ShipBuilding").Value);
+					newPlanet.ShipConstructionAmount = float.Parse(planetElement.Attribute("AmountBuilt").Value);
+					newPlanet.RelocateToSystemID = int.Parse(planetElement.Attribute("RelocatingTo").Value);
+					var transferTo = planetElement.Element("TransferTo");
+					if (transferTo != null)
+					{
+						newPlanet.TransferSystemID = new KeyValuePair<int, int>(int.Parse(transferTo.Attribute("StarSystem").Value), int.Parse(transferTo.Attribute("Amount").Value));
+					}
+					var races = planetElement.Element("Races");
+					foreach (var race in races.Elements())
+					{
+						newPlanet.AddRacePopulation(gameMain.RaceManager.GetRace(race.Attribute("RaceName").Value), float.Parse(race.Attribute("Amount").Value));
+					}
+					newStar.Planets.Add(newPlanet);
+				}
+				starSystems.Add(newStar);
+				quickLookupSystems.Add(newStar.ID, newStar);
+			}
+			//Now match up IDs to actual classes
+			foreach (var starSystem in starSystems)
+			{
+				foreach (var planet in starSystem.Planets)
+				{
+					if (planet.RelocateToSystemID != -1)
+					{
+						planet.RelocateToSystem = new TravelNode {StarSystem = quickLookupSystems[planet.RelocateToSystemID]};
+						planet.RelocateToSystemID = -1;
+					}
+					if (!planet.TransferSystemID.Equals(new KeyValuePair<int, int>()))
+					{
+						planet.TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode { StarSystem = quickLookupSystems[planet.TransferSystemID.Key]}, planet.TransferSystemID.Value);
+					}
 				}
 			}
 			return true;

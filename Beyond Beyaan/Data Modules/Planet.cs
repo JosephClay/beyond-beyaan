@@ -19,11 +19,9 @@ namespace Beyond_Beyaan
 		private Empire owner;
 		string name;
 		private float populationMax;
-		private float infrastructure;
 		private Dictionary<Race, float> racePopulations;
 		private List<Race> races;
 		private Ship shipBeingBuilt;
-		private float constructionTotal;
 		private bool isWetClimate;
 		#endregion
 
@@ -83,6 +81,7 @@ namespace Beyond_Beyaan
 			get { return owner; }
 			set { owner = value; }
 		}
+		public int OwnerID { get; set; } //Useful for saving/loading purposes, otherwise unused
 		public float TotalPopulation
 		{
 			get 
@@ -95,13 +94,12 @@ namespace Beyond_Beyaan
 				return totalPopulation;
 			}
 		}
-		public float InfrastructureTotal
-		{
-			get { return infrastructure; }
-		}
+
+		public float InfrastructureTotal { get; set; }
+
 		public float TotalProduction
 		{
-			get { return (TotalPopulation * 0.5f) + (infrastructure); }
+			get { return (TotalPopulation * 0.5f) + (InfrastructureTotal); }
 		}
 		public float ActualProduction
 		{
@@ -120,8 +118,11 @@ namespace Beyond_Beyaan
 			get { return shipBeingBuilt; }
 			set { shipBeingBuilt = value; }
 		}
+		public int ShipBeingBuiltID { get; set; } //Useful for saving/loading purposes, otherwise unused
 		public TravelNode RelocateToSystem { get; set; }
+		public int RelocateToSystemID { get; set; } //Useful for saving/loading purposes, otherwise unused
 		public KeyValuePair<TravelNode, int> TransferSystem { get; set; }
+		public KeyValuePair<int, int> TransferSystemID { get; set; } //Useful for saving/loading purposes, otherwise unused
 		public float ShipConstructionLength
 		{
 			get
@@ -130,14 +131,12 @@ namespace Beyond_Beyaan
 				{
 					return -1;
 				}
-				float remaining = (shipBeingBuilt.Cost - constructionTotal);
+				float remaining = (shipBeingBuilt.Cost - ShipConstructionAmount);
 				return remaining / (ConstructionAmount * 0.01f * ActualProduction);
 			}
 		}
-		public float ShipConstructionAmount
-		{
-			get { return constructionTotal; }
-		}
+
+		public float ShipConstructionAmount { get; set; }
 
 		public PLANET_CONSTRUCTION_BONUS ConstructionBonus
 		{
@@ -160,28 +159,28 @@ namespace Beyond_Beyaan
 			{
 				if (InfrastructureAmount > 0)
 				{
-					if (infrastructure >= populationMax * 2)
+					if (InfrastructureTotal >= populationMax * 2)
 					{
-						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)infrastructure, InfrastructureAmount * 0.01 * 0.5 * ActualProduction);
+						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)InfrastructureTotal, InfrastructureAmount * 0.01 * 0.5 * ActualProduction);
 					}
 					else
 					{
-						float amountRemaining = (populationMax * 2) - infrastructure;
+						float amountRemaining = (populationMax * 2) - InfrastructureTotal;
 						float amountBuildThisTurn = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
 						if (amountBuildThisTurn > amountRemaining) //Will put some into reserve
 						{
 							float difference = (amountBuildThisTurn - amountRemaining) * 5; //This is now BC for excess
-							return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)infrastructure, amountRemaining, difference);
+							return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)InfrastructureTotal, amountRemaining, difference);
 						}
 						else
 						{
-							return string.Format("{0} (+{1:0.0}) Buildings", (int)infrastructure, amountBuildThisTurn);
+							return string.Format("{0} (+{1:0.0}) Buildings", (int)InfrastructureTotal, amountBuildThisTurn);
 						}
 					}
 				}
 				else
 				{
-					return string.Format("{0} Buildings", (int)infrastructure);
+					return string.Format("{0} Buildings", (int)InfrastructureTotal);
 				}
 			}
 		}
@@ -252,11 +251,11 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public int ResearchAmount { get; private set; }
-		public int DefenseAmount { get; private set; }
-		public int InfrastructureAmount { get; private set; }
-		public int EnvironmentAmount { get; private set; }
-		public int ConstructionAmount { get; private set; }
+		public int ResearchAmount { get; set; } //Usually those should be modified by only this class, but for saving/loading purposes, they can be set directly from other places.
+		public int DefenseAmount { get; set; }
+		public int InfrastructureAmount { get; set; }
+		public int EnvironmentAmount { get; set; }
+		public int ConstructionAmount { get; set; }
 
 		public bool InfrastructureLocked { get; set; }
 		public bool EnvironmentLocked { get; set; }
@@ -389,6 +388,7 @@ namespace Beyond_Beyaan
 			races = new List<Race>();
 			racePopulations = new Dictionary<Race, float>();
 			TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode(), 0);
+			TransferSystemID = new KeyValuePair<int, int>();
 			RelocateToSystem = null;
 			Owner = empire;
 			populationMax = maxPop;
@@ -491,7 +491,7 @@ namespace Beyond_Beyaan
 			populationMax = 100;
 			races.Add(owner.EmpireRace);
 			racePopulations.Add(owner.EmpireRace, 50.0f);
-			infrastructure = 30;
+			InfrastructureTotal = 30;
 			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
 			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
@@ -782,7 +782,7 @@ namespace Beyond_Beyaan
 		public void SetCleanup()
 		{
 			//Waste Processing uses the formula: (Number of buildings * 0.5 * lowest pollution tech percentage) / production * 100
-			float wasteAmount = (infrastructure * 0.5f); //add tech improvements and racial bonuses/negatives inside (3.0f)
+			float wasteAmount = (InfrastructureTotal * 0.5f); //add tech improvements and racial bonuses/negatives inside (3.0f)
 			float amountOfProductionUsed = (wasteAmount / ActualProduction) * 100;
 			int percentage = (int)amountOfProductionUsed + ((amountOfProductionUsed - (int)amountOfProductionUsed) > 0 ? 1 : 0);
 			
@@ -799,23 +799,23 @@ namespace Beyond_Beyaan
 			//Update ship construction
 			if (ConstructionAmount > 0)
 			{
-				constructionTotal += ConstructionAmount * 0.01f * ActualProduction;
+				ShipConstructionAmount += ConstructionAmount * 0.01f * ActualProduction;
 			}
 			if (InfrastructureAmount > 0)
 			{
-				if (infrastructure < populationMax * 2)
+				if (InfrastructureTotal < populationMax * 2)
 				{
-					float remaining = (populationMax * 2) - infrastructure;
+					float remaining = (populationMax * 2) - InfrastructureTotal;
 					float amountToBuild = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
 					if (amountToBuild > remaining)
 					{
-						infrastructure += remaining;
+						InfrastructureTotal += remaining;
 						amountToBuild -= remaining;
 						//TODO: add BC
 					}
 					else
 					{
-						infrastructure += amountToBuild;
+						InfrastructureTotal += amountToBuild;
 					}
 				}
 				else
@@ -835,13 +835,13 @@ namespace Beyond_Beyaan
 
 		public Ship CheckIfShipBuilt(out int amount)
 		{
-			if (constructionTotal >= shipBeingBuilt.Cost)
+			if (ShipConstructionAmount >= shipBeingBuilt.Cost)
 			{
 				amount = 0;
-				while (constructionTotal >= shipBeingBuilt.Cost)
+				while (ShipConstructionAmount >= shipBeingBuilt.Cost)
 				{
 					amount++;
-					constructionTotal -= shipBeingBuilt.Cost;
+					ShipConstructionAmount -= shipBeingBuilt.Cost;
 				}
 				return shipBeingBuilt;
 			}
