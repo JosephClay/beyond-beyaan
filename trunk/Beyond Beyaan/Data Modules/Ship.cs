@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan
@@ -144,6 +142,29 @@ namespace Beyond_Beyaan
 				writer.WriteEndElement();
 			}
 			writer.WriteEndElement();
+		}
+
+		public void Load(XElement shipDesign, GameMain gameMain)
+		{
+			Name = shipDesign.Attribute("Name").Value;
+			DesignID = int.Parse(shipDesign.Attribute("DesignID").Value);
+			Size = int.Parse(shipDesign.Attribute("Size").Value);
+			WhichStyle = int.Parse(shipDesign.Attribute("WhichStyle").Value);
+			Engine = gameMain.MasterTechnologyManager.GetTechnologyWithName(shipDesign.Attribute("Engine").Value);
+			Armor = gameMain.MasterTechnologyManager.GetTechnologyWithName(shipDesign.Attribute("Armor").Value);
+			Shield = gameMain.MasterTechnologyManager.GetTechnologyWithName(shipDesign.Attribute("Shield").Value);
+			Computer = gameMain.MasterTechnologyManager.GetTechnologyWithName(shipDesign.Attribute("Computer").Value);
+			ECM = gameMain.MasterTechnologyManager.GetTechnologyWithName(shipDesign.Attribute("ECM").Value);
+			foreach (var weapon in shipDesign.Elements("Weapon"))
+			{
+				var weaponTech = gameMain.MasterTechnologyManager.GetTechnologyWithName(weapon.Attribute("Name").Value);
+				Weapons.Add(weaponTech);
+			}
+			foreach (var special in shipDesign.Elements("Special"))
+			{
+				var specialTech = gameMain.MasterTechnologyManager.GetTechnologyWithName(special.Attribute("Name").Value);
+				Specials.Add(specialTech);
+			}
 		}
 	}
 

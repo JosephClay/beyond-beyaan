@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Beyond_Beyaan.Data_Managers
 {
@@ -35,6 +36,52 @@ namespace Beyond_Beyaan.Data_Managers
 
 			reason = null;
 			return true;
+		}
+
+		public Technology GetTechnologyWithName(string name) //In the future, we'll have only one list of technology, with each technology being more detailed
+		{
+			foreach (var tech in ComputerTechs)
+			{
+				if (string.Compare(name, tech.TechName, StringComparison.CurrentCulture) == 0)
+				{
+					return tech;
+				}
+			}
+			foreach (var tech in ConstructionTechs)
+			{
+				if (string.Compare(name, tech.TechName, StringComparison.CurrentCulture) == 0)
+				{
+					return tech;
+				}
+			}
+			foreach (var tech in ForceFieldTechs)
+			{
+				if (string.Compare(name, tech.TechName, StringComparison.CurrentCulture) == 0)
+				{
+					return tech;
+				}
+			}
+			foreach (var tech in PlanetologyTechs)
+			{
+				if (string.Compare(name, tech.TechName, StringComparison.CurrentCulture) == 0)
+				{
+					return tech;
+				}
+			}
+			foreach (var tech in PropulsionTechs)
+			{
+				if (string.Compare(name, tech.TechName, StringComparison.CurrentCulture) == 0)
+				{
+					return tech;
+				}
+			}
+			foreach (var tech in WeaponTechs)
+			{
+				if (string.Compare(name, tech.TechName, StringComparison.CurrentCulture) == 0)
+				{
+					return tech;
+				}
+			}
 		}
 
 		private void LoadComputerTechs()
