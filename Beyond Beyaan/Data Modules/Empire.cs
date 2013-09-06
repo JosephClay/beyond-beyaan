@@ -226,7 +226,6 @@ namespace Beyond_Beyaan
 			this.empireID = empireID;
 			this.type = type;
 			EmpireColor = color;
-			technologyManager = new TechnologyManager();
 			technologyManager.DifficultyModifier = difficultyModifier;
 			try
 			{
@@ -249,6 +248,7 @@ namespace Beyond_Beyaan
 		public Empire()
 		{
 			fleetManager = new FleetManager(this);
+			technologyManager = new TechnologyManager();
 			planetManager = new PlanetManager();
 			sitRepManager = new SitRepManager();
 			//reserves = 0;
@@ -543,16 +543,21 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("Name", empireName);
 			writer.WriteAttributeString("Color", empireColor.ToArgb().ToString());
 			writer.WriteAttributeString("Race", race.RaceName);
-			writer.WriteAttributeString("SelectedSystem", this.lastSelectedSystem.ID.ToString());
+			writer.WriteAttributeString("SelectedSystem", lastSelectedSystem.ID.ToString());
 			technologyManager.Save(writer);
 			fleetManager.Save(writer);
 			//sitRepManager.Save(writer);
 			writer.WriteEndElement();
 		}
-		public bool Load(XElement empireToLoad, GameMain gameMain)
+		public void Load(XElement empireToLoad, GameMain gameMain)
 		{
-
-			return true;
+			empireID = int.Parse(empireToLoad.Attribute("ID").Value);
+			empireName = empireToLoad.Attribute("Name").Value;
+			empireColor = Color.FromArgb(int.Parse(empireToLoad.Attribute("Color").Value));
+			race = gameMain.RaceManager.GetRace(empireToLoad.Attribute("Race").Value);
+			lastSelectedSystem = gameMain.Galaxy.GetStarWithID(int.Parse(empireToLoad.Attribute("SelectedSystem").Value));
+			technologyManager.Load(empireToLoad, gameMain.MasterTechnologyManager);
+			fleetManager.Load(empireToLoad, gameMain);
 		}
 		#endregion
 	}

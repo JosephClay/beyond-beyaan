@@ -16,6 +16,7 @@ namespace Beyond_Beyaan
 		public const int PARSEC_SIZE_IN_PIXELS = 60;
 
 		private List<StarSystem> starSystems = new List<StarSystem>();
+		private Dictionary<int, StarSystem> _quickLookupSystem = new Dictionary<int, StarSystem>();
 		private BackgroundWorker _bw = new BackgroundWorker();
 
 		public Action OnGenerateComplete;
@@ -183,6 +184,15 @@ namespace Beyond_Beyaan
 			}
 			return null;
 		}
+
+		public StarSystem GetStarWithID(int id)
+		{
+			if (id == -1)
+			{
+				return null; //-1 means none
+			}
+			return _quickLookupSystem[id];
+		}
 		#endregion
 
 		#region Galaxy Shape Functions
@@ -347,6 +357,7 @@ namespace Beyond_Beyaan
 		private void FillGalaxyWithStars(int numberOfStars, int minPlanets, int maxPlanets, bool[][] grid, Random r)
 		{
 			starSystems = new List<StarSystem>();
+			_quickLookupSystem = new Dictionary<int, StarSystem>();
 
 			StarNode starTree = new StarNode(0, 0, grid.Length - 1, grid.Length - 1);
 
@@ -397,7 +408,9 @@ namespace Beyond_Beyaan
 						break;
 				}
 
-				starSystems.Add(new StarSystem(NameGenerator.GetStarName(r), starId, x * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), y * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), starColor, description, minPlanets, maxPlanets, r));
+				var newStarsystem = new StarSystem(NameGenerator.GetStarName(r), starId, x * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), y * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), starColor, description, minPlanets, maxPlanets, r);
+				starSystems.Add(newStarsystem);
+				_quickLookupSystem.Add(newStarsystem.ID, newStarsystem);
 
 				bool[][] invalidatedArea = Utility.CalculateDisc(2, 1);
 
@@ -486,7 +499,20 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Pathfinding functions
-
+		public TravelNode GenerateTravelNode(StarSystem origin, StarSystem destination)
+		{
+			return GenerateTravelNode(origin.X, origin.Y, destination);
+		}
+		public TravelNode GenerateTravelNode(float xPos, float yPos, StarSystem destination)
+		{
+			TravelNode newNode = new TravelNode();
+			newNode.StarSystem = destination;
+			float x = destination.X - xPos;
+			float y = destination.Y - yPos;
+			newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
+			newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+			return newNode;
+		}
 		/// <summary>
 		/// Pathfinding function
 		/// </summary>
@@ -513,31 +539,16 @@ namespace Beyond_Beyaan
 			List<TravelNode> nodes = new List<TravelNode>();
 			if (currentDestination != null)
 			{
-				TravelNode newNode = new TravelNode();
-				newNode.StarSystem = currentDestination;
-				float x = currentDestination.X - currentX;
-				float y = currentDestination.Y - currentY;
-				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
-				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				TravelNode newNode = GenerateTravelNode(currentX, currentY, currentDestination);
 				newNode.IsValid = true;
 				nodes.Add(newNode);
-				newNode = new TravelNode();
-				newNode.StarSystem = newDestination;
-				x = newDestination.X - currentDestination.X;
-				y = newDestination.Y - currentDestination.Y;
-				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
-				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				newNode = GenerateTravelNode(currentDestination, newDestination);
 				newNode.IsValid = true; //IsDestinationValid(newDestination, hasExtended, whichEmpire);
 				nodes.Add(newNode);
 			}
 			else
 			{
-				TravelNode newNode = new TravelNode();
-				newNode.StarSystem = newDestination;
-				float x = newDestination.X - currentX;
-				float y = newDestination.Y - currentY;
-				newNode.Length = (float)Math.Sqrt((x * x) + (y * y));
-				newNode.Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
+				TravelNode newNode = GenerateTravelNode(currentX, currentY, newDestination);
 				newNode.IsValid = true; // IsDestinationValid(newDestination, hasExtended, whichEmpire);
 				nodes.Add(newNode);
 			}
@@ -651,8 +662,8 @@ namespace Beyond_Beyaan
 				return false;
 			}
 			starSystems = new List<StarSystem>();
+			_quickLookupSystem = new Dictionary<int, StarSystem>();
 			var starsElement = galaxyElement.Element("Stars");
-			Dictionary<int, StarSystem> quickLookupSystems = new Dictionary<int, StarSystem>();
 			foreach (var star in starsElement.Elements())
 			{
 				string name = star.Attribute("Name").Value;
@@ -711,7 +722,7 @@ namespace Beyond_Beyaan
 					newStar.Planets.Add(newPlanet);
 				}
 				starSystems.Add(newStar);
-				quickLookupSystems.Add(newStar.ID, newStar);
+				_quickLookupSystem.Add(newStar.ID, newStar);
 			}
 			//Now match up IDs to actual classes
 			foreach (var starSystem in starSystems)
@@ -720,12 +731,12 @@ namespace Beyond_Beyaan
 				{
 					if (planet.RelocateToSystemID != -1)
 					{
-						planet.RelocateToSystem = new TravelNode {StarSystem = quickLookupSystems[planet.RelocateToSystemID]};
+						planet.RelocateToSystem = new TravelNode {StarSystem = _quickLookupSystem[planet.RelocateToSystemID]};
 						planet.RelocateToSystemID = -1;
 					}
 					if (!planet.TransferSystemID.Equals(new KeyValuePair<int, int>()))
 					{
-						planet.TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode { StarSystem = quickLookupSystems[planet.TransferSystemID.Key]}, planet.TransferSystemID.Value);
+						planet.TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode { StarSystem = _quickLookupSystem[planet.TransferSystemID.Key] }, planet.TransferSystemID.Value);
 					}
 				}
 			}
