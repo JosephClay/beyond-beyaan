@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -978,6 +979,11 @@ namespace Beyond_Beyaan
 			writer.WriteEndElement();
 			writer.WriteEndElement();
 			writer.WriteEndElement();
+		}
+
+		public void Load(XElement empire, MasterTechnologyManager MTM)
+		{
+			
 		}
 		#endregion
 	}
