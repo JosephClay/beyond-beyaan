@@ -11,20 +11,20 @@ namespace Beyond_Beyaan
 		#region Variables
 		//private float totalResearch;
 		//private float totalCommerce;
-		private List<Planet> planets;
+		private List<Planet> _planets;
 		#endregion
 
 		#region Properties
 		public List<Planet> Planets
 		{
-			get { return planets; }
+			get { return _planets; }
 		}
 		#endregion
 
 		#region Constructor
 		public PlanetManager()
 		{
-			planets = new List<Planet>();
+			_planets = new List<Planet>();
 		}
 		#endregion
 
@@ -33,7 +33,7 @@ namespace Beyond_Beyaan
 		{
 			//this function calculates regular pop growth plus any bonuses or negatives
 			List<Planet> planetsToRemove = new List<Planet>();
-			foreach (Planet planet in planets)
+			foreach (Planet planet in _planets)
 			{
 				planet.UpdatePlanet();
 				foreach (Race race in planet.Races)
@@ -54,8 +54,13 @@ namespace Beyond_Beyaan
 			foreach (Planet planet in planetsToRemove)
 			{
 				//those planets died out
-				planets.Remove(planet);
+				_planets.Remove(planet);
 			}
+		}
+
+		public void AddOwnedPlanet(Planet planet)
+		{
+			_planets.Add(planet);
 		}
 		#endregion
 	}

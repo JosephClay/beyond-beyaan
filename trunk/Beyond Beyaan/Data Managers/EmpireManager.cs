@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
-using Beyond_Beyaan.Data_Managers;
 
 namespace Beyond_Beyaan
 {
-	class EmpireManager
+	public class EmpireManager
 	{
 		#region Variables
 		private List<Empire> _empires;
@@ -498,6 +497,7 @@ namespace Beyond_Beyaan
 		}
 		public bool Load(XElement root)
 		{
+			_empires = new List<Empire>();
 			var empires = root.Element("Empires");
 			foreach (var empire in empires.Elements())
 			{

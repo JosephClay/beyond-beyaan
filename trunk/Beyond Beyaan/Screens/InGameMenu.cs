@@ -198,18 +198,11 @@ namespace Beyond_Beyaan.Screens
 			if (_buttons[1].MouseUp(x, y))
 			{
 				_promptShowing = true;
-				bool selected = false;
-				for (int i = 0; i < _maxVisible; i++)
+				if (_selectedGame >= 0)
 				{
-					if (_saveGameButtons[i].Selected)
-					{
-						//Fill in current selected save game's name into the field
-						_saveGameNameField.SetText(_files[i + _scrollBar.TopIndex].Name.Substring(0, _files[i + _scrollBar.TopIndex].Name.Length - _files[i + _scrollBar.TopIndex].Extension.Length));
-						selected = true;
-						break;
-					}
+					_saveGameNameField.SetText(_files[_selectedGame].Name.Substring(0, _files[_selectedGame].Name.Length - _files[_selectedGame].Extension.Length));
 				}
-				if (!selected)
+				else
 				{
 					_saveGameNameField.SetText(string.Empty);
 				}
@@ -218,9 +211,12 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (_buttons[2].MouseUp(x, y))
 			{
-				//StartLoadGameCommand
-				//_gameMain.LoadGame(saveFileName);
-				//FinishLoadGameCommand
+				var func = CloseWindow;
+				if (func != null)
+				{
+					func();
+				}
+				_gameMain.LoadGame(_files[_selectedGame].Name);
 				return true;
 			}
 			if (_buttons[3].MouseUp(x, y))
@@ -240,6 +236,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					_saveGameButtons[i].Selected = true;
 					_selectedGame = i + _scrollBar.TopIndex;
+					_buttons[2].Enabled = true;
 					return true;
 				}
 			}
@@ -251,6 +248,16 @@ namespace Beyond_Beyaan.Screens
 				{
 					CloseWindow();
 				}
+			}
+			else
+			{
+				//Clicked inside window, clear save game selection, if any
+				_selectedGame = -1;
+				foreach (var button in _saveGameButtons)
+				{
+					button.Selected = false;
+				}
+				_buttons[2].Enabled = false;
 			}
 			return false;
 		}

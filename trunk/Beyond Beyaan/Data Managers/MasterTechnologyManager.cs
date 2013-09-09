@@ -82,6 +82,7 @@ namespace Beyond_Beyaan.Data_Managers
 					return tech;
 				}
 			}
+			return null;
 		}
 
 		private void LoadComputerTechs()

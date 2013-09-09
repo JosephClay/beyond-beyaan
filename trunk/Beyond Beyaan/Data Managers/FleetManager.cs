@@ -313,7 +313,7 @@ namespace Beyond_Beyaan
 			foreach (var fleet in fleets.Elements())
 			{
 				var newFleet = new Fleet();
-				newFleet.Load(fleet, this);
+				newFleet.Load(fleet, this, gameMain);
 				_fleets.Add(newFleet);
 			}
 		}

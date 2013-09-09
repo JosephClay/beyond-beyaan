@@ -880,6 +880,7 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("Researching", WhichComputerBeingResearched == null ? string.Empty : WhichComputerBeingResearched.TechName);
 			writer.WriteAttributeString("Percentage", ComputerPercentage.ToString());
 			writer.WriteAttributeString("Locked", ComputerLocked ? "True" : "False");
+			writer.WriteAttributeString("Invested", ComputerResearchAmount.ToString());
 			writer.WriteStartElement("Researched");
 			foreach (var tech in ResearchedComputerTechs)
 			{
@@ -897,6 +898,7 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("Researching", WhichConstructionBeingResearched == null ? string.Empty : WhichConstructionBeingResearched.TechName);
 			writer.WriteAttributeString("Percentage", ConstructionPercentage.ToString());
 			writer.WriteAttributeString("Locked", ConstructionLocked ? "True" : "False");
+			writer.WriteAttributeString("Invested", ConstructionResearchAmount.ToString());
 			writer.WriteStartElement("Researched");
 			foreach (var tech in ResearchedConstructionTechs)
 			{
@@ -914,6 +916,7 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("Researching", WhichForceFieldBeingResearched == null ? string.Empty : WhichForceFieldBeingResearched.TechName);
 			writer.WriteAttributeString("Percentage", ForceFieldPercentage.ToString());
 			writer.WriteAttributeString("Locked", ForceFieldLocked ? "True" : "False");
+			writer.WriteAttributeString("Invested", ForceFieldResearchAmount.ToString());
 			writer.WriteStartElement("Researched");
 			foreach (var tech in ResearchedForceFieldTechs)
 			{
@@ -931,6 +934,7 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("Researching", WhichPlanetologyBeingResearched == null ? string.Empty : WhichPlanetologyBeingResearched.TechName);
 			writer.WriteAttributeString("Percentage", PlanetologyPercentage.ToString());
 			writer.WriteAttributeString("Locked", PlanetologyLocked ? "True" : "False");
+			writer.WriteAttributeString("Invested", PlanetologyResearchAmount.ToString());
 			writer.WriteStartElement("Researched");
 			foreach (var tech in ResearchedPlanetologyTechs)
 			{
@@ -948,6 +952,7 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("Researching", WhichPropulsionBeingResearched == null ? string.Empty : WhichPropulsionBeingResearched.TechName);
 			writer.WriteAttributeString("Percentage", PropulsionPercentage.ToString());
 			writer.WriteAttributeString("Locked", PropulsionLocked ? "True" : "False");
+			writer.WriteAttributeString("Invested", PropulsionResearchAmount.ToString());
 			writer.WriteStartElement("Researched");
 			foreach (var tech in ResearchedPropulsionTechs)
 			{
@@ -965,6 +970,7 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("Researching", WhichWeaponBeingResearched == null ? string.Empty : WhichWeaponBeingResearched.TechName);
 			writer.WriteAttributeString("Percentage", WeaponPercentage.ToString());
 			writer.WriteAttributeString("Locked", WeaponLocked ? "True" : "False");
+			writer.WriteAttributeString("Invested", WeaponResearchAmount.ToString());
 			writer.WriteStartElement("Researched");
 			foreach (var tech in ResearchedWeaponTechs)
 			{
@@ -983,7 +989,92 @@ namespace Beyond_Beyaan
 
 		public void Load(XElement empire, MasterTechnologyManager MTM)
 		{
-			
+			var technologies = empire.Element("Technologies");
+			var compTechs = technologies.Element("Computer");
+			var constTechs = technologies.Element("Construction");
+			var ffTechs = technologies.Element("ForceField");
+			var planetTechs = technologies.Element("Planetology");
+			var propTechs = technologies.Element("Propulsion");
+			var weaponTechs = technologies.Element("Weapon");
+
+			WhichComputerBeingResearched = MTM.GetTechnologyWithName(compTechs.Attribute("Researching").Value);
+			WhichConstructionBeingResearched = MTM.GetTechnologyWithName(constTechs.Attribute("Researching").Value);
+			WhichForceFieldBeingResearched = MTM.GetTechnologyWithName(ffTechs.Attribute("Researching").Value);
+			WhichPlanetologyBeingResearched = MTM.GetTechnologyWithName(planetTechs.Attribute("Researching").Value);
+			WhichPropulsionBeingResearched = MTM.GetTechnologyWithName(propTechs.Attribute("Researching").Value);
+			WhichWeaponBeingResearched = MTM.GetTechnologyWithName(weaponTechs.Attribute("Researching").Value);
+
+			ComputerPercentage = int.Parse(compTechs.Attribute("Percentage").Value);
+			ConstructionPercentage = int.Parse(constTechs.Attribute("Percentage").Value);
+			ForceFieldPercentage = int.Parse(ffTechs.Attribute("Percentage").Value);
+			PlanetologyPercentage = int.Parse(planetTechs.Attribute("Percentage").Value);
+			PropulsionPercentage = int.Parse(propTechs.Attribute("Percentage").Value);
+			WeaponPercentage = int.Parse(weaponTechs.Attribute("Percentage").Value);
+
+			ComputerLocked = bool.Parse(compTechs.Attribute("Locked").Value);
+			ConstructionLocked = bool.Parse(constTechs.Attribute("Locked").Value);
+			ForceFieldLocked = bool.Parse(ffTechs.Attribute("Locked").Value);
+			PlanetologyLocked = bool.Parse(planetTechs.Attribute("Locked").Value);
+			PropulsionLocked = bool.Parse(propTechs.Attribute("Locked").Value);
+			WeaponLocked = bool.Parse(weaponTechs.Attribute("Locked").Value);
+
+			ComputerResearchAmount = float.Parse(compTechs.Attribute("Invested").Value);
+			ConstructionResearchAmount = float.Parse(constTechs.Attribute("Invested").Value);
+			ForceFieldResearchAmount = float.Parse(ffTechs.Attribute("Invested").Value);
+			PlanetologyResearchAmount = float.Parse(planetTechs.Attribute("Invested").Value);
+			PropulsionResearchAmount = float.Parse(propTechs.Attribute("Invested").Value);
+			WeaponResearchAmount = float.Parse(weaponTechs.Attribute("Invested").Value);
+
+			foreach (var researched in compTechs.Element("Researched").Elements())
+			{
+				ResearchedComputerTechs.Add(MTM.GetTechnologyWithName(researched.Value));
+			}
+			foreach (var unresearched in compTechs.Element("Unresearched").Elements())
+			{
+				UnresearchedComputerTechs.Add(MTM.GetTechnologyWithName(unresearched.Value));
+			}
+			foreach (var researched in constTechs.Element("Researched").Elements())
+			{
+				ResearchedConstructionTechs.Add(MTM.GetTechnologyWithName(researched.Value));
+			}
+			foreach (var unresearched in constTechs.Element("Unresearched").Elements())
+			{
+				UnresearchedConstructionTechs.Add(MTM.GetTechnologyWithName(unresearched.Value));
+			}
+			foreach (var researched in ffTechs.Element("Researched").Elements())
+			{
+				ResearchedForceFieldTechs.Add(MTM.GetTechnologyWithName(researched.Value));
+			}
+			foreach (var unresearched in ffTechs.Element("Unresearched").Elements())
+			{
+				UnresearchedForceFieldTechs.Add(MTM.GetTechnologyWithName(unresearched.Value));
+			}
+			foreach (var researched in planetTechs.Element("Researched").Elements())
+			{
+				ResearchedPlanetologyTechs.Add(MTM.GetTechnologyWithName(researched.Value));
+			}
+			foreach (var unresearched in planetTechs.Element("Unresearched").Elements())
+			{
+				UnresearchedPlanetologyTechs.Add(MTM.GetTechnologyWithName(unresearched.Value));
+			}
+			foreach (var researched in propTechs.Element("Researched").Elements())
+			{
+				ResearchedPropulsionTechs.Add(MTM.GetTechnologyWithName(researched.Value));
+			}
+			foreach (var unresearched in propTechs.Element("Unresearched").Elements())
+			{
+				UnresearchedPropulsionTechs.Add(MTM.GetTechnologyWithName(unresearched.Value));
+			}
+			foreach (var researched in weaponTechs.Element("Researched").Elements())
+			{
+				ResearchedWeaponTechs.Add(MTM.GetTechnologyWithName(researched.Value));
+			}
+			foreach (var unresearched in weaponTechs.Element("Unresearched").Elements())
+			{
+				UnresearchedWeaponTechs.Add(MTM.GetTechnologyWithName(unresearched.Value));
+			}
+
+			UpdateValues();
 		}
 		#endregion
 	}
