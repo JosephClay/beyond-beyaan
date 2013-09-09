@@ -104,7 +104,7 @@ namespace Beyond_Beyaan.Screens
 		}
 
 		//Used when other non-combat screens are open, to fill in the blank areas
-		public void DrawGalaxy(DrawingManagement drawingManagement)
+		public void DrawGalaxy()
 		{
 			Empire currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
@@ -331,9 +331,9 @@ namespace Beyond_Beyaan.Screens
 			}
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public void DrawScreen()
 		{
-			DrawGalaxy(drawingManagement);
+			DrawGalaxy();
 
 			Empire currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;

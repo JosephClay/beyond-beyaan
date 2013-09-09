@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using GorgonLibrary.InputDevices;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -7,7 +6,7 @@ namespace Beyond_Beyaan.Screens
 	{
 		GameMain gameMain;
 
-		List<Planet> ownedPlanets;
+		/*List<Planet> ownedPlanets;
 		List<Planet> neutralPlanets;
 		List<Planet> otherPlanets;
 		List<Planet> planetsShowing;
@@ -48,13 +47,13 @@ namespace Beyond_Beyaan.Screens
 		private int selectedPlanet;
 		private int maxVisible;
 		private StarSystem selectedSystem;
-		private StarSystem hoveringSystem;
+		private StarSystem hoveringSystem;*/
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
 
-			int x = (gameMain.ScreenWidth / 2) - 400;
+			/*int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
 
 			ownedPlanetButton = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, "Owned Planets", x + 5, y + 410, 125, 25);
@@ -106,15 +105,15 @@ namespace Beyond_Beyaan.Screens
 
 			scrollBar = new ScrollBar(x + 784, y, 16, 568, 6, 10, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
 				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
-				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
+				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);*/
 
 			reason = null;
 			return true;
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public void DrawScreen()
 		{
-			gameMain.DrawGalaxyBackground();
+			/*gameMain.DrawGalaxyBackground();
 			int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x, y, 255, 800, 600, System.Drawing.Color.White);
@@ -163,12 +162,12 @@ namespace Beyond_Beyaan.Screens
 			netIncome.Draw();
 			netIncomeLabel.Draw();
 
-			scrollBar.DrawScrollBar(drawingManagement);
+			scrollBar.DrawScrollBar(drawingManagement);*/
 		}
 
 		public void Update(int x, int y, float frameDeltaTime)
 		{
-			ownedPlanetButton.UpdateHovering(x, y, frameDeltaTime);
+			/*ownedPlanetButton.UpdateHovering(x, y, frameDeltaTime);
 			neutralPlanetButton.UpdateHovering(x, y, frameDeltaTime);
 			otherPlanetButton.UpdateHovering(x, y, frameDeltaTime);
 
@@ -195,12 +194,12 @@ namespace Beyond_Beyaan.Screens
 				{
 					hoveringSystem = planetsShowing[i + planetIndex].System;
 				}
-			}
+			}*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			ownedPlanetButton.MouseDown(x, y);
+			/*ownedPlanetButton.MouseDown(x, y);
 			neutralPlanetButton.MouseDown(x, y);
 			otherPlanetButton.MouseDown(x, y);
 			scrollBar.MouseDown(x, y);
@@ -208,12 +207,12 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				planetButtons[i].MouseDown(x, y);
-			}
+			}*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			if (ownedPlanetButton.MouseUp(x, y))
+			/*if (ownedPlanetButton.MouseUp(x, y))
 			{
 				ownedPlanetButton.Selected = !ownedPlanetButton.Selected;
 				RefreshShowingPlanets();
@@ -256,7 +255,7 @@ namespace Beyond_Beyaan.Screens
 					selectedPlanet = i + planetIndex;
 					selectedSystem = planetsShowing[i + planetIndex].System;
 				}
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -277,7 +276,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void LoadScreen()
 		{
-			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
+			/*Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
 			ownedPlanets = currentEmpire.PlanetManager.Planets;
 			otherPlanets = new List<Planet>();
 			neutralPlanets = new List<Planet>();
@@ -322,10 +321,10 @@ namespace Beyond_Beyaan.Screens
 			netIncome.SetText(currentEmpire.NetIncome + " BC");
 			netIncome.Move((x + 395) - (int)netIncome.GetWidth(), y + 575);
 
-			RefreshShowingPlanets();
+			RefreshShowingPlanets();*/
 		}
 
-		private void RefreshShowingPlanets()
+		/*private void RefreshShowingPlanets()
 		{
 			planetsShowing = new List<Planet>();
 			if (ownedPlanetButton.Selected)
@@ -408,7 +407,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview()
 		{
-			/*List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
+			List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
 
 			foreach (StarSystem system in systems)
 			{
@@ -428,7 +427,7 @@ namespace Beyond_Beyaan.Screens
 					//drawingManagement.DrawSprite(SpriteName.Star, x, y, 255, 6 * system.Size, 6 * system.Size, System.Drawing.Color.White);
 				}
 				GorgonLibrary.Gorgon.CurrentShader = null;
-			}*/
-		}
+			}
+		}*/
 	}
 }

@@ -250,7 +250,7 @@ namespace Beyond_Beyaan.Screens
 			}
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public void DrawScreen()
 		{
 			for (int i = 0; i < _gameMain.ScreenWidth; i += (int)_nebulaBackground.Width)
 			{
