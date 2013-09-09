@@ -757,6 +757,11 @@ namespace Beyond_Beyaan
 						planet.ShipBeingBuilt = planet.Owner.FleetManager.GetShipWithDesignID(planet.ShipBeingBuiltID);
 					}
 				}
+				if (string.IsNullOrEmpty(star.ExploredByIDs))
+				{
+					//No empires explored this star yet.
+					continue;
+				}
 				string[] exploredBy = star.ExploredByIDs.Split(new[] { ',' });
 				foreach (var explored in exploredBy)
 				{

@@ -230,6 +230,13 @@ namespace Beyond_Beyaan
 			ResearchedPropulsionTechs = new List<Technology>();
 			ResearchedWeaponTechs = new List<Technology>();
 
+			UnresearchedComputerTechs = new List<Technology>();
+			UnresearchedConstructionTechs = new List<Technology>();
+			UnresearchedForceFieldTechs = new List<Technology>();
+			UnresearchedPlanetologyTechs = new List<Technology>();
+			UnresearchedPropulsionTechs = new List<Technology>();
+			UnresearchedWeaponTechs = new List<Technology>();
+
 			UpdateValues();
 		}
 		#endregion
