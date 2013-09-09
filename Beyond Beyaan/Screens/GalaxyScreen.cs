@@ -647,5 +647,10 @@ namespace Beyond_Beyaan.Screens
 			_windowShowing = _inGameMenu;
 			_inGameMenu.GetSaveList();
 		}
+
+		public void ResetCamera()
+		{
+			camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
+		}
 	}
 }

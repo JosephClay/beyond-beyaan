@@ -591,6 +591,8 @@ namespace Beyond_Beyaan
 		public void Save(XmlWriter writer)
 		{
 			writer.WriteStartElement("Galaxy");
+			writer.WriteAttributeString("Width", GalaxySize.ToString());
+			writer.WriteAttributeString("Height", GalaxySize.ToString()); //Unused at the moment until I refactor the galaxy size to be rectangle
 			writer.WriteStartElement("Stars");
 			foreach (var star in starSystems)
 			{
@@ -661,6 +663,7 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
+			GalaxySize = int.Parse(galaxyElement.Attribute("Width").Value);
 			starSystems = new List<StarSystem>();
 			_quickLookupSystem = new Dictionary<int, StarSystem>();
 			var starsElement = galaxyElement.Element("Stars");
@@ -678,11 +681,7 @@ namespace Beyond_Beyaan
 					starColor[i] = float.Parse(color[i]);
 				}
 				StarSystem newStar = new StarSystem(name, id, xPos, yPos, Color.FromArgb((int)(255 * starColor[0]), (int)(255 * starColor[1]), (int)(255 * starColor[2]), (int)(255 * starColor[3])), description, gameMain.Random);
-				string[] exploredBy = star.Attribute("ExploredBy").Value.Split(new [] {','});
-				foreach (var explored in exploredBy)
-				{
-					newStar.AddEmpireExplored(gameMain.EmpireManager.GetEmpire(int.Parse(explored)));
-				}
+				newStar.ExploredByIDs = star.Attribute("ExploredBy").Value;
 				foreach (var planetElement in star.Elements())
 				{
 					string planetName = planetElement.Attribute("Name").Value;
@@ -741,6 +740,29 @@ namespace Beyond_Beyaan
 				}
 			}
 			return true;
+		}
+
+		public void Reconcilate(EmpireManager empireManager)
+		{
+			foreach (var star in starSystems)
+			{
+				//Set the empire
+				foreach (var planet in star.Planets)
+				{
+					if (planet.OwnerID != -1)
+					{
+						planet.Owner = empireManager.GetEmpire(planet.OwnerID);
+						planet.OwnerID = -1; //Clear out the ID
+						planet.Owner.PlanetManager.AddOwnedPlanet(planet);
+						planet.ShipBeingBuilt = planet.Owner.FleetManager.GetShipWithDesignID(planet.ShipBeingBuiltID);
+					}
+				}
+				string[] exploredBy = star.ExploredByIDs.Split(new[] { ',' });
+				foreach (var explored in exploredBy)
+				{
+					star.AddEmpireExplored(empireManager.GetEmpire(int.Parse(explored)));
+				}
+			}
 		}
 	}
 

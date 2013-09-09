@@ -461,9 +461,16 @@ namespace Beyond_Beyaan
 				{
 					return false;
 				}
-				/*
-				 * Reconcile the data between galaxy and empire manager here
-				 */
+				Galaxy.Reconcilate(EmpireManager);
+				if (_galaxyScreen != null)
+				{
+					_galaxyScreen.ResetCamera();
+				}
+				if (_processingTurnScreen != null)
+				{
+					_processingTurnScreen.ResetCamera();
+				}
+				ChangeToScreen(Screen.Galaxy);
 				return true;
 			}
 			catch

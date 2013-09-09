@@ -873,7 +873,15 @@ namespace Beyond_Beyaan
 
 		public void AddRacePopulation(Race whichRace, float amount)
 		{
-			racePopulations[whichRace] += amount;
+			if (racePopulations.ContainsKey(whichRace))
+			{
+				racePopulations[whichRace] += amount;
+			}
+			else
+			{
+				//Add it
+				racePopulations[whichRace] = amount;
+			}
 		}
 
 		public void RemoveRacePopulation(Race whichRace, float amount)
@@ -890,6 +898,7 @@ namespace Beyond_Beyaan
 		public void Colonize(Empire whichEmpire)
 		{
 			owner = whichEmpire;
+			whichEmpire.PlanetManager.AddOwnedPlanet(this);
 			racePopulations = new Dictionary<Race, float>();
 			racePopulations.Add(whichEmpire.EmpireRace, 2);
 			races.Add(whichEmpire.EmpireRace);

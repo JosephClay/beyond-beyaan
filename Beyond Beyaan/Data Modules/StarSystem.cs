@@ -22,6 +22,7 @@ namespace Beyond_Beyaan
 
 		private float[] color;
 		private List<Empire> exploredBy;
+		public string ExploredByIDs { get; set; } //Used for saving/loading, otherwise not used.
 
 		List<Planet> planets;
 		#endregion
@@ -102,6 +103,7 @@ namespace Beyond_Beyaan
 				};
 
 			exploredBy = new List<Empire>();
+			planets = new List<Planet>();
 
 			//type = StarType.NORMAL;
 
@@ -117,7 +119,6 @@ namespace Beyond_Beyaan
 		public StarSystem(string name, int id, int x, int y, Color color, string description, int minPlanets, int maxPlanets, Random r) : this (name, id, x, y, color, description, r)
 		{
 			int amountOfPlanets = r.Next(maxPlanets - minPlanets) + minPlanets;
-			planets = new List<Planet>();
 			for (int i = 0; i < amountOfPlanets; i++)
 			{
 				StringBuilder sb = new StringBuilder();
