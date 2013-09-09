@@ -124,7 +124,7 @@ namespace Beyond_Beyaan.Screens
 			techScrollBar.SetEnabledState(false);*/
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public void DrawScreen()
 		{
 			/*_gameMain.DrawGalaxyBackground();
 

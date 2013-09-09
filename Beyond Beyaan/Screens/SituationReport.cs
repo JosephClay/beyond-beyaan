@@ -1,28 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Beyond_Beyaan.Data_Managers;
-using Beyond_Beyaan.Data_Modules;
-
-namespace Beyond_Beyaan.Screens
+﻿namespace Beyond_Beyaan.Screens
 {
 	class SituationReport
 	{
-		private const int AMOUNT_VISIBLE = 10;
+		//private const int AMOUNT_VISIBLE = 10;
 		private GameMain gameMain;
 
-		private Label title;
+		/*private Label title;
 		private Button[] buttons;
 		private ScrollBar scrollBar;
 		private int topIndex;
-		private bool isVisible;
+		private bool isVisible;*/
 
 		public SituationReport(GameMain gameMain)
 		{
 			this.gameMain = gameMain;
 
-			int x = (gameMain.ScreenWidth / 2) - 400;
+			/*int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
 
 			buttons = new Button[AMOUNT_VISIBLE];
@@ -35,17 +28,17 @@ namespace Beyond_Beyaan.Screens
 				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
 			topIndex = 0;
 			isVisible = false;
-			title = new Label("Situation Report", x + 5, y + 5);
+			title = new Label("Situation Report", x + 5, y + 5);*/
 		}
 
 		public void ResetIndex()
 		{
-			topIndex = 0;
+			//topIndex = 0;
 		}
 
-		public void DrawSitRep(DrawingManagement drawingManagement)
+		public void DrawSitRep()
 		{
-			if (!isVisible)
+			/*if (!isVisible)
 			{
 				return;
 			}
@@ -70,12 +63,12 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				buttons[i].Draw(drawingManagement);
-			}
+			}*/
 		}
 
 		public bool Update(int mouseX, int mouseY, float frameDeltaTime)
 		{
-			if (!isVisible)
+			/*if (!isVisible)
 			{
 				return false;
 			}
@@ -98,13 +91,13 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				buttons[i].UpdateHovering(mouseX, mouseY, frameDeltaTime);
-			}
-			return true;
+			}*/
+			return false;
 		}
 
 		public bool MouseDown(int x, int y)
 		{
-			if (!isVisible)
+			/*if (!isVisible)
 			{
 				return false;
 			}
@@ -123,13 +116,13 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				buttons[i].MouseDown(x, y);
-			}
-			return true;
+			}*/
+			return false;
 		}
 
 		public bool MouseUp(int x, int y)
 		{
-			if (!isVisible)
+			/*if (!isVisible)
 			{
 				return false;
 			}
@@ -176,43 +169,43 @@ namespace Beyond_Beyaan.Screens
 					}
 					isVisible = false;
 				}
-			}
-			return true;
+			}*/
+			return false;
 		}
 
 		public void Refresh()
 		{
-			scrollBar.SetAmountOfItems(gameMain.EmpireManager.CurrentEmpire.SitRepManager.Items.Count);
+			/*scrollBar.SetAmountOfItems(gameMain.EmpireManager.CurrentEmpire.SitRepManager.Items.Count);
 			scrollBar.TopIndex = 0;
 			topIndex = 0;
 			isVisible = gameMain.EmpireManager.CurrentEmpire.SitRepManager.HasItems;
-			RefreshLabels(gameMain.EmpireManager.CurrentEmpire.SitRepManager);
+			RefreshLabels(gameMain.EmpireManager.CurrentEmpire.SitRepManager);*/
 		}
 
 		public void Clear()
 		{
-			scrollBar.SetAmountOfItems(10);
+			/*scrollBar.SetAmountOfItems(10);
 			scrollBar.TopIndex = 0;
 			topIndex = 0;
-			isVisible = false;
+			isVisible = false;*/
 		}
 
 		public void ToggleVisibility()
 		{
-			isVisible = !isVisible;
+			//isVisible = !isVisible;
 		}
 
 		public void Show()
 		{
-			isVisible = true;
+			//isVisible = true;
 		}
 
 		public void Hide()
 		{
-			isVisible = false;
+			//isVisible = false;
 		}
 
-		private void RefreshLabels(SitRepManager sitRepManager)
+		/*private void RefreshLabels(SitRepManager sitRepManager)
 		{
 			int maxVisible = AMOUNT_VISIBLE;
 
@@ -225,6 +218,6 @@ namespace Beyond_Beyaan.Screens
 			{
 				buttons[i].SetButtonText(sitRepManager.Items[topIndex + i].EventMessage);
 			}
-		}
+		}*/
 	}
 }

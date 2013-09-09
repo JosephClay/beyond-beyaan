@@ -1,68 +1,102 @@
-﻿using GorgonLibrary.InputDevices;
+﻿using System.Collections.Generic;
+using System.IO;
+using Beyond_Beyaan.Data_Managers;
+using Beyond_Beyaan.Data_Modules;
+using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
 	public class MainGameMenu : ScreenInterface
 	{
-		GameMain gameMain;
-		Button[] buttons;
-		Label version;
-		int x;
-		int y;
+		private BBSprite _background;
+		private BBSprite _planet;
+		private BBSprite _title;
+		private GameMain _gameMain;
+		private BBButton[] _buttons;
+		private BBLabel _versionLabel;
+		private int _x;
+		private int _y;
+
+		private List<FileInfo> _files;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			this.gameMain = gameMain;
+			this._gameMain = gameMain;
 
-			buttons = new Button[6];
+			_buttons = new BBButton[4];
 
-			x = (gameMain.ScreenWidth / 2) - 130;
+			_x = (gameMain.ScreenWidth / 2) - 130;
+			_y = (gameMain.ScreenHeight / 2);
 
-			buttons[0] = new Button(SpriteName.Continue2, SpriteName.Continue, string.Empty, 400, gameMain.ScreenHeight - 350, 260, 40);
-			buttons[1] = new Button(SpriteName.NewGame2, SpriteName.NewGame, string.Empty, 400, gameMain.ScreenHeight - 300, 260, 40);
-			buttons[2] = new Button(SpriteName.LoadGame2, SpriteName.LoadGame, string.Empty, 400, gameMain.ScreenHeight - 250, 260, 40);
-			buttons[3] = new Button(SpriteName.Customize2, SpriteName.Customize, string.Empty, 400, gameMain.ScreenHeight - 200, 260, 40);
-			buttons[4] = new Button(SpriteName.Options2, SpriteName.Options, string.Empty, 400, gameMain.ScreenHeight - 150, 260, 40);
-			buttons[5] = new Button(SpriteName.Exit2, SpriteName.Exit, string.Empty, 400, gameMain.ScreenHeight - 100, 260, 40);
+			for (int i = 0; i < _buttons.Length; i++)
+			{
+				_buttons[i] = new BBButton();
+			}
 
-			version = new Label("Version 0.4", 5, gameMain.ScreenHeight - 25);
+			if (!_buttons[0].Initialize("ContinueGameBG", "ContinueGameFG", string.Empty, ButtonTextAlignment.CENTER, _x, _y, 260, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_buttons[1].Initialize("NewGameBG", "NewGameFG", string.Empty, ButtonTextAlignment.CENTER, _x, _y + 50, 260, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_buttons[2].Initialize("LoadGameBG", "LoadGameFG", string.Empty, ButtonTextAlignment.CENTER, _x, _y + 100, 260, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_buttons[3].Initialize("ExitGameBG", "ExitGameFG", string.Empty, ButtonTextAlignment.CENTER, _x, _y + 150, 260, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
-			x = (gameMain.ScreenWidth / 2) - 512;
-			y = 25;
+			_versionLabel = new BBLabel();
+			if (!_versionLabel.Initialize(10, _gameMain.ScreenHeight - 30, "Version 0.5", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+
+			_background = SpriteManager.GetSprite("MainBackground", gameMain.Random);
+			_planet = SpriteManager.GetSprite("MainPlanetBackground", gameMain.Random);
+			_title = SpriteManager.GetSprite("Title", gameMain.Random);
+
+			_x = (gameMain.ScreenWidth / 2) - 512;
+			_y = (gameMain.ScreenHeight / 2) - 300;
+
+			_files = Utility.GetSaveGames(gameMain.GameDataSet.FullName);
+			if (_files.Count == 0)
+			{
+				_buttons[0].Active = false; //Disabled Continue and Load buttons since there's no games to load
+				_buttons[2].Active = false;
+			}
 
 			reason = null;
 			return true;
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public void DrawScreen()
 		{
-			for (int i = 0; i < gameMain.ScreenWidth; i += 1024)
+			_background.Draw(0, 0, _gameMain.ScreenWidth / _background.Width, _gameMain.ScreenHeight / _background.Height);
+			_planet.Draw(_x, _y);
+			_title.Draw(_x, _y);
+			foreach (BBButton button in _buttons)
 			{
-				for (int j = 0; j < gameMain.ScreenHeight; j += 600)
-				{
-					drawingManagement.DrawSprite(SpriteName.TitleNebula, i, j, 255, System.Drawing.Color.White);
-				}
+				button.Draw();
 			}
-			drawingManagement.DrawSprite(SpriteName.TitlePlanet, x, y, 255, System.Drawing.Color.White);
-			drawingManagement.DrawSprite(SpriteName.TitleName, x, y, 255, System.Drawing.Color.White);
-			foreach (Button button in buttons)
-			{
-				button.Draw(drawingManagement);
-			}
-			version.Draw();
+			_versionLabel.Draw();
 		}
 
 		public void Update(int x, int y, float frameDeltaTime)
 		{
-			foreach (Button button in buttons)
+			foreach (BBButton button in _buttons)
 			{
-				button.UpdateHovering(x, y, frameDeltaTime);
+				button.MouseHover(x, y, frameDeltaTime);
 			}
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			foreach (Button button in buttons)
+			foreach (BBButton button in _buttons)
 			{
 				button.MouseDown(x, y);
 			}
@@ -70,19 +104,36 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			for (int i = 0; i < buttons.Length; i++)
+			for (int i = 0; i < _buttons.Length; i++)
 			{
-				if (buttons[i].MouseUp(x, y))
+				if (_buttons[i].MouseUp(x, y))
 				{
 					switch (i)
 					{
-						case 1:
-							gameMain.ChangeToScreen(Screen.NewGame);
+						case 0: //Continue button
+							FileInfo mostRecentGame = null;
+							foreach (var file in _files)
+							{
+								if (mostRecentGame == null)
+								{
+									mostRecentGame = file;
+								}
+								else if (mostRecentGame.LastWriteTime.CompareTo(file.LastWriteTime) < 0)
+								{
+									mostRecentGame = file;
+								}
+							}
+							if (mostRecentGame != null)
+							{
+								_gameMain.LoadGame(mostRecentGame.Name);
+								_gameMain.ChangeToScreen(Screen.Galaxy);
+							}
 							break;
-						case 5:
-							gameMain.ExitGame();
+						case 1: //New Game button
+							_gameMain.ChangeToScreen(Screen.NewGame);
 							break;
-						default:
+						case 3:
+							_gameMain.ExitGame();
 							break;
 					}
 				}

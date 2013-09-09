@@ -10,7 +10,7 @@ namespace Beyond_Beyaan.Screens
 	{
 		bool Initialize(GameMain gameMain, out string reason);
 
-		void DrawScreen(DrawingManagement drawingManagement);
+		void DrawScreen();
 
 		void Update(int x, int y, float frameDeltaTime);
 

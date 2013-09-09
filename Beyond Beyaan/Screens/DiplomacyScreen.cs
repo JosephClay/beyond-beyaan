@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using GorgonLibrary.InputDevices;
-using Beyond_Beyaan.Data_Modules;
+﻿using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
 	public class DiplomacyScreen : ScreenInterface
 	{
 		#region Constants
-		const int TRADE = 0;
+		/*const int TRADE = 0;
 		const int RESEARCH = 1;
 		const int ALLY = 2;
 		const int UNALLY = 3;
@@ -16,14 +14,14 @@ namespace Beyond_Beyaan.Screens
 		const int WAR = 6;
 		const int SEND = 7;
 		const int ACCEPT = 8;
-		const int REJECT = 9;
+		const int REJECT = 9;*/
 		#endregion
 
 
 		GameMain gameMain;
-		List<Contact> empiresInContact;
+		//List<Contact> empiresInContact;
 
-		ScrollBar empireScrollBar;
+		/*ScrollBar empireScrollBar;
 		ScrollBar[] spyEffortScrollbars;
 		ScrollBar[] spyDefenseScrollbars;
 		Button[] empireButtons;
@@ -43,12 +41,12 @@ namespace Beyond_Beyaan.Screens
 
 		int maxVisible;
 		int x;
-		int y;
+		int y;*/
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			this.gameMain = gameMain;
-			x = (gameMain.ScreenWidth / 2) - 400;
+			/*x = (gameMain.ScreenWidth / 2) - 400;
 			y = (gameMain.ScreenHeight / 2) - 300;
 			empireButtons = new Button[4];
 			spyEffortScrollbars = new ScrollBar[4];
@@ -97,15 +95,15 @@ namespace Beyond_Beyaan.Screens
 			spriteNames.Add(SpriteName.ScrollDownForegroundButton);
 			spriteNames.Add(SpriteName.ScrollVerticalBackgroundButton);
 			spriteNames.Add(SpriteName.ScrollVerticalForegroundButton);
-			whichMessageToSend = -1;
+			whichMessageToSend = -1;*/
 
 			reason = null;
 			return true;
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public void DrawScreen()
 		{
-			gameMain.DrawGalaxyBackground();
+			/*gameMain.DrawGalaxyBackground();
 			drawingManagement.DrawSprite(SpriteName.ControlBackground, x, y, 255, 800, 600, System.Drawing.Color.White);
 			for (int i = 0; i < maxVisible; i++)
 			{
@@ -147,12 +145,12 @@ namespace Beyond_Beyaan.Screens
 					messageOptions[ACCEPT].Draw(drawingManagement);
 					messageOptions[REJECT].Draw(drawingManagement);
 				}
-			}
+			}*/
 		}
 
 		public void Update(int x, int y, float frameDeltaTime)
 		{
-			if (empireScrollBar.UpdateHovering(x, y, frameDeltaTime))
+			/*if (empireScrollBar.UpdateHovering(x, y, frameDeltaTime))
 			{
 				RefreshContactList();
 			}
@@ -188,12 +186,12 @@ namespace Beyond_Beyaan.Screens
 					messageOptions[ACCEPT].UpdateHovering(x, y, frameDeltaTime);
 					messageOptions[REJECT].UpdateHovering(x, y, frameDeltaTime);
 				}
-			}
+			}*/
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
-			if (empireScrollBar.MouseDown(x, y))
+			/*if (empireScrollBar.MouseDown(x, y))
 			{
 				return;
 			}
@@ -237,12 +235,12 @@ namespace Beyond_Beyaan.Screens
 					messageOptions[ACCEPT].MouseDown(x, y);
 					messageOptions[REJECT].MouseDown(x, y);
 				}
-			}
+			}*/
 		}
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
-			if (empireScrollBar.MouseUp(x, y))
+			/*if (empireScrollBar.MouseUp(x, y))
 			{
 				RefreshContactList();
 				return;
@@ -431,7 +429,7 @@ namespace Beyond_Beyaan.Screens
 						return;
 					}
 				}
-			}
+			}*/
 		}
 
 		public void MouseScroll(int direction, int x, int y)
@@ -440,7 +438,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void SetupScreen()
 		{
-			empiresInContact = new List<Contact>();
+			/*empiresInContact = new List<Contact>();
 			Empire currentEmpire = gameMain.EmpireManager.CurrentEmpire;
 			foreach (Contact contact in currentEmpire.ContactManager.Contacts)
 			{
@@ -469,10 +467,10 @@ namespace Beyond_Beyaan.Screens
 			whichContactSelected = -1;
 			isViewingReceivedMessage = false;
 
-			RefreshContactList();
+			RefreshContactList();*/
 		}
 
-		private void RefreshContactList()
+		/*private void RefreshContactList()
 		{
 			foreach (Button button in empireButtons)
 			{
@@ -760,7 +758,7 @@ namespace Beyond_Beyaan.Screens
 						break;
 				}
 			}
-		}
+		}*/
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{

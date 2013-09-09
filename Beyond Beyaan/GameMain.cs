@@ -35,7 +35,6 @@ namespace Beyond_Beyaan
 
 		#region Properties
 		internal Random Random { get; private set; }
-		internal DrawingManagement DrawingManagement { get; private set; }
 		internal Galaxy Galaxy { get; private set; }
 		internal EmpireManager EmpireManager { get; private set; }
 		internal RaceManager RaceManager { get; private set; }
@@ -76,11 +75,6 @@ namespace Beyond_Beyaan
 				return false;
 			}
 			if (!FontManager.Initialize(GameDataSet, out reason))
-			{
-				return false;
-			}
-			DrawingManagement = new DrawingManagement();
-			if (!DrawingManagement.LoadGraphics(Path.Combine(GameDataSet.FullName, "graphics"), out reason))
 			{
 				return false;
 			}
@@ -150,10 +144,10 @@ namespace Beyond_Beyaan
 			{
 				_screenInterface.Update(MousePos.X, MousePos.Y, frameDeltaTime);
 			}
-			_screenInterface.DrawScreen(DrawingManagement);
+			_screenInterface.DrawScreen();
 			if (handleTaskBar)
 			{
-				_situationReport.DrawSitRep(DrawingManagement);
+				_situationReport.DrawSitRep();
 			}
 			Cursor.Draw(MousePos.X, MousePos.Y);
 			Cursor.Update(frameDeltaTime, Random);
@@ -395,7 +389,7 @@ namespace Beyond_Beyaan
 
 		public void DrawGalaxyBackground()
 		{
-			_galaxyScreen.DrawGalaxy(DrawingManagement);
+			_galaxyScreen.DrawGalaxy();
 		}
 
 		public void RefreshSitRep()

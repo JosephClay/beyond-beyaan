@@ -281,22 +281,9 @@ namespace Beyond_Beyaan.Screens
 
 		public void GetSaveList()
 		{
+			_files = Utility.GetSaveGames(_gameMain.GameDataSet.FullName);
+			
 			_maxVisible = 0;
-
-			string path = Path.Combine(_gameMain.GameDataSet.FullName, "Saves");
-			DirectoryInfo di = new DirectoryInfo(path);
-			if (!di.Exists)
-			{
-				return;
-			}
-			try
-			{
-				_files = new List<FileInfo>(di.GetFiles("*.BB"));
-			}
-			catch
-			{
-				return;
-			}
 			if (_files.Count > _saveGameButtons.Length)
 			{
 				_maxVisible = _saveGameButtons.Length;

@@ -82,7 +82,6 @@
     <Compile Include="Data Modules\AI.cs" />
     <Compile Include="Data Modules\BBSprite.cs" />
     <Compile Include="Data Modules\Camera.cs" />
-    <Compile Include="Data Managers\DrawingManagement.cs" />
     <Compile Include="Data Modules\CombatItems.cs" />
     <Compile Include="Data Modules\Contact.cs" />
     <Compile Include="Data Modules\Empire.cs" />
@@ -96,7 +95,6 @@
     <Compile Include="GameMain.cs" />
     <Compile Include="Data Managers\InterfaceManagement.cs" />
     <Compile Include="Screens\ColonizeScreen.cs" />
-    <Compile Include="Screens\CustomRaceScreen.cs" />
     <Compile Include="Screens\ResearchPrompt.cs" />
     <Compile Include="Screens\SystemInfoWindow.cs" />
     <Compile Include="Screens\FleetView.cs" />

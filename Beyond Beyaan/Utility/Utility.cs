@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Globalization;
 
@@ -273,7 +273,7 @@ namespace Beyond_Beyaan
 			return String.Empty;
 		}
 
-		public static SpriteName PlanetConstructionBonusToSprite(PLANET_CONSTRUCTION_BONUS bonus)
+		/*public static SpriteName PlanetConstructionBonusToSprite(PLANET_CONSTRUCTION_BONUS bonus)
 		{
 			switch (bonus)
 			{
@@ -305,7 +305,7 @@ namespace Beyond_Beyaan
 			}
 			//If it reaches here, something went wrong
 			return SpriteName.CancelBackground;
-		}
+		}*/
 
 		public static string ShipSizeToString(int size)
 		{
@@ -360,6 +360,24 @@ namespace Beyond_Beyaan
 				return "Esteem";
 			}
 			return "Venerate";
+		}
+
+		public static List<FileInfo> GetSaveGames(string dataSetPath)
+		{
+			string path = Path.Combine(dataSetPath, "Saves");
+			DirectoryInfo di = new DirectoryInfo(path);
+			if (!di.Exists)
+			{
+				return new List<FileInfo>();
+			}
+			try
+			{
+				return new List<FileInfo>(di.GetFiles("*.BB"));
+			}
+			catch
+			{
+				return new List<FileInfo>();
+			}
 		}
 	}
 

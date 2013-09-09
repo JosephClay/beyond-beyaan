@@ -75,7 +75,7 @@ namespace Beyond_Beyaan.Screens
 			return true;
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public void DrawScreen()
 		{
 			List<StarSystem> systems = _gameMain.Galaxy.GetStarsInArea(_camera.CameraX, _camera.CameraY, _gameMain.ScreenWidth / _camera.ZoomDistance, _gameMain.ScreenHeight / _camera.ZoomDistance);
 			foreach (StarSystem system in systems)

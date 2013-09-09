@@ -108,7 +108,7 @@ namespace Beyond_Beyaan.Screens
 			return true;
 		}
 
-		public void DrawScreen(DrawingManagement drawingManagement)
+		public void DrawScreen()
 		{
 			/*_gameMain.DrawGalaxyBackground();
 
