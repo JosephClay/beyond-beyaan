@@ -105,7 +105,7 @@ namespace Beyond_Beyaan
 		{
 			if (empireIter + 1 == _empires.Count)
 			{
-				//It've reached teh end
+				//It've reached the end
 				return true;
 			}
 			//This will update each empire if they're AI.  If an empire is human-controlled, it stops and waits for the player to press end of turn
@@ -505,6 +505,12 @@ namespace Beyond_Beyaan
 				newEmpire.Load(empire, _gameMain);
 				_empires.Add(newEmpire);
 			}
+			foreach (var empire in _empires)
+			{
+				empire.SetUpContacts(_empires);
+				//TODO: Update all empires' contacts
+			}
+			SetInitialEmpireTurn();
 			return true;
 		}
 		#endregion
