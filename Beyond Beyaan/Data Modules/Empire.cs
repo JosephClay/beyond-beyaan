@@ -59,7 +59,7 @@ namespace Beyond_Beyaan
 			set 
 			{ 
 				empireColor = value;
-				convertedColor = new float[]
+				convertedColor = new[]
 				{
 					empireColor.R / 255.0f,
 					empireColor.G / 255.0f,
@@ -553,7 +553,7 @@ namespace Beyond_Beyaan
 		{
 			empireID = int.Parse(empireToLoad.Attribute("ID").Value);
 			empireName = empireToLoad.Attribute("Name").Value;
-			empireColor = Color.FromArgb(int.Parse(empireToLoad.Attribute("Color").Value));
+			EmpireColor = Color.FromArgb(int.Parse(empireToLoad.Attribute("Color").Value));
 			race = gameMain.RaceManager.GetRace(empireToLoad.Attribute("Race").Value);
 			lastSelectedSystem = gameMain.Galaxy.GetStarWithID(int.Parse(empireToLoad.Attribute("SelectedSystem").Value));
 			technologyManager.Load(empireToLoad, gameMain.MasterTechnologyManager);

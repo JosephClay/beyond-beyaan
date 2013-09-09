@@ -680,7 +680,7 @@ namespace Beyond_Beyaan
 				{
 					starColor[i] = float.Parse(color[i]);
 				}
-				StarSystem newStar = new StarSystem(name, id, xPos, yPos, Color.FromArgb((int)(255 * starColor[0]), (int)(255 * starColor[1]), (int)(255 * starColor[2]), (int)(255 * starColor[3])), description, gameMain.Random);
+				StarSystem newStar = new StarSystem(name, id, xPos, yPos, Color.FromArgb((int)(255 * starColor[3]), (int)(255 * starColor[0]), (int)(255 * starColor[1]), (int)(255 * starColor[2])), description, gameMain.Random);
 				newStar.ExploredByIDs = star.Attribute("ExploredBy").Value;
 				foreach (var planetElement in star.Elements())
 				{
@@ -757,6 +757,7 @@ namespace Beyond_Beyaan
 						planet.ShipBeingBuilt = planet.Owner.FleetManager.GetShipWithDesignID(planet.ShipBeingBuiltID);
 					}
 				}
+				star.UpdateOwners();
 				if (string.IsNullOrEmpty(star.ExploredByIDs))
 				{
 					//No empires explored this star yet.
