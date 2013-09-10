@@ -293,27 +293,29 @@ namespace Beyond_Beyaan
 			writer.WriteEndElement();
 		}
 
-		public void Load(XElement empire, GameMain gameMain)
+		public void Load(XElement empireDoc, Empire empire, GameMain gameMain)
 		{
-			var currentDesigns = empire.Element("CurrentShipDesigns");
+			var currentDesigns = empireDoc.Element("CurrentShipDesigns");
 			foreach (var currentDesign in currentDesigns.Elements())
 			{
 				var currentShip = new Ship();
 				currentShip.Load(currentDesign, gameMain);
+				currentShip.Owner = empire;
 				CurrentDesigns.Add(currentShip);
 			}
-			var obsoleteDesigns = empire.Element("ObsoleteShipDesigns");
+			var obsoleteDesigns = empireDoc.Element("ObsoleteShipDesigns");
 			foreach (var obsoleteDesign in obsoleteDesigns.Elements())
 			{
 				var obsoleteShip = new Ship();
 				obsoleteShip.Load(obsoleteDesign, gameMain);
+				obsoleteShip.Owner = empire;
 				ObsoleteDesigns.Add(obsoleteShip);
 			}
-			var fleets = empire.Element("Fleets");
+			var fleets = empireDoc.Element("Fleets");
 			foreach (var fleet in fleets.Elements())
 			{
 				var newFleet = new Fleet();
-				newFleet.Load(fleet, this, gameMain);
+				newFleet.Load(fleet, this, empire, gameMain);
 				_fleets.Add(newFleet);
 			}
 		}

@@ -557,7 +557,7 @@ namespace Beyond_Beyaan
 			race = gameMain.RaceManager.GetRace(empireToLoad.Attribute("Race").Value);
 			lastSelectedSystem = gameMain.Galaxy.GetStarWithID(int.Parse(empireToLoad.Attribute("SelectedSystem").Value));
 			technologyManager.Load(empireToLoad, gameMain.MasterTechnologyManager);
-			fleetManager.Load(empireToLoad, gameMain);
+			fleetManager.Load(empireToLoad, this, gameMain);
 		}
 		#endregion
 	}
