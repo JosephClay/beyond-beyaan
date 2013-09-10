@@ -581,7 +581,7 @@ namespace Beyond_Beyaan.Screens
 						selectedRaces.Add(_playerRaces[i + 1]);
 					}
 				}
-				empire = new Empire(_playerRaces[i + 1].GetRandomEmperorName(), 0, _playerRaces[i + 1], PlayerType.CPU, null, 30, _playerColors[i + 1], _gameMain);
+				empire = new Empire(_playerRaces[i + 1].GetRandomEmperorName(), i + 1, _playerRaces[i + 1], PlayerType.CPU, null, 30, _playerColors[i + 1], _gameMain);
 				homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
 				if (homeSystem == null)
 				{
