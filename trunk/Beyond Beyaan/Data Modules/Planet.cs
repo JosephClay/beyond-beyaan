@@ -464,6 +464,8 @@ namespace Beyond_Beyaan
 						GroundSprite = SpriteManager.GetSprite("VolcanicGround", r);
 					} break;
 			}
+
+			planetTypeString = Utility.PlanetTypeToString(planetType);
 		}
 		#endregion
 

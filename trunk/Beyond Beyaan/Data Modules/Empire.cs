@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using GorgonLibrary.Graphics;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -22,24 +18,15 @@ namespace Beyond_Beyaan
 		//private float reserves;
 		//private float expenses;
 		private Color empireColor;
-		private float[] convertedColor;
 		private PlayerType type;
 		private StarSystem selectedSystem;
 		private StarSystem lastSelectedSystem; //the last system selected by the player (can be the current selected system, used for end of turn processing)
 		private int planetSelected;
 		private int fleetSelected;
-		private PlanetManager planetManager;
-		private FleetManager fleetManager;
-		private TechnologyManager technologyManager;
-		private ContactManager contactManager;
 		private FleetGroup selectedFleetGroup;
-		private SitRepManager sitRepManager;
 		//GorgonLibrary.Graphics.Sprite influenceMap;
 		private List<Fleet> visibleOtherFleets;
-		private Race race;
-		private AI ai;
 		private float planetIncome;
-		private float totalResearchPoints;
 		//private float handicap;
 		#endregion
 
@@ -59,7 +46,7 @@ namespace Beyond_Beyaan
 			set 
 			{ 
 				empireColor = value;
-				convertedColor = new[]
+				ConvertedColor = new[]
 				{
 					empireColor.R / 255.0f,
 					empireColor.G / 255.0f,
@@ -69,10 +56,7 @@ namespace Beyond_Beyaan
 			}
 		}
 
-		public float[] ConvertedColor
-		{
-			get { return convertedColor; }
-		}
+		public float[] ConvertedColor { get; private set; }
 
 		public PlayerType Type
 		{
@@ -109,35 +93,15 @@ namespace Beyond_Beyaan
 			set { fleetSelected = value; }
 		}
 
-		public PlanetManager PlanetManager
-		{
-			get { return planetManager; }
-		}
+		public PlanetManager PlanetManager { get; private set; }
 
-		public FleetManager FleetManager
-		{
-			get { return fleetManager; }
-		}
+		public FleetManager FleetManager { get; private set; }
 
-		public TechnologyManager TechnologyManager
-		{
-			get { return technologyManager; }
-		}
+		public TechnologyManager TechnologyManager { get; private set; }
 
-		public ContactManager ContactManager
-		{
-			get { return contactManager; }
-		}
+		public ContactManager ContactManager { get; private set; }
 
-		public SitRepManager SitRepManager
-		{
-			get { return sitRepManager; }
-		}
-
-		public bool IsHumanPlayer
-		{
-			get { return ai == null; }
-		}
+		public SitRepManager SitRepManager { get; private set; }
 
 		/*public GorgonLibrary.Graphics.Sprite InfluenceMap
 		{
@@ -207,50 +171,45 @@ namespace Beyond_Beyaan
 			get;
 			private set;
 		}
-		public float ResearchPoints
-		{
-			get { return totalResearchPoints; }
-		}
-		public Race EmpireRace
-		{
-			get { return race; }
-		}
+
+		public float ResearchPoints { get; private set; }
+
+		public Race EmpireRace { get; private set; }
 
 		public bool Refresh { get; set; }
 		#endregion
 
 		#region Constructors
-		public Empire(string emperorName, int empireID, Race race, PlayerType type, AI ai, int difficultyModifier, Color color, GameMain gameMain) : this()
+		public Empire(string emperorName, int empireID, Race race, PlayerType type, int difficultyModifier, Color color, GameMain gameMain) : this()
 		{
 			this.empireName = emperorName;
 			this.empireID = empireID;
 			this.type = type;
 			EmpireColor = color;
-			technologyManager.DifficultyModifier = difficultyModifier;
+			TechnologyManager.DifficultyModifier = difficultyModifier;
 			try
 			{
-				technologyManager.SetComputerTechs(gameMain.MasterTechnologyManager.GetRandomizedComputerTechs());
-				technologyManager.SetConstructionTechs(gameMain.MasterTechnologyManager.GetRandomizedConstructionTechs());
-				technologyManager.SetForceFieldTechs(gameMain.MasterTechnologyManager.GetRandomizedForceFieldTechs());
-				technologyManager.SetPlanetologyTechs(gameMain.MasterTechnologyManager.GetRandomizedPlanetologyTechs());
-				technologyManager.SetPropulsionTechs(gameMain.MasterTechnologyManager.GetRandomizedPropulsionTechs());
-				technologyManager.SetWeaponTechs(gameMain.MasterTechnologyManager.GetRandomizedWeaponTechs());
+				TechnologyManager.SetComputerTechs(gameMain.MasterTechnologyManager.GetRandomizedComputerTechs());
+				TechnologyManager.SetConstructionTechs(gameMain.MasterTechnologyManager.GetRandomizedConstructionTechs());
+				TechnologyManager.SetForceFieldTechs(gameMain.MasterTechnologyManager.GetRandomizedForceFieldTechs());
+				TechnologyManager.SetPlanetologyTechs(gameMain.MasterTechnologyManager.GetRandomizedPlanetologyTechs());
+				TechnologyManager.SetPropulsionTechs(gameMain.MasterTechnologyManager.GetRandomizedPropulsionTechs());
+				TechnologyManager.SetWeaponTechs(gameMain.MasterTechnologyManager.GetRandomizedWeaponTechs());
 			}
 			catch (Exception e)
 			{
 				MessageBox.Show(e.Message);
 			}
-			
-			this.ai = ai;
-			this.race = race;
+
+			this.EmpireRace = race;
 			//this.handicap = 1.0f;
 		}
 		public Empire()
 		{
-			fleetManager = new FleetManager(this);
-			technologyManager = new TechnologyManager();
-			planetManager = new PlanetManager();
-			sitRepManager = new SitRepManager();
+			FleetManager = new FleetManager(this);
+			TechnologyManager = new TechnologyManager();
+			PlanetManager = new PlanetManager();
+			SitRepManager = new SitRepManager();
 			//reserves = 0;
 			//expenses = 0;
 			visibleOtherFleets = new List<Fleet>();
@@ -263,10 +222,10 @@ namespace Beyond_Beyaan
 		{
 			selectedSystem = homeSystem;
 			lastSelectedSystem = homeSystem;
-			planetManager.AddOwnedPlanet(homePlanet);
-			fleetManager.SetupStarterFleet(homeSystem);
-			homePlanet.ShipBeingBuilt = fleetManager.CurrentDesigns[0];
-			ShipMaintenance = fleetManager.GetExpenses();
+			PlanetManager.AddOwnedPlanet(homePlanet);
+			FleetManager.SetupStarterFleet(homeSystem);
+			homePlanet.ShipBeingBuilt = FleetManager.CurrentDesigns[0];
+			ShipMaintenance = FleetManager.GetExpenses();
 			Refresh = true;
 			UpdateNetIncome();
 			homePlanet.SetCleanup();
@@ -274,7 +233,7 @@ namespace Beyond_Beyaan
 
 		public void SetUpContacts(List<Empire> allEmpires)
 		{
-			contactManager = new ContactManager(this, allEmpires);
+			ContactManager = new ContactManager(this, allEmpires);
 		}
 
 		public void ClearTurnData()
@@ -287,14 +246,14 @@ namespace Beyond_Beyaan
 		public List<StarSystem> CheckExploredSystems(Galaxy galaxy)
 		{
 			List<StarSystem> exploredSystems = new List<StarSystem>();
-			foreach (Fleet fleet in fleetManager.GetFleets())
+			foreach (Fleet fleet in FleetManager.GetFleets())
 			{
 				if (fleet.TravelNodes == null || fleet.TravelNodes.Count == 0)
 				{
 					StarSystem systemExplored = fleet.AdjacentSystem;
 					if (systemExplored != null && !systemExplored.IsThisSystemExploredByEmpire(this))
 					{
-						sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
+						SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, systemExplored, null, new Point(systemExplored.X, systemExplored.Y), systemExplored.Name + " has been explored."));
 						systemExplored.AddEmpireExplored(this);
 						exploredSystems.Add(systemExplored);
 					}
@@ -306,7 +265,7 @@ namespace Beyond_Beyaan
 		public List<Fleet> CheckColonizableSystems(Galaxy galaxy)
 		{
 			List<Fleet> colonizingFleets = new List<Fleet>();
-			foreach (Fleet fleet in fleetManager.GetFleets())
+			foreach (Fleet fleet in FleetManager.GetFleets())
 			{
 				if (fleet.TravelNodes == null || fleet.TravelNodes.Count == 0)
 				{
@@ -442,7 +401,7 @@ namespace Beyond_Beyaan
 
 		public void LaunchTransports()
 		{
-			foreach (var planet in planetManager.Planets)
+			foreach (var planet in PlanetManager.Planets)
 			{
 				if (planet.TransferSystem.Key.StarSystem != null)
 				{
@@ -455,7 +414,7 @@ namespace Beyond_Beyaan
 					planet.RemoveRacePopulation(planet.Races[0], planet.TransferSystem.Value);
 					planet.TransferSystem = new KeyValuePair<TravelNode,int>(new TravelNode(), 0);
 					newFleet.ResetMove();
-					fleetManager.AddFleet(newFleet);
+					FleetManager.AddFleet(newFleet);
 				}
 			}
 		}
@@ -463,7 +422,7 @@ namespace Beyond_Beyaan
 		public void LandTransports()
 		{
 			List<Fleet> fleetsToRemove = new List<Fleet>();
-			foreach (var fleet in fleetManager.GetFleets())
+			foreach (var fleet in FleetManager.GetFleets())
 			{
 				if (fleet.TransportShips.Count > 0 && (fleet.TravelNodes == null || fleet.TravelNodes.Count == 0) && fleet.AdjacentSystem != null)
 				{
@@ -479,13 +438,13 @@ namespace Beyond_Beyaan
 			}
 			foreach (var fleet in fleetsToRemove)
 			{
-				fleetManager.RemoveFleet(fleet);
+				FleetManager.RemoveFleet(fleet);
 			}
 		}
 
 		public void CheckForBuiltShips()
 		{
-			foreach (Planet planet in planetManager.Planets)
+			foreach (Planet planet in PlanetManager.Planets)
 			{
 				int amount;
 				Ship result = planet.CheckIfShipBuilt(out amount);
@@ -496,12 +455,12 @@ namespace Beyond_Beyaan
 					newFleet.GalaxyX = planet.System.X + planet.System.Size;
 					newFleet.GalaxyY = planet.System.Y;
 					newFleet.AddShips(result, amount);
-					fleetManager.AddFleet(newFleet);
-					sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, planet.System, planet, new Point(planet.System.X, planet.System.Y), planet.Name + " has produced " + amount + " " + result.Name + " ship" + (amount > 1 ? "s." : ".")));
+					FleetManager.AddFleet(newFleet);
+					SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, planet.System, planet, new Point(planet.System.X, planet.System.Y), planet.Name + " has produced " + amount + " " + result.Name + " ship" + (amount > 1 ? "s." : ".")));
 				}
 			}
-			fleetManager.MergeIdleFleets();
-			ShipMaintenance = fleetManager.GetExpenses();
+			FleetManager.MergeIdleFleets();
+			ShipMaintenance = FleetManager.GetExpenses();
 			UpdateNetIncome();
 		}
 
@@ -525,10 +484,10 @@ namespace Beyond_Beyaan
 
 		public void UpdateResearchPoints()
 		{
-			totalResearchPoints = 0;
-			foreach (Planet planet in planetManager.Planets)
+			ResearchPoints = 0;
+			foreach (Planet planet in PlanetManager.Planets)
 			{
-				totalResearchPoints += planet.ResearchAmount * 0.01f * planet.ActualProduction;
+				ResearchPoints += planet.ResearchAmount * 0.01f * planet.ActualProduction;
 			}
 		}
 
@@ -542,10 +501,11 @@ namespace Beyond_Beyaan
 			writer.WriteAttributeString("ID", empireID.ToString());
 			writer.WriteAttributeString("Name", empireName);
 			writer.WriteAttributeString("Color", empireColor.ToArgb().ToString());
-			writer.WriteAttributeString("Race", race.RaceName);
+			writer.WriteAttributeString("Race", EmpireRace.RaceName);
+			writer.WriteAttributeString("IsHumanPlayer", type == PlayerType.HUMAN ? "True" : "False");
 			writer.WriteAttributeString("SelectedSystem", lastSelectedSystem.ID.ToString());
-			technologyManager.Save(writer);
-			fleetManager.Save(writer);
+			TechnologyManager.Save(writer);
+			FleetManager.Save(writer);
 			//sitRepManager.Save(writer);
 			writer.WriteEndElement();
 		}
@@ -554,10 +514,11 @@ namespace Beyond_Beyaan
 			empireID = int.Parse(empireToLoad.Attribute("ID").Value);
 			empireName = empireToLoad.Attribute("Name").Value;
 			EmpireColor = Color.FromArgb(int.Parse(empireToLoad.Attribute("Color").Value));
-			race = gameMain.RaceManager.GetRace(empireToLoad.Attribute("Race").Value);
+			EmpireRace = gameMain.RaceManager.GetRace(empireToLoad.Attribute("Race").Value);
+			type = bool.Parse(empireToLoad.Attribute("IsHumanPlayer").Value) ? PlayerType.HUMAN : PlayerType.CPU;
 			lastSelectedSystem = gameMain.Galaxy.GetStarWithID(int.Parse(empireToLoad.Attribute("SelectedSystem").Value));
-			technologyManager.Load(empireToLoad, gameMain.MasterTechnologyManager);
-			fleetManager.Load(empireToLoad, this, gameMain);
+			TechnologyManager.Load(empireToLoad, gameMain.MasterTechnologyManager);
+			FleetManager.Load(empireToLoad, this, gameMain);
 		}
 		#endregion
 	}
