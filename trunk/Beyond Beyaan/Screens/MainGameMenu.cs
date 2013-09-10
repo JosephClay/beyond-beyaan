@@ -17,7 +17,13 @@ namespace Beyond_Beyaan.Screens
 		private int _x;
 		private int _y;
 
+		#region Loading Game UI
 		private List<FileInfo> _files;
+		private BBStretchableImage _loadBackground;
+		private BBInvisibleStretchButton[] _saveGameButtons;
+		private BBScrollBar _scrollBar;
+		private bool _showingLoadMenu;
+		#endregion
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
@@ -69,6 +75,30 @@ namespace Beyond_Beyaan.Screens
 				_buttons[0].Active = false; //Disabled Continue and Load buttons since there's no games to load
 				_buttons[2].Active = false;
 			}
+
+			_loadBackground = new BBStretchableImage();
+			if (!_loadBackground.Initialize((gameMain.ScreenWidth / 2) - 225, (gameMain.ScreenHeight / 2) - 350, 450, 350, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_saveGameButtons = new BBInvisibleStretchButton[10];
+			for (int i = 0; i < _saveGameButtons.Length; i++)
+			{
+				_saveGameButtons[i] = new BBInvisibleStretchButton();
+				if (!_saveGameButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, (gameMain.ScreenWidth / 2) - 220, (gameMain.ScreenHeight / 2) - 160 + (i * 32), 420, 32, gameMain.Random, out reason))
+				{
+					return false;
+				}
+			}
+			_scrollBar = new BBScrollBar();
+			if (!_scrollBar.Initialize((gameMain.ScreenWidth / 2) + 200, (gameMain.ScreenHeight / 2) - 160, 320, 10, 10, false, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
+			RefreshSaves();
+
+			_showingLoadMenu = false;
 
 			reason = null;
 			return true;
@@ -146,6 +176,11 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
+		}
+
+		private void RefreshSaves()
+		{
+			
 		}
 	}
 }
