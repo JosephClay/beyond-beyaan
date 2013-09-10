@@ -155,7 +155,7 @@ namespace Beyond_Beyaan
 		}
 		public string InfrastructureStringOutput
 		{
-			get 
+			get
 			{
 				if (InfrastructureAmount > 0)
 				{
@@ -163,25 +163,16 @@ namespace Beyond_Beyaan
 					{
 						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)InfrastructureTotal, InfrastructureAmount * 0.01 * 0.5 * ActualProduction);
 					}
-					else
+					float amountRemaining = (populationMax * 2) - InfrastructureTotal;
+					float amountBuildThisTurn = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
+					if (amountBuildThisTurn > amountRemaining) //Will put some into reserve
 					{
-						float amountRemaining = (populationMax * 2) - InfrastructureTotal;
-						float amountBuildThisTurn = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
-						if (amountBuildThisTurn > amountRemaining) //Will put some into reserve
-						{
-							float difference = (amountBuildThisTurn - amountRemaining) * 5; //This is now BC for excess
-							return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)InfrastructureTotal, amountRemaining, difference);
-						}
-						else
-						{
-							return string.Format("{0} (+{1:0.0}) Buildings", (int)InfrastructureTotal, amountBuildThisTurn);
-						}
+						float difference = (amountBuildThisTurn - amountRemaining) * 5; //This is now BC for excess
+						return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)InfrastructureTotal, amountRemaining, difference);
 					}
+					return string.Format("{0} (+{1:0.0}) Buildings", (int)InfrastructureTotal, amountBuildThisTurn);
 				}
-				else
-				{
-					return string.Format("{0} Buildings", (int)InfrastructureTotal);
-				}
+				return string.Format("{0} Buildings", (int)InfrastructureTotal);
 			}
 		}
 		public string ResearchStringOutput
@@ -227,27 +218,21 @@ namespace Beyond_Beyaan
 				{
 					return ShipBeingBuilt.Name + " - No activity";
 				}
-				else if (length <= 1)
+				if (length <= 1)
 				{
 					int amount = (int)(1.0f / length);
 					if (amount == 1)
 					{
 						return ShipBeingBuilt.Name + " in 1 year";
 					}
-					else
-					{
-						return ShipBeingBuilt.Name + " x " + amount + " in 1 year";
-					}
+					return ShipBeingBuilt.Name + " x " + amount + " in 1 year";
 				}
-				else
+				int turns = (int)length;
+				if (length - turns > 0)
 				{
-					int turns = (int)length;
-					if (length - turns > 0)
-					{
-						turns++;
-					}
-					return ShipBeingBuilt.Name + " in " + turns + " years";
+					turns++;
 				}
+				return ShipBeingBuilt.Name + " in " + turns + " years";
 			}
 		}
 
@@ -880,6 +865,10 @@ namespace Beyond_Beyaan
 			else
 			{
 				//Add it
+				if (!races.Contains(whichRace))
+				{
+					races.Add(whichRace);
+				}
 				racePopulations[whichRace] = amount;
 			}
 		}
@@ -887,6 +876,11 @@ namespace Beyond_Beyaan
 		public void RemoveRacePopulation(Race whichRace, float amount)
 		{
 			racePopulations[whichRace] -= amount;
+			if (racePopulations[whichRace] <= 0)
+			{
+				//They died out on this planet
+				RemoveRace(whichRace);
+			}
 		}
 
 		public void RemoveRace(Race whichRace)
