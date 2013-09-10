@@ -589,11 +589,8 @@ namespace Beyond_Beyaan.Screens
 						{
 							selectedFleetGroup = _gameMain.EmpireManager.GetFleetsAtPoint((int)selectedFleetGroup.SelectedFleet.GalaxyX, (int)selectedFleetGroup.SelectedFleet.GalaxyY);
 						}
-						if (!selectedFleetGroup.IsSameAs(_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup))
-						{
-							_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup = selectedFleetGroup;
-							_fleetView.LoadFleetGroup(selectedFleetGroup);
-						}
+						_gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup = selectedFleetGroup;
+						_fleetView.LoadFleetGroup(selectedFleetGroup);
 					}
 				}
 			}

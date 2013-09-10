@@ -22,7 +22,7 @@ namespace Beyond_Beyaan
 		private float galaxyX;
 		private float galaxyY;
 
-		private Empire empire;
+		private Empire _empire;
 		private List<TravelNode> _travelNodes;
 		private List<TravelNode> tentativeNodes;
 		private Dictionary<Ship, int> ships;
@@ -49,8 +49,8 @@ namespace Beyond_Beyaan
 
 		public Empire Empire
 		{
-			get { return empire; }
-			set { empire = value; }
+			get { return _empire; }
+			set { _empire = value; }
 		}
 
 		public List<TravelNode> TravelNodes
@@ -229,7 +229,7 @@ namespace Beyond_Beyaan
 			{
 				currentDestination = _travelNodes[0].StarSystem;
 			}
-			List<TravelNode> path = galaxy.GetPath(galaxyX, galaxyY, currentDestination, destination, hasExtendedFuelTanks, empire);
+			List<TravelNode> path = galaxy.GetPath(galaxyX, galaxyY, currentDestination, destination, hasExtendedFuelTanks, _empire);
 			if (path == null)
 			{
 				tentativeNodes = null;
@@ -465,7 +465,7 @@ namespace Beyond_Beyaan
 				ships.Remove(whichShip);
 				orderedShips.Remove(whichShip);
 			}
-			adjacentSystem.Planets[0].Colonize(empire);
+			adjacentSystem.Planets[0].Colonize(_empire);
 		}
 
 		public void Save(XmlWriter writer)
@@ -502,8 +502,9 @@ namespace Beyond_Beyaan
 			writer.WriteEndElement();
 		}
 
-		public void Load(XElement fleet, FleetManager fleetManager, GameMain gameMain)
+		public void Load(XElement fleet, FleetManager fleetManager, Empire empire, GameMain gameMain)
 		{
+			_empire = empire;
 			galaxyX = float.Parse(fleet.Attribute("X").Value);
 			galaxyY = float.Parse(fleet.Attribute("Y").Value);
 			adjacentSystem = gameMain.Galaxy.GetStarWithID(int.Parse(fleet.Attribute("AdjacentSystem").Value));
@@ -528,7 +529,7 @@ namespace Beyond_Beyaan
 			}
 			foreach (var ship in fleet.Elements("Ship"))
 			{
-				ships.Add(fleetManager.GetShipWithDesignID(int.Parse(ship.Attribute("ShipDesign").Value)), int.Parse(ship.Attribute("NumberOfShips").Value));
+				AddShips(fleetManager.GetShipWithDesignID(int.Parse(ship.Attribute("ShipDesign").Value)), int.Parse(ship.Attribute("NumberOfShips").Value));
 			}
 			foreach (var transport in fleet.Elements("Transport"))
 			{

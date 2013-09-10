@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Beyond_Beyaan
 {
@@ -151,24 +148,6 @@ namespace Beyond_Beyaan
 				empire.FleetManager.AddFleet(fleet);
 			}
 			selectedFleet = fleet;
-		}
-		public bool IsSameAs(FleetGroup fleetGroup)
-		{
-			foreach (var fleet in fleets)
-			{
-				if (!fleetGroup.fleets.Contains(fleet))
-				{
-					return false;
-				}
-			}
-			foreach (var fleet in fleetGroup.fleets)
-			{
-				if (!fleets.Contains(fleet))
-				{
-					return false;
-				}
-			}
-			return true;
 		}
 		#endregion
 	}
