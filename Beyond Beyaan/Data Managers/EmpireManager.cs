@@ -222,7 +222,7 @@ namespace Beyond_Beyaan
 			foreach (Empire empire in _empires)
 			{
 				var items = empire.TechnologyManager.RollForDiscoveries(r, empire.SitRepManager);
-				if (empire.IsHumanPlayer && items.Count > 0)
+				if (empire.Type == PlayerType.HUMAN && items.Count > 0)
 				{
 					itemsNeedingSelection.Add(empire, items);
 				}
@@ -263,7 +263,7 @@ namespace Beyond_Beyaan
 			foreach (Empire empire in _empires)
 			{
 				List<StarSystem> temp = empire.CheckExploredSystems(galaxy);
-				if (empire.IsHumanPlayer && temp.Count > 0)
+				if (empire.Type == PlayerType.HUMAN && temp.Count > 0)
 				{
 					exploredSystems.Add(empire, temp);
 				}
@@ -277,7 +277,7 @@ namespace Beyond_Beyaan
 			foreach (Empire empire in _empires)
 			{
 				List<Fleet> temp = empire.CheckColonizableSystems(galaxy);
-				if (empire.IsHumanPlayer && temp.Count > 0)
+				if (empire.Type == PlayerType.HUMAN && temp.Count > 0)
 				{
 					colonizableSystems.Add(empire, temp);
 				}
