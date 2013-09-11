@@ -23,6 +23,7 @@ namespace Beyond_Beyaan.Screens
 		private BBInvisibleStretchButton[] _saveGameButtons;
 		private BBScrollBar _scrollBar;
 		private bool _showingLoadMenu;
+		private int _maxVisible;
 		#endregion
 
 		public bool Initialize(GameMain gameMain, out string reason)
@@ -77,7 +78,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			_loadBackground = new BBStretchableImage();
-			if (!_loadBackground.Initialize((gameMain.ScreenWidth / 2) - 225, (gameMain.ScreenHeight / 2) - 350, 450, 350, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			if (!_loadBackground.Initialize((gameMain.ScreenWidth / 2) - 225, (gameMain.ScreenHeight / 2) - 175, 450, 350, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -94,6 +95,18 @@ namespace Beyond_Beyaan.Screens
 			if (!_scrollBar.Initialize((gameMain.ScreenWidth / 2) + 200, (gameMain.ScreenHeight / 2) - 160, 320, 10, 10, false, false, gameMain.Random, out reason))
 			{
 				return false;
+			}
+
+			_maxVisible = _files.Count > _saveGameButtons.Length ? _saveGameButtons.Length : _files.Count;
+			if (_maxVisible < _saveGameButtons.Length)
+			{
+				//Disable the scrollbar
+				_scrollBar.SetEnabledState(false);
+			}
+			else
+			{
+				_scrollBar.SetEnabledState(true);
+				_scrollBar.SetAmountOfItems(_files.Count);
 			}
 
 			RefreshSaves();
@@ -113,11 +126,32 @@ namespace Beyond_Beyaan.Screens
 			{
 				button.Draw();
 			}
+			if (_showingLoadMenu)
+			{
+				_loadBackground.Draw();
+				foreach (var button in _saveGameButtons)
+				{
+					button.Draw();
+				}
+				_scrollBar.Draw();
+			}
 			_versionLabel.Draw();
 		}
 
 		public void Update(int x, int y, float frameDeltaTime)
 		{
+			if (_showingLoadMenu)
+			{
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					_saveGameButtons[i].MouseHover(x, y, frameDeltaTime);
+				}
+				if (_scrollBar.MouseHover(x, y, frameDeltaTime))
+				{
+					RefreshSaves();
+				}
+				return;
+			}
 			foreach (BBButton button in _buttons)
 			{
 				button.MouseHover(x, y, frameDeltaTime);
@@ -126,6 +160,15 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseDown(int x, int y, int whichButton)
 		{
+			if (_showingLoadMenu)
+			{
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					_saveGameButtons[i].MouseDown(x, y);
+				}
+				_scrollBar.MouseDown(x, y);
+				return;
+			}
 			foreach (BBButton button in _buttons)
 			{
 				button.MouseDown(x, y);
@@ -134,6 +177,27 @@ namespace Beyond_Beyaan.Screens
 
 		public void MouseUp(int x, int y, int whichButton)
 		{
+			if (_showingLoadMenu)
+			{
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					if (_saveGameButtons[i].MouseUp(x, y))
+					{
+						_gameMain.LoadGame(_files[i + _scrollBar.TopIndex].Name);
+						_gameMain.ChangeToScreen(Screen.Galaxy);
+						_showingLoadMenu = false;
+						return;
+					}
+				}
+				if (_scrollBar.MouseUp(x, y))
+				{
+					RefreshSaves();
+					return;
+				}
+				//Since the player didn't click on one of the buttons, it's considered as cancel.
+				_showingLoadMenu = false;
+				return;
+			}
 			for (int i = 0; i < _buttons.Length; i++)
 			{
 				if (_buttons[i].MouseUp(x, y))
@@ -162,6 +226,9 @@ namespace Beyond_Beyaan.Screens
 						case 1: //New Game button
 							_gameMain.ChangeToScreen(Screen.NewGame);
 							break;
+						case 2:
+							_showingLoadMenu = true;
+							break;
 						case 3:
 							_gameMain.ExitGame();
 							break;
@@ -180,7 +247,11 @@ namespace Beyond_Beyaan.Screens
 
 		private void RefreshSaves()
 		{
-			
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				var file = _files[i + _scrollBar.TopIndex];
+				_saveGameButtons[i].SetText(file.Name.Substring(0, file.Name.Length - file.Extension.Length) + " - (" + file.LastWriteTime.ToString() + ")");
+			}
 		}
 	}
 }
