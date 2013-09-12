@@ -11,7 +11,7 @@ namespace Beyond_Beyaan.Screens
 		private BBStretchableImage _researchBackground;
 		private BBStretchableImage _environmentBackground;
 		private BBStretchableImage _defenseBackground;
-		private BBStretchableImage _constructionBackground;
+		private BBStretchButton _constructionProjectButton;
 
 		private BBStretchableImage _generalPurposeBackground; //Used for unexplored planets, enemy-occupied planets, empty planets, population transferring, or ship relocating
 
@@ -140,7 +140,7 @@ namespace Beyond_Beyaan.Screens
 			_researchBackground = new BBStretchableImage();
 			_environmentBackground = new BBStretchableImage();
 			_defenseBackground = new BBStretchableImage();
-			_constructionBackground = new BBStretchableImage();
+			_constructionProjectButton = new BBStretchButton();
 			_popLabel = new BBLabel();
 			_terrainLabel = new BBLabel();
 			_productionLabel = new BBLabel();
@@ -194,7 +194,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_constructionBackground.Initialize(xPos + 10, yPos + 370, 280, 60, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			if (!_constructionProjectButton.Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 10, yPos + 370, 280, 60, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -419,7 +419,7 @@ namespace Beyond_Beyaan.Screens
 						_researchBackground.Draw();
 						_environmentBackground.Draw();
 						_defenseBackground.Draw();
-						_constructionBackground.Draw();
+						_constructionProjectButton.Draw();
 						_infrastructureIcon.Draw(xPos + 20, yPos + 140);
 						_researchIcon.Draw(xPos + 20, yPos + 200);
 						_environmentIcon.Draw(xPos + 20, yPos + 260);
@@ -473,7 +473,7 @@ namespace Beyond_Beyaan.Screens
 			_researchBackground.MoveTo(xPos + 10, yPos + 190);
 			_environmentBackground.MoveTo(xPos + 10, yPos + 250);
 			_defenseBackground.MoveTo(xPos + 10, yPos + 310);
-			_constructionBackground.MoveTo(xPos + 10, yPos + 370);
+			_constructionProjectButton.MoveTo(xPos + 10, yPos + 370);
 			_productionLabel.MoveTo(xPos + 55, yPos + 100);
 			_infrastructureLabel.MoveTo(xPos + 65, yPos + 140);
 			_infrastructureSlider.MoveTo(xPos + 65, yPos + 160);
@@ -577,6 +577,10 @@ namespace Beyond_Beyaan.Screens
 			if (!result)
 			{
 				result = _transferToButton.MouseDown(x, y);
+			}
+			if (!result)
+			{
+				result = _constructionProjectButton.MouseDown(x, y);
 			}
 			if (!result)
 			{
@@ -716,6 +720,10 @@ namespace Beyond_Beyaan.Screens
 				_generalPurposeText.SetText("Select a colonized planet to send population");
 				return true;
 			}
+			if (_constructionProjectButton.MouseUp(x, y))
+			{
+				//Display list of ships to choose from
+			}
 			return base.MouseUp(x, y);
 		}
 
@@ -784,6 +792,11 @@ namespace Beyond_Beyaan.Screens
 			_constructionLockButton.MouseHover(x, y, frameDeltaTime);
 			_relocateToButton.MouseHover(x, y, frameDeltaTime);
 			_transferToButton.MouseHover(x, y, frameDeltaTime);
+			if (_constructionLockButton.MouseHover(x, y, frameDeltaTime))
+			{
+				return true;
+			}
+			_constructionProjectButton.MouseHover(x, y, frameDeltaTime);
 			return base.MouseHover(x, y, frameDeltaTime);
 		}
 
