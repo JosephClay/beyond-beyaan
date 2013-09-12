@@ -132,7 +132,18 @@ namespace Beyond_Beyaan
 					return -1;
 				}
 				float remaining = (shipBeingBuilt.Cost - ShipConstructionAmount);
-				return remaining / (ConstructionAmount * 0.01f * ActualProduction);
+				float totalConstruction = ConstructionAmount * 0.01f * ActualProduction;
+				if (remaining > totalConstruction)
+				{
+					return remaining / totalConstruction;
+				}
+				int amount = 1;
+				totalConstruction -= remaining;
+				if (totalConstruction > 0)
+				{
+					amount += (int)(totalConstruction / shipBeingBuilt.Cost);
+				}
+				return 1.0f / amount;
 			}
 		}
 

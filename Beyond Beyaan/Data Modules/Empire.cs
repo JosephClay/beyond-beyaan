@@ -452,8 +452,9 @@ namespace Beyond_Beyaan
 				{
 					Fleet newFleet = new Fleet();
 					newFleet.Empire = this;
-					newFleet.GalaxyX = planet.System.X + planet.System.Size;
+					newFleet.GalaxyX = planet.System.X;
 					newFleet.GalaxyY = planet.System.Y;
+					newFleet.AdjacentSystem = planet.System;
 					newFleet.AddShips(result, amount);
 					FleetManager.AddFleet(newFleet);
 					SitRepManager.AddItem(new SitRepItem(Screen.Galaxy, planet.System, planet, new Point(planet.System.X, planet.System.Y), planet.Name + " has produced " + amount + " " + result.Name + " ship" + (amount > 1 ? "s." : ".")));
