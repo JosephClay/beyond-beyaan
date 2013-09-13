@@ -722,7 +722,8 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (_constructionProjectButton.MouseUp(x, y))
 			{
-				//Display list of ships to choose from
+				_currentSystem.Planets[0].ShipBeingBuilt = _currentEmpire.FleetManager.GetNextShipDesign(_currentSystem.Planets[0].ShipBeingBuilt);
+				Refresh();
 			}
 			return base.MouseUp(x, y);
 		}

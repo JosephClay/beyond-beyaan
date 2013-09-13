@@ -543,13 +543,13 @@ namespace Beyond_Beyaan
 				newNode.IsValid = true;
 				nodes.Add(newNode);
 				newNode = GenerateTravelNode(currentDestination, newDestination);
-				newNode.IsValid = true; //IsDestinationValid(newDestination, hasExtended, whichEmpire);
+				newNode.IsValid = IsDestinationValid(newDestination, hasExtended, whichEmpire);
 				nodes.Add(newNode);
 			}
 			else
 			{
 				TravelNode newNode = GenerateTravelNode(currentX, currentY, newDestination);
-				newNode.IsValid = true; // IsDestinationValid(newDestination, hasExtended, whichEmpire);
+				newNode.IsValid = IsDestinationValid(newDestination, hasExtended, whichEmpire);
 				nodes.Add(newNode);
 			}
 			
