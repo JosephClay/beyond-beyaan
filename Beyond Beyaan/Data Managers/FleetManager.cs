@@ -185,6 +185,16 @@ namespace Beyond_Beyaan
 			throw new Exception("Ship Design not found: " + designID);
 		}
 
+		public Ship GetNextShipDesign(Ship previousDesign) //For iterating through ship design when clicking on construction button in planet UI
+		{
+			int iter = CurrentDesigns.IndexOf(previousDesign) + 1; //Even if not found (which results in -1), it will be the next ship
+			if (iter >= CurrentDesigns.Count)
+			{
+				iter = 0; //Start over from beginning
+			}
+			return CurrentDesigns[iter];
+		}
+
 		public bool MoveFleets(float frameDeltaTime)
 		{
 			bool stillHaveMovement = false;
