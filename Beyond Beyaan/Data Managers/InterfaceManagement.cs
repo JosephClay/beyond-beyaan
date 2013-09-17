@@ -13,13 +13,15 @@ namespace Beyond_Beyaan
 	{
 		#region Member Variables
 		private BBToolTip _toolTip;
-		private BBSprite backgroundSprite;
-		private BBSprite foregroundSprite;
+		private BBSprite _backgroundSprite;
+		private BBSprite _foregroundSprite;
 		private int _xPos;
 		private int _yPos;
 		private int _width;
 		private int _height;
 		private BBLabel _label;
+		private int _xTextOffset;
+		private int _yTextOffset;
 		private ButtonTextAlignment _alignment;
 		#endregion
 
@@ -34,10 +36,10 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public bool Initialize(string backgroundSprite, string foregroundSprite, string buttonText, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, Random r, out string reason)
+		public bool Initialize(string backgroundSprite, string foregroundSprite, string buttonText, string font, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, Random r, out string reason, int xTextOffset = 0, int yTextOffset = 0)
 		{
-			this.backgroundSprite = SpriteManager.GetSprite(backgroundSprite, r);
-			this.foregroundSprite = SpriteManager.GetSprite(foregroundSprite, r);
+			_backgroundSprite = SpriteManager.GetSprite(backgroundSprite, r);
+			_foregroundSprite = SpriteManager.GetSprite(foregroundSprite, r);
 			if (backgroundSprite == null || foregroundSprite == null)
 			{
 				reason = string.Format("One of those sprites does not exist in sprites.xml: \"{0}\" or \"{1}\"", backgroundSprite, foregroundSprite);
@@ -47,17 +49,34 @@ namespace Beyond_Beyaan
 			_yPos = yPos;
 			_width = width;
 			_height = height;
+			_xTextOffset = xTextOffset;
+			_yTextOffset = yTextOffset;
 			_alignment = alignment;
 
 			_label = new BBLabel();
-			if (!_label.Initialize(0, 0, buttonText, Color.White, out reason))
+			if (string.IsNullOrEmpty(font))
 			{
-				return false;
+				if (!_label.Initialize(0, 0, buttonText, Color.White, out reason))
+				{
+					return false;
+				}
 			}
+			else
+			{
+				if (!_label.Initialize(0, 0, buttonText, Color.White, font, out reason))
+				{
+					return false;
+				}
+			}
+			SetText(buttonText);
 
 			Reset();
 			reason = null;
 			return true;
+		}
+		public bool Initialize(string backgroundSprite, string foregroundSprite, string buttonText, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, Random r, out string reason)
+		{
+			return Initialize(backgroundSprite, foregroundSprite, buttonText, string.Empty, alignment, xPos, yPos, width, height, r, out reason);
 		}
 		#endregion
 
@@ -71,21 +90,25 @@ namespace Beyond_Beyaan
 			Selected = false;
 		}
 
-		public void SetButtonText(string text)
+		public void SetText(string text)
 		{
-			_label.SetText(text);
+			_label.SetTextWithDefaultFont(text);
 			switch (_alignment)
 			{
 				case ButtonTextAlignment.LEFT:
-					_label.MoveTo(_xPos + 5, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					_label.MoveTo(_xPos + 5 + _xTextOffset, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos) + _yTextOffset);
 					break;
 				case ButtonTextAlignment.CENTER:
-					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos) + _xTextOffset, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos) + _yTextOffset);
 					break;
 				case ButtonTextAlignment.RIGHT:
-					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()) + _xTextOffset, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos) + _yTextOffset);
 					break;
 			}
+		}
+		public void SetTextAttributes(Color color, Color outline, bool bold = false, bool italics = false, bool antiAlias = false)
+		{
+			_label.SetAttributes(color, outline, antiAlias, bold, italics);
 		}
 		public bool SetToolTip(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
 		{
@@ -104,13 +127,13 @@ namespace Beyond_Beyaan
 			switch (_alignment)
 			{
 				case ButtonTextAlignment.LEFT:
-					_label.MoveTo(_xPos + 5, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					_label.MoveTo(_xPos + 5 + _xTextOffset, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos) + _yTextOffset);
 					break;
 				case ButtonTextAlignment.CENTER:
-					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					_label.MoveTo((int)((_width / 2.0f) - (_label.GetWidth() / 2) + _xPos) + _xTextOffset, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos) + _yTextOffset);
 					break;
 				case ButtonTextAlignment.RIGHT:
-					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()), (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos));
+					_label.MoveTo((int)(_xPos + _width - 5 - _label.GetWidth()) + _xTextOffset, (int)((_height / 2.0f) - (_label.GetHeight() / 2) + _yPos) + _yTextOffset);
 					break;
 			}
 		}
@@ -212,23 +235,23 @@ namespace Beyond_Beyaan
 			{
 				if (pressed || Selected)
 				{
-					foregroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height);
+					_foregroundSprite.Draw(_xPos, _yPos, _foregroundSprite.Width / _width, _foregroundSprite.Height / _height);
 				}
 				else if (!Selected)
 				{
-					backgroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height);
+					_backgroundSprite.Draw(_xPos, _yPos, _foregroundSprite.Width / _width, _foregroundSprite.Height / _height);
 					if (pulse > 0)
 					{
-						foregroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height, (byte)(255 * pulse));
+						_foregroundSprite.Draw(_xPos, _yPos, _foregroundSprite.Width / _width, _foregroundSprite.Height / _height, (byte)(255 * pulse));
 					}
 				}
 			}
 			else
 			{
-				backgroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height, System.Drawing.Color.Tan);
+				_backgroundSprite.Draw(_xPos, _yPos, _foregroundSprite.Width / _width, _foregroundSprite.Height / _height, System.Drawing.Color.Tan);
 				if (Selected)
 				{
-					foregroundSprite.Draw(_xPos, _yPos, foregroundSprite.Width / _width, foregroundSprite.Height / _height, System.Drawing.Color.Tan);
+					_foregroundSprite.Draw(_xPos, _yPos, _foregroundSprite.Width / _width, _foregroundSprite.Height / _height, System.Drawing.Color.Tan);
 				}
 			}
 			if (_label.Text.Length > 0)
@@ -316,7 +339,7 @@ namespace Beyond_Beyaan
 
 		public void SetButtonText(string text)
 		{
-			_label.SetText(text);
+			_label.SetTextWithDefaultFont(text);
 			switch (_alignment)
 			{
 				case ButtonTextAlignment.LEFT:
@@ -532,7 +555,7 @@ namespace Beyond_Beyaan
 
 		public void SetText(string text)
 		{
-			_label.SetText(text);
+			_label.SetTextWithDefaultFont(text);
 			switch (_alignment)
 			{
 				case ButtonTextAlignment.LEFT:
@@ -559,9 +582,9 @@ namespace Beyond_Beyaan
 		{
 			_toolTip.SetText(text);
 		}
-		public void SetTextColor(Color color)
+		public void SetTextAttributes(Color color, Color outline, bool bold = false, bool italics = false, bool antiAlias = false)
 		{
-			_label.SetColor(color);
+			_label.SetAttributes(color, outline, antiAlias, bold, italics);
 		}
 
 		public void MoveTo(int x, int y)
@@ -867,12 +890,10 @@ namespace Beyond_Beyaan
 			if (_items.Count <= 0)
 			{
 				_buttons[0].Enabled = false;
-				_buttons[0].SetText(string.Empty);
 			}
 			else
 			{
 				_buttons[0].Enabled = Enabled;
-				_buttons[0].SetText(_items[_selectedIndex]);
 			}
 			if (!Dropped)
 			{
@@ -1380,6 +1401,328 @@ namespace Beyond_Beyaan
 		#endregion
 	}
 
+	public class BBScrollBarNoArrows
+	{
+		// TODO: Fix scrollbar so if I say 100 items, I don't need to specify 101 for _amountOfItems
+		#region Member Variables
+		//Variables that are defined in constructor
+		private int _xPos;
+		private int _yPos;
+		private BBUniStretchButton _scroll;
+		private BBSprite _scrollBar;
+		private BBSprite _highlightedScrollBar;
+		private int _amountOfItems;
+		private int _amountVisible;
+		private int _scrollBarLength;
+
+		private int _topIndex; //Which topmost item is visible
+		private int _scrollPos;
+		private bool _scrollSelected; //is the scroll button selected? if so, drag it
+		private int _initialMousePos;
+		private int _initialScrollPos;
+		private bool _isHorizontal;
+		private bool _isSlider; //Is the scroll bar's behavior like a scroll bar or a slider?
+		private bool _isEnabled;
+
+		//Variables that are calculated from the values passed into the constructor
+		private int _scrollButtonLength;
+
+		#endregion
+
+		#region Properties
+		public int TopIndex
+		{
+			get { return _topIndex; }
+			set
+			{
+				_topIndex = value;
+				SetScrollButtonPosition();
+			}
+		}
+		#endregion
+
+		#region Constructors
+		public bool Initialize(int xPos, int yPos, int length, int amountOfVisibleItems, int amountOfItems, bool isHorizontal, bool isSlider, Random r, out string reason)
+		{
+			_xPos = xPos;
+			_yPos = yPos;
+			_scroll = new BBUniStretchButton();
+
+			_amountOfItems = amountOfItems;
+			_amountVisible = amountOfVisibleItems;
+			_isSlider = isSlider;
+			_isHorizontal = isHorizontal;
+
+			_scrollBarLength = length;
+
+			if (!isSlider)
+			{
+				_scrollButtonLength = (int)(((float)amountOfVisibleItems / amountOfItems) * _scrollBarLength);
+				if (!isHorizontal)
+				{
+					if (!_scroll.Initialize(new List<string> { "TinyScrollVerticalBGButton1", "TinyScrollVerticalBGButton2", "TinyScrollVerticalBGButton3" },
+										   new List<string> { "TinyScrollVerticalFGButton1", "TinyScrollVerticalFGButton2", "TinyScrollVerticalFGButton3" },
+										   isHorizontal, "", ButtonTextAlignment.LEFT, xPos, yPos, 5, _scrollButtonLength, r, out reason))
+					{
+						return false;
+					}
+					_scrollBar = SpriteManager.GetSprite("TinyScrollVerticalBar", r);
+					if (_scrollBar == null)
+					{
+						reason = "\"TinyScrollVerticalBar\" sprite does not exist";
+						return false;
+					}
+				}
+				else
+				{
+					if (!_scroll.Initialize(new List<string> { "TinyScrollHorizontalBGButton1", "TinyScrollHorizontalBGButton2", "TinyScrollHorizontalBGButton3" },
+										   new List<string> { "TinyScrollHorizontalFGButton1", "TinyScrollHorizontalFGButton2", "TinyScrollHorizontalFGButton3" },
+										   isHorizontal, "", ButtonTextAlignment.LEFT, xPos, yPos, _scrollButtonLength, 5, r, out reason))
+					{
+						return false;
+					}
+					_scrollBar = SpriteManager.GetSprite("TinyScrollHorizontalBar", r);
+					if (_scrollBar == null)
+					{
+						reason = "\"TinyScrollHorizontalBar\" sprite does not exist";
+						return false;
+					}
+				}
+			}
+			else
+			{
+				_scrollButtonLength = 16;
+				if (!_scroll.Initialize(new List<string> { "TinySliderHorizontalBGButton1", "TinySliderHorizontalBGButton2", "TinySliderHorizontalBGButton3" },
+									   new List<string> { "TinySliderHorizontalFGButton1", "TinySliderHorizontalFGButton2", "TinySliderHorizontalFGButton3" },
+									   true, "", ButtonTextAlignment.LEFT, xPos, yPos, _scrollButtonLength, 16, r, out reason))
+				{
+					return false;
+				}
+				_scrollBar = SpriteManager.GetSprite("TinySliderBGBar", r);
+				if (_scrollBar == null)
+				{
+					reason = "\"TinySliderBGBar\" sprite does not exist";
+					return false;
+				}
+				_highlightedScrollBar = SpriteManager.GetSprite("TinySliderFGBar", r);
+				if (_highlightedScrollBar == null)
+				{
+					reason = "\"SliderFGBar\" sprite does not exist";
+					return false;
+				}
+			}
+
+			_topIndex = 0;
+			_scrollPos = 0; //relative to the scrollbar itself
+			_scrollSelected = false;
+			_isEnabled = true;
+			reason = null;
+			return true;
+		}
+		#endregion
+
+		#region Private Functions
+		private void SetScrollButtonPosition()
+		{
+			_scrollPos = (int)(((float)_topIndex / (_amountOfItems - _amountVisible)) * (_scrollBarLength - _scrollButtonLength));
+			if (_scrollPos < 0)
+			{
+				_scrollPos = 0;
+			}
+			else if (_scrollPos > (_scrollBarLength - _scrollButtonLength))
+			{
+				_scrollPos = _scrollBarLength - _scrollButtonLength;
+			}
+			if (_isHorizontal)
+			{
+				_scroll.MoveTo(_xPos + _scrollPos, _yPos);
+			}
+			else
+			{
+				_scroll.MoveTo(_xPos, _yPos + _scrollPos);
+			}
+		}
+		#endregion
+
+		#region Public Functions
+		public void Draw()
+		{
+			Color enabledColor = _isEnabled ? Color.White : Color.Tan;
+			if (!_isSlider)
+			{
+				if (!_isHorizontal)
+				{
+					_scrollBar.Draw(_xPos, _yPos, 1, _scrollBarLength / _scrollBar.Height, enabledColor);
+				}
+				else
+				{
+					_scrollBar.Draw(_xPos, _yPos, _scrollBarLength / _scrollBar.Width, 1, enabledColor);
+				}
+			}
+			else
+			{
+				_scrollBar.Draw(_xPos, _yPos, _scrollBarLength / _scrollBar.Width, 1, enabledColor);
+				_highlightedScrollBar.Draw(_xPos, _yPos, _scrollPos / _highlightedScrollBar.Width, 1, enabledColor);
+			}
+			_scroll.Draw();
+		}
+
+		public bool MouseDown(int x, int y)
+		{
+			if (_isEnabled)
+			{
+				if (!_isSlider && _scroll.MouseDown(x, y))
+				{
+					_scrollSelected = true;
+					if (_isHorizontal)
+					{
+						_initialMousePos = x;
+					}
+					else
+					{
+						_initialMousePos = y;
+					}
+					_initialScrollPos = _scrollPos;
+					return true;
+				}
+				//at this point, only the scroll bar itself is left
+				if ((_isHorizontal && (x >= _xPos && x < _xPos + _scrollBarLength && _yPos <= y && y < _yPos + 5))
+					|| (!_isHorizontal && (x >= _xPos && x < _xPos + 5 && _yPos <= y && y < _yPos + _scrollBarLength)))
+				{
+					if (!_isSlider)
+					{
+						//clicked on the bar itself, jump up one page
+						if ((!_isHorizontal && y < _yPos + _scrollPos) || (_isHorizontal && x < _xPos + _scrollPos))
+						{
+							_topIndex -= _amountVisible;
+							if (_topIndex < 0)
+							{
+								_topIndex = 0;
+							}
+						}
+						else
+						{
+							//since up is checked already, jump down one page
+							_topIndex += _amountVisible;
+							if (_topIndex > (_amountOfItems - _amountVisible))
+							{
+								_topIndex = (_amountOfItems - _amountVisible);
+							}
+						}
+						SetScrollButtonPosition();
+					}
+					else
+					{
+						_scrollSelected = true;
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool MouseUp(int x, int y)
+		{
+			if (_isEnabled)
+			{
+				if (_scrollSelected)
+				{
+					_scrollSelected = false;
+					if (!_isSlider)
+					{
+						SetScrollButtonPosition();
+						_scroll.MouseUp(x, y);
+					}
+					return true;
+				}
+				if (x >= _xPos && x < _xPos + (_isHorizontal ? _scrollBarLength : 5) && _yPos <= y && y < _yPos + (_isHorizontal ? 5 : _scrollBarLength))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			if (_isEnabled)
+			{
+				_scroll.MouseHover(x, y, frameDeltaTime);
+				if (_scrollSelected)
+				{
+					int newPosition;
+					if (_isHorizontal)
+					{
+						newPosition = _initialScrollPos + (x - (_isSlider ? (_xPos + (_scrollButtonLength / 2)) : _initialMousePos));
+					}
+					else
+					{
+						newPosition = _initialScrollPos + (y - (_isSlider ? (_yPos + (_scrollButtonLength / 2)) : _initialMousePos));
+					}
+					if (newPosition < 0)
+					{
+						newPosition = 0;
+					}
+					else if (newPosition > (_scrollBarLength - _scrollButtonLength))
+					{
+						newPosition = _scrollBarLength - _scrollButtonLength;
+					}
+					float itemsPerIncrement = ((_amountOfItems - _amountVisible) / (float)(_scrollBarLength - _scrollButtonLength));
+					int oldIndex = _topIndex;
+					_topIndex = (int)((itemsPerIncrement * newPosition) + 0.5f);
+					SetScrollButtonPosition();
+					return oldIndex != _topIndex;
+				}
+				return false;
+			}
+			return false;
+		}
+
+		public void MoveTo(int x, int y)
+		{
+			if (_isHorizontal)
+			{
+				_scroll.MoveTo(x + _scrollPos, y);
+			}
+			else
+			{
+				_scroll.MoveTo(x, y + _scrollPos);
+			}
+			_xPos = x;
+			_yPos = y;
+		}
+
+		public void SetAmountOfItems(int amount)
+		{
+			_topIndex = 0;
+			_amountOfItems = amount;
+			if (!_isSlider)
+			{
+				_scrollButtonLength = (int)(((float)_amountVisible / _amountOfItems) * _scrollBarLength);
+				if (_scrollButtonLength < 16)
+				{
+					_scrollButtonLength = 16;
+				}
+				if (_isHorizontal)
+				{
+					_scroll.ResizeButton(_scrollButtonLength, 16);
+				}
+				else
+				{
+					_scroll.ResizeButton(16, _scrollButtonLength);
+				}
+			}
+			SetScrollButtonPosition();
+		}
+
+		public void SetEnabledState(bool enabled)
+		{
+			_scroll.Active = enabled;
+			_isEnabled = enabled;
+		}
+		#endregion
+	}
+
 	public class BBNumericUpDown
 	{
 		#region Member Variables
@@ -1528,7 +1871,7 @@ namespace Beyond_Beyaan
 			{
 				Value = _maximum;
 			}
-			_valueLabel.SetText(Value.ToString());
+			_valueLabel.SetTextWithDefaultFont(Value.ToString());
 		}
 		#endregion
 	}
@@ -2223,11 +2566,16 @@ namespace Beyond_Beyaan
 	public class BBLabel
 	{
 		#region Member Variables
-		private int x;
-		private int y;
-		private bool isRightAligned;
-		private TextSprite textSprite;
-		private Color color;
+		private int _x;
+		private int _y;
+		private bool _isRightAligned;
+		private TextSprite _textSprite;
+		private Color _color;
+		private Color _outlineColor;
+		private bool _bold;
+		private bool _italics;
+		private bool _antiAlias;
+		private GorgonLibrary.Graphics.Font _font;
 		#endregion
 
 		#region Properties
@@ -2237,10 +2585,10 @@ namespace Beyond_Beyaan
 		#region Constructor
 		public bool Initialize(int x, int y, string label, Color color, out string reason)
 		{
-			this.x = x;
-			this.y = y;
-			this.color = color;
-			if (!SetText(label))
+			_x = x;
+			_y = y;
+			_color = color;
+			if (!SetTextWithDefaultFont(label))
 			{
 				reason = "Default font not found";
 				return false;
@@ -2250,10 +2598,10 @@ namespace Beyond_Beyaan
 		}
 		public bool Initialize(int x, int y, string label, Color color, string fontName, out string reason)
 		{
-			this.x = x;
-			this.y = y;
-			this.color = color;
-			if (!SetText(label, fontName))
+			_x = x;
+			_y = y;
+			_color = color;
+			if (!SetTextWithDefaultFont(label, fontName))
 			{
 				reason = fontName + " font not found";
 				return false;
@@ -2264,68 +2612,88 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Functions
-		public bool SetText(string text)
+		public bool SetTextWithDefaultFont(string text)
 		{
-			var font = FontManager.GetDefaultFont();
-			if (font == null)
+			if (_font == null)
+			{
+				_font = FontManager.GetDefaultFont();
+			}
+			if (_font == null)
 			{
 				return false;
 			}
-			textSprite = new TextSprite("Arial", text, font);
-			SetAlignment(isRightAligned);
-			Text = text;
+			SetText(text);
 			return true;
 		}
-		public bool SetText(string text, string fontName)
+		public bool SetTextWithDefaultFont(string text, string fontName)
 		{
-			var font = FontManager.GetFont(fontName);
-			if (font == null)
+			//fontName overrides whatever existing font it was using
+			_font = FontManager.GetFont(fontName);
+			if (_font == null)
 			{
 				return false;
 			}
-			textSprite = new TextSprite("Arial", text, font);
-			SetAlignment(isRightAligned);
-			Text = text;
+			SetText(text);
 			return true;
+		}
+		private void SetText(string text)
+		{
+			_font.Bold = _bold;
+			_font.Italic = _italics;
+			_font.AntiAlias = _antiAlias;
+			_textSprite = new TextSprite("Arial", text, _font, _color);
+			if (!_outlineColor.IsEmpty)
+			{
+				_textSprite.ShadowColor = _outlineColor;
+				_textSprite.ShadowDirection = FontShadowDirection.LowerRight;
+				_textSprite.Shadowed = true;
+			}
+			SetAlignment(_isRightAligned);
+			Text = text;
 		}
 		public void SetAlignment(bool isRightAligned)
 		{
-			this.isRightAligned = isRightAligned;
-			if (textSprite != null)
+			_isRightAligned = isRightAligned;
+			if (_textSprite != null)
 			{
 				if (isRightAligned)
 				{
-					textSprite.SetPosition(x - textSprite.Width, y);
+					_textSprite.SetPosition(_x - _textSprite.Width, _y);
 				}
 				else
 				{
-					textSprite.SetPosition(x, y);
+					_textSprite.SetPosition(_x, _y);
 				}
 			}
 		}
 
 		public float GetWidth()
 		{
-			return textSprite.Width > 0 ? textSprite.Width : 1;
+			return _textSprite.Width > 0 ? _textSprite.Width : 1;
 		}
 		public float GetHeight()
 		{
-			return textSprite.Height > 0 ? textSprite.Height : 1;
+			return _textSprite.Height > 0 ? _textSprite.Height : 1;
 		}
 		public void MoveTo(int x, int y)
 		{
-			this.x = x;
-			this.y = y;
-			textSprite.SetPosition(x, y);
+			this._x = x;
+			this._y = y;
+			_textSprite.SetPosition(x - (_isRightAligned ? _textSprite.Width : 0), y);
 		}
-		public void SetColor(Color color)
+		public void SetAttributes(Color color, Color outline, bool antiAlias, bool bold, bool italics)
 		{
-			this.color = color;
+			_color = color;
+			_outlineColor = outline;
+			_antiAlias = antiAlias;
+			_bold = bold;
+			_italics = italics;
+			//Update the font sprite
+			SetText(Text);
 		}
 		public void Draw()
 		{
-			textSprite.Color = color;
-			textSprite.Draw();
+			_textSprite.Draw();
 		}
 		#endregion
 	}
@@ -2422,7 +2790,7 @@ namespace Beyond_Beyaan
 			if (!isSelected)
 			{
 				blink = false;
-				text.SetText(Text);
+				text.SetTextWithDefaultFont(Text);
 			}
 			return isSelected;
 		}
@@ -2435,7 +2803,7 @@ namespace Beyond_Beyaan
 				if (timer >= 0.25f)
 				{
 					blink = !blink;
-					text.SetText(Text + (blink ? "|" : ""));
+					text.SetTextWithDefaultFont(Text + (blink ? "|" : ""));
 					timer -= 0.25f;
 				}
 			}
@@ -2458,7 +2826,7 @@ namespace Beyond_Beyaan
 		public void SetText(string text)
 		{
 			Text = text;
-			this.text.SetText(text);
+			this.text.SetTextWithDefaultFont(text);
 		}
 
 		public void SetReadOnly(bool readOnly)
@@ -2466,9 +2834,9 @@ namespace Beyond_Beyaan
 			isReadOnly = readOnly;
 		}
 
-		public void SetColor(Color color)
+		public void SetTextAttributes(Color color, Color outline, bool bold = false, bool italics = false, bool antiAlias = false)
 		{
-			text.SetColor(color);
+			text.SetAttributes(color, outline, antiAlias, bold, italics);
 		}
 
 		public void Select()
@@ -2487,195 +2855,33 @@ namespace Beyond_Beyaan
 		{
 			if (isSelected)
 			{
-				string prevText = Text;
-				switch (e.Key)
+				if (e.Key == KeyboardKeys.Enter || e.Key == KeyboardKeys.Return)
 				{
-					case KeyboardKeys.A:
-						Text = Text + (e.Shift ? "A" : "a");
-						break;
-					case KeyboardKeys.B:
-						Text = Text + (e.Shift ? "B" : "b");
-						break;
-					case KeyboardKeys.C:
-						Text = Text + (e.Shift ? "C" : "c");
-						break;
-					case KeyboardKeys.D:
-						Text = Text + (e.Shift ? "D" : "d");
-						break;
-					case KeyboardKeys.E:
-						Text = Text + (e.Shift ? "E" : "e");
-						break;
-					case KeyboardKeys.F:
-						Text = Text + (e.Shift ? "F" : "f");
-						break;
-					case KeyboardKeys.G:
-						Text = Text + (e.Shift ? "G" : "g");
-						break;
-					case KeyboardKeys.H:
-						Text = Text + (e.Shift ? "H" : "h");
-						break;
-					case KeyboardKeys.I:
-						Text = Text + (e.Shift ? "I" : "i");
-						break;
-					case KeyboardKeys.J:
-						Text = Text + (e.Shift ? "J" : "j");
-						break;
-					case KeyboardKeys.K:
-						Text = Text + (e.Shift ? "K" : "k");
-						break;
-					case KeyboardKeys.L:
-						Text = Text + (e.Shift ? "L" : "l");
-						break;
-					case KeyboardKeys.M:
-						Text = Text + (e.Shift ? "M" : "m");
-						break;
-					case KeyboardKeys.N:
-						Text = Text + (e.Shift ? "N" : "n");
-						break;
-					case KeyboardKeys.O:
-						Text = Text + (e.Shift ? "O" : "o");
-						break;
-					case KeyboardKeys.P:
-						Text = Text + (e.Shift ? "P" : "p");
-						break;
-					case KeyboardKeys.Q:
-						Text = Text + (e.Shift ? "Q" : "q");
-						break;
-					case KeyboardKeys.R:
-						Text = Text + (e.Shift ? "R" : "r");
-						break;
-					case KeyboardKeys.S:
-						Text = Text + (e.Shift ? "S" : "s");
-						break;
-					case KeyboardKeys.T:
-						Text = Text + (e.Shift ? "T" : "t");
-						break;
-					case KeyboardKeys.U:
-						Text = Text + (e.Shift ? "U" : "u");
-						break;
-					case KeyboardKeys.V:
-						Text = Text + (e.Shift ? "V" : "v");
-						break;
-					case KeyboardKeys.W:
-						Text = Text + (e.Shift ? "W" : "w");
-						break;
-					case KeyboardKeys.X:
-						Text = Text + (e.Shift ? "X" : "x");
-						break;
-					case KeyboardKeys.Y:
-						Text = Text + (e.Shift ? "Y" : "y");
-						break;
-					case KeyboardKeys.Z:
-						Text = Text + (e.Shift ? "Z" : "z");
-						break;
-					case KeyboardKeys.OemQuotes:
-						Text = Text + (e.Shift ? "\"" : "'");
-						break;
-					case KeyboardKeys.OemSemicolon:
-						Text = Text + (e.Shift ? ":" : ";");
-						break;
-					case KeyboardKeys.Oemtilde:
-						Text = Text + (e.Shift ? "~" : "`");
-						break;
-					case KeyboardKeys.OemPeriod:
-						Text = Text + (e.Shift ? ">" : ".");
-						break;
-					case KeyboardKeys.Oemcomma:
-						Text = Text + (e.Shift ? "<" : ",");
-						break;
-					case KeyboardKeys.Space:
-						Text = Text + " ";
-						break;
-					case KeyboardKeys.D0:
-						Text = Text + (e.Shift ? ")" : "0");
-						break;
-					case KeyboardKeys.D1:
-						Text = Text + (e.Shift ? "!" : "1");
-						break;
-					case KeyboardKeys.D2:
-						Text = Text + (e.Shift ? "@" : "2");
-						break;
-					case KeyboardKeys.D3:
-						Text = Text + (e.Shift ? "#" : "3");
-						break;
-					case KeyboardKeys.D4:
-						Text = Text + (e.Shift ? "$" : "4");
-						break;
-					case KeyboardKeys.D5:
-						Text = Text + (e.Shift ? "%" : "5");
-						break;
-					case KeyboardKeys.D6:
-						Text = Text + (e.Shift ? "^" : "6");
-						break;
-					case KeyboardKeys.D7:
-						Text = Text + (e.Shift ? "&" : "7");
-						break;
-					case KeyboardKeys.D8:
-						Text = Text + (e.Shift ? "*" : "8");
-						break;
-					case KeyboardKeys.D9:
-						Text = Text + (e.Shift ? "(" : "9");
-						break;
-					case KeyboardKeys.NumPad0:
-						Text = Text + (e.Shift ? "!" : "0");
-						break;
-					case KeyboardKeys.NumPad1:
-						Text = Text + "1";
-						break;
-					case KeyboardKeys.NumPad2:
-						Text = Text + "2";
-						break;
-					case KeyboardKeys.NumPad3:
-						Text = Text + "3";
-						break;
-					case KeyboardKeys.NumPad4:
-						Text = Text + "4";
-						break;
-					case KeyboardKeys.NumPad5:
-						Text = Text + "5";
-						break;
-					case KeyboardKeys.NumPad6:
-						Text = Text + "6";
-						break;
-					case KeyboardKeys.NumPad7:
-						Text = Text + "7";
-						break;
-					case KeyboardKeys.NumPad8:
-						Text = Text + "8";
-						break;
-					case KeyboardKeys.NumPad9:
-						Text = Text + "9";
-						break;
-					case KeyboardKeys.Subtract:
-						Text = Text + "-";
-						break;
-					case KeyboardKeys.Multiply:
-						Text = Text + "*";
-						break;
-					case KeyboardKeys.Divide:
-						Text = Text + "/";
-						break;
-					case KeyboardKeys.Add:
-						Text = Text + "+";
-						break;
-					case KeyboardKeys.OemMinus:
-						Text = Text + (e.Shift ? "_" : "-");
-						break;
-					case KeyboardKeys.Enter:
-						isSelected = false;
-						break;
-					case KeyboardKeys.Back:
-						if (Text.Length > 0)
-						{
-							Text = Text.Substring(0, Text.Length - 1);
-						}
-						break;
+					isSelected = false;
 				}
-				text.SetText(Text);
-				if (text.GetWidth() > width - 8)
+				else if (e.Key == KeyboardKeys.Back)
 				{
-					text.SetText(prevText);
-					Text = prevText;
+					if (Text.Length > 0)
+					{
+						Text = Text.Substring(0, Text.Length - 1);
+					}
+				}
+				else if (char.IsLetterOrDigit(e.CharacterMapping.Character) || 
+					char.IsLetterOrDigit(e.CharacterMapping.Shifted) || 
+					char.IsSymbol(e.CharacterMapping.Character) || 
+					char.IsSymbol(e.CharacterMapping.Shifted) || 
+					char.IsPunctuation(e.CharacterMapping.Character) || 
+					char.IsPunctuation(e.CharacterMapping.Shifted) || 
+					char.IsWhiteSpace(e.CharacterMapping.Character))
+				{
+					string prevText = Text;
+					Text = Text + (e.Shift ? e.CharacterMapping.Shifted : e.CharacterMapping.Character);
+					text.SetTextWithDefaultFont(Text);
+					if (text.GetWidth() > width - 8)
+					{
+						text.SetTextWithDefaultFont(prevText);
+						Text = prevText;
+					}
 				}
 				return true;
 			}
@@ -2690,10 +2896,11 @@ namespace Beyond_Beyaan
 		#region Member Variables
 		private Viewport _wrapView;
 		private TextSprite _textSprite;
-		private BBScrollBar _textScrollBar;
+		private BBScrollBarNoArrows _textScrollBar;
 		private RenderImage _target;
 		private bool _scrollbarVisible;
-		private bool _usingScrollBar;
+		private bool _wrapText;
+		private bool _allowScrollbar;
 		private int _x;
 		private int _y;
 		#endregion
@@ -2701,25 +2908,39 @@ namespace Beyond_Beyaan
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
-		public bool Initialize(int xPos, int yPos, int width, int height, bool useScrollBar, string name, Random r, out string reason)
+		public bool Initialize(int xPos, int yPos, int width, int height, bool wrapText, bool allowScrollbar, string name, Random r, out string reason)
 		{
 			//If using scrollbar, then shrink the actual width by 16 to allow for scrollbar, even if it's not visible
 			_x = xPos;
 			_y = yPos;
 			Width = width;
 			Height = height == 0 ? 1 : height;
-			_usingScrollBar = useScrollBar;
+			_wrapText = wrapText;
 			_scrollbarVisible = false;
-			if (_usingScrollBar)
+			_textScrollBar = new BBScrollBarNoArrows();
+			_allowScrollbar = allowScrollbar;
+			if (_allowScrollbar)
 			{
-				_textScrollBar = new BBScrollBar();
-				if (!_textScrollBar.Initialize(xPos + Width - 16, yPos, Height, Height, 1, false, false, r, out reason))
+				if (_wrapText)
 				{
-					return false;
-				}
-				_wrapView = new Viewport(0, 0, Width - 16, Height);
+					if (!_textScrollBar.Initialize(xPos + Width - 5, yPos, Height, Height, 1, false, false, r, out reason))
+					{
+						return false;
+					}
+					_wrapView = new Viewport(0, 0, Width - 5, Height);
 
-				_target = new RenderImage(name + "render", Width - 16, Height, ImageBufferFormats.BufferRGB888A8);
+					_target = new RenderImage(name + "render", Width - 5, Height, ImageBufferFormats.BufferRGB888A8);
+				}
+				else
+				{
+					if (!_textScrollBar.Initialize(xPos, yPos + Height - 5, Width, Width, 1, true, false, r, out reason))
+					{
+						return false;
+					}
+					_wrapView = new Viewport(0, 0, Width, Height - 5);
+
+					_target = new RenderImage(name + "render", Width, Height - 5, ImageBufferFormats.BufferRGB888A8);
+				}
 			}
 			else
 			{
@@ -2728,8 +2949,11 @@ namespace Beyond_Beyaan
 				_target = new RenderImage(name + "render", Width, Height, ImageBufferFormats.BufferRGB888A8);
 			}
 			_textSprite = new TextSprite(name, string.Empty, FontManager.GetDefaultFont());
-			_textSprite.WordWrap = true;
-			_textSprite.Bounds = _wrapView;
+			_textSprite.WordWrap = _wrapText;
+			if (_allowScrollbar || _wrapText)
+			{
+				_textSprite.Bounds = _wrapView;
+			}
 			_target.BlendingMode = BlendingModes.Modulated;
 			reason = null;
 			return true;
@@ -2742,37 +2966,55 @@ namespace Beyond_Beyaan
 				text = "Missing Text!";
 			}
 			_textSprite.Text = text;
-			if (_usingScrollBar)
+			if (_allowScrollbar)
 			{
 				_textScrollBar.TopIndex = 0;
-				if (_textSprite.Height > Height)
+				if (_wrapText)
 				{
-					_scrollbarVisible = true;
-					_textScrollBar.SetAmountOfItems((int)_textSprite.Height);
+					if (_textSprite.Height > Height)
+					{
+						_scrollbarVisible = true;
+						_textScrollBar.SetAmountOfItems((int)_textSprite.Height);
+					}
+					else
+					{
+						_scrollbarVisible = false;
+					}
 				}
 				else
 				{
-					_scrollbarVisible = false;
+					if (_textSprite.Width > Width)
+					{
+						_scrollbarVisible = true;
+						_textScrollBar.SetAmountOfItems((int)_textSprite.Width);
+						_textScrollBar.MoveTo(_x, (int)(_y + _textSprite.Height));
+					}
+					else
+					{
+						_scrollbarVisible = false;
+					}
 				}
 			}
 			else
 			{
-				//Expand the height to the actual text sprite's height
-				Height = (int)_textSprite.Height;
-				_target.Height = Height;
+				//Expand the size to the actual text sprite's size
+				if (_wrapText)
+				{
+					Height = (int)_textSprite.Height;
+					_target.Height = Height;
+				}
+				else
+				{
+					Width = (int)_textSprite.Width;
+					_target.Width = Width;
+				}
 			}
-			//Draw it once onto _target for performance reasons
-			_target.Clear(Color.FromArgb(0, Color.Black));
-			RenderTarget old = GorgonLibrary.Gorgon.CurrentRenderTarget;
-			GorgonLibrary.Gorgon.CurrentRenderTarget = _target;
-			_textSprite.SetPosition(0, _usingScrollBar ? -_textScrollBar.TopIndex : 0);
-			_textSprite.Draw();
-			GorgonLibrary.Gorgon.CurrentRenderTarget = old;
+			RefreshText();
 		}
 
 		public void Draw()
 		{
-			if (_usingScrollBar && _scrollbarVisible)
+			if (_allowScrollbar && _scrollbarVisible)
 			{
 				_textScrollBar.Draw();
 			}
@@ -2782,27 +3024,39 @@ namespace Beyond_Beyaan
 
 		public bool MouseDown(int x, int y)
 		{
-			if (_usingScrollBar && _scrollbarVisible)
+			if (_allowScrollbar && _scrollbarVisible)
 			{
-				return _textScrollBar.MouseDown(x, y);
+				if (_textScrollBar.MouseDown(x, y))
+				{
+					RefreshText();
+					return true;
+				}
 			}
 			return false;
 		}
 
 		public bool MouseUp(int x, int y)
 		{
-			if (_usingScrollBar && _scrollbarVisible)
+			if (_allowScrollbar && _scrollbarVisible)
 			{
-				return _textScrollBar.MouseUp(x, y);
+				if (_textScrollBar.MouseUp(x, y))
+				{
+					RefreshText();
+					return true;
+				}
 			}
 			return false;
 		}
 
 		public bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			if (_usingScrollBar && _scrollbarVisible)
+			if (_allowScrollbar && _scrollbarVisible)
 			{
-				return _textScrollBar.MouseHover(x, y, frameDeltaTime);
+				if (_textScrollBar.MouseHover(x, y, frameDeltaTime))
+				{
+					RefreshText();
+					return true;
+				}
 			}
 			return false;
 		}
@@ -2811,10 +3065,42 @@ namespace Beyond_Beyaan
 		{
 			_x = x;
 			_y = y;
-			if (_usingScrollBar)
+			if (_allowScrollbar)
 			{
-				_textScrollBar.MoveTo(_x + Width - 16, y);
+				if (_wrapText)
+				{
+					_textScrollBar.MoveTo(_x + Width - 5, _y);
+				}
+				else
+				{
+					_textScrollBar.MoveTo(_x, (int)(_y + _textSprite.Height));
+				}
 			}
+		}
+
+		private void RefreshText()
+		{
+			//Draw it once onto _target for performance reasons
+			_target.Clear(Color.FromArgb(0, Color.Black));
+			RenderTarget old = GorgonLibrary.Gorgon.CurrentRenderTarget;
+			GorgonLibrary.Gorgon.CurrentRenderTarget = _target;
+			if (_allowScrollbar)
+			{
+				if (_wrapText)
+				{
+					_textSprite.SetPosition(0, -_textScrollBar.TopIndex);
+				}
+				else
+				{
+					_textSprite.SetPosition(-_textScrollBar.TopIndex, 0);
+				}
+			}
+			else
+			{
+				_textSprite.SetPosition(0, 0);
+			}
+			_textSprite.Draw();
+			GorgonLibrary.Gorgon.CurrentRenderTarget = old;
 		}
 	}
 
@@ -2838,7 +3124,7 @@ namespace Beyond_Beyaan
 		public bool Initialize(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
 		{
 			_text = new BBTextBox();
-			if (!_text.Initialize(0, 0, WIDTH - 20, 0, false, name, r, out reason))
+			if (!_text.Initialize(0, 0, WIDTH - 20, 0, true, false, name, r, out reason))
 			{
 				return false;
 			}
