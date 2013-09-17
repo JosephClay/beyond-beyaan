@@ -57,7 +57,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_techDescription.Initialize(xPos + 165, yPos + 33, 265, 150, true, "TechDescriptionTextBox", gameMain.Random, out reason))
+			if (!_techDescription.Initialize(xPos + 165, yPos + 33, 265, 150, true, true, "TechDescriptionTextBox", gameMain.Random, out reason))
 			{
 				return false;
 			}

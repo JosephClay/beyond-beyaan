@@ -40,21 +40,25 @@ namespace Beyond_Beyaan.Screens
 				_buttons[i] = new BBButton();
 			}
 
-			if (!_buttons[0].Initialize("ContinueGameBG", "ContinueGameFG", string.Empty, ButtonTextAlignment.CENTER, _x, _y, 260, 40, gameMain.Random, out reason))
+			if (!_buttons[0].Initialize("MainButtonBG", "MainButtonFG", "Continue", "LargeComputerFont", ButtonTextAlignment.CENTER, _x, _y, 260, 40, gameMain.Random, out reason, 20, -1))
 			{
 				return false;
 			}
-			if (!_buttons[1].Initialize("NewGameBG", "NewGameFG", string.Empty, ButtonTextAlignment.CENTER, _x, _y + 50, 260, 40, gameMain.Random, out reason))
+			if (!_buttons[1].Initialize("MainButtonBG", "MainButtonFG", "New Game", "LargeComputerFont", ButtonTextAlignment.CENTER, _x, _y + 50, 260, 40, gameMain.Random, out reason, 20, -1))
 			{
 				return false;
 			}
-			if (!_buttons[2].Initialize("LoadGameBG", "LoadGameFG", string.Empty, ButtonTextAlignment.CENTER, _x, _y + 100, 260, 40, gameMain.Random, out reason))
+			if (!_buttons[2].Initialize("MainButtonBG", "MainButtonFG", "Load Game", "LargeComputerFont", ButtonTextAlignment.CENTER, _x, _y + 100, 260, 40, gameMain.Random, out reason, 20, -1))
 			{
 				return false;
 			}
-			if (!_buttons[3].Initialize("ExitGameBG", "ExitGameFG", string.Empty, ButtonTextAlignment.CENTER, _x, _y + 150, 260, 40, gameMain.Random, out reason))
+			if (!_buttons[3].Initialize("MainButtonBG", "MainButtonFG", "Exit", "LargeComputerFont", ButtonTextAlignment.CENTER, _x, _y + 150, 260, 40, gameMain.Random, out reason, 20, -1))
 			{
 				return false;
+			}
+			for (int i = 0; i < _buttons.Length; i++)
+			{
+				_buttons[i].SetTextAttributes(System.Drawing.Color.Gold, System.Drawing.Color.Black);
 			}
 
 			_versionLabel = new BBLabel();

@@ -519,7 +519,7 @@ namespace Beyond_Beyaan.Screens
 				messageOptions[HARASS].Active = false;
 				messageOptions[RECONCILE].Active = false;
 				messageOptions[WAR].Active = true;
-				messageOptions[WAR].SetButtonText("Offer Peace");
+				messageOptions[WAR].SetTextWithDefaultFont("Offer Peace");
 			}
 			else
 			{
@@ -530,40 +530,40 @@ namespace Beyond_Beyaan.Screens
 				messageOptions[HARASS].Active = true;
 				messageOptions[RECONCILE].Active = true;
 				messageOptions[WAR].Active = true;
-				messageOptions[WAR].SetButtonText("Declare War");
+				messageOptions[WAR].SetTextWithDefaultFont("Declare War");
 			}
 			if (contact.Allied)
 			{
 				messageOptions[ALLY].Active = false;
-				messageOptions[ALLY].SetButtonText("Already Allied");
-				messageOptions[UNALLY].SetButtonText("Break Alliance");
+				messageOptions[ALLY].SetTextWithDefaultFont("Already Allied");
+				messageOptions[UNALLY].SetTextWithDefaultFont("Break Alliance");
 			}
 			else if (contact.NonAggression)
 			{
-				messageOptions[ALLY].SetButtonText("Offer Alliance");
-				messageOptions[UNALLY].SetButtonText("Break Non-Aggression");
+				messageOptions[ALLY].SetTextWithDefaultFont("Offer Alliance");
+				messageOptions[UNALLY].SetTextWithDefaultFont("Break Non-Aggression");
 			}
 			else if (!contact.AtWar)
 			{
 				messageOptions[UNALLY].Active = false;
-				messageOptions[ALLY].SetButtonText("Offer Non-Aggression");
-				messageOptions[UNALLY].SetButtonText("No Military Pacts to Break");
+				messageOptions[ALLY].SetTextWithDefaultFont("Offer Non-Aggression");
+				messageOptions[UNALLY].SetTextWithDefaultFont("No Military Pacts to Break");
 			}
 			if (contact.TradeTreaty)
 			{
-				messageOptions[TRADE].SetButtonText("Halt Trade");
+				messageOptions[TRADE].SetTextWithDefaultFont("Halt Trade");
 			}
 			else
 			{
-				messageOptions[TRADE].SetButtonText("Offer Trade");
+				messageOptions[TRADE].SetTextWithDefaultFont("Offer Trade");
 			}
 			if (contact.ResearchTreaty)
 			{
-				messageOptions[RESEARCH].SetButtonText("Halt Shared Research");
+				messageOptions[RESEARCH].SetTextWithDefaultFont("Halt Shared Research");
 			}
 			else
 			{
-				messageOptions[RESEARCH].SetButtonText("Offer Shared Research");
+				messageOptions[RESEARCH].SetTextWithDefaultFont("Offer Shared Research");
 			}
 
 			List<string> empires = new List<string>();
@@ -652,88 +652,88 @@ namespace Beyond_Beyaan.Screens
 			switch (contact.IncomingMessage)
 			{
 				case MessageType.TRADE:
-					IncomingMessageTextBox.SetText("We want trade agreement, do you agree?");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We want trade agreement, do you agree?");
 					break;
 				case MessageType.BREAK_TRADE:
-					IncomingMessageTextBox.SetText("We don't want your cheap items anymore!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We don't want your cheap items anymore!");
 					break;
 				case MessageType.RESEARCH:
-					IncomingMessageTextBox.SetText("We would like us to share our research.");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We would like us to share our research.");
 					break;
 				case MessageType.BREAK_RESEARCH:
-					IncomingMessageTextBox.SetText("We don't want your lousy research!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We don't want your lousy research!");
 					break;
 				case MessageType.NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We want non-aggression!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We want non-aggression!");
 					break;
 				case MessageType.ALLIANCE:
-					IncomingMessageTextBox.SetText("We want alliance!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We want alliance!");
 					break;
 				case MessageType.BREAK_NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We want aggression!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We want aggression!");
 					break;
 				case MessageType.BREAK_ALLIANCE:
-					IncomingMessageTextBox.SetText("We want to break our alliance!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We want to break our alliance!");
 					break;
 				case MessageType.HARASS_EMPIRE:
-					IncomingMessageTextBox.SetText("We want you to bully " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We want you to bully " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!");
 					break;
 				case MessageType.RECONCILE_EMPIRE:
-					IncomingMessageTextBox.SetText("We want you to make peace with " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We want you to make peace with " + empiresInContact[whichContactSelected].IncomingEmpireRequest.EmpireName + "!");
 					break;
 				case MessageType.WAR:
-					IncomingMessageTextBox.SetText("We're going to KILL you!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We're going to KILL you!");
 					break;
 				case MessageType.OFFER_PEACE:
-					IncomingMessageTextBox.SetText("Please have mercy on us!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("Please have mercy on us!");
 					break;
 				case MessageType.ACCEPT_ALLIANCE:
-					IncomingMessageTextBox.SetText("We agree to ally with you!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We agree to ally with you!");
 					break;
 				case MessageType.ACCEPT_NONAGGRESSION:
-					IncomingMessageTextBox.SetText("We agree to not be aggressive!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We agree to not be aggressive!");
 					break;
 				case MessageType.ACCEPT_PEACE:
-					IncomingMessageTextBox.SetText("We will spare you for now!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We will spare you for now!");
 					break;
 				case MessageType.ACCEPT_RECONCILE:
-					IncomingMessageTextBox.SetText("We will make peace with " + "!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We will make peace with " + "!");
 					break;
 				case MessageType.ACCEPT_HARASS:
-					IncomingMessageTextBox.SetText("We will bully " + "!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We will bully " + "!");
 					break;
 				case MessageType.ACCEPT_RESEARCH:
-					IncomingMessageTextBox.SetText("We accept the deal to share research!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We accept the deal to share research!");
 					break;
 				case MessageType.ACCEPT_TRADE:
-					IncomingMessageTextBox.SetText("We accept the trade offer!");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We accept the trade offer!");
 					break;
 				case MessageType.DECLINE_REQUEST:
-					IncomingMessageTextBox.SetText("We decline your request.");
+					IncomingMessageTextBox.SetTextWithDefaultFont("We decline your request.");
 					break;
 			}
 			if (whichMessage == MessageType.BREAK_ALLIANCE || whichMessage == MessageType.BREAK_NONAGGRESSION || whichMessage == MessageType.BREAK_RESEARCH ||
 				whichMessage == MessageType.BREAK_TRADE || whichMessage == MessageType.WAR || whichMessage == MessageType.DECLINE_REQUEST)
 			{
-				messageOptions[ACCEPT].SetButtonText("Oh really?");
+				messageOptions[ACCEPT].SetTextWithDefaultFont("Oh really?");
 				messageOptions[ACCEPT].Active = false;
-				messageOptions[REJECT].SetButtonText(string.Empty);
+				messageOptions[REJECT].SetTextWithDefaultFont(string.Empty);
 				messageOptions[REJECT].Active = false;
 			}
 			else if (whichMessage == MessageType.ACCEPT_ALLIANCE || whichMessage == MessageType.ACCEPT_HARASS || whichMessage == MessageType.ACCEPT_NONAGGRESSION ||
 				whichMessage == MessageType.ACCEPT_PEACE || whichMessage == MessageType.ACCEPT_RECONCILE || whichMessage == MessageType.ACCEPT_RESEARCH ||
 				whichMessage == MessageType.ACCEPT_TRADE)
 			{
-				messageOptions[ACCEPT].SetButtonText("Yayification!");
+				messageOptions[ACCEPT].SetTextWithDefaultFont("Yayification!");
 				messageOptions[ACCEPT].Active = false;
-				messageOptions[REJECT].SetButtonText(string.Empty);
+				messageOptions[REJECT].SetTextWithDefaultFont(string.Empty);
 				messageOptions[REJECT].Active = false;
 			}
 			else
 			{
-				messageOptions[ACCEPT].SetButtonText("Accept Offer");
+				messageOptions[ACCEPT].SetTextWithDefaultFont("Accept Offer");
 				messageOptions[ACCEPT].Active = true;
-				messageOptions[REJECT].SetButtonText("Reject Offer");
+				messageOptions[REJECT].SetTextWithDefaultFont("Reject Offer");
 				messageOptions[REJECT].Active = true;
 			}
 			messageOptions[ACCEPT].Selected = false;

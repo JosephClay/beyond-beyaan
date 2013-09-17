@@ -113,7 +113,7 @@ namespace Beyond_Beyaan.Screens
 				_shipButtons[i].SetText(_colonyShips[i].Name + (_colonizingFleet.Ships[_colonyShips[i]] > 1 ? " (" + _colonizingFleet.Ships[_colonyShips[i]] + ")" : string.Empty));
 			}
 			_shipButtons[0].Selected = true;
-			_systemNameLabel.SetText(_starSystem.Name);
+			_systemNameLabel.SetTextWithDefaultFont(_starSystem.Name);
 			_systemNameLabel.MoveTo(xPos + 300 - (int)(_systemNameLabel.GetWidth() / 2), yPos + 130 - (int)(_systemNameLabel.GetHeight() / 2));
 		}
 

@@ -69,7 +69,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_raceDescription.Initialize(xPos + 315, yPos + 325, 300, 215, true, "RaceSelectionDescriptionTextBox", gameMain.Random, out reason))
+			if (!_raceDescription.Initialize(xPos + 315, yPos + 325, 300, 215, true, true, "RaceSelectionDescriptionTextBox", gameMain.Random, out reason))
 			{
 				return false;
 			}

@@ -57,7 +57,7 @@ namespace Beyond_Beyaan.Data_Managers
 						reason = "Font name or file is missing in fonts.xml.";
 						return false;
 					}
-					var files = fontDirectory.GetFiles(fileName + ".*");
+					var files = fontDirectory.GetFiles(fileName + ".ttf");
 					if (files != null && files.Length > 0)
 					{
 						Font font = Font.FromFile(files[0].FullName, size, true);

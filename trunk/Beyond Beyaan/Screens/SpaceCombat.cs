@@ -42,11 +42,11 @@ namespace Beyond_Beyaan.Screens
 			set
 			{
 				selectedShip = value;
-				shipNameLabel.SetText(selectedShip.Name);
-				engineLabel.SetText(selectedShip.Engine.TechName);
-				armorLabel.SetText(selectedShip.Armor.TechName);
-				shieldLabel.SetText(selectedShip.Shield.TechName);
-				computerLabel.SetText(selectedShip.Computer.TechName);
+				shipNameLabel.SetTextWithDefaultFont(selectedShip.Name);
+				engineLabel.SetTextWithDefaultFont(selectedShip.Engine.TechName);
+				armorLabel.SetTextWithDefaultFont(selectedShip.Armor.TechName);
+				shieldLabel.SetTextWithDefaultFont(selectedShip.Shield.TechName);
+				computerLabel.SetTextWithDefaultFont(selectedShip.Computer.TechName);
 				if (selectedShip.Weapons.Count > 6)
 				{
 					maxVisible = 6;
@@ -62,7 +62,7 @@ namespace Beyond_Beyaan.Screens
 				for (int i = 0; i < maxVisible; i++)
 				{
 					string text = selectedShip.Weapons[i].TechName; //+ " x " + selectedShip.Weapons[i].Mounts;
-					weaponButtons[i].SetText(text);
+					weaponButtons[i].SetTextWithDefaultFont(text);
 				}
 				selectedWeapon = 0;
 				foreach (Button button in weaponButtons)
@@ -71,7 +71,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				weaponButtons[selectedWeapon].Selected = true;
 				weaponScrollBar.TopIndex = 0;
-				//hitPointsLabel.SetText("HP: " + string.Format("{0}", selectedShip.CurrentHitPoints) + "/" + selectedShip.Armor.GetHP(selectedShip.TotalSpace));
+				//hitPointsLabel.SetTextWithDefaultFont("HP: " + string.Format("{0}", selectedShip.CurrentHitPoints) + "/" + selectedShip.Armor.GetHP(selectedShip.TotalSpace));
 			}
 		}
 
