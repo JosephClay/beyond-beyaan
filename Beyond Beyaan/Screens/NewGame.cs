@@ -172,12 +172,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_numberOfAILabel.Initialize(0, 0, "Number of Computer Players:", Color.White, out reason))
+			if (!_numberOfAILabel.Initialize(_xPos + 730, _yPos + 220, "Number of Computer Players:", Color.White, out reason))
 			{
 				return false;
 			}
 			_numberOfAILabel.SetAlignment(true);
-			_numberOfAILabel.MoveTo(_xPos + 730, _yPos + 220);
 			if (!_numericUpDownAI.Initialize(_xPos + 735, _yPos + 222, 75, 1, 5, 5, gameMain.Random, out reason))
 			{
 				return false;
@@ -221,7 +220,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_busyText.Initialize(gameMain.ScreenWidth / 2, gameMain.ScreenHeight / 2, string.Empty, Color.White, out reason))
+			if (!_busyText.Initialize(gameMain.ScreenWidth / 2, gameMain.ScreenHeight / 2, "Generating Galaxy", Color.White, out reason))
 			{
 				return false;
 			}
@@ -422,7 +421,6 @@ namespace Beyond_Beyaan.Screens
 				{
 					//Update galaxy here
 					_generatingGalaxy = true;
-					_busyText.SetTextWithDefaultFont("Generating Galaxy");
 					_busyText.MoveTo((int)((_gameMain.ScreenWidth / 2) - (_busyText.GetWidth() / 2)), (int)((_gameMain.ScreenHeight / 2) - (_busyText.GetHeight() / 2)));
 					_gameMain.Galaxy.OnGenerateComplete += OnGalaxyGenerated;
 					string reason;
@@ -525,7 +523,6 @@ namespace Beyond_Beyaan.Screens
 		private void SetUpGalaxy()
 		{
 			_generatingGalaxy = true;
-			_busyText.SetTextWithDefaultFont("Generating Galaxy");
 			_busyText.MoveTo((int)((_gameMain.ScreenWidth / 2.0f) - (_busyText.GetWidth() / 2)), (int)((_gameMain.ScreenHeight / 2.0f) - (_busyText.GetHeight() / 2)));
 			_gameMain.Galaxy.OnGenerateComplete += OnGalaxyGeneratedThenPlayerStart;
 			string reason;
