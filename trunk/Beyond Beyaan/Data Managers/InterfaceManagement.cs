@@ -106,7 +106,7 @@ namespace Beyond_Beyaan
 					break;
 			}
 		}
-		public void SetTextAttributes(Color color, Color outline)
+		public void SetTextColor(Color color, Color outline)
 		{
 			_label.SetColor(color, outline);
 		}
@@ -582,7 +582,7 @@ namespace Beyond_Beyaan
 		{
 			_toolTip.SetText(text);
 		}
-		public void SetTextAttributes(Color color, Color outline)
+		public void SetTextColor(Color color, Color outline)
 		{
 			_label.SetColor(color, outline);
 		}
