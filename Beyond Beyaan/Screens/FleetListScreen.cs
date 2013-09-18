@@ -327,7 +327,7 @@ namespace Beyond_Beyaan.Screens
 			int maxVisible = (whichFleets.Count > fleetButtons.Length ? fleetButtons.Length : whichFleets.Count);
 			for (int i = 0; i < maxVisible; i++)
 			{
-				fleetButtons[i].SetTextWithDefaultFont(whichFleets[i + fleetIndex].Empire.EmpireName);
+				fleetButtons[i].SetText(whichFleets[i + fleetIndex].Empire.EmpireName);
 			}
 			if (selectedFleet >= 0)
 			{
@@ -347,7 +347,7 @@ namespace Beyond_Beyaan.Screens
 						{
 							break;
 						}
-						shipButtons[j].SetTextWithDefaultFont(ship.Key.Name + " x " + ship.Value);
+						shipButtons[j].SetText(ship.Key.Name + " x " + ship.Value);
 						j++;
 					}
 					i++;
@@ -399,12 +399,12 @@ namespace Beyond_Beyaan.Screens
 					if (i == (selectedShip + shipIndex))
 					{
 						shipSelected = ship.Key;
-						nameText.SetTextWithDefaultFont(shipSelected.Name);
-						sizeText.SetTextWithDefaultFont(Utility.ShipSizeToString(shipSelected.Size));
-						engineText.SetTextWithDefaultFont(shipSelected.Engine.TechName);
-						computerText.SetTextWithDefaultFont(shipSelected.Computer.TechName);
-						armorText.SetTextWithDefaultFont(shipSelected.Armor.TechName);
-						shieldText.SetTextWithDefaultFont(shipSelected.Shield.TechName);
+						nameText.SetText(shipSelected.Name);
+						sizeText.SetText(Utility.ShipSizeToString(shipSelected.Size));
+						engineText.SetText(shipSelected.Engine.TechName);
+						computerText.SetText(shipSelected.Computer.TechName);
+						armorText.SetText(shipSelected.Armor.TechName);
+						shieldText.SetText(shipSelected.Shield.TechName);
 						weaponIndex = 0;
 						UpdateWeaponSpecs();
 						LoadShipSprite(whichFleets[selectedFleet - fleetIndex].Empire, ship.Key);
@@ -420,8 +420,8 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				weaponTexts[i].SetTextWithDefaultFont(shipSelected.weapons[i + weaponIndex].GetName());
-				mountsTexts[i].SetTextWithDefaultFont(shipSelected.weapons[i + weaponIndex].Mounts.ToString());
+				weaponTexts[i].SetText(shipSelected.weapons[i + weaponIndex].GetName());
+				mountsTexts[i].SetText(shipSelected.weapons[i + weaponIndex].Mounts.ToString());
 			}
 		}
 

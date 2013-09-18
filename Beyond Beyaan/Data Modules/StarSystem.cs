@@ -44,7 +44,7 @@ namespace Beyond_Beyaan
 			set
 			{
 				name = value;
-				StarName.SetTextWithDefaultFont(name);
+				StarName.SetText(name);
 			}
 		}
 		public BBSprite Sprite

@@ -483,7 +483,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void DrawGalaxyPreview()
 		{
-			if (_generatingGalaxy || _gameMain.Galaxy.GetAllStars().Count == 0)
+			if (_generatingGalaxy)
 			{
 				//Don't draw anything, the systems may get updated in middle of drawing, and cause an exception
 				return;

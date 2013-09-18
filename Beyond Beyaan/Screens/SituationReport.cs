@@ -216,7 +216,7 @@
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				buttons[i].SetTextWithDefaultFont(sitRepManager.Items[topIndex + i].EventMessage);
+				buttons[i].SetText(sitRepManager.Items[topIndex + i].EventMessage);
 			}
 		}*/
 	}

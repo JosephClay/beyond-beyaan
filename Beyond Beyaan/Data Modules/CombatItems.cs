@@ -16,7 +16,7 @@ namespace Beyond_Beyaan.Data_Modules
 			private set 
 			{ 
 				amount = value;
-				AmountLabel.SetTextWithDefaultFont(amount.ToString());
+				AmountLabel.SetText(amount.ToString());
 			}
 		}
 		public int X { get; set; }

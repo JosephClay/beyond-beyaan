@@ -318,17 +318,17 @@ namespace Beyond_Beyaan.Screens
 				_name.SetText(_currentSystem.Name);
 				_isOwnedSystem = _currentSystem.Planets[0].Owner == _currentEmpire;
 				_name.SetTextAttributes(_currentSystem.Planets[0].Owner != null ? _currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White, System.Drawing.Color.Empty);
-				_popLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].Owner != null ? string.Format("{0}/{1} M", (int)_currentSystem.Planets[0].TotalPopulation, _currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", _currentSystem.Planets[0].PopulationMax));
-				_terrainLabel.SetTextWithDefaultFont(Utility.PlanetTypeToString(_currentSystem.Planets[0].PlanetType));
+				_popLabel.SetText(_currentSystem.Planets[0].Owner != null ? string.Format("{0}/{1} M", (int)_currentSystem.Planets[0].TotalPopulation, _currentSystem.Planets[0].PopulationMax) : string.Format("{0} M", _currentSystem.Planets[0].PopulationMax));
+				_terrainLabel.SetText(Utility.PlanetTypeToString(_currentSystem.Planets[0].PlanetType));
 				if (_isOwnedSystem)
 				{
 					_name.SetReadOnly(false);
-					_productionLabel.SetTextWithDefaultFont(string.Format("{0:0.0} ({1:0.0}) Production", _currentSystem.Planets[0].ActualProduction, _currentSystem.Planets[0].TotalProduction));
-					_infrastructureLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].InfrastructureStringOutput);
-					_researchLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].ResearchStringOutput);
-					_environmentLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].EnvironmentStringOutput);
-					_defenseLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].DefenseStringOutput);
-					_constructionLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].ConstructionStringOutput);
+					_productionLabel.SetText(string.Format("{0:0.0} ({1:0.0}) Production", _currentSystem.Planets[0].ActualProduction, _currentSystem.Planets[0].TotalProduction));
+					_infrastructureLabel.SetText(_currentSystem.Planets[0].InfrastructureStringOutput);
+					_researchLabel.SetText(_currentSystem.Planets[0].ResearchStringOutput);
+					_environmentLabel.SetText(_currentSystem.Planets[0].EnvironmentStringOutput);
+					_defenseLabel.SetText(_currentSystem.Planets[0].DefenseStringOutput);
+					_constructionLabel.SetText(_currentSystem.Planets[0].ConstructionStringOutput);
 					_infrastructureSlider.TopIndex = planet.InfrastructureAmount;
 					_researchSlider.TopIndex = planet.ResearchAmount;
 					_environmentSlider.TopIndex = planet.EnvironmentAmount;
@@ -348,12 +348,12 @@ namespace Beyond_Beyaan.Screens
 
 					if (_currentSystem.Planets[0].TransferSystem.Key.StarSystem != null)
 					{
-						_transferLabel.SetTextWithDefaultFont("Moving " + _currentSystem.Planets[0].TransferSystem.Value + " Pop");
+						_transferLabel.SetText("Moving " + _currentSystem.Planets[0].TransferSystem.Value + " Pop");
 						_transferLabel.MoveTo(xPos + 10, yPos + 440);
 					}
 					else
 					{
-						_transferLabel.SetTextWithDefaultFont(string.Empty);
+						_transferLabel.SetText(string.Empty);
 					}
 				}
 				else if (_currentSystem.Planets[0].Owner != null)
@@ -373,14 +373,14 @@ namespace Beyond_Beyaan.Screens
 				_name.SetText("Unexplored");
 				_name.SetTextAttributes(System.Drawing.Color.White, System.Drawing.Color.Empty);
 				_generalPurposeText.SetText(_currentSystem.Description);
-				_popLabel.SetTextWithDefaultFont(string.Empty);
-				_terrainLabel.SetTextWithDefaultFont(string.Empty);
-				_productionLabel.SetTextWithDefaultFont(string.Empty);
-				_infrastructureLabel.SetTextWithDefaultFont(string.Empty);
-				_researchLabel.SetTextWithDefaultFont(string.Empty);
-				_environmentLabel.SetTextWithDefaultFont(string.Empty);
-				_defenseLabel.SetTextWithDefaultFont(string.Empty);
-				_constructionLabel.SetTextWithDefaultFont(string.Empty);
+				_popLabel.SetText(string.Empty);
+				_terrainLabel.SetText(string.Empty);
+				_productionLabel.SetText(string.Empty);
+				_infrastructureLabel.SetText(string.Empty);
+				_researchLabel.SetText(string.Empty);
+				_environmentLabel.SetText(string.Empty);
+				_defenseLabel.SetText(string.Empty);
+				_constructionLabel.SetText(string.Empty);
 				_name.SetReadOnly(true);
 			}
 		}
@@ -599,7 +599,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (_popTransferSlider.MouseUp(x, y))
 				{
-					_transferLabel.SetTextWithDefaultFont("Moving " + _popTransferSlider.TopIndex + " Population");
+					_transferLabel.SetText("Moving " + _popTransferSlider.TopIndex + " Population");
 					return true;
 				}
 				if (_transferToButton.MouseUp(x, y))
@@ -614,7 +614,7 @@ namespace Beyond_Beyaan.Screens
 						{
 							_currentSystem.Planets[0].TransferSystem = new KeyValuePair<TravelNode, int>(TransferSystem, _popTransferSlider.TopIndex);
 						}
-						_transferLabel.SetTextWithDefaultFont("Moving " + _currentSystem.Planets[0].TransferSystem.Value + " Pop");
+						_transferLabel.SetText("Moving " + _currentSystem.Planets[0].TransferSystem.Value + " Pop");
 						_transferLabel.MoveTo(xPos + 10, yPos + 440);
 						TransferSystem = null;
 						//Done setting transfer
@@ -715,7 +715,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				IsTransferring = true;
 				_transferLabel.MoveTo(xPos + 20, yPos + 370);
-				_transferLabel.SetTextWithDefaultFont("Moving 0 Population");
+				_transferLabel.SetText("Moving 0 Population");
 				_popTransferSlider.SetAmountOfItems((int)(_currentSystem.Planets[0].TotalPopulation / 2));
 				_generalPurposeText.SetText("Select a colonized planet to send population");
 				return true;
@@ -738,7 +738,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (_popTransferSlider.MouseHover(x, y, frameDeltaTime))
 				{
-					_transferLabel.SetTextWithDefaultFont("Moving " + _popTransferSlider.TopIndex + " Population");
+					_transferLabel.SetText("Moving " + _popTransferSlider.TopIndex + " Population");
 					return true;
 				}
 				if (_transferToButton.MouseHover(x, y, frameDeltaTime))
@@ -820,11 +820,11 @@ namespace Beyond_Beyaan.Screens
 			_defenseSlider.TopIndex = _currentSystem.Planets[0].DefenseAmount;
 			_constructionSlider.TopIndex = _currentSystem.Planets[0].ConstructionAmount;
 
-			_infrastructureLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].InfrastructureStringOutput);
-			_researchLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].ResearchStringOutput);
-			_environmentLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].EnvironmentStringOutput);
-			_defenseLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].DefenseStringOutput);
-			_constructionLabel.SetTextWithDefaultFont(_currentSystem.Planets[0].ConstructionStringOutput);
+			_infrastructureLabel.SetText(_currentSystem.Planets[0].InfrastructureStringOutput);
+			_researchLabel.SetText(_currentSystem.Planets[0].ResearchStringOutput);
+			_environmentLabel.SetText(_currentSystem.Planets[0].EnvironmentStringOutput);
+			_defenseLabel.SetText(_currentSystem.Planets[0].DefenseStringOutput);
+			_constructionLabel.SetText(_currentSystem.Planets[0].ConstructionStringOutput);
 		}
 	}
 }
