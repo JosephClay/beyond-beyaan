@@ -14,6 +14,7 @@ namespace Beyond_Beyaan.Data_Managers
 
 		public static bool Initialize(DirectoryInfo dataSet, out string reason)
 		{
+			// TODO: Add font attributes at load such as bold, etc in font.xml file
 			if (_initalized)
 			{
 				reason = null;

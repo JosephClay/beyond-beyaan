@@ -277,7 +277,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichBeamBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleBeams[i + techIndex];
-								researchingTechNames[BEAM].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[BEAM].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[BEAM].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[BEAM].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[BEAM].SetPotentialProgress((int)(researchPoints * (techManager.BeamPercentage * 0.01f)));
@@ -286,7 +286,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichParticleBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleParticles[i + techIndex];
-								researchingTechNames[PARTICLE].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[PARTICLE].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[PARTICLE].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[PARTICLE].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[PARTICLE].SetPotentialProgress((int)(researchPoints * (techManager.ParticlePercentage * 0.01f)));
@@ -295,7 +295,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichMissileBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleMissiles[i + techIndex];
-								researchingTechNames[MISSILE].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[MISSILE].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[MISSILE].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[MISSILE].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[MISSILE].SetPotentialProgress((int)(researchPoints * (techManager.MissilePercentage * 0.01f)));
@@ -304,7 +304,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichTorpedoBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleTorpedoes[i + techIndex];
-								researchingTechNames[TORPEDO].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[TORPEDO].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[TORPEDO].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[TORPEDO].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[TORPEDO].SetPotentialProgress((int)(researchPoints * (techManager.TorpedoPercentage * 0.01f)));
@@ -313,7 +313,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichBombBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleBombs[i + techIndex];
-								researchingTechNames[BOMB].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[BOMB].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[BOMB].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[BOMB].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[BOMB].SetPotentialProgress((int)(researchPoints * (techManager.BombPercentage * 0.01f)));
@@ -322,7 +322,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichEngineBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleEngines[i + techIndex];
-								researchingTechNames[ENGINE].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[ENGINE].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[ENGINE].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[ENGINE].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[ENGINE].SetPotentialProgress((int)(researchPoints * (techManager.EnginePercentage * 0.01f)));
@@ -331,7 +331,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichArmorBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleArmors[i + techIndex];
-								researchingTechNames[ARMOR].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[ARMOR].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[ARMOR].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[ARMOR].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[ARMOR].SetPotentialProgress((int)(researchPoints * (techManager.ArmorPercentage * 0.01f)));
@@ -340,7 +340,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichShieldBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleShields[i + techIndex];
-								researchingTechNames[SHIELD].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[SHIELD].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[SHIELD].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[SHIELD].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[SHIELD].SetPotentialProgress((int)(researchPoints * (techManager.ShieldPercentage * 0.01f)));
@@ -349,7 +349,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichComputerBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleComputers[i + techIndex];
-								researchingTechNames[COMPUTER].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[COMPUTER].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[COMPUTER].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[COMPUTER].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[COMPUTER].SetPotentialProgress((int)(researchPoints * (techManager.ComputerPercentage * 0.01f)));
@@ -358,7 +358,7 @@ namespace Beyond_Beyaan.Screens
 							{
 								techManager.WhichInfrastructureBeingResearched = i + techIndex;
 								whichTechToUpdate = techManager.VisibleInfrastructures[i + techIndex];
-								researchingTechNames[INFRASTRUCTURE].SetTextWithDefaultFont(whichTechToUpdate.GetNameWithNextLevel());
+								researchingTechNames[INFRASTRUCTURE].SetText(whichTechToUpdate.GetNameWithNextLevel());
 								techFieldProgresses[INFRASTRUCTURE].SetMaxProgress(whichTechToUpdate.GetNextLevelCost());
 								techFieldProgresses[INFRASTRUCTURE].SetProgress(whichTechToUpdate.GetTotalResearchPoints());
 								techFieldProgresses[INFRASTRUCTURE].SetPotentialProgress((int)(researchPoints * (techManager.InfrastructurePercentage * 0.01f)));
@@ -383,20 +383,20 @@ namespace Beyond_Beyaan.Screens
 		public void LoadPoints(float researchPoints)
 		{
 			/*this.researchPoints = researchPoints;
-			researchPointsLabel.SetTextWithDefaultFont("Research Points: " + researchPoints);
+			researchPointsLabel.SetText("Research Points: " + researchPoints);
 
 			TechnologyManager techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
 
-			researchingTechNames[BEAM].SetTextWithDefaultFont(techManager.VisibleBeams[techManager.WhichBeamBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[PARTICLE].SetTextWithDefaultFont(techManager.VisibleParticles[techManager.WhichParticleBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[MISSILE].SetTextWithDefaultFont(techManager.VisibleMissiles[techManager.WhichMissileBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[TORPEDO].SetTextWithDefaultFont(techManager.VisibleTorpedoes[techManager.WhichTorpedoBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[BOMB].SetTextWithDefaultFont(techManager.VisibleBombs[techManager.WhichBombBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[ENGINE].SetTextWithDefaultFont(techManager.VisibleEngines[techManager.WhichEngineBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[ARMOR].SetTextWithDefaultFont(techManager.VisibleArmors[techManager.WhichArmorBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[SHIELD].SetTextWithDefaultFont(techManager.VisibleShields[techManager.WhichShieldBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[COMPUTER].SetTextWithDefaultFont(techManager.VisibleComputers[techManager.WhichComputerBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[INFRASTRUCTURE].SetTextWithDefaultFont(techManager.VisibleInfrastructures[techManager.WhichInfrastructureBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[BEAM].SetText(techManager.VisibleBeams[techManager.WhichBeamBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[PARTICLE].SetText(techManager.VisibleParticles[techManager.WhichParticleBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[MISSILE].SetText(techManager.VisibleMissiles[techManager.WhichMissileBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[TORPEDO].SetText(techManager.VisibleTorpedoes[techManager.WhichTorpedoBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[BOMB].SetText(techManager.VisibleBombs[techManager.WhichBombBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[ENGINE].SetText(techManager.VisibleEngines[techManager.WhichEngineBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[ARMOR].SetText(techManager.VisibleArmors[techManager.WhichArmorBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[SHIELD].SetText(techManager.VisibleShields[techManager.WhichShieldBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[COMPUTER].SetText(techManager.VisibleComputers[techManager.WhichComputerBeingResearched].GetNameWithNextLevel());
+			researchingTechNames[INFRASTRUCTURE].SetText(techManager.VisibleInfrastructures[techManager.WhichInfrastructureBeingResearched].GetNameWithNextLevel());
 
 			lockedButtons[BEAM].Selected = techManager.BeamLocked;
 			lockedButtons[PARTICLE].Selected = techManager.ParticleLocked;
@@ -498,7 +498,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleBeams.Count > 12 ? 12 : techManager.VisibleBeams.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleBeams[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleBeams[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleBeams[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleBeams[i + techIndex].GetTotalResearchPoints());
 						}
@@ -509,7 +509,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleParticles.Count > 12 ? 12 : techManager.VisibleParticles.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleParticles[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleParticles[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleParticles[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleParticles[i + techIndex].GetTotalResearchPoints());
 						}
@@ -520,7 +520,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleMissiles.Count > 12 ? 12 : techManager.VisibleMissiles.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleMissiles[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleMissiles[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleMissiles[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleMissiles[i + techIndex].GetTotalResearchPoints());
 						}
@@ -531,7 +531,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleTorpedoes.Count > 12 ? 12 : techManager.VisibleTorpedoes.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleTorpedoes[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleTorpedoes[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleTorpedoes[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleTorpedoes[i + techIndex].GetTotalResearchPoints());
 						}
@@ -542,7 +542,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleBombs.Count > 12 ? 12 : techManager.VisibleBombs.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleBombs[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleBombs[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleBombs[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleBombs[i + techIndex].GetTotalResearchPoints());
 						}
@@ -553,7 +553,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleEngines.Count > 12 ? 12 : techManager.VisibleEngines.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleEngines[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleEngines[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleEngines[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleEngines[i + techIndex].GetTotalResearchPoints());
 						}
@@ -564,7 +564,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleArmors.Count > 12 ? 12 : techManager.VisibleArmors.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleArmors[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleArmors[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleArmors[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleArmors[i + techIndex].GetTotalResearchPoints());
 						}
@@ -575,7 +575,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleShields.Count > 12 ? 12 : techManager.VisibleShields.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleShields[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleShields[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleShields[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleShields[i + techIndex].GetTotalResearchPoints());
 						}
@@ -586,7 +586,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleComputers.Count > 12 ? 12 : techManager.VisibleComputers.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleComputers[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleComputers[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleComputers[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleComputers[i + techIndex].GetTotalResearchPoints());
 						}
@@ -597,7 +597,7 @@ namespace Beyond_Beyaan.Screens
 						maxVisible = techManager.VisibleInfrastructures.Count > 12 ? 12 : techManager.VisibleInfrastructures.Count;
 						for (int i = 0; i < maxVisible; i++)
 						{
-							availableTechs[i].SetTextWithDefaultFont(techManager.VisibleInfrastructures[i + techIndex].GetNameWithNextLevel());
+							availableTechs[i].SetText(techManager.VisibleInfrastructures[i + techIndex].GetNameWithNextLevel());
 							availableTechProgresses[i].SetMaxProgress(techManager.VisibleInfrastructures[i + techIndex].GetNextLevelCost());
 							availableTechProgresses[i].SetProgress(techManager.VisibleInfrastructures[i + techIndex].GetTotalResearchPoints());
 						}

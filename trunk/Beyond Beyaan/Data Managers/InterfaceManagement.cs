@@ -92,7 +92,7 @@ namespace Beyond_Beyaan
 
 		public void SetText(string text)
 		{
-			_label.SetTextWithDefaultFont(text);
+			_label.SetText(text);
 			switch (_alignment)
 			{
 				case ButtonTextAlignment.LEFT:
@@ -106,9 +106,9 @@ namespace Beyond_Beyaan
 					break;
 			}
 		}
-		public void SetTextAttributes(Color color, Color outline, bool bold = false, bool italics = false, bool antiAlias = false)
+		public void SetTextAttributes(Color color, Color outline)
 		{
-			_label.SetAttributes(color, outline, antiAlias, bold, italics);
+			_label.SetColor(color, outline);
 		}
 		public bool SetToolTip(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
 		{
@@ -339,7 +339,7 @@ namespace Beyond_Beyaan
 
 		public void SetButtonText(string text)
 		{
-			_label.SetTextWithDefaultFont(text);
+			_label.SetText(text);
 			switch (_alignment)
 			{
 				case ButtonTextAlignment.LEFT:
@@ -555,7 +555,7 @@ namespace Beyond_Beyaan
 
 		public void SetText(string text)
 		{
-			_label.SetTextWithDefaultFont(text);
+			_label.SetText(text);
 			switch (_alignment)
 			{
 				case ButtonTextAlignment.LEFT:
@@ -582,9 +582,9 @@ namespace Beyond_Beyaan
 		{
 			_toolTip.SetText(text);
 		}
-		public void SetTextAttributes(Color color, Color outline, bool bold = false, bool italics = false, bool antiAlias = false)
+		public void SetTextAttributes(Color color, Color outline)
 		{
-			_label.SetAttributes(color, outline, antiAlias, bold, italics);
+			_label.SetColor(color, outline);
 		}
 
 		public void MoveTo(int x, int y)
@@ -1871,7 +1871,7 @@ namespace Beyond_Beyaan
 			{
 				Value = _maximum;
 			}
-			_valueLabel.SetTextWithDefaultFont(Value.ToString());
+			_valueLabel.SetText(Value.ToString());
 		}
 		#endregion
 	}
@@ -2572,10 +2572,7 @@ namespace Beyond_Beyaan
 		private TextSprite _textSprite;
 		private Color _color;
 		private Color _outlineColor;
-		private bool _bold;
-		private bool _italics;
-		private bool _antiAlias;
-		private GorgonLibrary.Graphics.Font _font;
+		private string _font = string.Empty;
 		#endregion
 
 		#region Properties
@@ -2588,7 +2585,7 @@ namespace Beyond_Beyaan
 			_x = x;
 			_y = y;
 			_color = color;
-			if (!SetTextWithDefaultFont(label))
+			if (!SetText(label))
 			{
 				reason = "Default font not found";
 				return false;
@@ -2601,7 +2598,7 @@ namespace Beyond_Beyaan
 			_x = x;
 			_y = y;
 			_color = color;
-			if (!SetTextWithDefaultFont(label, fontName))
+			if (!SetText(label, fontName))
 			{
 				reason = fontName + " font not found";
 				return false;
@@ -2612,36 +2609,30 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Functions
-		public bool SetTextWithDefaultFont(string text)
+		public bool SetText(string text)
 		{
-			if (_font == null)
-			{
-				_font = FontManager.GetDefaultFont();
-			}
-			if (_font == null)
-			{
-				return false;
-			}
-			SetText(text);
+			//If font has been specified, use that, otherwise use default.  This function merely changes text.
+			RefreshText(text);
 			return true;
 		}
-		public bool SetTextWithDefaultFont(string text, string fontName)
+		public bool SetText(string text, string fontName)
 		{
-			//fontName overrides whatever existing font it was using
-			_font = FontManager.GetFont(fontName);
-			if (_font == null)
-			{
-				return false;
-			}
-			SetText(text);
+			_font = fontName;
+			RefreshText(text);
 			return true;
 		}
-		private void SetText(string text)
+		private void RefreshText(string text)
 		{
-			_font.Bold = _bold;
-			_font.Italic = _italics;
-			_font.AntiAlias = _antiAlias;
-			_textSprite = new TextSprite("Arial", text, _font, _color);
+			GorgonLibrary.Graphics.Font font;
+			if (string.IsNullOrEmpty(_font))
+			{
+				font = FontManager.GetDefaultFont();
+			}
+			else
+			{
+				font = FontManager.GetFont(_font);
+			}
+			_textSprite = new TextSprite("Arial", text, font, _color);
 			if (!_outlineColor.IsEmpty)
 			{
 				_textSprite.ShadowColor = _outlineColor;
@@ -2681,15 +2672,12 @@ namespace Beyond_Beyaan
 			this._y = y;
 			_textSprite.SetPosition(x - (_isRightAligned ? _textSprite.Width : 0), y);
 		}
-		public void SetAttributes(Color color, Color outline, bool antiAlias, bool bold, bool italics)
+		public void SetColor(Color color, Color outline)
 		{
 			_color = color;
 			_outlineColor = outline;
-			_antiAlias = antiAlias;
-			_bold = bold;
-			_italics = italics;
 			//Update the font sprite
-			SetText(Text);
+			RefreshText(Text);
 		}
 		public void Draw()
 		{
@@ -2790,7 +2778,7 @@ namespace Beyond_Beyaan
 			if (!isSelected)
 			{
 				blink = false;
-				text.SetTextWithDefaultFont(Text);
+				text.SetText(Text);
 			}
 			return isSelected;
 		}
@@ -2803,7 +2791,7 @@ namespace Beyond_Beyaan
 				if (timer >= 0.25f)
 				{
 					blink = !blink;
-					text.SetTextWithDefaultFont(Text + (blink ? "|" : ""));
+					text.SetText(Text + (blink ? "|" : ""));
 					timer -= 0.25f;
 				}
 			}
@@ -2826,7 +2814,7 @@ namespace Beyond_Beyaan
 		public void SetText(string text)
 		{
 			Text = text;
-			this.text.SetTextWithDefaultFont(text);
+			this.text.SetText(text);
 		}
 
 		public void SetReadOnly(bool readOnly)
@@ -2834,9 +2822,9 @@ namespace Beyond_Beyaan
 			isReadOnly = readOnly;
 		}
 
-		public void SetTextAttributes(Color color, Color outline, bool bold = false, bool italics = false, bool antiAlias = false)
+		public void SetTextAttributes(Color color, Color outline)
 		{
-			text.SetAttributes(color, outline, antiAlias, bold, italics);
+			text.SetColor(color, outline);
 		}
 
 		public void Select()
@@ -2866,20 +2854,20 @@ namespace Beyond_Beyaan
 						Text = Text.Substring(0, Text.Length - 1);
 					}
 				}
-				else if (char.IsLetterOrDigit(e.CharacterMapping.Character) || 
-					char.IsLetterOrDigit(e.CharacterMapping.Shifted) || 
-					char.IsSymbol(e.CharacterMapping.Character) || 
-					char.IsSymbol(e.CharacterMapping.Shifted) || 
-					char.IsPunctuation(e.CharacterMapping.Character) || 
-					char.IsPunctuation(e.CharacterMapping.Shifted) || 
+				else if (char.IsLetterOrDigit(e.CharacterMapping.Character) ||
+					char.IsLetterOrDigit(e.CharacterMapping.Shifted) ||
+					char.IsSymbol(e.CharacterMapping.Character) ||
+					char.IsSymbol(e.CharacterMapping.Shifted) ||
+					char.IsPunctuation(e.CharacterMapping.Character) ||
+					char.IsPunctuation(e.CharacterMapping.Shifted) ||
 					char.IsWhiteSpace(e.CharacterMapping.Character))
 				{
 					string prevText = Text;
 					Text = Text + (e.Shift ? e.CharacterMapping.Shifted : e.CharacterMapping.Character);
-					text.SetTextWithDefaultFont(Text);
+					text.SetText(Text);
 					if (text.GetWidth() > width - 8)
 					{
-						text.SetTextWithDefaultFont(prevText);
+						text.SetText(prevText);
 						Text = prevText;
 					}
 				}

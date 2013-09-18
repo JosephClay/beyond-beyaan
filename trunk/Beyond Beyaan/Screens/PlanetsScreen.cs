@@ -306,19 +306,19 @@ namespace Beyond_Beyaan.Screens
 			int x = (gameMain.ScreenWidth / 2) - 400;
 			int y = (gameMain.ScreenHeight / 2) - 300;
 
-			planetIncome.SetTextWithDefaultFont(currentEmpire.EmpirePlanetIncome + " BC");
+			planetIncome.SetText(currentEmpire.EmpirePlanetIncome + " BC");
 			planetIncome.Move((x + 395) - (int)planetIncome.GetWidth(), y + 440);
-			tradeIncome.SetTextWithDefaultFont("0 BC");
+			tradeIncome.SetText("0 BC");
 			tradeIncome.Move((x + 395) - (int)tradeIncome.GetWidth(), y + 465);
 
-			shipExpense.SetTextWithDefaultFont(currentEmpire.ShipMaintenance + " BC");
+			shipExpense.SetText(currentEmpire.ShipMaintenance + " BC");
 			shipExpense.Move((x + 395) - (int)shipExpense.GetWidth(), y + 495);
-			espionageExpense.SetTextWithDefaultFont("0 BC");
+			espionageExpense.SetText("0 BC");
 			espionageExpense.Move((x + 395) - (int)espionageExpense.GetWidth(), y + 520);
-			securityExpense.SetTextWithDefaultFont("0 BC");
+			securityExpense.SetText("0 BC");
 			securityExpense.Move((x + 395) - (int)securityExpense.GetWidth(), y + 545);
 
-			netIncome.SetTextWithDefaultFont(currentEmpire.NetIncome + " BC");
+			netIncome.SetText(currentEmpire.NetIncome + " BC");
 			netIncome.Move((x + 395) - (int)netIncome.GetWidth(), y + 575);
 
 			RefreshShowingPlanets();*/
@@ -373,34 +373,34 @@ namespace Beyond_Beyaan.Screens
 
 			for (int i = 0; i < maxVisible; i++)
 			{
-				planetName[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].Name);
-				planetType[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].PlanetTypeString);
+				planetName[i].SetText(planetsShowing[i + planetIndex].Name);
+				planetType[i].SetText(planetsShowing[i + planetIndex].PlanetTypeString);
 				if (planetsShowing[i + planetIndex].Owner != null)
 				{
-					population[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].TotalPopulation + "/" + planetsShowing[i + planetIndex].PopulationMax);
-					empireOwner[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].Owner.EmpireName);
-					empireOwner[i].SetAttributes(planetsShowing[i + planetIndex].Owner.EmpireColor);
+					population[i].SetText(planetsShowing[i + planetIndex].TotalPopulation + "/" + planetsShowing[i + planetIndex].PopulationMax);
+					empireOwner[i].SetText(planetsShowing[i + planetIndex].Owner.EmpireName);
+					empireOwner[i].SetColor(planetsShowing[i + planetIndex].Owner.EmpireColor);
 				}
 				else
 				{
-					population[i].SetTextWithDefaultFont("Max Pop: " + planetsShowing[i + planetIndex].PopulationMax);
-					empireOwner[i].SetTextWithDefaultFont(string.Empty);
+					population[i].SetText("Max Pop: " + planetsShowing[i + planetIndex].PopulationMax);
+					empireOwner[i].SetText(string.Empty);
 				}
 				if (planetsShowing[i + planetIndex].Owner == empire)
 				{
-					agriculture[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].InfrastructureStringOutput);
-					waste[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].EnvironmentStringOutput);
-					commerce[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].DefenseStringOutput);
-					research[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].ResearchStringOutput);
-					construction[i].SetTextWithDefaultFont(planetsShowing[i + planetIndex].ConstructionStringOutput);
+					agriculture[i].SetText(planetsShowing[i + planetIndex].InfrastructureStringOutput);
+					waste[i].SetText(planetsShowing[i + planetIndex].EnvironmentStringOutput);
+					commerce[i].SetText(planetsShowing[i + planetIndex].DefenseStringOutput);
+					research[i].SetText(planetsShowing[i + planetIndex].ResearchStringOutput);
+					construction[i].SetText(planetsShowing[i + planetIndex].ConstructionStringOutput);
 				}
 				else
 				{
-					agriculture[i].SetTextWithDefaultFont(string.Empty);
-					waste[i].SetTextWithDefaultFont(string.Empty);
-					commerce[i].SetTextWithDefaultFont(string.Empty);
-					research[i].SetTextWithDefaultFont(string.Empty);
-					construction[i].SetTextWithDefaultFont(string.Empty);
+					agriculture[i].SetText(string.Empty);
+					waste[i].SetText(string.Empty);
+					commerce[i].SetText(string.Empty);
+					research[i].SetText(string.Empty);
+					construction[i].SetText(string.Empty);
 				}
 			}
 		}
