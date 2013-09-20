@@ -58,7 +58,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			for (int i = 0; i < _buttons.Length; i++)
 			{
-				_buttons[i].SetTextAttributes(System.Drawing.Color.Gold, System.Drawing.Color.Black);
+				_buttons[i].SetTextColor(System.Drawing.Color.Gold, System.Drawing.Color.Black);
 			}
 
 			_versionLabel = new BBLabel();

@@ -25,7 +25,7 @@ namespace Beyond_Beyaan.Screens
 		public void LoadExploredSystem(StarSystem system)
 		{
 			_informationText.SetText(string.Format("{0} System has been explored", system.Name));
-			_informationText.MoveTo(xPos + 200 - (int)(_informationText.GetWidth() / 2), yPos + 50 - (int)(_informationText.GetHeight() / 2));
+			_informationText.MoveTo(_xPos + 200 - (int)(_informationText.GetWidth() / 2), _yPos + 50 - (int)(_informationText.GetHeight() / 2));
 		}
 
 		public override void Draw()

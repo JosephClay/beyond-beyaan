@@ -8,6 +8,7 @@ namespace Beyond_Beyaan
 		private BBButton[] _taskButtons;
 
 		public Action ShowGameMenu;
+		public Action ShowResearchScreen;
 
 		private int left;
 		private int top;
@@ -158,12 +159,22 @@ namespace Beyond_Beyaan
 						case 4: _gameMain.ChangeToScreen(Screen.Design);
 							break;
 						case 5: _gameMain.ChangeToScreen(Screen.Planets);
-							break;
-						case 6: _gameMain.ChangeToScreen(Screen.Research);
 							break;*/
-						case 7: _gameMain.ChangeToScreen(Screen.ProcessTurn);
+						case 6:
+						{
+							if (ShowResearchScreen != null)
+							{
+								ShowResearchScreen();
+								SetToScreen(Screen.Research);
+							}
+							break;
+						}
+						case 7:
+						{
+							_gameMain.ChangeToScreen(Screen.ProcessTurn);
 							_gameMain.HideSitRep();
 							break;
+						}
 					}
 					return true;
 				}

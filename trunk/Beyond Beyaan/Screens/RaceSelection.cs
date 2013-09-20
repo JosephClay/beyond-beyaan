@@ -49,14 +49,14 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < _raceButtons.Length; i++)
 			{
 				_raceButtons[i] = new BBStretchButton();
-				if (!_raceButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 10, yPos + 10 + (i * 40), 280, 40, gameMain.Random, out reason))
+				if (!_raceButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 10, _yPos + 10 + (i * 40), 280, 40, gameMain.Random, out reason))
 				{
 					return false;
 				}
 			}
 			//Add 1 for the random race option
 			int scrollValue = (_raceManager.Races.Count + 1) < _raceButtons.Length ? _raceButtons.Length : (_raceManager.Races.Count + 1);
-			if (!_raceScrollBar.Initialize(xPos + 290, yPos + 10, 600, _raceButtons.Length, scrollValue, false, false, gameMain.Random, out reason))
+			if (!_raceScrollBar.Initialize(_xPos + 290, _yPos + 10, 600, _raceButtons.Length, scrollValue, false, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -65,15 +65,15 @@ namespace Beyond_Beyaan.Screens
 			{
 				_raceScrollBar.SetEnabledState(false);
 			}
-			if (!_raceBackground.Initialize(xPos + 310, yPos + 10, 310, 550, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			if (!_raceBackground.Initialize(_xPos + 310, _yPos + 10, 310, 550, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_raceDescription.Initialize(xPos + 315, yPos + 325, 300, 215, true, true, "RaceSelectionDescriptionTextBox", gameMain.Random, out reason))
+			if (!_raceDescription.Initialize(_xPos + 315, _yPos + 325, 300, 215, true, true, "RaceSelectionDescriptionTextBox", gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_okButton.Initialize("Select Race", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 310, yPos + 570, 310, 40, gameMain.Random, out reason))
+			if (!_okButton.Initialize("Select Race", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 310, _yPos + 570, 310, 40, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -102,11 +102,11 @@ namespace Beyond_Beyaan.Screens
 			_raceScrollBar.Draw();
 			if (_whichRaceSelected == null)
 			{
-				_randomSprite.Draw(xPos + 315, yPos + 15, 300 / _randomSprite.Width, 300 / _randomSprite.Height);
+				_randomSprite.Draw(_xPos + 315, _yPos + 15, 300 / _randomSprite.Width, 300 / _randomSprite.Height);
 			}
 			else
 			{
-				_whichRaceSelected.NeutralAvatar.Draw(xPos + 315, yPos + 15, 300 / _whichRaceSelected.NeutralAvatar.Width, 300 / _whichRaceSelected.NeutralAvatar.Height);
+				_whichRaceSelected.NeutralAvatar.Draw(_xPos + 315, _yPos + 15, 300 / _whichRaceSelected.NeutralAvatar.Width, 300 / _whichRaceSelected.NeutralAvatar.Height);
 			}
 			_raceDescription.Draw();
 			_okButton.Draw();

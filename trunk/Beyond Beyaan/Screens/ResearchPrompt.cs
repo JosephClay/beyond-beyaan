@@ -45,30 +45,30 @@ namespace Beyond_Beyaan.Screens
 			_scrollBar = new BBScrollBar();
 			_availableTechsToResearchButtons = new BBInvisibleStretchButton[4];
 
-			if (!_techDescriptionBackground.Initialize(xPos + 20, yPos + 20, 420, 170, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			if (!_techDescriptionBackground.Initialize(_xPos + 20, _yPos + 20, 420, 170, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_availableTechsToResearchBackground.Initialize(xPos + 20, yPos + 220, 420, 120, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			if (!_availableTechsToResearchBackground.Initialize(_xPos + 20, _yPos + 220, 420, 120, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_instructionLabel.Initialize(xPos + 20, yPos + 195, "Please select an item to research", System.Drawing.Color.White, out reason))
+			if (!_instructionLabel.Initialize(_xPos + 20, _yPos + 195, "Please select an item to research", System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_techDescription.Initialize(xPos + 165, yPos + 33, 265, 150, true, true, "TechDescriptionTextBox", gameMain.Random, out reason))
+			if (!_techDescription.Initialize(_xPos + 165, _yPos + 33, 265, 150, true, true, "TechDescriptionTextBox", gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_scrollBar.Initialize(xPos + 415, yPos + 230, 100, 4, 4, false, false, gameMain.Random, out reason))
+			if (!_scrollBar.Initialize(_xPos + 415, _yPos + 230, 100, 4, 4, false, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			for (int i = 0; i < _availableTechsToResearchButtons.Length; i++)
 			{
 				_availableTechsToResearchButtons[i] = new BBInvisibleStretchButton();
-				if (!_availableTechsToResearchButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, xPos + 30, yPos + 230 + (i * 25), 385, 25, gameMain.Random, out reason))
+				if (!_availableTechsToResearchButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, _xPos + 30, _yPos + 230 + (i * 25), 385, 25, gameMain.Random, out reason))
 				{
 					return false;
 				}
@@ -86,7 +86,7 @@ namespace Beyond_Beyaan.Screens
 			base.Draw();
 			_techDescriptionBackground.Draw();
 			_availableTechsToResearchBackground.Draw();
-			_techIcon.Draw(xPos + 35, yPos + 38);
+			_techIcon.Draw(_xPos + 35, _yPos + 38);
 			_techDescription.Draw();
 			_instructionLabel.Draw();
 			for (int i = 0; i < _maxVisible; i++)
