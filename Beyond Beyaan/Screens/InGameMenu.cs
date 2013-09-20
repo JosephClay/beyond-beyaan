@@ -170,7 +170,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				result = _saveGameButtons[i].MouseDown(x, y) || result;
 			}
-			return result;
+			return base.MouseDown(x, y) || result;
 		}
 
 		public override bool MouseUp(int x, int y)

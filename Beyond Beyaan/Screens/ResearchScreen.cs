@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
@@ -44,6 +45,9 @@ namespace Beyond_Beyaan.Screens
 		private BBScrollBar[] _techSliders;
 		private BBButton[] _techLockButtons;
 		private BBLabel _totalResearchPointsLabel;
+
+		private BBTextBox _researchedTechnologyDescriptions;
+		private BBStretchButton[] _techFieldButtons;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
@@ -133,35 +137,44 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 			_totalResearchPointsLabel.SetAlignment(true);
-			/*researchPointsLabel = new Label(x + 500, y + 575);
 
-			researchingTechNames = new Button[10];
-			techScrollBars = new ScrollBar[10];
-			lockedButtons = new Button[10];
-			techFieldProgresses = new ProgressBar[10];
-
-			for (int i = 0; i < techScrollBars.Length; i++)
+			_researchedTechnologyDescriptions = new BBTextBox();
+			if (!_researchedTechnologyDescriptions.Initialize(x + 30, y + 310, 740, 260, true, true, "TechnologyListDescriptions", gameMain.Random, out reason))
 			{
-				techScrollBars[i] = new ScrollBar(x + 5, y + 32 + (i * 60), 16, 250, 1, 101, true, true, SpriteName.ScrollLeftBackgroundButton, SpriteName.ScrollLeftForegroundButton,
-					SpriteName.ScrollRightBackgroundButton, SpriteName.ScrollRightForegroundButton, SpriteName.SliderHorizontalBackgroundButton, SpriteName.SliderHorizontalForegroundButton,
-					SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
-				researchingTechNames[i] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, string.Empty, x + 5, y + 4 + (i * 60), 200, 24);
-				lockedButtons[i] = new Button(SpriteName.LockDisabled, SpriteName.LockEnabled, string.Empty, x + 295, y + 32 + (i * 60), 16, 16);
-				techFieldProgresses[i] = new ProgressBar(x + 211, y + 7 + (i * 60), 100, 16, 100, 0, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar, System.Drawing.Color.Green);
+				return false;
 			}
 
-			availableTechs = new Button[12];
-			availableTechProgresses = new ProgressBar[12];
-			for (int i = 0; i < availableTechs.Length; i++)
+			_techFieldButtons = new BBStretchButton[6];
+			for (int i = 0; i < 6; i++)
 			{
-				availableTechs[i] = new Button(SpriteName.MiniBackgroundButton, SpriteName.MiniForegroundButton, string.Empty, x + 420, y + 4 + (i * 30), 350, 30);
-				availableTechProgresses[i] = new ProgressBar(x + 665, y + 10 + (i * 30), 100, 16, 100, 0, SpriteName.SliderHorizontalBar, SpriteName.SliderHighlightedHorizontalBar);
+				_techFieldButtons[i] = new BBStretchButton();
 			}
 
-			availableScrollBar = new ScrollBar(x + 770, y + 4, 16, 342, 12, 30, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
-				SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton, SpriteName.ScrollVerticalForegroundButton,
-				SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
-			availableScrollBar.SetEnabledState(false);*/
+			if (!_techFieldButtons[0].Initialize("Computers", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x + 20, y + 255, 125, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldButtons[1].Initialize("Construction", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x + 147, y + 255, 125, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldButtons[2].Initialize("Force Fields", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x + 274, y + 255, 125, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldButtons[3].Initialize("Planetology", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x + 401, y + 255, 125, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldButtons[4].Initialize("Propulsion", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x + 528, y + 255, 125, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldButtons[5].Initialize("Weapons", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x + 655, y + 255, 125, 40, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
 			reason = null;
 			return true;
 		}
@@ -180,32 +193,25 @@ namespace Beyond_Beyaan.Screens
 				_techProgressLabels[i].Draw();
 				_techSliders[i].Draw();
 				_techLockButtons[i].Draw();
+				_techFieldButtons[i].Draw();
 			}
 			_totalResearchPointsLabel.Draw();
+			_researchedTechnologyDescriptions.Draw();
 		}
-		/*public void DrawScreen()
+
+		public override bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			bool result = false;
+			foreach (var button in _techFieldButtons)
+			{
+				result = button.MouseHover(x, y, frameDeltaTime) || result;
+			}
+			return result;
+		}
+
+		/*public void Update(int x, int y, float frameDeltaTime)
 		{
 			for (int i = 0; i < techScrollBars.Length; i++)
-			{
-				techScrollBars[i].DrawScrollBar(drawingManagement);
-				researchingTechNames[i].Draw(drawingManagement);
-				lockedButtons[i].Draw(drawingManagement);
-				techFieldProgresses[i].Draw(drawingManagement);
-			}
-
-			for (int i = 0; i < maxVisible; i++)
-			{
-				availableTechs[i].Draw(drawingManagement);
-				availableTechProgresses[i].Draw(drawingManagement);
-			}
-
-			availableScrollBar.DrawScrollBar(drawingManagement);
-			researchPointsLabel.Draw();
-		}*/
-
-		public void Update(int x, int y, float frameDeltaTime)
-		{
-			/*for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				if (techScrollBars[i].MouseHover(x, y, frameDeltaTime))
 				{
@@ -261,12 +267,22 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				availableTechs[i].MouseHover(x, y, frameDeltaTime);
-			}*/
+			}
+		}*/
+
+		public override bool MouseDown(int x, int y)
+		{
+			bool result = false;
+			foreach (var button in _techFieldButtons)
+			{
+				result = button.MouseDown(x, y) || result;
+			}
+			return base.MouseDown(x, y) || result;
 		}
 
-		public void MouseDown(int x, int y, int whichButton)
+		/*public bool MouseDown(int x, int y, int whichButton)
 		{
-			/*for (int i = 0; i < techScrollBars.Length; i++)
+			for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				techScrollBars[i].MouseDown(x, y);
 				lockedButtons[i].MouseDown(x, y);
@@ -279,12 +295,49 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < maxVisible; i++)
 			{
 				availableTechs[i].MouseDown(x, y);
-			}*/
+			}
+		}*/
+
+		public override bool MouseUp(int x, int y)
+		{
+			bool result = false;
+			for (int i = 0; i < _techFieldButtons.Length; i++)
+			{
+				if (_techFieldButtons[i].MouseUp(x, y))
+				{
+					switch (i)
+					{
+						case 0: RefreshResearchedTechs(TechField.COMPUTER);
+							break;
+						case 1: RefreshResearchedTechs(TechField.CONSTRUCTION);
+							break;
+						case 2: RefreshResearchedTechs(TechField.FORCE_FIELD);
+							break;
+						case 3: RefreshResearchedTechs(TechField.PLANETOLOGY);
+							break;
+						case 4: RefreshResearchedTechs(TechField.PROPULSION);
+							break;
+						case 5: RefreshResearchedTechs(TechField.WEAPON);
+							break;
+					}
+					result = true;
+				}
+			}
+			if (!base.MouseUp(x, y))
+			{
+				//Clicked outside window, close the window
+				if (CloseWindow != null)
+				{
+					CloseWindow();
+					return true;
+				}
+			}
+			return result;
 		}
 
-		public void MouseUp(int x, int y, int whichButton)
+		/*public void MouseUp(int x, int y, int whichButton)
 		{
-			/*for (int i = 0; i < techScrollBars.Length; i++)
+			for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				if (techScrollBars[i].MouseUp(x, y))
 				{
@@ -473,8 +526,8 @@ namespace Beyond_Beyaan.Screens
 							} break;
 					}
 				}
-			}*/
-		}
+			}
+		}*/
 
 		public void MouseScroll(int direction, int x, int y)
 		{
@@ -556,6 +609,8 @@ namespace Beyond_Beyaan.Screens
 			RefreshProgressLabels();
 
 			RefreshLockedStatus();
+
+			RefreshResearchedTechs(TechField.COMPUTER);
 		}
 
 		private void RefreshLockedStatus()
@@ -601,148 +656,53 @@ namespace Beyond_Beyaan.Screens
 			_techSliders[5].TopIndex = currentEmpire.TechnologyManager.WeaponPercentage;
 		}
 
-		/*private void SetPercentages(TechnologyManager techManager)
+		private void RefreshResearchedTechs(TechField whichField)
 		{
-			techScrollBars[BEAM].TopIndex = techManager.BeamPercentage;
-			techScrollBars[PARTICLE].TopIndex = techManager.ParticlePercentage;
-			techScrollBars[MISSILE].TopIndex = techManager.MissilePercentage;
-			techScrollBars[TORPEDO].TopIndex = techManager.TorpedoPercentage;
-			techScrollBars[BOMB].TopIndex = techManager.BombPercentage;
-			techScrollBars[ENGINE].TopIndex = techManager.EnginePercentage;
-			techScrollBars[ARMOR].TopIndex = techManager.ArmorPercentage;
-			techScrollBars[SHIELD].TopIndex = techManager.ShieldPercentage;
-			techScrollBars[COMPUTER].TopIndex = techManager.ComputerPercentage;
-			techScrollBars[INFRASTRUCTURE].TopIndex = techManager.InfrastructurePercentage;
-
-			techFieldProgresses[BEAM].SetPotentialProgress((int)((techManager.BeamPercentage * 0.01f) * researchPoints));
-			techFieldProgresses[PARTICLE].SetPotentialProgress((int)((techManager.ParticlePercentage * 0.01f) * researchPoints));
-			techFieldProgresses[MISSILE].SetPotentialProgress((int)((techManager.MissilePercentage * 0.01f) * researchPoints));
-			techFieldProgresses[TORPEDO].SetPotentialProgress((int)((techManager.TorpedoPercentage * 0.01f) * researchPoints));
-			techFieldProgresses[BOMB].SetPotentialProgress((int)((techManager.BombPercentage * 0.01f) * researchPoints));
-			techFieldProgresses[ENGINE].SetPotentialProgress((int)((techManager.EnginePercentage * 0.01f) * researchPoints));
-			techFieldProgresses[ARMOR].SetPotentialProgress((int)((techManager.ArmorPercentage * 0.01f) * researchPoints));
-			techFieldProgresses[SHIELD].SetPotentialProgress((int)((techManager.ShieldPercentage * 0.01f) * researchPoints));
-			techFieldProgresses[COMPUTER].SetPotentialProgress((int)((techManager.ComputerPercentage * 0.01f) * researchPoints));
-			techFieldProgresses[INFRASTRUCTURE].SetPotentialProgress((int)((techManager.InfrastructurePercentage * 0.01f) * researchPoints));
-		}
-
-		private void RefreshAvailableTechs()
-		{
-			TechnologyManager techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
-
+			for (int i = 0; i < _techFieldButtons.Length; i++)
+			{
+				_techFieldButtons[i].Selected = false;
+			}
+			string techDescriptions = string.Empty;
+			List<Technology> researchedTechs = new List<Technology>();
 			switch (whichField)
 			{
-				case BEAM:
+				case TechField.COMPUTER:
 					{
-						maxVisible = techManager.VisibleBeams.Count > 12 ? 12 : techManager.VisibleBeams.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleBeams[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleBeams[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleBeams[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleBeams.Count > 12);
+						_techFieldButtons[0].Selected = true;
+						researchedTechs = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ResearchedComputerTechs;
 					} break;
-				case PARTICLE:
+				case TechField.CONSTRUCTION:
 					{
-						maxVisible = techManager.VisibleParticles.Count > 12 ? 12 : techManager.VisibleParticles.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleParticles[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleParticles[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleParticles[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleParticles.Count > 12);
+						_techFieldButtons[1].Selected = true;
+						researchedTechs = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ResearchedConstructionTechs;
 					} break;
-				case MISSILE:
+				case TechField.FORCE_FIELD:
 					{
-						maxVisible = techManager.VisibleMissiles.Count > 12 ? 12 : techManager.VisibleMissiles.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleMissiles[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleMissiles[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleMissiles[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleMissiles.Count > 12);
+						_techFieldButtons[2].Selected = true;
+						researchedTechs = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ResearchedForceFieldTechs;
 					} break;
-				case TORPEDO:
+				case TechField.PLANETOLOGY:
 					{
-						maxVisible = techManager.VisibleTorpedoes.Count > 12 ? 12 : techManager.VisibleTorpedoes.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleTorpedoes[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleTorpedoes[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleTorpedoes[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleTorpedoes.Count > 12);
+						_techFieldButtons[3].Selected = true;
+						researchedTechs = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ResearchedPlanetologyTechs;
 					} break;
-				case BOMB:
+				case TechField.PROPULSION:
 					{
-						maxVisible = techManager.VisibleBombs.Count > 12 ? 12 : techManager.VisibleBombs.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleBombs[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleBombs[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleBombs[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleBombs.Count > 12);
+						_techFieldButtons[4].Selected = true;
+						researchedTechs = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ResearchedPropulsionTechs;
 					} break;
-				case ENGINE:
+				case TechField.WEAPON:
 					{
-						maxVisible = techManager.VisibleEngines.Count > 12 ? 12 : techManager.VisibleEngines.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleEngines[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleEngines[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleEngines[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleEngines.Count > 12);
-					} break;
-				case ARMOR:
-					{
-						maxVisible = techManager.VisibleArmors.Count > 12 ? 12 : techManager.VisibleArmors.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleArmors[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleArmors[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleArmors[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleArmors.Count > 12);
-					} break;
-				case SHIELD:
-					{
-						maxVisible = techManager.VisibleShields.Count > 12 ? 12 : techManager.VisibleShields.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleShields[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleShields[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleShields[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleShields.Count > 12);
-					} break;
-				case COMPUTER:
-					{
-						maxVisible = techManager.VisibleComputers.Count > 12 ? 12 : techManager.VisibleComputers.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleComputers[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleComputers[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleComputers[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleComputers.Count > 12);
-					} break;
-				case INFRASTRUCTURE:
-					{
-						maxVisible = techManager.VisibleInfrastructures.Count > 12 ? 12 : techManager.VisibleInfrastructures.Count;
-						for (int i = 0; i < maxVisible; i++)
-						{
-							availableTechs[i].SetText(techManager.VisibleInfrastructures[i + techIndex].GetNameWithNextLevel());
-							availableTechProgresses[i].SetMaxProgress(techManager.VisibleInfrastructures[i + techIndex].GetNextLevelCost());
-							availableTechProgresses[i].SetProgress(techManager.VisibleInfrastructures[i + techIndex].GetTotalResearchPoints());
-						}
-						availableScrollBar.SetEnabledState(techManager.VisibleInfrastructures.Count > 12);
+						_techFieldButtons[5].Selected = true;
+						researchedTechs = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.ResearchedWeaponTechs;
 					} break;
 			}
-		}*/
+			foreach (var researchedTech in researchedTechs)
+			{
+				techDescriptions += researchedTech.TechName + " -\r\n" + researchedTech.TechDescription + "\r\n\r\n\r\n";
+			}
+			_researchedTechnologyDescriptions.SetText(techDescriptions);
+			_researchedTechnologyDescriptions.ScrollToBottom();
+		}
 	}
 }
