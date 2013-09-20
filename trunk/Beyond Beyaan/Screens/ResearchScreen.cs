@@ -81,27 +81,27 @@ namespace Beyond_Beyaan.Screens
 			}
 			_totalResearchPointsLabel = new BBLabel();
 
-			if (!_techFieldLabels[0].Initialize(x + 145, y + 35, "Computers:", System.Drawing.Color.White, out reason))
+			if (!_techFieldLabels[0].Initialize(x + 135, y + 35, "Computers:", System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_techFieldLabels[1].Initialize(x + 145, y + 65, "Construction:", System.Drawing.Color.White, out reason))
+			if (!_techFieldLabels[1].Initialize(x + 135, y + 65, "Construction:", System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_techFieldLabels[2].Initialize(x + 145, y + 95, "Force Fields:", System.Drawing.Color.White, out reason))
+			if (!_techFieldLabels[2].Initialize(x + 135, y + 95, "Force Fields:", System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_techFieldLabels[3].Initialize(x + 145, y + 125, "Planetology:", System.Drawing.Color.White, out reason))
+			if (!_techFieldLabels[3].Initialize(x + 135, y + 125, "Planetology:", System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_techFieldLabels[4].Initialize(x + 145, y + 155, "Propulsion:", System.Drawing.Color.White, out reason))
+			if (!_techFieldLabels[4].Initialize(x + 135, y + 155, "Propulsion:", System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_techFieldLabels[5].Initialize(x + 145, y + 185, "Weapons:", System.Drawing.Color.White, out reason))
+			if (!_techFieldLabels[5].Initialize(x + 135, y + 185, "Weapons:", System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
@@ -109,16 +109,16 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < 6; i++)
 			{
 				_techFieldLabels[i].SetAlignment(true);
-				if (!_techNamesBeingResearchedLabels[i].Initialize(x + 150, y + 35 + (i * 30), "None", System.Drawing.Color.White, out reason))
+				if (!_techNamesBeingResearchedLabels[i].Initialize(x + 140, y + 35 + (i * 30), "None", System.Drawing.Color.White, out reason))
 				{
 					return false;
 				}
-				if (!_techProgressLabels[i].Initialize(x + 495, y + 35 + (i * 30), "N/A", System.Drawing.Color.White, out reason))
+				if (!_techProgressLabels[i].Initialize(x + 545, y + 35 + (i * 30), "N/A", System.Drawing.Color.White, out reason))
 				{
 					return false;
 				}
 				_techProgressLabels[i].SetAlignment(true);
-				if (!_techSliders[i].Initialize(x + 500, y + 35 + (i * 30), 250, 1, 100, true, true, gameMain.Random, out reason))
+				if (!_techSliders[i].Initialize(x + 550, y + 35 + (i * 30), 200, 1, 100, true, true, gameMain.Random, out reason))
 				{
 					return false;
 				}
@@ -499,14 +499,8 @@ namespace Beyond_Beyaan.Screens
 		private void RefreshFields()
 		{
 			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
-			float amount = currentEmpire.ResearchPoints;
-			_totalResearchPointsLabel.SetText(string.Format("Total Research Points: {0:0.00}", amount));
-			_techSliders[0].TopIndex = currentEmpire.TechnologyManager.ComputerPercentage;
-			_techSliders[1].TopIndex = currentEmpire.TechnologyManager.ConstructionPercentage;
-			_techSliders[2].TopIndex = currentEmpire.TechnologyManager.ForceFieldPercentage;
-			_techSliders[3].TopIndex = currentEmpire.TechnologyManager.PlanetologyPercentage;
-			_techSliders[4].TopIndex = currentEmpire.TechnologyManager.PropulsionPercentage;
-			_techSliders[5].TopIndex = currentEmpire.TechnologyManager.WeaponPercentage;
+
+			_totalResearchPointsLabel.SetText(string.Format("Total Research Points: {0:0.00}", currentEmpire.ResearchPoints));
 
 			if (currentEmpire.TechnologyManager.WhichComputerBeingResearched != null)
 			{
@@ -556,84 +550,55 @@ namespace Beyond_Beyaan.Screens
 			{
 				_techNamesBeingResearchedLabels[5].SetText("None");
 			}
-			/*this.researchPoints = researchPoints;
-			researchPointsLabel.SetText("Research Points: " + researchPoints);
 
-			TechnologyManager techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
+			RefreshSliders();
 
-			researchingTechNames[BEAM].SetText(techManager.VisibleBeams[techManager.WhichBeamBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[PARTICLE].SetText(techManager.VisibleParticles[techManager.WhichParticleBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[MISSILE].SetText(techManager.VisibleMissiles[techManager.WhichMissileBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[TORPEDO].SetText(techManager.VisibleTorpedoes[techManager.WhichTorpedoBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[BOMB].SetText(techManager.VisibleBombs[techManager.WhichBombBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[ENGINE].SetText(techManager.VisibleEngines[techManager.WhichEngineBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[ARMOR].SetText(techManager.VisibleArmors[techManager.WhichArmorBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[SHIELD].SetText(techManager.VisibleShields[techManager.WhichShieldBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[COMPUTER].SetText(techManager.VisibleComputers[techManager.WhichComputerBeingResearched].GetNameWithNextLevel());
-			researchingTechNames[INFRASTRUCTURE].SetText(techManager.VisibleInfrastructures[techManager.WhichInfrastructureBeingResearched].GetNameWithNextLevel());
+			RefreshProgressLabels();
 
-			lockedButtons[BEAM].Selected = techManager.BeamLocked;
-			lockedButtons[PARTICLE].Selected = techManager.ParticleLocked;
-			lockedButtons[MISSILE].Selected = techManager.MissileLocked;
-			lockedButtons[TORPEDO].Selected = techManager.TorpedoLocked;
-			lockedButtons[BOMB].Selected = techManager.BombLocked;
-			lockedButtons[ENGINE].Selected = techManager.EngineLocked;
-			lockedButtons[ARMOR].Selected = techManager.ArmorLocked;
-			lockedButtons[SHIELD].Selected = techManager.ShieldLocked;
-			lockedButtons[COMPUTER].Selected = techManager.ComputerLocked;
-			lockedButtons[INFRASTRUCTURE].Selected = techManager.InfrastructureLocked;
+			RefreshLockedStatus();
+		}
 
-			techScrollBars[BEAM].SetEnabledState(!techManager.BeamLocked);
-			techScrollBars[PARTICLE].SetEnabledState(!techManager.ParticleLocked);
-			techScrollBars[MISSILE].SetEnabledState(!techManager.MissileLocked);
-			techScrollBars[TORPEDO].SetEnabledState(!techManager.TorpedoLocked);
-			techScrollBars[BOMB].SetEnabledState(!techManager.BombLocked);
-			techScrollBars[ENGINE].SetEnabledState(!techManager.EngineLocked);
-			techScrollBars[ARMOR].SetEnabledState(!techManager.ArmorLocked);
-			techScrollBars[SHIELD].SetEnabledState(!techManager.ShieldLocked);
-			techScrollBars[COMPUTER].SetEnabledState(!techManager.ComputerLocked);
-			techScrollBars[INFRASTRUCTURE].SetEnabledState(!techManager.InfrastructureLocked);
+		private void RefreshLockedStatus()
+		{
+			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+			_techLockButtons[0].Selected = currentEmpire.TechnologyManager.ComputerLocked;
+			_techLockButtons[1].Selected = currentEmpire.TechnologyManager.ConstructionLocked;
+			_techLockButtons[2].Selected = currentEmpire.TechnologyManager.ForceFieldLocked;
+			_techLockButtons[3].Selected = currentEmpire.TechnologyManager.PlanetologyLocked;
+			_techLockButtons[4].Selected = currentEmpire.TechnologyManager.PropulsionLocked;
+			_techLockButtons[5].Selected = currentEmpire.TechnologyManager.WeaponLocked;
 
-			techFieldProgresses[BEAM].SetMaxProgress(techManager.VisibleBeams[techManager.WhichBeamBeingResearched].GetNextLevelCost());
-			techFieldProgresses[BEAM].SetProgress(techManager.VisibleBeams[techManager.WhichBeamBeingResearched].GetTotalResearchPoints());
+			_techSliders[0].SetEnabledState(!currentEmpire.TechnologyManager.ComputerLocked);
+			_techSliders[1].SetEnabledState(!currentEmpire.TechnologyManager.ConstructionLocked);
+			_techSliders[2].SetEnabledState(!currentEmpire.TechnologyManager.ForceFieldLocked);
+			_techSliders[3].SetEnabledState(!currentEmpire.TechnologyManager.PlanetologyLocked);
+			_techSliders[4].SetEnabledState(!currentEmpire.TechnologyManager.PropulsionLocked);
+			_techSliders[5].SetEnabledState(!currentEmpire.TechnologyManager.WeaponLocked);
+		}
 
-			techFieldProgresses[PARTICLE].SetMaxProgress(techManager.VisibleParticles[techManager.WhichParticleBeingResearched].GetNextLevelCost());
-			techFieldProgresses[PARTICLE].SetProgress(techManager.VisibleParticles[techManager.WhichParticleBeingResearched].GetTotalResearchPoints());
+		private void RefreshProgressLabels()
+		{
+			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+			float amount = currentEmpire.ResearchPoints;
 
-			techFieldProgresses[MISSILE].SetMaxProgress(techManager.VisibleMissiles[techManager.WhichMissileBeingResearched].GetNextLevelCost());
-			techFieldProgresses[MISSILE].SetProgress(techManager.VisibleMissiles[techManager.WhichMissileBeingResearched].GetTotalResearchPoints());
+			_techProgressLabels[0].SetText(currentEmpire.TechnologyManager.GetFieldProgressString(TechField.COMPUTER, amount));
+			_techProgressLabels[1].SetText(currentEmpire.TechnologyManager.GetFieldProgressString(TechField.CONSTRUCTION, amount));
+			_techProgressLabels[2].SetText(currentEmpire.TechnologyManager.GetFieldProgressString(TechField.FORCE_FIELD, amount));
+			_techProgressLabels[3].SetText(currentEmpire.TechnologyManager.GetFieldProgressString(TechField.PLANETOLOGY, amount));
+			_techProgressLabels[4].SetText(currentEmpire.TechnologyManager.GetFieldProgressString(TechField.PROPULSION, amount));
+			_techProgressLabels[5].SetText(currentEmpire.TechnologyManager.GetFieldProgressString(TechField.WEAPON, amount));
+		}
 
-			techFieldProgresses[TORPEDO].SetMaxProgress(techManager.VisibleTorpedoes[techManager.WhichTorpedoBeingResearched].GetNextLevelCost());
-			techFieldProgresses[TORPEDO].SetProgress(techManager.VisibleTorpedoes[techManager.WhichTorpedoBeingResearched].GetTotalResearchPoints());
+		private void RefreshSliders()
+		{
+			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 
-			techFieldProgresses[BOMB].SetMaxProgress(techManager.VisibleBombs[techManager.WhichBombBeingResearched].GetNextLevelCost());
-			techFieldProgresses[BOMB].SetProgress(techManager.VisibleBombs[techManager.WhichBombBeingResearched].GetTotalResearchPoints());
-
-			techFieldProgresses[ENGINE].SetMaxProgress(techManager.VisibleEngines[techManager.WhichEngineBeingResearched].GetNextLevelCost());
-			techFieldProgresses[ENGINE].SetProgress(techManager.VisibleEngines[techManager.WhichEngineBeingResearched].GetTotalResearchPoints());
-
-			techFieldProgresses[ARMOR].SetMaxProgress(techManager.VisibleArmors[techManager.WhichArmorBeingResearched].GetNextLevelCost());
-			techFieldProgresses[ARMOR].SetProgress(techManager.VisibleArmors[techManager.WhichArmorBeingResearched].GetTotalResearchPoints());
-
-			techFieldProgresses[SHIELD].SetMaxProgress(techManager.VisibleShields[techManager.WhichShieldBeingResearched].GetNextLevelCost());
-			techFieldProgresses[SHIELD].SetProgress(techManager.VisibleShields[techManager.WhichShieldBeingResearched].GetTotalResearchPoints());
-
-			techFieldProgresses[COMPUTER].SetMaxProgress(techManager.VisibleComputers[techManager.WhichComputerBeingResearched].GetNextLevelCost());
-			techFieldProgresses[COMPUTER].SetProgress(techManager.VisibleComputers[techManager.WhichComputerBeingResearched].GetTotalResearchPoints());
-
-			techFieldProgresses[INFRASTRUCTURE].SetMaxProgress(techManager.VisibleInfrastructures[techManager.WhichInfrastructureBeingResearched].GetNextLevelCost());
-			techFieldProgresses[INFRASTRUCTURE].SetProgress(techManager.VisibleInfrastructures[techManager.WhichInfrastructureBeingResearched].GetTotalResearchPoints());
-
-			SetPercentages(techManager);
-
-			whichField = BEAM;
-			foreach (Button button in researchingTechNames)
-			{
-				button.Selected = false;
-			}
-			researchingTechNames[whichField].Selected = true;
-			techIndex = 0;
-			RefreshAvailableTechs();*/
+			_techSliders[0].TopIndex = currentEmpire.TechnologyManager.ComputerPercentage;
+			_techSliders[1].TopIndex = currentEmpire.TechnologyManager.ConstructionPercentage;
+			_techSliders[2].TopIndex = currentEmpire.TechnologyManager.ForceFieldPercentage;
+			_techSliders[3].TopIndex = currentEmpire.TechnologyManager.PlanetologyPercentage;
+			_techSliders[4].TopIndex = currentEmpire.TechnologyManager.PropulsionPercentage;
+			_techSliders[5].TopIndex = currentEmpire.TechnologyManager.WeaponPercentage;
 		}
 
 		/*private void SetPercentages(TechnologyManager techManager)
