@@ -9,6 +9,7 @@ using GorgonLibrary.InputDevices;
 namespace Beyond_Beyaan
 {
 	public enum ButtonTextAlignment { LEFT, CENTER, RIGHT }
+
 	public class BBButton
 	{
 		#region Member Variables
@@ -1720,6 +1721,12 @@ namespace Beyond_Beyaan
 			_scroll.Active = enabled;
 			_isEnabled = enabled;
 		}
+
+		public void ScrollToBottom()
+		{
+			TopIndex = (_amountOfItems - _amountVisible);
+			SetScrollButtonPosition();
+		}
 		#endregion
 	}
 
@@ -3063,6 +3070,16 @@ namespace Beyond_Beyaan
 				{
 					_textScrollBar.MoveTo(_x, (int)(_y + _textSprite.Height));
 				}
+			}
+		}
+
+		public void ScrollToBottom()
+		{
+			if (_allowScrollbar && _scrollbarVisible)
+			{
+				//Move the scroll to last position
+				_textScrollBar.ScrollToBottom();
+				RefreshText();
 			}
 		}
 
