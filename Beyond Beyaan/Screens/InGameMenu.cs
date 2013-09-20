@@ -52,30 +52,30 @@ namespace Beyond_Beyaan.Screens
 			_buttons = new BBStretchButton[4];
 
 			_buttons[0] = new BBStretchButton();
-			if (!_buttons[0].Initialize("New Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 30, yPos + 350, 200, 35, gameMain.Random, out reason))
+			if (!_buttons[0].Initialize("New Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 30, _yPos + 350, 200, 35, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			_buttons[1] = new BBStretchButton();
-			if (!_buttons[1].Initialize("Save Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 270, yPos + 300, 200, 35, gameMain.Random, out reason))
+			if (!_buttons[1].Initialize("Save Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 270, _yPos + 300, 200, 35, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			_buttons[2] = new BBStretchButton();
-			if (!_buttons[2].Initialize("Load Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 30, yPos + 300, 200, 35, gameMain.Random, out reason))
+			if (!_buttons[2].Initialize("Load Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 30, _yPos + 300, 200, 35, gameMain.Random, out reason))
 			{
 				return false;
 			}
 			_buttons[2].Enabled = false;
 
 			_buttons[3] = new BBStretchButton();
-			if (!_buttons[3].Initialize("Exit Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 270, yPos + 350, 200, 35, gameMain.Random, out reason))
+			if (!_buttons[3].Initialize("Exit Game", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 270, _yPos + 350, 200, 35, gameMain.Random, out reason))
 			{
 				return false;
 			}
 
 			_saveGameListBackground = new BBStretchableImage();
-			if (!_saveGameListBackground.Initialize(xPos + 20, yPos + 20, 460, 325, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			if (!_saveGameListBackground.Initialize(_xPos + 20, _yPos + 20, 460, 325, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -84,14 +84,14 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < _saveGameButtons.Length; i++)
 			{
 				_saveGameButtons[i] = new BBInvisibleStretchButton();
-				if (!_saveGameButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, xPos + 30, yPos + 35 + (i * 32), 420, 32, gameMain.Random, out reason))
+				if (!_saveGameButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, _xPos + 30, _yPos + 35 + (i * 32), 420, 32, gameMain.Random, out reason))
 				{
 					return false;
 				}
 			}
 
 			_scrollBar = new BBScrollBar();
-			if (!_scrollBar.Initialize(xPos + 455, yPos + 37, 256, _saveGameButtons.Length, _saveGameButtons.Length, false, false, gameMain.Random, out reason))
+			if (!_scrollBar.Initialize(_xPos + 455, _yPos + 37, 256, _saveGameButtons.Length, _saveGameButtons.Length, false, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -274,7 +274,17 @@ namespace Beyond_Beyaan.Screens
 					_gameMain.SaveGame(_saveGameNameField.Text);
 					GetSaveList(); //Refresh the list after saving
 				}
+				else if (e.Key == KeyboardKeys.Escape)
+				{
+					_promptShowing = false;
+					result = true;
+				}
 				return result;
+			}
+			if (e.Key == KeyboardKeys.Escape && CloseWindow != null)
+			{
+				CloseWindow();
+				return true;
 			}
 			return false;
 		}

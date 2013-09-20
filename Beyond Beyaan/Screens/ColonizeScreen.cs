@@ -42,7 +42,7 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < _shipButtons.Length; i++)
 			{
 				_shipButtons[i] = new BBStretchButton();
-				if (!_shipButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, xPos + 20, yPos + 60, 200, 40, gameMain.Random, out reason))
+				if (!_shipButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 20, _yPos + 60, 200, 40, gameMain.Random, out reason))
 				{
 					return false;
 				}
@@ -55,20 +55,20 @@ namespace Beyond_Beyaan.Screens
 			_nameBackground = new BBStretchableImage();
 			_nameTextBox = new BBSingleLineTextBox();
 
-			if (!_instructionLabel.Initialize(xPos + 20, yPos + 25, "Select a ship to colonize this planet", Color.White, out reason))
+			if (!_instructionLabel.Initialize(_xPos + 20, _yPos + 25, "Select a ship to colonize this planet", Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_systemNameLabel.Initialize(xPos + 300, yPos + 130, string.Empty, Color.White, out reason))
+			if (!_systemNameLabel.Initialize(_xPos + 300, _yPos + 130, string.Empty, Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_cancelButton.Initialize("CancelColonizeBG", "CancelColonizeFG", string.Empty, ButtonTextAlignment.LEFT, xPos + 230, yPos + 195, 75, 35, gameMain.Random, out reason))
+			if (!_cancelButton.Initialize("CancelColonizeBG", "CancelColonizeFG", string.Empty, ButtonTextAlignment.LEFT, _xPos + 230, _yPos + 195, 75, 35, gameMain.Random, out reason))
 			{
 				return false;
 			}
 
-			if (!_colonizeButton.Initialize("TransferToBG", "TransferToFG", string.Empty, ButtonTextAlignment.LEFT, xPos + 310, yPos + 195, 75, 35, gameMain.Random, out reason))
+			if (!_colonizeButton.Initialize("TransferToBG", "TransferToFG", string.Empty, ButtonTextAlignment.LEFT, _xPos + 310, _yPos + 195, 75, 35, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -114,7 +114,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			_shipButtons[0].Selected = true;
 			_systemNameLabel.SetText(_starSystem.Name);
-			_systemNameLabel.MoveTo(xPos + 300 - (int)(_systemNameLabel.GetWidth() / 2), yPos + 130 - (int)(_systemNameLabel.GetHeight() / 2));
+			_systemNameLabel.MoveTo(_xPos + 300 - (int)(_systemNameLabel.GetWidth() / 2), _yPos + 130 - (int)(_systemNameLabel.GetHeight() / 2));
 		}
 
 		public override void Draw()
@@ -128,7 +128,7 @@ namespace Beyond_Beyaan.Screens
 					_shipButtons[i].Draw();
 				}
 				_systemNameLabel.Draw();
-				_starSystem.Planets[0].SmallSprite.Draw(xPos + 285, yPos + 80);
+				_starSystem.Planets[0].SmallSprite.Draw(_xPos + 285, _yPos + 80);
 				_cancelButton.Draw();
 				_colonizeButton.Draw();
 			}

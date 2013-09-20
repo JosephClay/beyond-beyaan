@@ -21,6 +21,7 @@ namespace Beyond_Beyaan.Screens
 
 		private TaskBar _taskBar;
 		private InGameMenu _inGameMenu;
+		private ResearchScreen _researchScreen;
 
 		private WindowInterface _windowShowing;
 
@@ -76,13 +77,20 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 			_inGameMenu = new InGameMenu();
+			_researchScreen = new ResearchScreen();
 			if (!_inGameMenu.Initialize(_gameMain, out reason))
 			{
 				return false;
 			}
+			if (!_researchScreen.Initialize(_gameMain, out reason))
+			{
+				return false;
+			}
 			_inGameMenu.CloseWindow = CloseWindow;
+			_researchScreen.CloseWindow = CloseWindow;
 
 			_taskBar.ShowGameMenu = ShowInGameMenu;
+			_taskBar.ShowResearchScreen = ShowResearchScreen;
 
 			reason = null;
 			return true;
@@ -643,6 +651,12 @@ namespace Beyond_Beyaan.Screens
 		{
 			_windowShowing = _inGameMenu;
 			_inGameMenu.GetSaveList();
+		}
+
+		private void ShowResearchScreen()
+		{
+			_windowShowing = _researchScreen;
+			_researchScreen.Load();
 		}
 
 		public void ResetCamera()

@@ -321,126 +321,152 @@ namespace Beyond_Beyaan
 			}
 		}
 
+		public string GetFieldProgressString(TechField whichField, float researchPoints)
+		{
+			switch (whichField)
+			{
+				case TechField.COMPUTER:
+				{
+					
+				} break;
+			}
+		}
+
 		public void AccureResearch(float researchPoints)
 		{
-			if (ComputerPercentage == 0)
-			{
-				if (ComputerResearchAmount > 0)
-				{
-					//Lose 10% of total research invested if no research is being invested
-					ComputerResearchAmount *= 0.9f;
-				}
-			}
-			else
-			{
-				float interest = ComputerResearchAmount * 0.15f;
-				float newPoints = (researchPoints * (ComputerPercentage * 0.01f));
-				if ((newPoints * 2) < interest)
-				{
-					//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
-					interest = newPoints * 2;
-				}
-				ComputerResearchAmount += (newPoints + interest);
-			}
+			ComputerResearchAmount += GetFieldInvestmentAmount(TechField.COMPUTER, researchPoints);
+			ConstructionResearchAmount += GetFieldInvestmentAmount(TechField.CONSTRUCTION, researchPoints);
+			ForceFieldResearchAmount += GetFieldInvestmentAmount(TechField.FORCE_FIELD, researchPoints);
+			PlanetologyResearchAmount += GetFieldInvestmentAmount(TechField.PLANETOLOGY, researchPoints);
+			PropulsionResearchAmount += GetFieldInvestmentAmount(TechField.PROPULSION, researchPoints);
+			WeaponResearchAmount += GetFieldInvestmentAmount(TechField.WEAPON, researchPoints);
+		}
 
-			if (ConstructionPercentage == 0)
+		private float GetFieldInvestmentAmount(TechField whichField, float researchPoints)
+		{
+			switch (whichField)
 			{
-				if (ConstructionResearchAmount > 0)
+				case TechField.COMPUTER:
 				{
-					//Lose 10% of total research invested if no research is being invested
-					ConstructionResearchAmount *= 0.9f;
+					if (ComputerPercentage == 0)
+					{
+						if (ComputerResearchAmount > 0)
+						{
+							//Lose 10% of total research invested if no research is being invested
+							return (ComputerResearchAmount * 0.9f) - ComputerResearchAmount;
+						}
+						return 0;
+					}
+					float interest = ComputerResearchAmount * 0.15f;
+					float newPoints = (researchPoints * (ComputerPercentage * 0.01f));
+					if ((newPoints * 2) < interest)
+					{
+						//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
+						interest = newPoints * 2;
+					}
+					return (newPoints + interest);
 				}
-			}
-			else
-			{
-				float interest = ConstructionResearchAmount * 0.15f;
-				float newPoints = (researchPoints * (ConstructionPercentage * 0.01f));
-				if ((newPoints * 2) < interest)
+				case TechField.CONSTRUCTION:
 				{
-					//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
-					interest = newPoints * 2;
+					if (ConstructionPercentage == 0)
+					{
+						if (ConstructionResearchAmount > 0)
+						{
+							//Lose 10% of total research invested if no research is being invested
+							return (ConstructionResearchAmount * 0.9f) - ConstructionResearchAmount;
+						}
+						return 0;
+					}
+					float interest = ConstructionResearchAmount * 0.15f;
+					float newPoints = (researchPoints * (ConstructionPercentage * 0.01f));
+					if ((newPoints * 2) < interest)
+					{
+						//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
+						interest = newPoints * 2;
+					}
+					return (newPoints + interest);
 				}
-				ConstructionResearchAmount += (newPoints + interest);
-			}
-
-			if (ForceFieldPercentage == 0)
-			{
-				if (ForceFieldResearchAmount > 0)
+				case TechField.FORCE_FIELD:
 				{
-					//Lose 10% of total research invested if no research is being invested
-					ForceFieldResearchAmount *= 0.9f;
+					if (ForceFieldPercentage == 0)
+					{
+						if (ForceFieldResearchAmount > 0)
+						{
+							//Lose 10% of total research invested if no research is being invested
+							return (ForceFieldResearchAmount * 0.9f) - ForceFieldResearchAmount;
+						}
+						return 0;
+					}
+					float interest = ForceFieldResearchAmount * 0.15f;
+					float newPoints = (researchPoints * (ForceFieldPercentage * 0.01f));
+					if ((newPoints * 2) < interest)
+					{
+						//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
+						interest = newPoints * 2;
+					}
+					return (newPoints + interest);
 				}
-			}
-			else
-			{
-				float interest = ForceFieldResearchAmount * 0.15f;
-				float newPoints = (researchPoints * (ForceFieldPercentage * 0.01f));
-				if ((newPoints * 2) < interest)
+				case TechField.PLANETOLOGY:
 				{
-					//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
-					interest = newPoints * 2;
+					if (PlanetologyPercentage == 0)
+					{
+						if (PlanetologyResearchAmount > 0)
+						{
+							//Lose 10% of total research invested if no research is being invested
+							return (PlanetologyResearchAmount * 0.9f) - PlanetologyResearchAmount;
+						}
+						return 0;
+					}
+					float interest = PlanetologyResearchAmount * 0.15f;
+					float newPoints = (researchPoints * (PlanetologyPercentage * 0.01f));
+					if ((newPoints * 2) < interest)
+					{
+						//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
+						interest = newPoints * 2;
+					}
+					return (newPoints + interest);
 				}
-				ForceFieldResearchAmount += (newPoints + interest);
-			}
-
-			if (PlanetologyPercentage == 0)
-			{
-				if (PlanetologyResearchAmount > 0)
+				case TechField.PROPULSION:
 				{
-					//Lose 10% of total research invested if no research is being invested
-					PlanetologyResearchAmount *= 0.9f;
+					if (PropulsionPercentage == 0)
+					{
+						if (PropulsionResearchAmount > 0)
+						{
+							//Lose 10% of total research invested if no research is being invested
+							return (PropulsionResearchAmount * 0.9f) - PropulsionResearchAmount;
+						}
+						return 0;
+					}
+					float interest = PropulsionResearchAmount * 0.15f;
+					float newPoints = (researchPoints * (PropulsionPercentage * 0.01f));
+					if ((newPoints * 2) < interest)
+					{
+						//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
+						interest = newPoints * 2;
+					}
+					return (newPoints + interest);
 				}
-			}
-			else
-			{
-				float interest = PlanetologyResearchAmount * 0.15f;
-				float newPoints = (researchPoints * (PlanetologyPercentage * 0.01f));
-				if ((newPoints * 2) < interest)
+				case TechField.WEAPON:
 				{
-					//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
-					interest = newPoints * 2;
+					if (WeaponPercentage == 0)
+					{
+						if (WeaponResearchAmount > 0)
+						{
+							//Lose 10% of total research invested if no research is being invested
+							return (WeaponResearchAmount * 0.9f) - WeaponResearchAmount;
+						}
+						return 0;
+					}
+					float interest = WeaponResearchAmount * 0.15f;
+					float newPoints = (researchPoints * (WeaponPercentage * 0.01f));
+					if ((newPoints * 2) < interest)
+					{
+						//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
+						interest = newPoints * 2;
+					}
+					return (newPoints + interest);
 				}
-				PlanetologyResearchAmount += (newPoints + interest);
-			}
-
-			if (PropulsionPercentage == 0)
-			{
-				if (PropulsionResearchAmount > 0)
-				{
-					//Lose 10% of total research invested if no research is being invested
-					PropulsionResearchAmount *= 0.9f;
-				}
-			}
-			else
-			{
-				float interest = PropulsionResearchAmount * 0.15f;
-				float newPoints = (researchPoints * (PropulsionPercentage * 0.01f));
-				if ((newPoints * 2) < interest)
-				{
-					//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
-					interest = newPoints * 2;
-				}
-				PropulsionResearchAmount += (newPoints + interest);
-			}
-
-			if (WeaponPercentage == 0)
-			{
-				if (WeaponResearchAmount > 0)
-				{
-					//Lose 10% of total research invested if no research is being invested
-					WeaponResearchAmount *= 0.9f;
-				}
-			}
-			else
-			{
-				float interest = WeaponResearchAmount * 0.15f;
-				float newPoints = (researchPoints * (WeaponPercentage * 0.01f));
-				if ((newPoints * 2) < interest)
-				{
-					//up to 15% interest, but if we contribute less than half the interest, then cap the interest to double the current investment
-					interest = newPoints * 2;
-				}
-				WeaponResearchAmount += (newPoints + interest);
+				default: return 0;
 			}
 		}
 

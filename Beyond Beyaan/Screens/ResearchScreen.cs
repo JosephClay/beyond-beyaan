@@ -1,8 +1,9 @@
-﻿using GorgonLibrary.InputDevices;
+﻿using System;
+using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
-	public class ResearchScreen : ScreenInterface
+	public class ResearchScreen : WindowInterface
 	{
 		/*private const int BEAM = 0;
 		private const int PARTICLE = 1;
@@ -14,8 +15,6 @@ namespace Beyond_Beyaan.Screens
 		private const int SHIELD = 7;
 		private const int COMPUTER = 8;
 		private const int INFRASTRUCTURE = 9;
-
-		GameMain _gameMain;
 
 		private float researchPoints;
 		private Label researchPointsLabel;
@@ -31,14 +30,110 @@ namespace Beyond_Beyaan.Screens
 		private int maxVisible;
 		private int techIndex;*/
 
+		//private BBStretchableImage _background;
+
+		public Action CloseWindow;
+
+		private BBStretchableImage _fieldsBackground;
+		private BBStretchableImage _technologyListBackground;
+
+		//The top UI part:
+		private BBLabel[] _techFieldLabels;
+		private BBLabel[] _techNamesBeingResearchedLabels;
+		private BBLabel[] _techProgressLabels;
+		private BBScrollBar[] _techSliders;
+		private BBButton[] _techLockButtons;
+		private BBLabel _totalResearchPointsLabel;
+
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			/*this._gameMain = _gameMain;
+			int x = (gameMain.ScreenWidth / 2) - 400;
+			int y = (gameMain.ScreenHeight / 2) - 300;
 
-			int x = (_gameMain.ScreenWidth / 2) - 400;
-			int y = (_gameMain.ScreenHeight / 2) - 300;
+			if (!base.Initialize(x, y, 800, 600, StretchableImageType.MediumBorder, gameMain, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
-			researchPointsLabel = new Label(x + 500, y + 575);
+			_fieldsBackground = new BBStretchableImage();
+			_technologyListBackground = new BBStretchableImage();
+			if (!_fieldsBackground.Initialize(x + 20, y + 20, 760, 230, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_technologyListBackground.Initialize(x + 20, y + 300, 760, 280, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
+			_techFieldLabels = new BBLabel[6];
+			_techNamesBeingResearchedLabels = new BBLabel[6];
+			_techProgressLabels = new BBLabel[6];
+			_techSliders = new BBScrollBar[6];
+			_techLockButtons = new BBButton[6];
+			for (int i = 0; i < 6; i++)
+			{
+				_techFieldLabels[i] = new BBLabel();
+				_techNamesBeingResearchedLabels[i] = new BBLabel();
+				_techProgressLabels[i] = new BBLabel();
+				_techSliders[i] = new BBScrollBar();
+				_techLockButtons[i] = new BBButton();
+			}
+			_totalResearchPointsLabel = new BBLabel();
+
+			if (!_techFieldLabels[0].Initialize(x + 145, y + 35, "Computers:", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldLabels[1].Initialize(x + 145, y + 65, "Construction:", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldLabels[2].Initialize(x + 145, y + 95, "Force Fields:", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldLabels[3].Initialize(x + 145, y + 125, "Planetology:", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldLabels[4].Initialize(x + 145, y + 155, "Propulsion:", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_techFieldLabels[5].Initialize(x + 145, y + 185, "Weapons:", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+
+			for (int i = 0; i < 6; i++)
+			{
+				_techFieldLabels[i].SetAlignment(true);
+				if (!_techNamesBeingResearchedLabels[i].Initialize(x + 150, y + 35 + (i * 30), "None", System.Drawing.Color.White, out reason))
+				{
+					return false;
+				}
+				if (!_techProgressLabels[i].Initialize(x + 495, y + 35 + (i * 30), "N/A", System.Drawing.Color.White, out reason))
+				{
+					return false;
+				}
+				_techProgressLabels[i].SetAlignment(true);
+				if (!_techSliders[i].Initialize(x + 500, y + 35 + (i * 30), 250, 1, 100, true, true, gameMain.Random, out reason))
+				{
+					return false;
+				}
+				if (!_techLockButtons[i].Initialize("LockBG", "LockFG", string.Empty, ButtonTextAlignment.LEFT, x + 755, y + 35 + (i * 30), 16, 16, gameMain.Random, out reason))
+				{
+					return false;
+				}
+			}
+
+			if (!_totalResearchPointsLabel.Initialize(x + 765, y + 215, "Total Research Points: 0", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			_totalResearchPointsLabel.SetAlignment(true);
+			/*researchPointsLabel = new Label(x + 500, y + 575);
 
 			researchingTechNames = new Button[10];
 			techScrollBars = new ScrollBar[10];
@@ -71,12 +166,25 @@ namespace Beyond_Beyaan.Screens
 			return true;
 		}
 
-		public void DrawScreen()
+		public override void Draw()
 		{
-			/*_gameMain.DrawGalaxyBackground();
+			base.Draw();
 
-			drawingManagement.DrawSprite(SpriteName.ControlBackground, (_gameMain.ScreenWidth / 2) - 400, (_gameMain.ScreenHeight / 2) - 300, 255, 800, 600, System.Drawing.Color.White);
+			_fieldsBackground.Draw();
+			_technologyListBackground.Draw();
 
+			for (int i = 0; i < 6; i++)
+			{
+				_techFieldLabels[i].Draw();
+				_techNamesBeingResearchedLabels[i].Draw();
+				_techProgressLabels[i].Draw();
+				_techSliders[i].Draw();
+				_techLockButtons[i].Draw();
+			}
+			_totalResearchPointsLabel.Draw();
+		}
+		/*public void DrawScreen()
+		{
 			for (int i = 0; i < techScrollBars.Length; i++)
 			{
 				techScrollBars[i].DrawScrollBar(drawingManagement);
@@ -92,8 +200,8 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			availableScrollBar.DrawScrollBar(drawingManagement);
-			researchPointsLabel.Draw();*/
-		}
+			researchPointsLabel.Draw();
+		}*/
 
 		public void Update(int x, int y, float frameDeltaTime)
 		{
@@ -372,16 +480,82 @@ namespace Beyond_Beyaan.Screens
 		{
 		}
 
-		public void KeyDown(KeyboardInputEventArgs e)
+		public override bool KeyDown(KeyboardInputEventArgs e)
 		{
-			/*if (e.Key == KeyboardKeys.Escape)
+			if (e.Key == KeyboardKeys.Escape && CloseWindow != null)
 			{
-				_gameMain.ChangeToScreen(Screen.Galaxy);
-			}*/
+				CloseWindow();
+				return true;
+			}
+			return false;
 		}
 
-		public void LoadPoints(float researchPoints)
+		public void Load()
 		{
+			_gameMain.EmpireManager.CurrentEmpire.UpdateResearchPoints(); //To ensure that we have an accurate amount of points
+			RefreshFields();
+		}
+
+		private void RefreshFields()
+		{
+			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+			float amount = currentEmpire.ResearchPoints;
+			_totalResearchPointsLabel.SetText(string.Format("Total Research Points: {0:0.00}", amount));
+			_techSliders[0].TopIndex = currentEmpire.TechnologyManager.ComputerPercentage;
+			_techSliders[1].TopIndex = currentEmpire.TechnologyManager.ConstructionPercentage;
+			_techSliders[2].TopIndex = currentEmpire.TechnologyManager.ForceFieldPercentage;
+			_techSliders[3].TopIndex = currentEmpire.TechnologyManager.PlanetologyPercentage;
+			_techSliders[4].TopIndex = currentEmpire.TechnologyManager.PropulsionPercentage;
+			_techSliders[5].TopIndex = currentEmpire.TechnologyManager.WeaponPercentage;
+
+			if (currentEmpire.TechnologyManager.WhichComputerBeingResearched != null)
+			{
+				_techNamesBeingResearchedLabels[0].SetText(currentEmpire.TechnologyManager.WhichComputerBeingResearched.TechName);
+			}
+			else
+			{
+				_techNamesBeingResearchedLabels[0].SetText("None");
+			}
+			if (currentEmpire.TechnologyManager.WhichConstructionBeingResearched != null)
+			{
+				_techNamesBeingResearchedLabels[1].SetText(currentEmpire.TechnologyManager.WhichConstructionBeingResearched.TechName);
+			}
+			else
+			{
+				_techNamesBeingResearchedLabels[1].SetText("None");
+			}
+			if (currentEmpire.TechnologyManager.WhichForceFieldBeingResearched != null)
+			{
+				_techNamesBeingResearchedLabels[2].SetText(currentEmpire.TechnologyManager.WhichForceFieldBeingResearched.TechName);
+			}
+			else
+			{
+				_techNamesBeingResearchedLabels[2].SetText("None");
+			}
+			if (currentEmpire.TechnologyManager.WhichPlanetologyBeingResearched != null)
+			{
+				_techNamesBeingResearchedLabels[3].SetText(currentEmpire.TechnologyManager.WhichPlanetologyBeingResearched.TechName);
+			}
+			else
+			{
+				_techNamesBeingResearchedLabels[3].SetText("None");
+			}
+			if (currentEmpire.TechnologyManager.WhichPropulsionBeingResearched != null)
+			{
+				_techNamesBeingResearchedLabels[4].SetText(currentEmpire.TechnologyManager.WhichPropulsionBeingResearched.TechName);
+			}
+			else
+			{
+				_techNamesBeingResearchedLabels[4].SetText("None");
+			}
+			if (currentEmpire.TechnologyManager.WhichWeaponBeingResearched != null)
+			{
+				_techNamesBeingResearchedLabels[5].SetText(currentEmpire.TechnologyManager.WhichWeaponBeingResearched.TechName);
+			}
+			else
+			{
+				_techNamesBeingResearchedLabels[5].SetText("None");
+			}
 			/*this.researchPoints = researchPoints;
 			researchPointsLabel.SetText("Research Points: " + researchPoints);
 

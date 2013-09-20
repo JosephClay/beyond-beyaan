@@ -7,28 +7,28 @@ namespace Beyond_Beyaan.Screens
 	{
 		protected GameMain _gameMain;
 
-		protected int xPos;
-		protected int yPos;
-		protected int mouseX;
-		protected int mouseY;
-		protected int origX;
-		protected int origY;
-		protected int windowWidth;
-		protected int windowHeight;
-		protected bool moving;
-		protected bool moveable;
+		protected int _xPos;
+		protected int _yPos;
+		protected int _mouseX;
+		protected int _mouseY;
+		protected int _origX;
+		protected int _origY;
+		protected int _windowWidth;
+		protected int _windowHeight;
+		protected bool _moving;
+		protected bool _moveable;
 
 		protected BBStretchableImage _backGroundImage;
 
 		public bool Initialize(int x, int y, int width, int height, StretchableImageType backgroundImage, GameMain gameMain, bool moveable, Random r, out string reason)
 		{
-			xPos = x;
-			yPos = y;
-			windowWidth = width;
-			windowHeight = height;
-			this.moveable = moveable;
+			_xPos = x;
+			_yPos = y;
+			_windowWidth = width;
+			_windowHeight = height;
+			this._moveable = moveable;
 
-			moving = false;
+			_moving = false;
 			_gameMain = gameMain;
 
 			_backGroundImage = new BBStretchableImage();
@@ -47,31 +47,31 @@ namespace Beyond_Beyaan.Screens
 
 		public virtual bool MouseHover(int x, int y, float frameDeltaTime)
 		{
-			if (moving)
+			if (_moving)
 			{
-				xPos = (x - mouseX) + origX;
-				yPos = (y - mouseY) + origY;
+				_xPos = (x - _mouseX) + _origX;
+				_yPos = (y - _mouseY) + _origY;
 
-				if (xPos + windowWidth > _gameMain.ScreenWidth)
+				if (_xPos + _windowWidth > _gameMain.ScreenWidth)
 				{
-					xPos = _gameMain.ScreenWidth - windowWidth;
+					_xPos = _gameMain.ScreenWidth - _windowWidth;
 				}
-				if (yPos + windowHeight > _gameMain.ScreenHeight)
+				if (_yPos + _windowHeight > _gameMain.ScreenHeight)
 				{
-					yPos = _gameMain.ScreenHeight - windowHeight;
+					_yPos = _gameMain.ScreenHeight - _windowHeight;
 				}
-				if (xPos < 0)
+				if (_xPos < 0)
 				{
-					xPos = 0;
+					_xPos = 0;
 				}
-				if (yPos < 0)
+				if (_yPos < 0)
 				{
-					yPos = 0;
+					_yPos = 0;
 				}
 				MoveWindow();
 				return true;
 			}
-			if (x >= xPos && x < xPos + windowWidth && y >= yPos && y < yPos + windowHeight)
+			if (x >= _xPos && x < _xPos + _windowWidth && y >= _yPos && y < _yPos + _windowHeight)
 			{
 				//Don't want items behind this window to be highlighted
 				return true;
@@ -81,15 +81,15 @@ namespace Beyond_Beyaan.Screens
 
 		public virtual bool MouseDown(int x, int y)
 		{
-			if (x >= xPos && x < xPos + windowWidth && y >= yPos && y < yPos + windowHeight)
+			if (x >= _xPos && x < _xPos + _windowWidth && y >= _yPos && y < _yPos + _windowHeight)
 			{
-				if (moveable)
+				if (_moveable)
 				{
-					moving = true;
-					mouseX = x;
-					mouseY = y;
-					origX = xPos;
-					origY = yPos;
+					_moving = true;
+					_mouseX = x;
+					_mouseY = y;
+					_origX = _xPos;
+					_origY = _yPos;
 				}
 				return true;
 			}
@@ -98,13 +98,13 @@ namespace Beyond_Beyaan.Screens
 
 		public virtual bool MouseUp(int x, int y)
 		{
-			if (moving)
+			if (_moving)
 			{
 				//If it was moving, no matter what, it should capture the mouse up since it's releasing the moving grip
-				moving = false;
+				_moving = false;
 				return true;
 			}
-			if (x >= xPos && x < xPos + windowWidth && y >= yPos && y < yPos + windowHeight)
+			if (x >= _xPos && x < _xPos + _windowWidth && y >= _yPos && y < _yPos + _windowHeight)
 			{
 				return true;
 			}
@@ -118,7 +118,7 @@ namespace Beyond_Beyaan.Screens
 
 		public virtual void MoveWindow()
 		{
-			_backGroundImage.MoveTo(xPos, yPos);
+			_backGroundImage.MoveTo(_xPos, _yPos);
 		}
 	}
 }

@@ -23,7 +23,6 @@ namespace Beyond_Beyaan
 		private FleetListScreen _fleetListScreen;
 		private DesignScreen _designScreen;
 		private PlanetsScreen _planetsScreen;
-		private ResearchScreen _researchScreen;
 		private ProcessingTurnScreen _processingTurnScreen;
 		//private SpaceCombat _spaceCombat;
 		
@@ -333,21 +332,6 @@ namespace Beyond_Beyaan
 					}
 					_screenInterface = _planetsScreen;
 					_planetsScreen.LoadScreen();
-					break;
-				case Screen.Research:
-					EmpireManager.CurrentEmpire.UpdateResearchPoints();
-					if (_researchScreen == null)
-					{
-						_researchScreen = new ResearchScreen();
-						string reason;
-						if (!_researchScreen.Initialize(this, out reason))
-						{
-							MessageBox.Show("Exception in loading Research Screen. Reason: " + reason);
-							_parentForm.Close();
-						}
-					}
-					_researchScreen.LoadPoints(EmpireManager.CurrentEmpire.ResearchPoints);
-					_screenInterface = _researchScreen;
 					break;
 				case Screen.ProcessTurn:
 					EmpireManager.CurrentEmpire.ClearTurnData();
