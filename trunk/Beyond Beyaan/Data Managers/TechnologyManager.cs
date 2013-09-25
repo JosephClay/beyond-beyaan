@@ -63,7 +63,7 @@ namespace Beyond_Beyaan
 				}
 				level = (int)(level * 0.8);
 				level += ResearchedComputerTechs.Count + 1 - numberOfStartingTechs;
-				return level;
+				return Math.Min(level, 99);
 			}
 		}
 		public int ConstructionLevel
@@ -85,7 +85,7 @@ namespace Beyond_Beyaan
 				}
 				level = (int)(level * 0.8);
 				level += ResearchedConstructionTechs.Count + 1 - numberOfStartingTechs;
-				return level;
+				return Math.Min(level, 99);
 			}
 		}
 		public int ForceFieldLevel
@@ -107,7 +107,7 @@ namespace Beyond_Beyaan
 				}
 				level = (int)(level * 0.8);
 				level += ResearchedForceFieldTechs.Count + 1 - numberOfStartingTechs;
-				return level;
+				return Math.Min(level, 99);
 			}
 		}
 		public int PlanetologyLevel
@@ -129,7 +129,7 @@ namespace Beyond_Beyaan
 				}
 				level = (int)(level * 0.8);
 				level += ResearchedPlanetologyTechs.Count + 1 - numberOfStartingTechs;
-				return level;
+				return Math.Min(level, 99);
 			}
 		}
 		public int PropulsionLevel
@@ -151,7 +151,7 @@ namespace Beyond_Beyaan
 				}
 				level = (int)(level * 0.8);
 				level += ResearchedPropulsionTechs.Count + 1 - numberOfStartingTechs;
-				return level;
+				return Math.Min(level, 99);
 			}
 		}
 		public int WeaponLevel
@@ -173,7 +173,7 @@ namespace Beyond_Beyaan
 				}
 				level = (int)(level * 0.8);
 				level += ResearchedWeaponTechs.Count + 1 - numberOfStartingTechs;
-				return level;
+				return Math.Min(level, 99);
 			}
 		}
 		public int FuelRange { get; private set; }
@@ -319,6 +319,18 @@ namespace Beyond_Beyaan
 					UnresearchedWeaponTechs.Remove(tech);
 				}
 			}
+		}
+
+		public Dictionary<TechField, int> GetFieldLevels()
+		{
+			Dictionary<TechField, int> fields = new Dictionary<TechField, int>();
+			fields[TechField.COMPUTER] = ComputerLevel;
+			fields[TechField.CONSTRUCTION] = ConstructionLevel;
+			fields[TechField.FORCE_FIELD] = ForceFieldLevel;
+			fields[TechField.PLANETOLOGY] = PlanetologyLevel;
+			fields[TechField.PROPULSION] = PropulsionLevel;
+			fields[TechField.WEAPON] = WeaponLevel;
+			return fields;
 		}
 
 		public string GetFieldProgressString(TechField whichField, float researchPoints)
