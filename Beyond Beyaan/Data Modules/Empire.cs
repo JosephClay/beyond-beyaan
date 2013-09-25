@@ -24,10 +24,8 @@ namespace Beyond_Beyaan
 		private int planetSelected;
 		private int fleetSelected;
 		private FleetGroup selectedFleetGroup;
-		//GorgonLibrary.Graphics.Sprite influenceMap;
 		private List<Fleet> visibleOtherFleets;
 		private float planetIncome;
-		//private float handicap;
 		#endregion
 
 		#region Properties
@@ -103,11 +101,6 @@ namespace Beyond_Beyaan
 
 		public SitRepManager SitRepManager { get; private set; }
 
-		/*public GorgonLibrary.Graphics.Sprite InfluenceMap
-		{
-			get { return influenceMap; }
-		}*/
-
 		public List<StarSystem> SystemsUnderInfluence
 		{
 			get;
@@ -143,8 +136,7 @@ namespace Beyond_Beyaan
 		}
 		public float ShipMaintenance
 		{
-			get;
-			private set;
+			get { return FleetManager.GetExpenses(); }
 		}
 		public float EspionageExpense
 		{
@@ -225,7 +217,6 @@ namespace Beyond_Beyaan
 			PlanetManager.AddOwnedPlanet(homePlanet);
 			FleetManager.SetupStarterFleet(homeSystem);
 			homePlanet.ShipBeingBuilt = FleetManager.CurrentDesigns[0];
-			ShipMaintenance = FleetManager.GetExpenses();
 			Refresh = true;
 			UpdateNetIncome();
 			homePlanet.SetCleanup();
@@ -278,7 +269,7 @@ namespace Beyond_Beyaan
 					{
 						foreach (var special in ship.Specials)
 						{
-							if (special.Colony >= colonyReq)
+							if (special.Technology.Colony >= colonyReq)
 							{
 								colonizingFleets.Add(fleet);
 								break;
@@ -289,115 +280,6 @@ namespace Beyond_Beyaan
 			}
 			return colonizingFleets;
 		}
-
-		/*public void CreateInfluenceMapSprite(GridCell[][] gridCells)
-		{
-			int squaredSize = 2;
-
-			while (squaredSize < gridCells.Length)
-			{
-				squaredSize *= 2;
-			}
-			GorgonLibrary.Graphics.Image image;
-			if (GorgonLibrary.Graphics.ImageCache.Images.Contains(empireName + empireID))
-			{
-				image = GorgonLibrary.Graphics.ImageCache.Images[empireName + empireID];
-				image.Resize(squaredSize, squaredSize);
-			}
-			else
-			{
-				image = new GorgonLibrary.Graphics.Image(empireName + empireID, squaredSize, squaredSize, GorgonLibrary.Graphics.ImageBufferFormats.BufferRGB888A8);
-			}
-			image.Clear(Color.FromArgb(0, 0, 0, 0));
-			GorgonLibrary.Graphics.Image.ImageLockBox newImage = image.GetImageData();
-			for (int i = 0; i < gridCells.Length; i++)
-			{
-				for (int j = 0; j < gridCells[i].Length; j++)
-				{
-					if (gridCells[i][j].dominantEmpire == this)
-					{
-						newImage[i, j] = gridCells[i][j].dominantEmpire.empireColor.ToArgb();
-					}
-				}
-			}
-			influenceMap = new GorgonLibrary.Graphics.Sprite(empireName + empireID, image);
-		}*/
-
-		/*public void UpdateMigration(Galaxy galaxy)
-		{
-			List<Planet> migratingPlanets = new List<Planet>(); //Planets that have people moving out
-			List<Planet> immigratingPlanets = new List<Planet>(); //Planets that have people moving in
-
-			foreach (StarSystem system in SystemsUnderInfluence)
-			{
-				foreach (Planet planet in system.Planets)
-				{
-					if (planet.PlanetType == PLANET_TYPE.ASTEROIDS || planet.PlanetType == PLANET_TYPE.GAS_GIANT || (planet.Owner != this && planet.Owner != null))
-					{
-						//Uninhabitable or foreign owned planets are skipped
-						continue;
-					}
-					if (planet.Population >= (planet.PopulationMax * 0.75f))
-					{
-						migratingPlanets.Add(planet);
-					}
-					else if (planet.Population < (planet.PopulationMax * 0.25f))
-					{
-						immigratingPlanets.Add(planet);
-					}
-				}
-			}
-			if (migratingPlanets.Count == 0 || immigratingPlanets.Count == 0)
-			{
-				//Can't migrate anywhere, so end this function
-				return;
-			}
-
-			migratingPlanets.Sort((Planet a, Planet b) => 
-				{ 
-					return (b.Population / b.PopulationMax).CompareTo(a.Population / a.PopulationMax); 
-				});
-			immigratingPlanets.Sort((Planet a, Planet b) =>
-			{
-				return (a.Population / a.PopulationMax).CompareTo(b.Population / b.PopulationMax);
-			});
-
-			int j = 0;
-			for (int i = 0; i < migratingPlanets.Count; i++)
-			{
-				float amountToMove = (migratingPlanets[i].Population - (migratingPlanets[i].PopulationMax * 0.75f)) * 0.10f;
-				while (amountToMove > 0 && j < immigratingPlanets.Count)
-				{
-					float amountCanMove = ((immigratingPlanets[j].PopulationMax * 0.25f) - immigratingPlanets[j].Population) * 0.17f;
-					bool isAlreadyOwned = immigratingPlanets[j].Owner != null;
-					immigratingPlanets[j].Owner = this;
-					if (amountToMove > amountCanMove)
-					{
-						migratingPlanets[i].Population -= amountCanMove;
-						immigratingPlanets[j].Population += amountCanMove;
-						amountToMove -= amountCanMove;
-					}
-					else
-					{
-						migratingPlanets[i].Population -= amountToMove;
-						immigratingPlanets[j].Population += amountToMove;
-						amountToMove = 0;
-					}
-					if (!isAlreadyOwned)
-					{
-						//Gotta set the industry to do something
-						immigratingPlanets[j].SetMinimumFoodAndWaste();
-						if (fleetManager.CurrentDesigns.Count > 0)
-						{
-							immigratingPlanets[j].ShipBeingBuilt = fleetManager.CurrentDesigns[0];
-						}
-						sitRepManager.AddItem(new SitRepItem(Screen.Galaxy, immigratingPlanets[j].System, immigratingPlanets[j], new Point(immigratingPlanets[j].System.X, immigratingPlanets[j].System.Y),
-							immigratingPlanets[j].Name + " has been colonized."));
-					}
-					j++;
-				}
-			}
-		}*/
 
 		public void LaunchTransports()
 		{
@@ -461,7 +343,6 @@ namespace Beyond_Beyaan
 				}
 			}
 			FleetManager.MergeIdleFleets();
-			ShipMaintenance = FleetManager.GetExpenses();
 			UpdateNetIncome();
 		}
 
@@ -474,11 +355,20 @@ namespace Beyond_Beyaan
 		{
 			Refresh = false; //We're already refreshing stuff at this point
 			NetIncome = EmpirePlanetIncome;
-			NetIncome += EmpireTradeIncome;
 
 			NetExpenses = ShipMaintenance;
 			NetExpenses += EspionageExpense;
 			NetExpenses += SecurityExpense;
+
+			//If new trade, usually it's a penalty until it fleshes out.
+			if (EmpireTradeIncome >= 0)
+			{
+				NetIncome += EmpireTradeIncome;
+			}
+			else
+			{
+				NetExpenses += EmpireTradeIncome;
+			}
 			
 			ExpensesPercentage = NetExpenses / NetIncome;
 		}

@@ -58,16 +58,16 @@ namespace Beyond_Beyaan
 			scout.Owner = _empire;
 			scout.Size = Ship.SMALL;
 			scout.WhichStyle = 0;
-			scout.Engine = retroEngine;
-			scout.Armor = titaniumArmor;
+			scout.Armor = new Equipment(titaniumArmor, false);
 			foreach (var tech in _empire.TechnologyManager.ResearchedConstructionTechs)
 			{
 				if (tech.ReserveFuelTanks)
 				{
-					scout.Specials.Add(tech);
+					scout.Specials.Add(new Equipment(tech, false));
 					break;
 				}
 			}
+			scout.Engine = new KeyValuePair<Equipment, float>(new Equipment(retroEngine, false), scout.PowerUsed / (retroEngine.Speed * 10));
 			scout.DesignID = _currentShipDesignID;
 			CurrentDesigns.Add(scout);
 			_currentShipDesignID++;
@@ -77,16 +77,16 @@ namespace Beyond_Beyaan
 			colonyShip.Owner = _empire;
 			colonyShip.Size = Ship.LARGE;
 			colonyShip.WhichStyle = 0;
-			colonyShip.Engine = retroEngine;
-			colonyShip.Armor = titaniumArmor;
+			colonyShip.Armor = new Equipment(titaniumArmor, false);
 			foreach (var tech in _empire.TechnologyManager.ResearchedPlanetologyTechs)
 			{
 				if (tech.Colony == Technology.STANDARD_COLONY)
 				{
-					colonyShip.Specials.Add(tech);
+					colonyShip.Specials.Add(new Equipment(tech, false));
 					break;
 				}
 			}
+			colonyShip.Engine = new KeyValuePair<Equipment, float>(new Equipment(retroEngine, false), colonyShip.PowerUsed / (retroEngine.Speed * 10));
 			colonyShip.DesignID = _currentShipDesignID;
 			CurrentDesigns.Add(colonyShip);
 			_currentShipDesignID++;

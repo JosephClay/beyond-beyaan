@@ -121,7 +121,7 @@ namespace Beyond_Beyaan
 					bool hasReserve = false;
 					foreach (var special in ship.Key.Specials)
 					{
-						if (special.ReserveFuelTanks)
+						if (special.Technology.ReserveFuelTanks)
 						{
 							hasReserve = true;
 							break;
@@ -190,9 +190,9 @@ namespace Beyond_Beyaan
 			{
 				foreach (Ship ship in orderedShips)
 				{
-					if (ship.Engine.Speed < maxSpeed)
+					if (ship.Engine.Key.Technology.Speed < maxSpeed)
 					{
-						maxSpeed = ship.Engine.Speed;
+						maxSpeed = ship.Engine.Key.Technology.Speed;
 					}
 				}
 			}
@@ -450,7 +450,7 @@ namespace Beyond_Beyaan
 			float amount = 0;
 			foreach (KeyValuePair<Ship, int> ship in ships)
 			{
-				amount += (ship.Key.Maintenance * ship.Value);
+				amount += ship.Key.Maintenance * ship.Value;
 			}
 			return amount;
 		}

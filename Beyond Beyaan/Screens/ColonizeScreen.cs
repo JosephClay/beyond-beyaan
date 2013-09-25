@@ -99,7 +99,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				foreach (var special in ship.Specials)
 				{
-					if (special.Colony >= _starSystem.Planets[0].ColonyRequirement)
+					if (special.Technology.Colony >= _starSystem.Planets[0].ColonyRequirement)
 					{
 						_colonyShips.Add(ship);
 						break;

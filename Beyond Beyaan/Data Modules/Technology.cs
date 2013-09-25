@@ -1,4 +1,7 @@
-﻿namespace Beyond_Beyaan
+﻿using System;
+using System.Collections.Generic;
+
+namespace Beyond_Beyaan
 {
 	public class Technology
 	{
@@ -60,6 +63,7 @@
 		#endregion
 
 		public int TechLevel { get; private set; }
+		public TechField TechField { get; private set; }
 		public string TechName { get; private set; }
 		public string TechSecondaryName { get; private set; } //Used for technologies that are either armor or weapons with heavy weapon variant
 		public string TechDescription { get; private set; }
@@ -112,6 +116,9 @@
 		public bool CombatTransporters { get; private set; }
 		public bool InertialNullifier { get; private set; }
 		public bool DisplacementDevice { get; private set; }
+		public bool AntiMissileRockets { get; private set; }
+		public bool IonStreamProjector { get; private set; }
+		public bool NeutronStreamProjector { get; private set; }
 
 		//Space/Cost/Power requirements for ship.  Generic means ship's size don't matter
 		public float SmallSize { get; private set; }
@@ -176,7 +183,7 @@
 		public bool Enveloping { get; private set; }
 		public bool Dissipating { get; private set; } //Used only for plasma torpedoes
 
-		public Technology(string name, string desc, int level,
+		public Technology(TechField techField, string name, string desc, int level,
 						string secondaryName = "",
 						//Optional arguments goes here
 						int roboticControl = 0,
@@ -222,6 +229,9 @@
 						bool combatTransporters = false,
 						bool inertialNullifier = false,
 						bool displacementDevice = false,
+						bool antiMissileRockets = false,
+						bool ionStreamProjector = false,
+						bool neutronStreamProjector = false,
 						float smallSize = 0,
 						float smallCost = 0,
 						float smallPower = 0,
@@ -276,6 +286,7 @@
 						)
 		{
 			TechLevel = level;
+			TechField = techField;
 			TechName = name;
 			TechDescription = desc;
 			TechSecondaryName = secondaryName;
@@ -321,6 +332,9 @@
 			CombatTransporters = combatTransporters;
 			InertialNullifier = inertialNullifier;
 			DisplacementDevice = displacementDevice;
+			AntiMissileRockets = antiMissileRockets;
+			IonStreamProjector = ionStreamProjector;
+			NeutronStreamProjector = neutronStreamProjector;
 			Stargate = stargate;
 
 			//Ship component info
@@ -376,6 +390,125 @@
 			TargetingBonus = targetingBonus;
 			Enveloping = enveloping;
 			Dissipating = dissipating;
+		}
+	}
+
+	public class Equipment
+	{
+		public Technology Technology { get; private set; }
+		public bool UseSecondary { get; private set; }
+		public string EquipmentName
+		{
+			get { return UseSecondary ? Technology.TechName + "|Sec" : Technology.TechName; }
+		}
+
+		//This stores whether or not the secondary technology item is used, as well as store other useful data for use in space combat
+		public Equipment(Technology whichTech, bool useSecondary)
+		{
+			Technology = whichTech;
+			UseSecondary = useSecondary;
+		}
+
+		public float GetCost(Dictionary<TechField, int> techLevels, int shipSize)
+		{
+			float initialCost = 0;
+			if (Technology.GenericCost == 0) //It uses the ship-specific size cost
+			{
+				switch (shipSize)
+				{
+					case 0:
+						initialCost = UseSecondary ? Technology.SmallSecondaryCost : Technology.SmallCost;
+						break;
+					case 1:
+						initialCost = UseSecondary ? Technology.MediumSecondaryCost : Technology.MediumCost;
+						break;
+					case 2:
+						initialCost = UseSecondary ? Technology.LargeSecondaryCost : Technology.LargeCost;
+						break;
+					case 3:
+						initialCost = UseSecondary ? Technology.HugeSecondaryCost : Technology.HugeCost;
+						break;
+				}
+			}
+			else
+			{
+				initialCost = UseSecondary ? Technology.GenericSecondaryCost : Technology.GenericCost;
+			}
+			int levelDifference = techLevels[Technology.TechField] - Technology.TechLevel;
+			if (levelDifference < 0)
+			{
+				levelDifference = 0;
+			}
+			else if (levelDifference > 50)
+			{
+				levelDifference = 50; //Cap the miniaturization at 50 levels
+			}
+			return (float)(initialCost * (Math.Pow(0.5, (levelDifference / 10.0))));
+		}
+
+		public float GetSize(Dictionary<TechField, int> techLevels, int shipSize)
+		{
+			float initialSize = 0;
+			if (Technology.GenericSize == 0) //It uses the ship-specific size cost
+			{
+				switch (shipSize)
+				{
+					case 0:
+						initialSize = UseSecondary ? Technology.SmallSecondarySize : Technology.SmallSize;
+						break;
+					case 1:
+						initialSize = UseSecondary ? Technology.MediumSecondarySize : Technology.MediumSize;
+						break;
+					case 2:
+						initialSize = UseSecondary ? Technology.LargeSecondarySize : Technology.LargeSize;
+						break;
+					case 3:
+						initialSize = UseSecondary ? Technology.HugeSecondarySize : Technology.HugeSize;
+						break;
+				}
+			}
+			else
+			{
+				initialSize = UseSecondary ? Technology.GenericSecondarySize : Technology.GenericSize;
+			}
+			int levelDifference = techLevels[Technology.TechField] - Technology.TechLevel;
+			if (levelDifference < 0)
+			{
+				levelDifference = 0;
+			}
+			else if (levelDifference > 50)
+			{
+				levelDifference = 50; //Cap the miniaturization at 50 levels
+			}
+			if (Technology.TechField == TechField.WEAPON) //Weapons enjoy 50% miniauratization rate
+			{
+				return (float)(initialSize * (Math.Pow(0.5, (levelDifference / 10.0))));
+			}
+			return (float)(initialSize * (Math.Pow(0.75, (levelDifference / 10.0))));
+		}
+
+		public float GetPower(int shipSize)
+		{
+			if (Technology.GenericPower == 0) //It uses the ship-specific size cost
+			{
+				switch (shipSize)
+				{
+					case 0:
+						return UseSecondary ? Technology.SmallSecondaryPower : Technology.SmallPower;
+					case 1:
+						return UseSecondary ? Technology.MediumSecondaryPower : Technology.MediumPower;
+					case 2:
+						return UseSecondary ? Technology.LargeSecondaryPower : Technology.LargePower;
+					case 3:
+						return UseSecondary ? Technology.HugeSecondaryPower : Technology.HugePower;
+				}
+			}
+			return UseSecondary ? Technology.GenericSecondaryPower : Technology.GenericPower;
+		}
+
+		public string GetName()
+		{
+			return UseSecondary ? Technology.TechSecondaryName : Technology.TechName;
 		}
 	}
 }
