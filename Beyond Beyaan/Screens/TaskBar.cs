@@ -9,6 +9,7 @@ namespace Beyond_Beyaan
 
 		public Action ShowGameMenu;
 		public Action ShowResearchScreen;
+		public Action ShowShipDesignScreen;
 
 		private int left;
 		private int top;
@@ -69,6 +70,38 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
+			if (!_taskButtons[0].SetToolTip("TaskBarMenu", "Game Menu", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_taskButtons[1].SetToolTip("TaskBarGalaxy", "Galaxy Overview", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_taskButtons[2].SetToolTip("TaskBarDiplomacy", "Diplomacy", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_taskButtons[3].SetToolTip("TaskBarFleets", "Fleets Overview", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_taskButtons[4].SetToolTip("TaskBarDesign", "Design Ships", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_taskButtons[5].SetToolTip("TaskBarPlanets", "Planets Overview", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_taskButtons[6].SetToolTip("TaskBarResearch", "Manage Research", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_taskButtons[7].SetToolTip("TaskBarEndTurn", "End Turn", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
 			hide = false;
 			reason = null;
@@ -85,6 +118,10 @@ namespace Beyond_Beyaan
 			foreach (BBButton button in _taskButtons)
 			{
 				button.Draw();
+			}
+			foreach (BBButton button in _taskButtons)
+			{
+				button.DrawToolTip();
 			}
 		}
 
@@ -155,10 +192,17 @@ namespace Beyond_Beyaan
 						case 2: _gameMain.ChangeToScreen(Screen.Diplomacy);
 							break;
 						case 3: _gameMain.ChangeToScreen(Screen.FleetList);
+							break;*/
+						case 4:
+						{
+							if (ShowShipDesignScreen != null)
+							{
+								ShowShipDesignScreen();
+								SetToScreen(Screen.Design);
+							}
 							break;
-						case 4: _gameMain.ChangeToScreen(Screen.Design);
-							break;
-						case 5: _gameMain.ChangeToScreen(Screen.Planets);
+						}
+						/*case 5: _gameMain.ChangeToScreen(Screen.Planets);
 							break;*/
 						case 6:
 						{
