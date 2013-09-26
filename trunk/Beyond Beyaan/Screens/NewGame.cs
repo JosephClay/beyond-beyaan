@@ -81,8 +81,8 @@ namespace Beyond_Beyaan.Screens
 
 			_nebulaBackground = SpriteManager.GetSprite("TitleNebula", gameMain.Random);
 
-			_playerColors[0] = Color.Red;
-			_playerColors[1] = Color.Blue;
+			_playerColors[0] = Color.Blue;
+			_playerColors[1] = Color.Red;
 			_playerColors[2] = Color.Yellow;
 			_playerColors[3] = Color.Green;
 			_playerColors[4] = Color.Purple;

@@ -343,20 +343,20 @@ namespace Beyond_Beyaan
 			switch (whichField)
 			{
 				case TechField.COMPUTER:
-				{
-					if (WhichComputerBeingResearched == null)
 					{
-						return "N/A";
-					}
-					amount = GetFieldInvestmentAmount(whichField, researchPoints);
-					//Temporarily update the research amount to get accurate chance of discovery
-					float oldAmount = ComputerResearchAmount;
-					ComputerResearchAmount += amount;
-					chance = GetChanceForDiscovery(whichField);
-					ComputerResearchAmount = oldAmount;
-					researchedAmount = ComputerResearchAmount;
-					researchCost = WhichComputerBeingResearched.ResearchPoints;
-				} break;
+						if (WhichComputerBeingResearched == null)
+						{
+							return "N/A";
+						}
+						amount = GetFieldInvestmentAmount(whichField, researchPoints);
+						//Temporarily update the research amount to get accurate chance of discovery
+						float oldAmount = ComputerResearchAmount;
+						ComputerResearchAmount += amount;
+						chance = GetChanceForDiscovery(whichField);
+						ComputerResearchAmount = oldAmount;
+						researchedAmount = ComputerResearchAmount;
+						researchCost = (int)(WhichComputerBeingResearched.ResearchPoints * DifficultyModifier * ComputerRaceModifier);
+					} break;
 				case TechField.CONSTRUCTION:
 					{
 						if (WhichConstructionBeingResearched == null)
@@ -370,7 +370,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						ConstructionResearchAmount = oldAmount;
 						researchedAmount = ConstructionResearchAmount;
-						researchCost = WhichConstructionBeingResearched.ResearchPoints;
+						researchCost = (int)(WhichConstructionBeingResearched.ResearchPoints * DifficultyModifier * ConstructionRaceModifier);
 					} break;
 				case TechField.FORCE_FIELD:
 					{
@@ -385,7 +385,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						ForceFieldResearchAmount = oldAmount;
 						researchedAmount = ForceFieldResearchAmount;
-						researchCost = WhichForceFieldBeingResearched.ResearchPoints;
+						researchCost = (int)(WhichForceFieldBeingResearched.ResearchPoints * DifficultyModifier * ForceFieldRaceModifier);
 					} break;
 				case TechField.PLANETOLOGY:
 					{
@@ -400,7 +400,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						PlanetologyResearchAmount = oldAmount;
 						researchedAmount = PlanetologyResearchAmount;
-						researchCost = WhichPlanetologyBeingResearched.ResearchPoints;
+						researchCost = (int)(WhichPlanetologyBeingResearched.ResearchPoints * DifficultyModifier * PlanetologyRaceModifier);
 					} break;
 				case TechField.PROPULSION:
 					{
@@ -415,7 +415,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						PropulsionResearchAmount = oldAmount;
 						researchedAmount = PropulsionResearchAmount;
-						researchCost = WhichPropulsionBeingResearched.ResearchPoints;
+						researchCost = (int)(WhichPropulsionBeingResearched.ResearchPoints * DifficultyModifier * PropulsionRaceModifier);
 					} break;
 				case TechField.WEAPON:
 					{
@@ -430,7 +430,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						WeaponResearchAmount = oldAmount;
 						researchedAmount = WeaponResearchAmount;
-						researchCost = WhichWeaponBeingResearched.ResearchPoints;
+						researchCost = (int)(WhichWeaponBeingResearched.ResearchPoints * DifficultyModifier * WeaponRaceModifier);
 					} break;
 			}
 			progressString = string.Format("{0:0.0} / {1:0.0}", researchedAmount, researchCost);

@@ -2900,6 +2900,7 @@ namespace Beyond_Beyaan
 		private int _y;
 		#endregion
 
+		private int _maxWidth;
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
@@ -2908,6 +2909,7 @@ namespace Beyond_Beyaan
 			//If using scrollbar, then shrink the actual width by 16 to allow for scrollbar, even if it's not visible
 			_x = xPos;
 			_y = yPos;
+			_maxWidth = width;
 			Width = width;
 			Height = height == 0 ? 1 : height;
 			_wrapText = wrapText;
@@ -2918,30 +2920,30 @@ namespace Beyond_Beyaan
 			{
 				if (_wrapText)
 				{
-					if (!_textScrollBar.Initialize(xPos + Width - 5, yPos, Height, Height, 1, false, false, r, out reason))
+					if (!_textScrollBar.Initialize(xPos + _maxWidth - 5, yPos, Height, Height, 1, false, false, r, out reason))
 					{
 						return false;
 					}
-					_wrapView = new Viewport(0, 0, Width - 5, Height);
+					_wrapView = new Viewport(0, 0, _maxWidth - 5, Height);
 
-					_target = new RenderImage(name + "render", Width - 5, Height, ImageBufferFormats.BufferRGB888A8);
+					_target = new RenderImage(name + "render", _maxWidth - 5, Height, ImageBufferFormats.BufferRGB888A8);
 				}
 				else
 				{
-					if (!_textScrollBar.Initialize(xPos, yPos + Height - 5, Width, Width, 1, true, false, r, out reason))
+					if (!_textScrollBar.Initialize(xPos, yPos + Height - 5, _maxWidth, _maxWidth, 1, true, false, r, out reason))
 					{
 						return false;
 					}
-					_wrapView = new Viewport(0, 0, Width, Height - 5);
+					_wrapView = new Viewport(0, 0, _maxWidth, Height - 5);
 
-					_target = new RenderImage(name + "render", Width, Height - 5, ImageBufferFormats.BufferRGB888A8);
+					_target = new RenderImage(name + "render", _maxWidth, Height - 5, ImageBufferFormats.BufferRGB888A8);
 				}
 			}
 			else
 			{
-				_wrapView = new Viewport(0, 0, Width, Height);
+				_wrapView = new Viewport(0, 0, _maxWidth, Height);
 
-				_target = new RenderImage(name + "render", Width, Height, ImageBufferFormats.BufferRGB888A8);
+				_target = new RenderImage(name + "render", _maxWidth, Height, ImageBufferFormats.BufferRGB888A8);
 			}
 			_textSprite = new TextSprite(name, string.Empty, FontManager.GetDefaultFont());
 			_textSprite.WordWrap = _wrapText;
@@ -2973,12 +2975,20 @@ namespace Beyond_Beyaan
 					}
 					else
 					{
+						if (_textSprite.Width < _maxWidth)
+						{
+							Width = (int)_textSprite.Width;
+						}
+						else
+						{
+							Width = _maxWidth;
+						}
 						_scrollbarVisible = false;
 					}
 				}
 				else
 				{
-					if (_textSprite.Width > Width)
+					if (_textSprite.Width > _maxWidth)
 					{
 						_scrollbarVisible = true;
 						_textScrollBar.SetAmountOfItems((int)_textSprite.Width);
@@ -2996,6 +3006,14 @@ namespace Beyond_Beyaan
 				if (_wrapText)
 				{
 					Height = (int)_textSprite.Height;
+					if (_textSprite.Width < _maxWidth)
+					{
+						Width = (int)_textSprite.Width;
+					}
+					else
+					{
+						Width = _maxWidth;
+					}
 					_target.Height = Height;
 				}
 				else
@@ -3112,7 +3130,8 @@ namespace Beyond_Beyaan
 	public class BBToolTip
 	{
 		#region Member Variables
-		private const int WIDTH = 250;
+		private const int WIDTH = 260;
+		private int _actualWidth;
 
 		private BBStretchableImage _background;
 		private BBTextBox _text;
@@ -3129,16 +3148,24 @@ namespace Beyond_Beyaan
 		public bool Initialize(string name, string text, int screenWidth, int screenHeight, Random r, out string reason)
 		{
 			_text = new BBTextBox();
-			if (!_text.Initialize(0, 0, WIDTH - 20, 0, true, false, name, r, out reason))
+			if (!_text.Initialize(0, 0, WIDTH - 30, 0, true, false, name, r, out reason))
 			{
 				return false;
 			}
 			_text.SetText(text);
+			if (_text.Width < WIDTH - 30)
+			{
+				_actualWidth = _text.Width + 30;
+			}
+			else
+			{
+				_actualWidth = WIDTH;
+			}
 
-			_totalHeight = _text.Height + 10;
+			_totalHeight = _text.Height + 15;
 
 			_background = new BBStretchableImage();
-			if (!_background.Initialize(0, 0, WIDTH, _totalHeight, StretchableImageType.ThinBorderBG, r, out reason))
+			if (!_background.Initialize(0, 0, _actualWidth, _totalHeight, StretchableImageType.ThinBorderBG, r, out reason))
 			{
 				return false;
 			}
@@ -3157,9 +3184,17 @@ namespace Beyond_Beyaan
 		{
 			_text.SetText(text);
 
-			_totalHeight = _text.Height + 10;
+			if (_text.Width < WIDTH - 30)
+			{
+				_actualWidth = _text.Width + 30;
+			}
+			else
+			{
+				_actualWidth = WIDTH;
+			}
+			_totalHeight = _text.Height + 15;
 
-			_background.Resize(WIDTH, _totalHeight);
+			_background.Resize(_actualWidth, _totalHeight);
 		}
 
 		public void Draw()
@@ -3194,7 +3229,7 @@ namespace Beyond_Beyaan
 					modifiedY = y - _totalHeight;
 				}
 				_background.MoveTo(modifiedX, modifiedY);
-				_text.MoveTo(modifiedX + 10, modifiedY + 5);
+				_text.MoveTo(modifiedX + 15, modifiedY + 7);
 
 				if (_delayBeforeShowing < 1.0)
 				{
