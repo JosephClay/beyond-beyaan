@@ -170,6 +170,14 @@ namespace Beyond_Beyaan
 				return powerUsed;
 			}
 		}
+		public int GalaxySpeed
+		{
+			get { return Engine.Key.Technology.Speed; }
+		}
+		public int DefenseRating
+		{
+			get { return (2 - Size) + (ManeuverSpeed - 1); }
+		}
 		#endregion
 
 		#region Constructors

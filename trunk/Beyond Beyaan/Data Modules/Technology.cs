@@ -397,6 +397,10 @@ namespace Beyond_Beyaan
 	{
 		public Technology Technology { get; private set; }
 		public bool UseSecondary { get; private set; }
+		public string DisplayName
+		{
+			get { return UseSecondary ? Technology.TechSecondaryName : Technology.TechName; }
+		}
 		public string EquipmentName
 		{
 			get { return UseSecondary ? Technology.TechName + "|Sec" : Technology.TechName; }
