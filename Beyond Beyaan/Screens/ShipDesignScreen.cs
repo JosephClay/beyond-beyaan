@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Beyond_Beyaan.Data_Modules;
 
 namespace Beyond_Beyaan.Screens
@@ -12,9 +13,21 @@ namespace Beyond_Beyaan.Screens
 		private BBButton _prevShipStyleButton;
 		private BBButton _nextShipStyleButton;
 
+		private BBStretchableImage _engineBackground;
+		private BBStretchButton _engineButton;
+		private BBStretchButton _maneuverButton;
+		private BBLabel _engineLabel;
+		private BBLabel _maneuverLabel;
+		private BBLabel _engineSpeed;
+		private BBLabel _combatSpeed;
+		private BBLabel _costPerPower;
+		private BBLabel _spacePerPower;
+		private BBLabel _defenseRating;
+
 		private BBSprite _shipSprite;
 
 		private Ship _shipDesign;
+		private Dictionary<TechField, int> _techLevels;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
@@ -63,6 +76,60 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
+			_engineBackground = new BBStretchableImage();
+			_engineButton = new BBStretchButton();
+			_maneuverButton = new BBStretchButton();
+			_engineLabel = new BBLabel();
+			_maneuverLabel = new BBLabel();
+			_engineSpeed = new BBLabel();
+			_combatSpeed = new BBLabel();
+			_costPerPower = new BBLabel();
+			_spacePerPower = new BBLabel();
+			_defenseRating = new BBLabel();
+
+			if (!_engineBackground.Initialize(x + 15, y + 15, 300, 185, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_engineButton.Initialize(string.Empty, ButtonTextAlignment.CENTER, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, x + 135, y + 25, 170, 35, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_maneuverButton.Initialize(string.Empty, ButtonTextAlignment.CENTER, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, x + 135, y + 67, 170, 35, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_engineLabel.Initialize(x + 130, y + 30, "Engine: ", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_maneuverLabel.Initialize(x + 130, y + 72, "Maneuver: ", System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			_engineLabel.SetAlignment(true);
+			_maneuverLabel.SetAlignment(true);
+			if (!_engineSpeed.Initialize(x + 25, y + 105, string.Empty, System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_combatSpeed.Initialize(x + 165, y + 105, string.Empty, System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_costPerPower.Initialize(x + 25, y + 125, string.Empty, System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_spacePerPower.Initialize(x + 25, y + 145, string.Empty, System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_defenseRating.Initialize(x + 25, y + 165, string.Empty, System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+
 			return true;
 		}
 
@@ -80,6 +147,16 @@ namespace Beyond_Beyaan.Screens
 			_gameMain.ShipShader.Parameters["EmpireColor"].SetValue(_gameMain.EmpireManager.CurrentEmpire.ConvertedColor);
 			_shipSprite.Draw(_xPos + 125, _yPos + 485);
 			GorgonLibrary.Gorgon.CurrentShader = null;
+			_engineBackground.Draw();
+			_engineLabel.Draw();
+			_maneuverLabel.Draw();
+			_engineButton.Draw();
+			_maneuverButton.Draw();
+			_engineSpeed.Draw();
+			_combatSpeed.Draw();
+			_costPerPower.Draw();
+			_spacePerPower.Draw();
+			_defenseRating.Draw();
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -152,7 +229,9 @@ namespace Beyond_Beyaan.Screens
 		public void Load()
 		{
 			_shipDesign = _gameMain.EmpireManager.CurrentEmpire.FleetManager.LastShipDesign;
+			_techLevels = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.GetFieldLevels();
 			RefreshShipSprite();
+			RefreshEngineLabels();
 		}
 
 		private void RefreshShipSprite()
@@ -165,6 +244,17 @@ namespace Beyond_Beyaan.Screens
 				button.Selected = false;
 			}
 			_shipSizeButtons[_shipDesign.Size].Selected = true;
+		}
+
+		private void RefreshEngineLabels()
+		{
+			_engineButton.SetText(_shipDesign.Engine.Key.DisplayName);
+			_maneuverButton.SetText(_shipDesign.ManeuverSpeed.ToString());
+			_engineSpeed.SetText(string.Format("Galaxy Speed: {0}", _shipDesign.GalaxySpeed));
+			_combatSpeed.SetText(string.Format("Combat Speed: {0}", (_shipDesign.ManeuverSpeed / 2) + 1));
+			_costPerPower.SetText(string.Format("Cost per Power: {0:0.0} BCs", _shipDesign.Engine.Key.GetCost(_techLevels, _shipDesign.Size) / (_shipDesign.GalaxySpeed * 10)));
+			_spacePerPower.SetText(string.Format("Space per Power: {0:0.0} DWT", _shipDesign.Engine.Key.GetSize(_techLevels, _shipDesign.Size) / (_shipDesign.GalaxySpeed * 10)));
+			_defenseRating.SetText(string.Format("Defense Rating: {0}", _shipDesign.DefenseRating));
 		}
 	}
 }

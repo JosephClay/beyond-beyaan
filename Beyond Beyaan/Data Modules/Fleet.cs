@@ -190,9 +190,9 @@ namespace Beyond_Beyaan
 			{
 				foreach (Ship ship in orderedShips)
 				{
-					if (ship.Engine.Key.Technology.Speed < maxSpeed)
+					if (ship.GalaxySpeed < maxSpeed)
 					{
-						maxSpeed = ship.Engine.Key.Technology.Speed;
+						maxSpeed = ship.GalaxySpeed;
 					}
 				}
 			}
