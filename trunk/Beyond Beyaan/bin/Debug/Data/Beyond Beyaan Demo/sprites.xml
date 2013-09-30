@@ -522,71 +522,71 @@
   </Sprite>
 
   <!--Slider and Scrollbar images-->
-  <Sprite name="TinySliderBGBar" file="narrowSliders.png">
-    <Frame x="16" y="0" width="16" height="5" />
+  <Sprite name="TinySliderBGBar" file="main.png">
+    <Frame x="189" y="278" width="16" height="5" />
   </Sprite>
-  <Sprite name="TinySliderFGBar" file="narrowSliders.png">
-    <Frame x="16" y="0" width="16" height="5" />
+  <Sprite name="TinySliderFGBar" file="main.png">
+    <Frame x="153" y="278" width="16" height="5" />
   </Sprite>
-  <Sprite name="TinyScrollVerticalBar" file="narrowSliders.png">
-    <Frame x="5" y="26" width="5" height="16" />
+  <Sprite name="TinyScrollVerticalBar" file="main.png">
+    <Frame x="194" y="283" width="5" height="16" />
   </Sprite>
-  <Sprite name="TinyScrollHorizontalBar" file="narrowSliders.png">
-    <Frame x="16" y="0" width="16" height="5" />
+  <Sprite name="TinyScrollHorizontalBar" file="main.png">
+    <Frame x="189" y="278" width="16" height="5" />
   </Sprite>
-  <Sprite name="TinyScrollVerticalBGButton1" file="narrowSliders.png">
-    <Frame x="5" y="10" width="5" height="7" />
+  <Sprite name="TinyScrollVerticalBGButton1" file="main.png">
+    <Frame x="177" y="283" width="5" height="3" />
   </Sprite>
-  <Sprite name="TinyScrollVerticalBGButton2" file="narrowSliders.png">
-    <Frame x="5" y="17" width="5" height="2" />
+  <Sprite name="TinyScrollVerticalBGButton2" file="main.png">
+    <Frame x="177" y="286" width="5" height="1" />
   </Sprite>
-  <Sprite name="TinyScrollVerticalBGButton3" file="narrowSliders.png">
-    <Frame x="5" y="19" width="5" height="7" />
+  <Sprite name="TinyScrollVerticalBGButton3" file="main.png">
+    <Frame x="177" y="287" width="5" height="3" />
   </Sprite>
-  <Sprite name="TinyScrollVerticalFGButton1" file="narrowSliders.png">
-    <Frame x="0" y="10" width="5" height="7" />
+  <Sprite name="TinyScrollVerticalFGButton1" file="main.png">
+    <Frame x="141" y="283" width="5" height="3" />
   </Sprite>
-  <Sprite name="TinyScrollVerticalFGButton2" file="narrowSliders.png">
-    <Frame x="0" y="17" width="5" height="2" />
+  <Sprite name="TinyScrollVerticalFGButton2" file="main.png">
+    <Frame x="141" y="286" width="5" height="1" />
   </Sprite>
-  <Sprite name="TinyScrollVerticalFGButton3" file="narrowSliders.png">
-    <Frame x="0" y="19" width="5" height="7" />
+  <Sprite name="TinyScrollVerticalFGButton3" file="main.png">
+    <Frame x="141" y="287" width="5" height="3" />
   </Sprite>
-  <Sprite name="TinyScrollHorizontalBGButton1" file="narrowSliders.png">
-    <Frame x="0" y="0" width="7" height="5" />
+  <Sprite name="TinyScrollHorizontalBGButton1" file="main.png">
+    <Frame x="177" y="278" width="3" height="5" />
   </Sprite>
-  <Sprite name="TinyScrollHorizontalBGButton2" file="narrowSliders.png">
-    <Frame x="7" y="0" width="2" height="5" />
+  <Sprite name="TinyScrollHorizontalBGButton2" file="main.png">
+    <Frame x="180" y="278" width="1" height="5" />
   </Sprite>
-  <Sprite name="TinyScrollHorizontalBGButton3" file="narrowSliders.png">
-    <Frame x="9" y="0" width="7" height="5" />
+  <Sprite name="TinyScrollHorizontalBGButton3" file="main.png">
+    <Frame x="181" y="278" width="3" height="5" />
   </Sprite>
-  <Sprite name="TinyScrollHorizontalFGButton1" file="narrowSliders.png">
-    <Frame x="0" y="5" width="7" height="5" />
+  <Sprite name="TinyScrollHorizontalFGButton1" file="main.png">
+    <Frame x="141" y="278" width="3" height="5" />
   </Sprite>
-  <Sprite name="TinyScrollHorizontalFGButton2" file="narrowSliders.png">
-    <Frame x="7" y="5" width="2" height="5" />
+  <Sprite name="TinyScrollHorizontalFGButton2" file="main.png">
+    <Frame x="144" y="278" width="1" height="5" />
   </Sprite>
-  <Sprite name="TinyScrollHorizontalFGButton3" file="narrowSliders.png">
-    <Frame x="9" y="5" width="7" height="5" />
+  <Sprite name="TinyScrollHorizontalFGButton3" file="main.png">
+    <Frame x="145" y="278" width="3" height="5" />
   </Sprite>
-  <Sprite name="TinySliderHorizontalBGButton1" file="narrowSliders.png">
-    <Frame x="0" y="0" width="7" height="5" />
+  <Sprite name="TinySliderHorizontalBGButton1" file="main.png">
+    <Frame x="177" y="278" width="3" height="5" />
   </Sprite>
-  <Sprite name="TinySliderHorizontalBGButton2" file="narrowSliders.png">
-    <Frame x="7" y="0" width="2" height="5" />
+  <Sprite name="TinySliderHorizontalBGButton2" file="main.png">
+    <Frame x="180" y="278" width="1" height="5" />
   </Sprite>
-  <Sprite name="TinySliderHorizontalBGButton3" file="narrowSliders.png">
-    <Frame x="9" y="0" width="7" height="5" />
+  <Sprite name="TinySliderHorizontalBGButton3" file="main.png">
+    <Frame x="181" y="278" width="3" height="5" />
   </Sprite>
-  <Sprite name="TinySliderHorizontalFGButton1" file="narrowSliders.png">
-    <Frame x="0" y="5" width="7" height="5" />
+  <Sprite name="TinySliderHorizontalFGButton1" file="main.png">
+    <Frame x="141" y="278" width="3" height="5" />
   </Sprite>
-  <Sprite name="TinySliderHorizontalFGButton2" file="narrowSliders.png">
-    <Frame x="7" y="5" width="2" height="5" />
+  <Sprite name="TinySliderHorizontalFGButton2" file="main.png">
+    <Frame x="144" y="278" width="1" height="5" />
   </Sprite>
-  <Sprite name="TinySliderHorizontalFGButton3" file="narrowSliders.png">
-    <Frame x="9" y="5" width="7" height="5" />
+  <Sprite name="TinySliderHorizontalFGButton3" file="main.png">
+    <Frame x="145" y="278" width="3" height="5" />
   </Sprite>
   <Sprite name="ScrollUpBGButton" file="main.png">
     <Frame x="528" y="48" width="16" height="16" />
