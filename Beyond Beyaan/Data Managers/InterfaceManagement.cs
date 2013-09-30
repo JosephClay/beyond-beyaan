@@ -287,6 +287,8 @@ namespace Beyond_Beyaan
 		private int _yPos;
 		private int _width;
 		private int _height;
+		private int _fixedSize;
+		private int _variableSize;
 		#endregion
 
 		#region Properties
@@ -295,22 +297,24 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, Random r, out string reason)
+		public bool Initialize(List<string> backgroundSections, List<string> foregroundSections, bool isHorizontal, string buttonText, ButtonTextAlignment alignment, int xPos, int yPos, int width, int height, int fixedSize, int variableSize, Random r, out string reason)
 		{
 			_xPos = xPos;
 			_yPos = yPos;
 			_width = width;
 			_height = height;
+			_fixedSize = fixedSize;
+			_variableSize = variableSize;
 			_alignment = alignment;
 
 			backgroundImage = new BBUniStretchableImage();
 			foregroundImage = new BBUniStretchableImage();
 
-			if (!backgroundImage.Initialize(xPos, yPos, width, height, 7, 2, isHorizontal, backgroundSections, r, out reason))
+			if (!backgroundImage.Initialize(xPos, yPos, width, height, fixedSize, variableSize, isHorizontal, backgroundSections, r, out reason))
 			{
 				return false;
 			}
-			if (!foregroundImage.Initialize(xPos, yPos, width, height, 7, 2, isHorizontal, foregroundSections, r, out reason))
+			if (!foregroundImage.Initialize(xPos, yPos, width, height, fixedSize, variableSize, isHorizontal, foregroundSections, r, out reason))
 			{
 				return false;
 			}
@@ -1091,7 +1095,7 @@ namespace Beyond_Beyaan
 					}
 					if (!Scroll.Initialize(new List<string> { "ScrollVerticalBGButton1", "ScrollVerticalBGButton2", "ScrollVerticalBGButton3" }, 
 										   new List<string> { "ScrollVerticalFGButton1", "ScrollVerticalFGButton2", "ScrollVerticalFGButton3" },
-										   false, "", ButtonTextAlignment.LEFT, xPos, yPos + 16, 16, scrollButtonLength, r, out reason))
+										   false, "", ButtonTextAlignment.LEFT, xPos, yPos + 16, 16, 7, 2, scrollButtonLength, r, out reason))
 					{
 						return false;
 					}
@@ -1114,7 +1118,7 @@ namespace Beyond_Beyaan
 					}
 					if (!Scroll.Initialize(new List<string> { "ScrollHorizontalBGButton1", "ScrollHorizontalBGButton2", "ScrollHorizontalBGButton3" },
 										   new List<string> { "ScrollHorizontalFGButton1", "ScrollHorizontalFGButton2", "ScrollHorizontalFGButton3" },
-										   false, "", ButtonTextAlignment.LEFT, xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
+										   false, "", ButtonTextAlignment.LEFT, xPos + 16, yPos, 16, 7, 2, scrollButtonLength, r, out reason))
 					{
 						return false;
 					}
@@ -1139,7 +1143,7 @@ namespace Beyond_Beyaan
 				}
 				if (!Scroll.Initialize(new List<string> { "SliderHorizontalBGButton1", "SliderHorizontalBGButton2", "SliderHorizontalBGButton3" },
 									   new List<string> { "SliderHorizontalFGButton1", "SliderHorizontalFGButton2", "SliderHorizontalFGButton3" },
-									   true, "", ButtonTextAlignment.LEFT, xPos + 16, yPos, 16, scrollButtonLength, r, out reason))
+									   true, "", ButtonTextAlignment.LEFT, xPos + 16, yPos, 16, 7, 2, scrollButtonLength, r, out reason))
 				{
 					return false;
 				}
@@ -1463,7 +1467,7 @@ namespace Beyond_Beyaan
 				{
 					if (!_scroll.Initialize(new List<string> { "TinyScrollVerticalBGButton1", "TinyScrollVerticalBGButton2", "TinyScrollVerticalBGButton3" },
 										   new List<string> { "TinyScrollVerticalFGButton1", "TinyScrollVerticalFGButton2", "TinyScrollVerticalFGButton3" },
-										   isHorizontal, "", ButtonTextAlignment.LEFT, xPos, yPos, 5, _scrollButtonLength, r, out reason))
+										   isHorizontal, "", ButtonTextAlignment.LEFT, xPos, yPos, 5, _scrollButtonLength, 3, 1, r, out reason))
 					{
 						return false;
 					}
@@ -1478,7 +1482,7 @@ namespace Beyond_Beyaan
 				{
 					if (!_scroll.Initialize(new List<string> { "TinyScrollHorizontalBGButton1", "TinyScrollHorizontalBGButton2", "TinyScrollHorizontalBGButton3" },
 										   new List<string> { "TinyScrollHorizontalFGButton1", "TinyScrollHorizontalFGButton2", "TinyScrollHorizontalFGButton3" },
-										   isHorizontal, "", ButtonTextAlignment.LEFT, xPos, yPos, _scrollButtonLength, 5, r, out reason))
+										   isHorizontal, "", ButtonTextAlignment.LEFT, xPos, yPos, _scrollButtonLength, 5, 3, 1, r, out reason))
 					{
 						return false;
 					}
@@ -1495,7 +1499,7 @@ namespace Beyond_Beyaan
 				_scrollButtonLength = 16;
 				if (!_scroll.Initialize(new List<string> { "TinySliderHorizontalBGButton1", "TinySliderHorizontalBGButton2", "TinySliderHorizontalBGButton3" },
 									   new List<string> { "TinySliderHorizontalFGButton1", "TinySliderHorizontalFGButton2", "TinySliderHorizontalFGButton3" },
-									   true, "", ButtonTextAlignment.LEFT, xPos, yPos, _scrollButtonLength, 16, r, out reason))
+									   true, "", ButtonTextAlignment.LEFT, xPos, yPos, _scrollButtonLength, 5, 3, 1, r, out reason))
 				{
 					return false;
 				}
