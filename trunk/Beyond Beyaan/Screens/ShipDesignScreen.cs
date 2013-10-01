@@ -34,6 +34,12 @@ namespace Beyond_Beyaan.Screens
 		private BBStretchButton _computerButton;
 		private BBLabel _attackRating;
 
+		private BBStretchableImage _weaponsBackground;
+		private BBStretchButton[] _weaponButtons;
+		private BBNumericUpDown[] _weaponCounts;
+		private BBLabel[] _weaponCountLabels;
+		private BBLabel[] _weaponDescriptions;
+
 		private BBSprite _shipSprite;
 
 		private Ship _shipDesign;
@@ -181,6 +187,43 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
+			_weaponsBackground = new BBStretchableImage();
+			_weaponButtons = new BBStretchButton[4];
+			_weaponCountLabels = new BBLabel[4];
+			_weaponDescriptions = new BBLabel[4];
+			_weaponCounts = new BBNumericUpDown[4];
+
+			if (!_weaponsBackground.Initialize(x + 315, y + 70, 470, 220, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
+			for (int i = 0; i < 4; i++)
+			{
+				_weaponButtons[i] = new BBStretchButton();
+				_weaponCountLabels[i] = new BBLabel();
+				_weaponDescriptions[i] = new BBLabel();
+				_weaponCounts[i] = new BBNumericUpDown();
+
+				if (!_weaponButtons[i].Initialize(string.Empty, ButtonTextAlignment.CENTER, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, x + 325, y + 80 + (i * 50), 280, 30, gameMain.Random, out reason))
+				{
+					return false;
+				}
+				if (!_weaponCountLabels[i].Initialize(x + 695, y + 85 + (i * 50), "Count:", System.Drawing.Color.White, out reason))
+				{
+					return false;
+				}
+				_weaponCountLabels[i].SetAlignment(true);
+				if (!_weaponCounts[i].Initialize(x + 700, y + 85 + (i * 50), 70, 1, 99, 1, 1, gameMain.Random, out reason))
+				{
+					return false;
+				}
+				if (!_weaponDescriptions[i].Initialize(x + 325, y + 112, string.Empty, System.Drawing.Color.White, out reason))
+				{
+					return false;
+				}
+			}
+
 			return true;
 		}
 
@@ -216,6 +259,14 @@ namespace Beyond_Beyaan.Screens
 			_computerBackground.Draw();
 			_computerButton.Draw();
 			_attackRating.Draw();
+			_weaponsBackground.Draw();
+			for (int i = 0; i < 4; i++)
+			{
+				_weaponButtons[i].Draw();
+				_weaponCountLabels[i].Draw();
+				_weaponCounts[i].Draw();
+				_weaponDescriptions[i].Draw();
+			}
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -301,6 +352,7 @@ namespace Beyond_Beyaan.Screens
 			RefreshHP();
 			RefreshECM();
 			RefreshComputer();
+			RefreshWeapons();
 		}
 
 		private void RefreshShipSprite()
@@ -371,6 +423,68 @@ namespace Beyond_Beyaan.Screens
 			{
 				_computerButton.SetText("No Computer");
 				_attackRating.SetText("0 Attack Rating");
+			}
+		}
+
+		private void RefreshWeapons()
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (i < _shipDesign.Weapons.Count)
+				{
+					var weapon = _shipDesign.Weapons[i];
+					if (weapon.Key != null)
+					{
+						_weaponButtons[i].SetText(weapon.Key.DisplayName);
+						_weaponCounts[i].SetValue(weapon.Value);
+						_weaponCounts[i].Enabled = true;
+						string description = string.Format("Damage: {0}-{1}		Range: {2}		", weapon.Key.GetMinDamage(), weapon.Key.GetMaxDamage(), weapon.Key.GetRange());
+						if (weapon.Key.Technology.WeaponType == Technology.MISSILE_WEAPON)
+						{
+							description += string.Format("{0} Shots		", weapon.Key.UseSecondary ? 5 : 2);
+						}
+						else if (weapon.Key.Technology.NumberOfShots > 0)
+						{
+							description += string.Format("{0} Shots		", weapon.Key.Technology.NumberOfShots);
+						}
+						if (weapon.Key.Technology.Streaming)
+						{
+							description += "Streaming, ";
+						}
+						if (weapon.Key.Technology.ShieldPiercing)
+						{
+							description += "Piercing, ";
+						}
+						if (weapon.Key.Technology.Enveloping)
+						{
+							description += "Enveloping, ";
+						}
+						if (weapon.Key.Technology.Dissipating)
+						{
+							description += "Dissipating, ";
+						}
+						if (weapon.Key.Technology.TargetingBonus > 0)
+						{
+							description += string.Format("{0} To Hit ", weapon.Key.Technology.TargetingBonus);
+						}
+						description = description.Trim().TrimEnd(new[] {','});
+						_weaponDescriptions[i].SetText(description);
+					}
+					else
+					{
+						_weaponButtons[i].SetText("No Weapon");
+						_weaponCounts[i].SetValue(1);
+						_weaponCounts[i].Enabled = false;
+						_weaponDescriptions[i].SetText(string.Empty);
+					}
+				}
+				else
+				{
+					_weaponButtons[i].SetText("No Weapon");
+					_weaponCounts[i].SetValue(1);
+					_weaponCounts[i].Enabled = false;
+					_weaponDescriptions[i].SetText(string.Empty);
+				}
 			}
 		}
 	}
