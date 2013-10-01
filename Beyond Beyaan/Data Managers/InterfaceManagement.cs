@@ -1744,11 +1744,21 @@ namespace Beyond_Beyaan
 		private BBLabel _valueLabel;
 		private int _incrementAmount;
 		private int _width;
+		private bool _enabled;
 		#endregion
 
 		#region Properties
 
 		public int Value { get; private set; }
+		public bool Enabled
+		{
+			get { return _enabled; } 
+			set
+			{
+				_enabled = value;
+				RefreshButtons();
+			}
+		}
 
 		#endregion
 
@@ -1883,7 +1893,15 @@ namespace Beyond_Beyaan
 				Value = _maximum;
 			}
 			_valueLabel.SetText(Value.ToString());
+			RefreshButtons();
 		}
+
+		private void RefreshButtons()
+		{
+			_downButton.Active = Value != _minimum && _enabled;
+			_upButton.Active = Value != _maximum && _enabled;
+		}
+
 		#endregion
 	}
 

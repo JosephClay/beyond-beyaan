@@ -262,15 +262,19 @@ namespace Beyond_Beyaan
 			Shield = LoadEquipment(shipDesign.Attribute("Shield").Value, gameMain);
 			Computer = LoadEquipment(shipDesign.Attribute("Computer").Value, gameMain);
 			ECM = LoadEquipment(shipDesign.Attribute("ECM").Value, gameMain);
+			int iter = 0;
 			foreach (var weapon in shipDesign.Elements("Weapon"))
 			{
 				var weaponTech = LoadEquipment(weapon.Attribute("Name").Value, gameMain);
-				Weapons.Add(new KeyValuePair<Equipment, int>(weaponTech, int.Parse(weapon.Attribute("NumOfMounts").Value)));
+				Weapons[iter] = new KeyValuePair<Equipment, int>(weaponTech, int.Parse(weapon.Attribute("NumOfMounts").Value));
+				iter++;
 			}
+			iter = 0;
 			foreach (var special in shipDesign.Elements("Special"))
 			{
 				var specialTech = LoadEquipment(special.Attribute("Name").Value, gameMain);
-				Specials.Add(specialTech);
+				Specials[iter] = specialTech;
+				iter++;
 			}
 		}
 		private static Equipment LoadEquipment(string equipmentName, GameMain gameMain)

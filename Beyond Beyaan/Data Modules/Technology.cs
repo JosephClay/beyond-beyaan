@@ -514,5 +514,20 @@ namespace Beyond_Beyaan
 		{
 			return UseSecondary ? Technology.TechSecondaryName : Technology.TechName;
 		}
+
+		public int GetMinDamage()
+		{
+			return UseSecondary ? Technology.MinimumSecondaryWeaponDamage : Technology.MinimumWeaponDamage;
+		}
+
+		public int GetMaxDamage()
+		{
+			return UseSecondary ? Technology.MaximumSecondaryWeaponDamage : Technology.MaximumWeaponDamage;
+		}
+
+		public int GetRange()
+		{
+			return UseSecondary ? Technology.SecondaryWeaponRange : Technology.WeaponRange;
+		}
 	}
 }
