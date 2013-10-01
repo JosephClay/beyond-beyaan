@@ -178,6 +178,24 @@ namespace Beyond_Beyaan
 		{
 			get { return (2 - Size) + (ManeuverSpeed - 1); }
 		}
+		public int MaxHitPoints
+		{
+			get
+			{
+				switch (Size)
+				{
+					case SMALL:
+						return (int)(Armor.UseSecondary ? Armor.Technology.SmallSecondaryHP : Armor.Technology.SmallHP);
+					case MEDIUM:
+						return (int)(Armor.UseSecondary ? Armor.Technology.MediumSecondaryHP : Armor.Technology.MediumHP);
+					case LARGE:
+						return (int)(Armor.UseSecondary ? Armor.Technology.LargeSecondaryHP : Armor.Technology.LargeHP);
+					case HUGE:
+						return (int)(Armor.UseSecondary ? Armor.Technology.HugeSecondaryHP : Armor.Technology.HugeHP);
+				}
+				return 0;
+			}
+		}
 		#endregion
 
 		#region Constructors
