@@ -2982,7 +2982,7 @@ namespace Beyond_Beyaan
 		{
 			if (string.IsNullOrEmpty(text))
 			{
-				text = "Missing Text!";
+				text = " "; //Blank so it don't crash with 0 width
 			}
 			_textSprite.Text = text;
 			if (_allowScrollbar)
