@@ -702,6 +702,18 @@
   <Sprite name="CancelColonizeBG" file="main.png">
     <Frame x="77" y="239" width="75" height="35" />
   </Sprite>
+  <Sprite name="CancelBG" file="main.png">
+    <Frame x="141" y="405" width="75" height="35" />
+  </Sprite>
+  <Sprite name="CancelFG" file="main.png">
+    <Frame x="141" y="370" width="75" height="35" />
+  </Sprite>
+  <Sprite name="ConfirmBG" file="main.png">
+    <Frame x="141" y="335" width="75" height="35" />
+  </Sprite>
+  <Sprite name="ConfirmFG" file="main.png">
+    <Frame x="141" y="300" width="75" height="35" />
+  </Sprite>
   <!--Race Sprites-->
   <!--Humans-->
   <Sprite name="HumanTinyShip1" file="humans.png">

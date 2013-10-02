@@ -40,6 +40,18 @@ namespace Beyond_Beyaan.Screens
 		private BBLabel[] _weaponCountLabels;
 		private BBLabel[] _weaponDescriptions;
 
+		private BBStretchableImage _specialsBackground;
+		private BBStretchButton[] _specialButtons;
+		private BBTextBox[] _specialDescriptions;
+
+		private BBStretchableImage _statsBackground;
+		private BBLabel _spaceLabel;
+		private BBLabel _costLabel;
+		private BBSingleLineTextBox _nameField;
+
+		private BBButton _clearButton;
+		private BBButton _confirmButton;
+
 		private BBSprite _shipSprite;
 
 		private Ship _shipDesign;
@@ -224,6 +236,63 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 
+			_specialsBackground = new BBStretchableImage();
+			_specialButtons = new BBStretchButton[3];
+			_specialDescriptions = new BBTextBox[3];
+
+			if (!_specialsBackground.Initialize(x + 315, y + 290, 470, 230, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			for (int i = 0; i < 3; i++)
+			{
+				_specialButtons[i] = new BBStretchButton();
+				_specialDescriptions[i] = new BBTextBox();
+
+				if (!_specialButtons[i].Initialize(string.Empty, ButtonTextAlignment.CENTER, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, x + 325, y + 300 + (i * 70), 450, 30, gameMain.Random, out reason))
+				{
+					return false;
+				}
+				if (!_specialDescriptions[i].Initialize(x + 325, y + 332 + (i * 70), 450, 38, true, true, "SpecialDesc" + i, gameMain.Random, out reason))
+				{
+					return false;
+				}
+			}
+
+			_statsBackground = new BBStretchableImage();
+			_spaceLabel = new BBLabel();
+			_costLabel = new BBLabel();
+			_nameField = new BBSingleLineTextBox();
+
+			if (!_statsBackground.Initialize(x + 315, y + 520, 470, 65, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_spaceLabel.Initialize(x + 450, y + 559, string.Empty, System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_costLabel.Initialize(x + 325, y + 559, string.Empty, System.Drawing.Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_nameField.Initialize(string.Empty, x + 325, y + 527, 250, 30, false, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
+			_clearButton = new BBButton();
+			_confirmButton = new BBButton();
+
+			if (!_clearButton.Initialize("CancelBG", "CancelFG", string.Empty, ButtonTextAlignment.CENTER, x + 595, y + 535, 75, 35, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_confirmButton.Initialize("ConfirmBG", "ConfirmFG", string.Empty, ButtonTextAlignment.CENTER, x + 685, y + 535, 75, 35, gameMain.Random, out reason))
+			{
+				return false;
+			}
+
 			return true;
 		}
 
@@ -267,6 +336,18 @@ namespace Beyond_Beyaan.Screens
 				_weaponCounts[i].Draw();
 				_weaponDescriptions[i].Draw();
 			}
+			_specialsBackground.Draw();
+			for (int i = 0; i < 3; i++)
+			{
+				_specialButtons[i].Draw();
+				_specialDescriptions[i].Draw();
+			}
+			_statsBackground.Draw();
+			_costLabel.Draw();
+			_spaceLabel.Draw();
+			_nameField.Draw();
+			_clearButton.Draw();
+			_confirmButton.Draw();
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -341,6 +422,7 @@ namespace Beyond_Beyaan.Screens
 			_shipDesign = _gameMain.EmpireManager.CurrentEmpire.FleetManager.LastShipDesign;
 			_techLevels = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.GetFieldLevels();
 			RefreshAll();
+			_nameField.SetText(_shipDesign.Name);
 		}
 
 		private void RefreshAll()
@@ -353,6 +435,8 @@ namespace Beyond_Beyaan.Screens
 			RefreshECM();
 			RefreshComputer();
 			RefreshWeapons();
+			RefreshSpecials();
+			RefreshStats();
 		}
 
 		private void RefreshShipSprite()
@@ -433,50 +517,40 @@ namespace Beyond_Beyaan.Screens
 				if (i < _shipDesign.Weapons.Count)
 				{
 					var weapon = _shipDesign.Weapons[i];
-					if (weapon.Key != null)
+					_weaponButtons[i].SetText(weapon.Key.DisplayName);
+					_weaponCounts[i].SetValue(weapon.Value);
+					_weaponCounts[i].Enabled = true;
+					string description = string.Format("Damage: {0}-{1}		Range: {2}		", weapon.Key.GetMinDamage(), weapon.Key.GetMaxDamage(), weapon.Key.GetRange());
+					if (weapon.Key.Technology.WeaponType == Technology.MISSILE_WEAPON)
 					{
-						_weaponButtons[i].SetText(weapon.Key.DisplayName);
-						_weaponCounts[i].SetValue(weapon.Value);
-						_weaponCounts[i].Enabled = true;
-						string description = string.Format("Damage: {0}-{1}		Range: {2}		", weapon.Key.GetMinDamage(), weapon.Key.GetMaxDamage(), weapon.Key.GetRange());
-						if (weapon.Key.Technology.WeaponType == Technology.MISSILE_WEAPON)
-						{
-							description += string.Format("{0} Shots		", weapon.Key.UseSecondary ? 5 : 2);
-						}
-						else if (weapon.Key.Technology.NumberOfShots > 0)
-						{
-							description += string.Format("{0} Shots		", weapon.Key.Technology.NumberOfShots);
-						}
-						if (weapon.Key.Technology.Streaming)
-						{
-							description += "Streaming, ";
-						}
-						if (weapon.Key.Technology.ShieldPiercing)
-						{
-							description += "Piercing, ";
-						}
-						if (weapon.Key.Technology.Enveloping)
-						{
-							description += "Enveloping, ";
-						}
-						if (weapon.Key.Technology.Dissipating)
-						{
-							description += "Dissipating, ";
-						}
-						if (weapon.Key.Technology.TargetingBonus > 0)
-						{
-							description += string.Format("{0} To Hit ", weapon.Key.Technology.TargetingBonus);
-						}
-						description = description.Trim().TrimEnd(new[] {','});
-						_weaponDescriptions[i].SetText(description);
+						description += string.Format("{0} Shots		", weapon.Key.UseSecondary ? 5 : 2);
 					}
-					else
+					else if (weapon.Key.Technology.NumberOfShots > 0)
 					{
-						_weaponButtons[i].SetText("No Weapon");
-						_weaponCounts[i].SetValue(1);
-						_weaponCounts[i].Enabled = false;
-						_weaponDescriptions[i].SetText(string.Empty);
+						description += string.Format("{0} Shots		", weapon.Key.Technology.NumberOfShots);
 					}
+					if (weapon.Key.Technology.Streaming)
+					{
+						description += "Streaming, ";
+					}
+					if (weapon.Key.Technology.ShieldPiercing)
+					{
+						description += "Piercing, ";
+					}
+					if (weapon.Key.Technology.Enveloping)
+					{
+						description += "Enveloping, ";
+					}
+					if (weapon.Key.Technology.Dissipating)
+					{
+						description += "Dissipating, ";
+					}
+					if (weapon.Key.Technology.TargetingBonus > 0)
+					{
+						description += string.Format("{0} To Hit ", weapon.Key.Technology.TargetingBonus);
+					}
+					description = description.Trim().TrimEnd(new[] {','});
+					_weaponDescriptions[i].SetText(description);
 				}
 				else
 				{
@@ -486,6 +560,29 @@ namespace Beyond_Beyaan.Screens
 					_weaponDescriptions[i].SetText(string.Empty);
 				}
 			}
+		}
+
+		private void RefreshSpecials()
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (i < _shipDesign.Specials.Count)
+				{
+					_specialButtons[i].SetText(_shipDesign.Specials[i].DisplayName);
+					_specialDescriptions[i].SetText(_shipDesign.Specials[i].Technology.TechDescription);
+				}
+				else
+				{
+					_specialButtons[i].SetText("No Special");
+					_specialDescriptions[i].SetText(string.Empty);
+				}
+			}
+		}
+
+		private void RefreshStats()
+		{
+			_costLabel.SetText(string.Format("Cost: {0:0.0} BCs", _shipDesign.Cost));
+			_spaceLabel.SetText(string.Format("Space: {0:0.0}/{1:0}", _shipDesign.SpaceUsed, _shipDesign.TotalSpace));
 		}
 	}
 }
