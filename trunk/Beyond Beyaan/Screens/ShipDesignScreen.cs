@@ -18,9 +18,11 @@ namespace Beyond_Beyaan.Screens
 		private BBStretchButton _maneuverButton;
 		private BBLabel _engineSpeed;
 		private BBLabel _combatSpeed;
-		private BBLabel _costPerPower;
-		private BBLabel _spacePerPower;
+		private BBLabel _costPerPowerLabel;
+		private BBLabel _spacePerPowerLabel;
 		private BBLabel _defenseRating;
+		private float _costPerPower;
+		private float _spacePerPower;
 
 		private BBStretchableImage _defensiveEquipmentBackground;
 		private BBStretchButton _armorButton;
@@ -56,6 +58,13 @@ namespace Beyond_Beyaan.Screens
 
 		private Ship _shipDesign;
 		private Dictionary<TechField, int> _techLevels;
+		private List<Technology> _availableComputerTechs;
+		private List<Technology> _availableShieldTechs;
+		private List<Technology> _availableEngineTechs;
+		private List<Technology> _availableArmorTechs;
+		private List<Technology> _availableECMTechs;
+		private List<Technology> _availableWeaponTechs;
+		private List<Technology> _availableSpecialTechs; 
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
@@ -109,8 +118,8 @@ namespace Beyond_Beyaan.Screens
 			_maneuverButton = new BBStretchButton();
 			_engineSpeed = new BBLabel();
 			_combatSpeed = new BBLabel();
-			_costPerPower = new BBLabel();
-			_spacePerPower = new BBLabel();
+			_costPerPowerLabel = new BBLabel();
+			_spacePerPowerLabel = new BBLabel();
 			_defenseRating = new BBLabel();
 
 			if (!_engineBackground.Initialize(x + 15, y + 15, 300, 180, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
@@ -133,11 +142,11 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_costPerPower.Initialize(x + 25, y + 120, string.Empty, System.Drawing.Color.White, out reason))
+			if (!_costPerPowerLabel.Initialize(x + 25, y + 120, string.Empty, System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_spacePerPower.Initialize(x + 25, y + 140, string.Empty, System.Drawing.Color.White, out reason))
+			if (!_spacePerPowerLabel.Initialize(x + 25, y + 140, string.Empty, System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
@@ -292,6 +301,14 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			if (!_clearButton.SetToolTip("ClearDesign", "Clear Ship Design", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_confirmButton.SetToolTip("ConfirmDesign", "Add Ship Design", gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
 			return true;
 		}
@@ -315,8 +332,8 @@ namespace Beyond_Beyaan.Screens
 			_maneuverButton.Draw();
 			_engineSpeed.Draw();
 			_combatSpeed.Draw();
-			_costPerPower.Draw();
-			_spacePerPower.Draw();
+			_costPerPowerLabel.Draw();
+			_spacePerPowerLabel.Draw();
 			_defenseRating.Draw();
 			_defensiveEquipmentBackground.Draw();
 			_armorButton.Draw();
@@ -348,6 +365,8 @@ namespace Beyond_Beyaan.Screens
 			_nameField.Draw();
 			_clearButton.Draw();
 			_confirmButton.Draw();
+			_clearButton.DrawToolTip();
+			_confirmButton.DrawToolTip();
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -359,6 +378,25 @@ namespace Beyond_Beyaan.Screens
 			}
 			result = _prevShipStyleButton.MouseHover(x, y, frameDeltaTime) || result;
 			result = _nextShipStyleButton.MouseHover(x, y, frameDeltaTime) || result;
+
+			result = _engineButton.MouseHover(x, y, frameDeltaTime) || result;
+			result = _maneuverButton.MouseHover(x, y, frameDeltaTime) || result;
+			result = _armorButton.MouseHover(x, y, frameDeltaTime) || result;
+			result = _shieldButton.MouseHover(x, y, frameDeltaTime) || result;
+			result = _ECMButton.MouseHover(x, y, frameDeltaTime) || result;
+			result = _computerButton.MouseHover(x, y, frameDeltaTime) || result;
+			result = _confirmButton.MouseHover(x, y, frameDeltaTime) || result;
+			result = _clearButton.MouseHover(x, y, frameDeltaTime) || result;
+
+			for (int i = 0; i < _weaponButtons.Length; i++)
+			{
+				result = _weaponButtons[i].MouseHover(x, y, frameDeltaTime) || result;
+				result = _weaponCounts[i].MouseHover(x, y, frameDeltaTime) || result;
+			}
+			for (int i = 0; i < _specialButtons.Length; i++)
+			{
+				result = _specialButtons[i].MouseHover(x, y, frameDeltaTime) || result;
+			}
 
 			return result;
 		}
@@ -421,6 +459,7 @@ namespace Beyond_Beyaan.Screens
 		{
 			_shipDesign = _gameMain.EmpireManager.CurrentEmpire.FleetManager.LastShipDesign;
 			_techLevels = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager.GetFieldLevels();
+			LoadTechnologies();
 			RefreshAll();
 			_nameField.SetText(_shipDesign.Name);
 		}
@@ -437,6 +476,7 @@ namespace Beyond_Beyaan.Screens
 			RefreshWeapons();
 			RefreshSpecials();
 			RefreshStats();
+			RefreshValidButtons();
 		}
 
 		private void RefreshShipSprite()
@@ -457,8 +497,10 @@ namespace Beyond_Beyaan.Screens
 			_maneuverButton.SetText(string.Format("{0} Maneuverability", _shipDesign.ManeuverSpeed.ToString()));
 			_engineSpeed.SetText(string.Format("Galaxy Speed: {0}", _shipDesign.GalaxySpeed));
 			_combatSpeed.SetText(string.Format("Combat Speed: {0}", (_shipDesign.ManeuverSpeed / 2) + 1));
-			_costPerPower.SetText(string.Format("Cost per Power: {0:0.0} BCs", _shipDesign.Engine.Key.GetCost(_techLevels, _shipDesign.Size) / (_shipDesign.GalaxySpeed * 10)));
-			_spacePerPower.SetText(string.Format("Space per Power: {0:0.0} DWT", _shipDesign.Engine.Key.GetSize(_techLevels, _shipDesign.Size) / (_shipDesign.GalaxySpeed * 10)));
+			_costPerPower = _shipDesign.Engine.Key.GetCost(_techLevels, _shipDesign.Size) / (_shipDesign.GalaxySpeed * 10);
+			_spacePerPower = _shipDesign.Engine.Key.GetSize(_techLevels, _shipDesign.Size) / (_shipDesign.GalaxySpeed * 10);
+			_costPerPowerLabel.SetText(string.Format("Cost per Power: {0:0.0} BCs", _costPerPower));
+			_spacePerPowerLabel.SetText(string.Format("Space per Power: {0:0.0} DWT", _spacePerPower));
 			_defenseRating.SetText(string.Format("{0} Defense Rating", _shipDesign.DefenseRating));
 		}
 
@@ -583,6 +625,290 @@ namespace Beyond_Beyaan.Screens
 		{
 			_costLabel.SetText(string.Format("Cost: {0:0.0} BCs", _shipDesign.Cost));
 			_spaceLabel.SetText(string.Format("Space: {0:0.0}/{1:0}", _shipDesign.SpaceUsed, _shipDesign.TotalSpace));
+		}
+
+		private void RefreshValidButtons()
+		{
+			//This function greys out all illegal buttons, and activates all legal buttons.  Illegal meaning that there isn't enough space for incrementation, or decrementation if the weapon count is 1
+			float remainingSpace = _shipDesign.TotalSpace - _shipDesign.SpaceUsed;
+
+			_computerButton.SetTextColor(AtLeastOneBetterComputer(remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+			_shieldButton.SetTextColor(AtLeastOneBetterShield(remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+			_ECMButton.SetTextColor(AtLeastOneBetterECM(remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+			_engineButton.SetTextColor(AtLeastOneBetterEngine(remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+			_maneuverButton.SetTextColor(AtLeastOneBetterManeuver(remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+			_armorButton.SetTextColor(AtLeastOneBetterArmor(remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+
+			for (int i = 0; i < 4; i++)
+			{
+				if (_shipDesign.Weapons.Count > i)
+				{
+					_weaponButtons[i].SetTextColor(AtLeastOneBetterWeapon(_shipDesign.Weapons[i], remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+					_weaponCounts[i].Enabled = true;
+					if (_shipDesign.Weapons[i].Key.GetSize(_techLevels, _shipDesign.Size) > remainingSpace)
+					{
+						_weaponCounts[i].UpButtonEnabled = false;
+					}
+					else
+					{
+						_weaponCounts[i].UpButtonEnabled = true;
+					}
+				}
+				else
+				{
+					_weaponButtons[i].SetTextColor(AtLeastOneBetterWeapon(new KeyValuePair<Equipment, int>(null, 0), remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+					_weaponCounts[i].Enabled = false;
+				}
+			}
+			for (int i = 0; i < 3; i++)
+			{
+				if (_shipDesign.Specials.Count > i)
+				{
+					_specialButtons[i].SetTextColor(AtLeastOneHigherLevelSpecial(_shipDesign.Specials[i], remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+				}
+				else
+				{
+					_specialButtons[i].SetTextColor(AtLeastOneHigherLevelSpecial(null, remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+				}
+			}
+		}
+
+		private bool AtLeastOneBetterComputer(float remainingSpace)
+		{
+			if (_shipDesign.Computer != null && _shipDesign.Computer.Technology == _availableComputerTechs[_availableComputerTechs.Count - 1])
+			{
+				//Already the best computer
+				return false;
+			}
+			int index = (_shipDesign.Computer == null ? -1 : _availableComputerTechs.IndexOf(_shipDesign.Computer.Technology)) + 1; //Just one level higher will suffice, and we know we will always have at least one computer tech
+			return GetSpaceUsed(_availableComputerTechs[index], false) <= remainingSpace;
+		}
+		private bool AtLeastOneBetterECM(float remainingSpace)
+		{
+			if (_shipDesign.ECM != null && _shipDesign.ECM.Technology == _availableECMTechs[_availableECMTechs.Count - 1])
+			{
+				//Already the best ECM
+				return false;
+			}
+			int index = (_shipDesign.ECM == null ? -1 : _availableECMTechs.IndexOf(_shipDesign.ECM.Technology)) + 1; //Just one level higher will suffice
+			return index < _availableECMTechs.Count && GetSpaceUsed(_availableECMTechs[index], false) <= remainingSpace;
+		}
+		private bool AtLeastOneBetterShield(float remainingSpace)
+		{
+			if (_shipDesign.Shield != null && _shipDesign.Shield.Technology == _availableShieldTechs[_availableShieldTechs.Count - 1])
+			{
+				//Already the best shield
+				return false;
+			}
+			int index = (_shipDesign.Shield == null ? -1 : _availableShieldTechs.IndexOf(_shipDesign.Shield.Technology)) + 1; //Just one level higher will suffice
+			return index < _availableShieldTechs.Count && GetSpaceUsed(_availableShieldTechs[index], false) <= remainingSpace;
+		}
+		private bool AtLeastOneBetterManeuver(float remainingSpace)
+		{
+			if (_shipDesign.ManeuverSpeed == _shipDesign.Engine.Key.Technology.ManeuverSpeed)
+			{
+				//Already at best maneuver speed
+				return false;
+			}
+			int powerRequired = 2; //This is the small size's power requirement
+			switch (_shipDesign.Size)
+			{
+				case Ship.MEDIUM:
+					powerRequired = 15;
+					break;
+				case Ship.LARGE:
+					powerRequired = 100;
+					break;
+				case Ship.HUGE:
+					powerRequired = 700;
+					break;
+			}
+			float spaceRequired = (_shipDesign.ManeuverSpeed + 1) * powerRequired * _spacePerPower;
+			return spaceRequired <= remainingSpace;
+		}
+		private bool AtLeastOneBetterEngine(float remainingSpace)
+		{
+			if (_shipDesign.Engine.Key.Technology == _availableEngineTechs[_availableEngineTechs.Count - 1])
+			{
+				//Already the best engine
+				return false;
+			}
+			int index = _availableEngineTechs.IndexOf(_shipDesign.Engine.Key.Technology) + 1; //Just one level higher will suffice
+			Equipment engine = new Equipment(_availableEngineTechs[index], false);
+			float totalSpace = (engine.GetSize(_techLevels, _shipDesign.Size) / (engine.Technology.Speed * 10)) * _shipDesign.PowerUsed;
+			return totalSpace <= remainingSpace;
+		}
+		private bool AtLeastOneBetterArmor(float remainingSpace)
+		{
+			if (_shipDesign.Armor.Technology == _availableArmorTechs[_availableArmorTechs.Count - 1])
+			{
+				if (_shipDesign.Armor.UseSecondary)
+				{
+					//Already the best armor with double hull
+					return false;
+				}
+				Equipment armor = new Equipment(_shipDesign.Armor.Technology, true);
+				return armor.GetSize(_techLevels, _shipDesign.Size) <= remainingSpace;
+			}
+			int index = _availableArmorTechs.IndexOf(_shipDesign.Armor.Technology) + 1; //Just one level higher will suffice
+			return GetSpaceUsed(_availableArmorTechs[index], false) <= remainingSpace;
+		}
+		private bool AtLeastOneBetterWeapon(KeyValuePair<Equipment, int> weapon, float remainingSpace)
+		{
+			float currentWeaponSpaceUsage = 0;
+			int index = -1;
+			if (weapon.Key != null)
+			{
+				currentWeaponSpaceUsage = weapon.Key.GetSize(_techLevels, _shipDesign.Size) * weapon.Value;
+				index = _availableWeaponTechs.IndexOf(weapon.Key.Technology);
+			}
+			float totalAvailableSpace = remainingSpace + currentWeaponSpaceUsage;
+
+			if (weapon.Key != null && !weapon.Key.UseSecondary && weapon.Key.Technology.MaximumSecondaryWeaponDamage > 0)
+			{
+				//There is a bigger version of the weapon, see if there's room for it
+				Equipment bigWeapon = new Equipment(weapon.Key.Technology, true);
+				if (bigWeapon.GetSize(_techLevels, _shipDesign.Size) <= totalAvailableSpace)
+				{
+					return true;
+				}
+			}
+			for (int i = index + 1; i < _availableWeaponTechs.Count; i++)
+			{
+				if (GetSpaceUsed(_availableWeaponTechs[i], false) <= totalAvailableSpace)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		private bool AtLeastOneHigherLevelSpecial(Equipment special, float remainingSpace)
+		{
+			float currentSpecialSpaceUsage = 0;
+			int index = -1;
+			if (special != null)
+			{
+				currentSpecialSpaceUsage = special.GetSize(_techLevels, _shipDesign.Size);
+				index = _availableSpecialTechs.IndexOf(special.Technology);
+			}
+			float totalAvailableSpace = currentSpecialSpaceUsage + remainingSpace;
+
+			for (int i = index + 1; i < _availableSpecialTechs.Count; i++)
+			{
+				if (GetSpaceUsed(_availableSpecialTechs[i], false) <= totalAvailableSpace)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private void LoadTechnologies()
+		{
+			var techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
+
+			_availableArmorTechs = new List<Technology>();
+			_availableComputerTechs = new List<Technology>();
+			_availableECMTechs = new List<Technology>();
+			_availableEngineTechs = new List<Technology>();
+			_availableShieldTechs = new List<Technology>();
+			_availableSpecialTechs = new List<Technology>();
+			_availableWeaponTechs = new List<Technology>();
+
+			foreach (var construction in techManager.ResearchedConstructionTechs)
+			{
+				if (construction.Armor > 0)
+				{
+					_availableArmorTechs.Add(construction);
+				}
+				if (construction.Repair > 0)
+				{
+					_availableSpecialTechs.Add(construction);
+				}
+			}
+			_availableArmorTechs.Sort((a, b) => a.Armor.CompareTo(b.Armor));
+
+			foreach (var computer in techManager.ResearchedComputerTechs)
+			{
+				if (computer.BattleComputer > 0)
+				{
+					_availableComputerTechs.Add(computer);
+				}
+				if (computer.ECM > 0)
+				{
+					_availableECMTechs.Add(computer);
+				}
+				if (computer.BattleScanner || computer.OracleInterface || computer.TechnologyNullifier)
+				{
+					_availableSpecialTechs.Add(computer);
+				}
+			}
+			_availableComputerTechs.Sort((a, b) => a.BattleComputer.CompareTo(b.BattleComputer));
+			_availableECMTechs.Sort((a, b) => a.ECM.CompareTo(b.ECM));
+
+			foreach (var propulsion in techManager.ResearchedPropulsionTechs)
+			{
+				if (propulsion.Speed > 0)
+				{
+					_availableEngineTechs.Add(propulsion);
+				}
+				if (propulsion.WarpDissipator || propulsion.InertialStabilizer || propulsion.InertialNullifier || propulsion.EnergyPulsar || propulsion.HighEnergyFocus || propulsion.SubspaceTeleporter || propulsion.IonicPulsar || propulsion.DisplacementDevice)
+				{
+					_availableSpecialTechs.Add(propulsion);
+				}
+			}
+			_availableEngineTechs.Sort((a, b) => a.Speed.CompareTo(b.Speed));
+
+			foreach (var forceField in techManager.ResearchedForceFieldTechs)
+			{
+				if (forceField.Shield > 0)
+				{
+					_availableShieldTechs.Add(forceField);
+				}
+				if (forceField.RepulsorBeam || forceField.CloakingDevice || forceField.MissileShield > 0 || forceField.StatisField || forceField.BlackHoleGenerator)
+				{
+					_availableSpecialTechs.Add(forceField);
+				}
+			}
+			_availableShieldTechs.Sort((a, b) => a.Shield.CompareTo(b.Shield));
+
+			//Weapons contains technologies from both Weapons and Planetology fields
+			foreach (var weapon in techManager.ResearchedWeaponTechs)
+			{
+				if (weapon.MaximumWeaponDamage > 0) //Ensure that it's not a special device, MaximumWeaponDamage is used in ALL weapons, while MinimumWeaponDamage is not (i.e. missiles)
+				{
+					_availableWeaponTechs.Add(weapon);
+				}
+				if (weapon.AntiMissileRockets || weapon.NeutronStreamProjector)
+				{
+					_availableSpecialTechs.Add(weapon);
+				}
+			}
+			foreach (var planetology in techManager.ResearchedPlanetologyTechs)
+			{
+				if (planetology.BioWeapon > 0)
+				{
+					_availableWeaponTechs.Add(planetology);
+				}
+				if (planetology.Colony > 0)
+				{
+					_availableSpecialTechs.Add(planetology);
+				}
+			}
+			_availableWeaponTechs.Sort((a, b) => a.TechLevel.CompareTo(b.TechLevel));
+			_availableSpecialTechs.Sort((a, b) => a.TechLevel.CompareTo(b.TechLevel));
+		}
+
+		private float GetSpaceUsed(Technology whichTech, bool useSecondary)
+		{
+			Equipment equipment = new Equipment(whichTech, useSecondary);
+			return equipment.GetSize(_techLevels, _shipDesign.Size) + equipment.GetPower(_shipDesign.Size) * _spacePerPower;
+		}
+
+		private float GetCostUsed(Technology whichTech, bool useSecondary)
+		{
+			Equipment equipment = new Equipment(whichTech, useSecondary);
+			return equipment.GetCost(_techLevels, _shipDesign.Size) + equipment.GetPower(_shipDesign.Size) * _costPerPower;
 		}
 	}
 }
