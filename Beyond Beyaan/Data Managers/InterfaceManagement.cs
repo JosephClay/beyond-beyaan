@@ -1745,6 +1745,7 @@ namespace Beyond_Beyaan
 		private int _incrementAmount;
 		private int _width;
 		private bool _enabled;
+		private bool _upButtonEnabled;
 		#endregion
 
 		#region Properties
@@ -1756,6 +1757,15 @@ namespace Beyond_Beyaan
 			set
 			{
 				_enabled = value;
+				RefreshButtons();
+			}
+		}
+		public bool UpButtonEnabled
+		{
+			get { return _upButtonEnabled; }
+			set
+			{
+				_upButtonEnabled = value;
 				RefreshButtons();
 			}
 		}
@@ -1899,7 +1909,7 @@ namespace Beyond_Beyaan
 		private void RefreshButtons()
 		{
 			_downButton.Active = Value != _minimum && _enabled;
-			_upButton.Active = Value != _maximum && _enabled;
+			_upButton.Active = Value != _maximum && _enabled && _upButtonEnabled;
 		}
 
 		#endregion

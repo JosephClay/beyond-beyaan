@@ -93,7 +93,7 @@ namespace Beyond_Beyaan
 		public int BioAntidote { get; private set; }
 		public int Enrichment { get; private set; }
 		public int Speed { get; private set; }
-		public float ManeuverSpeed { get; private set; }
+		public int ManeuverSpeed { get; private set; }
 		public int FuelRange { get; private set; }
 
 		public bool ReserveFuelTanks { get; private set; }
@@ -182,6 +182,7 @@ namespace Beyond_Beyaan
 		public int TargetingBonus { get; private set; }
 		public bool Enveloping { get; private set; }
 		public bool Dissipating { get; private set; } //Used only for plasma torpedoes
+		public float MissileSpeed { get; private set; }
 
 		public Technology(TechField techField, string name, string desc, int level,
 						string secondaryName = "",
@@ -216,7 +217,7 @@ namespace Beyond_Beyaan
 						int bioAntidote = 0,
 						int enrichment = 0,
 						int speed = 0,
-						float maneuverSpeed = 0,
+						int maneuverSpeed = 0,
 						int fuelRange = 0,
 						bool inertialstabilizer = false,
 						bool energypulsar = false,
@@ -282,7 +283,8 @@ namespace Beyond_Beyaan
 						bool streaming = false,
 						int targetingBonus = 0,
 						bool enveloping = false,
-						bool dissipating = false
+						bool dissipating = false,
+						float missileSpeed = 0
 						)
 		{
 			TechLevel = level;
@@ -390,6 +392,7 @@ namespace Beyond_Beyaan
 			TargetingBonus = targetingBonus;
 			Enveloping = enveloping;
 			Dissipating = dissipating;
+			MissileSpeed = missileSpeed;
 		}
 	}
 
