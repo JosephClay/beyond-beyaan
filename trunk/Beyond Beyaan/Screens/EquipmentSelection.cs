@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -10,98 +7,41 @@ namespace Beyond_Beyaan.Screens
 	public class EquipmentSelection : WindowInterface
 	{
 		private BBStretchButton[] _buttons;
-		private BBLabel[] _columnNames;
-		private BBLabel[] _column1Values;
-		private BBLabel[] _column2Values;
-		private BBLabel[] _column3Values;
-		private BBLabel[] _column4Values;
-		private BBLabel[] _column5Values;
+		private List<BBLabel[]> _columnValues;
+		private List<BBLabel> _columnNames;
 
 		private List<Equipment> _availableEquipments;
 		private BBScrollBar _scrollBar;
 		private int _maxVisible;
 		private bool _scrollBarVisible;
 		private int _numOfColumnsVisible;
+		private int _middleX;
+		private int _middleY;
 
 		private Ship _shipDesign;
 		private Dictionary<TechField, int> _techLevels; 
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
+			_middleX = gameMain.ScreenWidth / 2;
+			_middleY = gameMain.ScreenHeight / 2;
 			if (!base.Initialize((gameMain.ScreenWidth / 2) - 210, (gameMain.ScreenHeight / 2) - 230, 420, 460, StretchableImageType.ThinBorderBG, gameMain, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
 
 			_buttons = new BBStretchButton[10];
-			_columnNames = new BBLabel[6];
-			_column1Values = new BBLabel[10];
-			_column2Values = new BBLabel[10];
-			_column3Values = new BBLabel[10];
-			_column4Values = new BBLabel[10];
-			_column5Values = new BBLabel[10];
+			_columnValues = new List<BBLabel[]>();
+			_columnNames = new List<BBLabel>();
 			_maxVisible = 0;
 
 			for (int i = 0; i < 10; i++)
 			{
 				_buttons[i] = new BBStretchButton();
-				_column1Values[i] = new BBLabel();
-				_column2Values[i] = new BBLabel();
-				_column3Values[i] = new BBLabel();
-				_column4Values[i] = new BBLabel();
-				_column5Values[i] = new BBLabel();
 				if (!_buttons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, _xPos + 10, _yPos + 50 + i * 40, 380, 40, gameMain.Random, out reason))
 				{
 					return false;
 				}
-				if (!_column1Values[i].Initialize(_xPos + 150, _yPos + 60 + i * 40, string.Empty, System.Drawing.Color.White, out reason))
-				{
-					return false;
-				}
-				if (!_column2Values[i].Initialize(_xPos + 200, _yPos + 60 + i * 40, string.Empty, System.Drawing.Color.White, out reason))
-				{
-					return false;
-				}
-				if (!_column3Values[i].Initialize(_xPos + 250, _yPos + 60 + i * 40, string.Empty, System.Drawing.Color.White, out reason))
-				{
-					return false;
-				}
-				if (!_column4Values[i].Initialize(_xPos + 300, _yPos + 60 + i * 40, string.Empty, System.Drawing.Color.White, out reason))
-				{
-					return false;
-				}
-				if (!_column5Values[i].Initialize(_xPos + 350, _yPos + 60 + i * 40, string.Empty, System.Drawing.Color.White, out reason))
-				{
-					return false;
-				}
-			}
-			for (int i = 0; i < 6; i++)
-			{
-				_columnNames[6] = new BBLabel();
-			}
-			if (!_columnNames[0].Initialize(_xPos + 15, _yPos + 10, "Name", System.Drawing.Color.White, out reason))
-			{
-				return false;
-			}
-			if (!_columnNames[1].Initialize(_xPos + 150, _yPos + 10, "Name1", System.Drawing.Color.White, out reason))
-			{
-				return false;
-			}
-			if (!_columnNames[2].Initialize(_xPos + 200, _yPos + 10, "Name2", System.Drawing.Color.White, out reason))
-			{
-				return false;
-			}
-			if (!_columnNames[3].Initialize(_xPos + 250, _yPos + 10, "Name3", System.Drawing.Color.White, out reason))
-			{
-				return false;
-			}
-			if (!_columnNames[4].Initialize(_xPos + 300, _yPos + 10, "Name4", System.Drawing.Color.White, out reason))
-			{
-				return false;
-			}
-			if (!_columnNames[5].Initialize(_xPos + 350, _yPos + 10, "Name5", System.Drawing.Color.White, out reason))
-			{
-				return false;
 			}
 			_scrollBar = new BBScrollBar();
 			if (!_scrollBar.Initialize(_xPos + 390, _yPos + 50, 400, 10, 10, false, false, gameMain.Random, out reason))
@@ -164,39 +104,45 @@ namespace Beyond_Beyaan.Screens
 				_scrollBar.TopIndex = 0;
 			}
 			_numOfColumnsVisible = 3;
-			ResizeWindow();
+			SetControlsAndWindow();
 			RefreshLabels();
 		}
 
-		private void ResizeWindow()
+		private void SetControlsAndWindow()
 		{
-			int height = 60 + _maxVisible * 40;
-			int buttonWidth = 150 + _numOfColumnsVisible * 50;
-			int width = 20 + buttonWidth + (_scrollBarVisible ? 20 : 0);
-
-			_xPos = (_gameMain.ScreenWidth / 2) - (width / 2);
-			_yPos = (_gameMain.ScreenHeight / 2) - (height / 2);
-			_backGroundImage.Resize(width, height);
-			_backGroundImage.MoveTo(_xPos, _yPos);
-
+			_columnValues.Clear();
+			int width = 150 + _numOfColumnsVisible * 50 + (_scrollBarVisible ? 16 : 0);
+			int height = 40 + _maxVisible * 40;
+			int left = (_middleX - (width / 2));
+			int top = (_middleY - (height / 2));
+			string reason; //Unused, since at this point we've already initialized at least once, meaning everything is set up correctly
+			_columnNames.Clear();
+			_columnNames.Add(new BBLabel());
+			_columnNames[0].Initialize(left, top, "Name", System.Drawing.Color.White, out reason);
+			top += 40;
 			for (int i = 0; i < _maxVisible; i++)
 			{
-				_buttons[i].ResizeButton(buttonWidth, 40);
-				_buttons[i].MoveTo(_xPos + 10, _yPos + 50 + i * 40);
-				_column1Values[i].MoveTo(_xPos + 150, _yPos + 60 + i * 40);
-				_column2Values[i].MoveTo(_xPos + 200, _yPos + 60 + i * 40);
-				_column3Values[i].MoveTo(_xPos + 250, _yPos + 60 + i * 40);
-				_column4Values[i].MoveTo(_xPos + 300, _yPos + 60 + i * 40);
-				_column5Values[i].MoveTo(_xPos + 350, _yPos + 60 + i * 40);
+				_buttons[i].MoveTo(left, top + 40 + (i * 40));
+				_buttons[i].ResizeButton(150 + _numOfColumnsVisible * 50, 40);
 			}
+			left += 150;
 			for (int i = 0; i < _numOfColumnsVisible; i++)
 			{
-				_columnNames[i].MoveTo(_xPos + 150 + i * 50, _yPos + 10);
+				_columnNames.Add(new BBLabel());
+				_columnNames[i + 1].Initialize(left + (i * 50), top, string.Empty, System.Drawing.Color.White, out reason);
+				_columnValues.Add(new BBLabel[_maxVisible]);
+				for (int j = 0; j < _maxVisible; j++)
+				{
+					_columnValues[i][j] = new BBLabel();
+					_columnValues[i][j].Initialize(left + (i * 50), top + (j * 40), string.Empty, System.Drawing.Color.White, out reason);
+				}
 			}
-			if (_scrollBarVisible)
-			{
-				_scrollBar.MoveTo(_xPos + width - 30, _yPos + 50);
-			}
+			//Move and resize the window to fit
+			_xPos = (_gameMain.ScreenWidth / 2) - (width / 2) - 10;
+			_yPos = (_gameMain.ScreenHeight / 2) - (height / 2) - 10;
+			_backGroundImage.Resize(width + 20, height + 20);
+			_backGroundImage.MoveTo(_xPos, _yPos);
+			_scrollBar.MoveTo(left + _numOfColumnsVisible * 50, top);
 		}
 
 		private void RefreshLabels()
@@ -208,20 +154,18 @@ namespace Beyond_Beyaan.Screens
 				if (_availableEquipments[i + _scrollBar.TopIndex].GetSize(_techLevels, _shipDesign.Size) > availableSpace)
 				{
 					_buttons[i].Enabled = false;
-					_column1Values[i].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
-					_column2Values[i].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
-					_column3Values[i].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
-					_column4Values[i].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
-					_column5Values[i].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+					for (int j = 0; j < _numOfColumnsVisible; j++)
+					{
+						_columnValues[i][j].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+					}
 				}
 				else
 				{
 					_buttons[i].Enabled = true;
-					_column1Values[i].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
-					_column2Values[i].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
-					_column3Values[i].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
-					_column4Values[i].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
-					_column5Values[i].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
+					for (int j = 0; j < _numOfColumnsVisible; j++)
+					{
+						_columnValues[i][j].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
+					}
 				}
 			}
 		}
