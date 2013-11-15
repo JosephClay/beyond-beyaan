@@ -120,21 +120,24 @@ namespace Beyond_Beyaan.Screens
 			_columnNames.Add(new BBLabel());
 			_columnNames[0].Initialize(left, top, "Name", System.Drawing.Color.White, out reason);
 			top += 40;
+			_columnValues.Add(new BBLabel[_maxVisible]);
 			for (int i = 0; i < _maxVisible; i++)
 			{
 				_buttons[i].MoveTo(left, top + 40 + (i * 40));
 				_buttons[i].ResizeButton(150 + _numOfColumnsVisible * 50, 40);
+				_columnValues[0][i] = new BBLabel();
+				_columnValues[0][i].Initialize(left, top + 40 + (i * 40), string.Empty, System.Drawing.Color.White, out reason);
 			}
 			left += 150;
-			for (int i = 0; i < _numOfColumnsVisible; i++)
+			for (int i = 1; i <= _numOfColumnsVisible; i++)
 			{
 				_columnNames.Add(new BBLabel());
-				_columnNames[i + 1].Initialize(left + (i * 50), top, string.Empty, System.Drawing.Color.White, out reason);
+				_columnNames[i].Initialize(left + ((i - 1) * 50), top, string.Empty, System.Drawing.Color.White, out reason);
 				_columnValues.Add(new BBLabel[_maxVisible]);
 				for (int j = 0; j < _maxVisible; j++)
 				{
 					_columnValues[i][j] = new BBLabel();
-					_columnValues[i][j].Initialize(left + (i * 50), top + (j * 40), string.Empty, System.Drawing.Color.White, out reason);
+					_columnValues[i][j].Initialize(left + ((i - 1) * 50), top + (j * 40), string.Empty, System.Drawing.Color.White, out reason);
 				}
 			}
 			//Move and resize the window to fit
