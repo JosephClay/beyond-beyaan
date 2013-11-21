@@ -64,7 +64,10 @@ namespace Beyond_Beyaan.Screens
 		private List<Technology> _availableArmorTechs;
 		private List<Technology> _availableECMTechs;
 		private List<Technology> _availableWeaponTechs;
-		private List<Technology> _availableSpecialTechs; 
+		private List<Technology> _availableSpecialTechs;
+
+		private EquipmentSelection _equipmentSelection;
+		private bool _selectionShowing;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
@@ -310,6 +313,13 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
+			_equipmentSelection = new EquipmentSelection();
+			if (!_equipmentSelection.Initialize(gameMain, out reason))
+			{
+				return false;
+			}
+			_selectionShowing = false;
+
 			return true;
 		}
 
@@ -367,10 +377,19 @@ namespace Beyond_Beyaan.Screens
 			_confirmButton.Draw();
 			_clearButton.DrawToolTip();
 			_confirmButton.DrawToolTip();
+
+			if (_selectionShowing)
+			{
+				_equipmentSelection.Draw();
+			}
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
+			if (_selectionShowing)
+			{
+				return _equipmentSelection.MouseHover(x, y, frameDeltaTime);
+			}
 			bool result = false;
 			foreach (var button in _shipSizeButtons)
 			{
@@ -403,11 +422,16 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseDown(int x, int y)
 		{
+			if (_selectionShowing)
+			{
+				return _equipmentSelection.MouseDown(x, y);
+			}
 			bool result = false;
 			foreach (var button in _shipSizeButtons)
 			{
 				result = button.MouseDown(x, y) || result;
 			}
+			result = _armorButton.MouseDown(x, y) || result;
 			result = _prevShipStyleButton.MouseDown(x, y) || result;
 			result = _nextShipStyleButton.MouseDown(x, y) || result;
 			return base.MouseDown(x, y) || result;
@@ -415,6 +439,11 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseUp(int x, int y)
 		{
+			if (_selectionShowing && !_equipmentSelection.MouseUp(x, y))
+			{
+				//Clicked outside the window, close the window
+				_selectionShowing = false;
+			}
 			for (int i = 0; i < _shipSizeButtons.Length; i++)
 			{
 				if (_shipSizeButtons[i].MouseUp(x, y))
@@ -443,6 +472,11 @@ namespace Beyond_Beyaan.Screens
 				}
 				RefreshShipSprite();
 				return true;
+			}
+			if (_armorButton.MouseUp(x, y))
+			{
+				_selectionShowing = true;
+				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.ARMOR, _availableArmorTechs, _techLevels);
 			}
 			if (!base.MouseUp(x, y))
 			{
