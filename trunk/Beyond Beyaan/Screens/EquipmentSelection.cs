@@ -19,6 +19,7 @@ namespace Beyond_Beyaan.Screens
 		private int _middleY;
 
 		private Ship _shipDesign;
+		private EquipmentType _equipmentType;
 		private Dictionary<TechField, int> _techLevels; 
 
 		public bool Initialize(GameMain gameMain, out string reason)
@@ -58,8 +59,9 @@ namespace Beyond_Beyaan.Screens
 		{
 			_shipDesign = shipDesign;
 			_techLevels = techLevels;
+			_equipmentType = equipmentType;
 			_availableEquipments = new List<Equipment>();
-			switch (equipmentType)
+			switch (_equipmentType)
 			{
 				case EquipmentType.ARMOR:
 					LoadArmor(_technologies);
@@ -79,18 +81,6 @@ namespace Beyond_Beyaan.Screens
 				case EquipmentType.WEAPON:
 					break;
 			}
-		}
-
-		private void LoadArmor(List<Technology> _technologies)
-		{
-			foreach (var tech in _technologies)
-			{
-				Equipment armorI = new Equipment(tech, false);
-				Equipment armorII = new Equipment(tech, true);
-
-				_availableEquipments.Add(armorI);
-				_availableEquipments.Add(armorII);
-			}
 			if (_availableEquipments.Count > 10)
 			{
 				_maxVisible = 10;
@@ -103,9 +93,21 @@ namespace Beyond_Beyaan.Screens
 				_scrollBarVisible = false;
 				_scrollBar.TopIndex = 0;
 			}
-			_numOfColumnsVisible = 3;
 			SetControlsAndWindow();
 			RefreshLabels();
+		}
+
+		private void LoadArmor(List<Technology> _technologies)
+		{
+			foreach (var tech in _technologies)
+			{
+				Equipment armorI = new Equipment(tech, false);
+				Equipment armorII = new Equipment(tech, true);
+
+				_availableEquipments.Add(armorI);
+				_availableEquipments.Add(armorII);
+			}
+			_numOfColumnsVisible = 2;
 		}
 
 		private void SetControlsAndWindow()
@@ -123,10 +125,10 @@ namespace Beyond_Beyaan.Screens
 			_columnValues.Add(new BBLabel[_maxVisible]);
 			for (int i = 0; i < _maxVisible; i++)
 			{
-				_buttons[i].MoveTo(left, top + 40 + (i * 40));
+				_buttons[i].MoveTo(left, top + (i * 40));
 				_buttons[i].ResizeButton(150 + _numOfColumnsVisible * 50, 40);
 				_columnValues[0][i] = new BBLabel();
-				_columnValues[0][i].Initialize(left, top + 40 + (i * 40), string.Empty, System.Drawing.Color.White, out reason);
+				_columnValues[0][i].Initialize(left, top + (i * 40), string.Empty, System.Drawing.Color.White, out reason);
 			}
 			left += 150;
 			for (int i = 1; i <= _numOfColumnsVisible; i++)
@@ -153,22 +155,49 @@ namespace Beyond_Beyaan.Screens
 			float availableSpace = _shipDesign.TotalSpace - _shipDesign.SpaceUsed;
 			for (int i = 0; i < _maxVisible; i++)
 			{
-				_buttons[i].SetText(_availableEquipments[i + _scrollBar.TopIndex].DisplayName);
+				SetText(i);
 				if (_availableEquipments[i + _scrollBar.TopIndex].GetSize(_techLevels, _shipDesign.Size) > availableSpace)
 				{
 					_buttons[i].Enabled = false;
-					for (int j = 0; j < _numOfColumnsVisible; j++)
+					for (int j = 0; j <= _numOfColumnsVisible; j++)
 					{
-						_columnValues[i][j].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+						_columnValues[j][i].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
 					}
 				}
 				else
 				{
 					_buttons[i].Enabled = true;
-					for (int j = 0; j < _numOfColumnsVisible; j++)
+					for (int j = 0; j <= _numOfColumnsVisible; j++)
 					{
-						_columnValues[i][j].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
+						_columnValues[j][i].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
 					}
+				}
+			}
+		}
+
+		private void SetText(int whichRow)
+		{
+			var equipment = _availableEquipments[whichRow + _scrollBar.TopIndex];
+			_columnValues[0][whichRow].SetText(equipment.DisplayName);
+			switch (_equipmentType)
+			{
+				case EquipmentType.ARMOR:
+				{
+					_columnValues[1][whichRow].SetText(string.Format("{0:0.0}", equipment.GetCost(_techLevels, _shipDesign.Size)));
+					_columnValues[2][whichRow].SetText(string.Format("{0:0.0}", equipment.GetSize(_techLevels, _shipDesign.Size)));
+				} break;
+			}
+		}
+
+		public override void Draw()
+		{
+			base.Draw();
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				_buttons[i].Draw();
+				for (int j = 0; j <= _numOfColumnsVisible; j++)
+				{
+					_columnValues[j][i].Draw();
 				}
 			}
 		}
