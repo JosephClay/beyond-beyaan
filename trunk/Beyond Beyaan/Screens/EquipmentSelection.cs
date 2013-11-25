@@ -8,6 +8,7 @@ namespace Beyond_Beyaan.Screens
 	public class EquipmentSelection : WindowInterface
 	{
 		private const int LABEL_WIDTH = 200;
+		private const int COLUMN_WIDTH = 100;
 
 		private BBStretchButton[] _buttons;
 		private List<BBLabel[]> _columnValues;
@@ -27,8 +28,10 @@ namespace Beyond_Beyaan.Screens
 		private float _spacePerPower;
 		private float _costPerPower;
 		private Equipment _currentEquipment; //Used for specifying which weapon or special to replace, otherwise unused
+		private int _maneuverLevel;
 
 		public Action<Equipment, Equipment> OnSelectEquipment;
+		public Action<int> OnSelectManeuver;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
@@ -84,6 +87,7 @@ namespace Beyond_Beyaan.Screens
 					LoadECM(technologies);
 					break;
 				case EquipmentType.ENGINE:
+					LoadEngines(technologies);
 					break;
 				case EquipmentType.MANEUVER:
 					break;
@@ -107,6 +111,22 @@ namespace Beyond_Beyaan.Screens
 				_scrollBarVisible = false;
 				_scrollBar.TopIndex = 0;
 			}
+			SetControlsAndWindow();
+			RefreshLabels();
+		}
+		public void LoadEquipments(Ship shipDesign, EquipmentType equipmentType, int currentManeuver, Dictionary<TechField, int> techLevels, float spacePerPower, float costPerPower)
+		{
+			_maneuverLevel = currentManeuver;
+			_shipDesign = shipDesign;
+			_techLevels = techLevels;
+			_equipmentType = equipmentType;
+			_availableEquipments = new List<Equipment>();
+			_spacePerPower = spacePerPower;
+			_costPerPower = costPerPower;
+			_maxVisible = _shipDesign.Engine.Key.Technology.ManeuverSpeed; //Never more than 9, which is less than max of 10
+			_scrollBarVisible = false;
+			_scrollBar.TopIndex = 0;
+			_numOfColumnsVisible = 4;
 			SetControlsAndWindow();
 			RefreshLabels();
 		}
@@ -162,10 +182,20 @@ namespace Beyond_Beyaan.Screens
 			_numOfColumnsVisible = 4;
 		}
 
+		private void LoadEngines(List<Technology> _technologies)
+		{
+			foreach (var tech in _technologies)
+			{
+				var engine = new Equipment(tech, false);
+				_availableEquipments.Add(engine);
+			}
+			_numOfColumnsVisible = 4;
+		}
+
 		private void SetControlsAndWindow()
 		{
 			_columnValues.Clear();
-			int width = LABEL_WIDTH + _numOfColumnsVisible * 50 + (_scrollBarVisible ? 16 : 0);
+			int width = LABEL_WIDTH + _numOfColumnsVisible * COLUMN_WIDTH + (_scrollBarVisible ? 16 : 0);
 			int height = 40 + _maxVisible * 40;
 			int left = (_middleX - (width / 2));
 			int top = (_middleY - (height / 2));
@@ -177,7 +207,7 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < _maxVisible; i++)
 			{
 				_buttons[i].MoveTo(left, top + 40 + (i * 40));
-				_buttons[i].ResizeButton(LABEL_WIDTH + _numOfColumnsVisible * 50, 40);
+				_buttons[i].ResizeButton(LABEL_WIDTH + _numOfColumnsVisible * COLUMN_WIDTH, 40);
 				_columnValues[0][i] = new BBLabel();
 				_columnValues[0][i].Initialize(left + 5, top + 50 + (i * 40), string.Empty, System.Drawing.Color.White, out reason);
 			}
@@ -185,12 +215,12 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 1; i <= _numOfColumnsVisible; i++)
 			{
 				_columnNames.Add(new BBLabel());
-				_columnNames[i].Initialize(left + ((i - 1) * 50) + 5, top + 10, string.Empty, System.Drawing.Color.White, out reason);
+				_columnNames[i].Initialize(left + ((i - 1) * COLUMN_WIDTH) + 5, top + 10, string.Empty, System.Drawing.Color.White, out reason);
 				_columnValues.Add(new BBLabel[_maxVisible]);
 				for (int j = 0; j < _maxVisible; j++)
 				{
 					_columnValues[i][j] = new BBLabel();
-					_columnValues[i][j].Initialize(left + ((i - 1) * 50) + 5, top + 50 + (j * 40), string.Empty, System.Drawing.Color.White, out reason);
+					_columnValues[i][j].Initialize(left + ((i - 1) * COLUMN_WIDTH) + 5, top + 50 + (j * 40), string.Empty, System.Drawing.Color.White, out reason);
 				}
 			}
 			//Move and resize the window to fit
@@ -198,7 +228,7 @@ namespace Beyond_Beyaan.Screens
 			_yPos = (_gameMain.ScreenHeight / 2) - (height / 2) - 10;
 			_backGroundImage.Resize(width + 20, height + 20);
 			_backGroundImage.MoveTo(_xPos, _yPos);
-			_scrollBar.MoveTo(left + _numOfColumnsVisible * 50, top + 40);
+			_scrollBar.MoveTo(left + _numOfColumnsVisible * COLUMN_WIDTH, top + 40);
 
 			switch (_equipmentType)
 			{
@@ -229,6 +259,22 @@ namespace Beyond_Beyaan.Screens
 						_columnNames[0].SetText("ECM Type");
 						_columnNames[1].SetText("Cost");
 						_columnNames[2].SetText("Size");
+						_columnNames[3].SetText("Power");
+						_columnNames[4].SetText("Space");
+					} break;
+				case EquipmentType.ENGINE:
+					{
+						_columnNames[0].SetText("Engine Type");
+						_columnNames[1].SetText("Cost");
+						_columnNames[2].SetText("Size");
+						_columnNames[3].SetText("# Required");
+						_columnNames[4].SetText("Space");
+					} break;
+				case EquipmentType.MANEUVER:
+					{
+						_columnNames[0].SetText("Maneuver Level");
+						_columnNames[1].SetText("Speed");
+						_columnNames[2].SetText("Cost");
 						_columnNames[3].SetText("Power");
 						_columnNames[4].SetText("Space");
 					} break;
@@ -266,8 +312,46 @@ namespace Beyond_Beyaan.Screens
 							availableSpace += _shipDesign.ECM.GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower);
 						}
 					} break;
+				case EquipmentType.ENGINE:
+					{
+						availableSpace += _shipDesign.Engine.Key.GetSize(_techLevels, _shipDesign.Size) * _shipDesign.Engine.Value;
+					} break;
+				case EquipmentType.MANEUVER:
+					{
+						availableSpace += PowerRequiredForManeuver(_shipDesign.ManeuverSpeed) * _spacePerPower;
+					} break;
 			}
 
+			if (_equipmentType == EquipmentType.MANEUVER)
+			{
+				//Unique condition since Maneuver isn't actually an equipment
+				for (int i = 0; i < _shipDesign.Engine.Key.Technology.ManeuverSpeed; i++)
+				{
+					int powerReq = PowerRequiredForManeuver(i + 1);
+					_columnValues[0][i].SetText(string.Format("Class {0}", i + 1));
+					_columnValues[1][i].SetText(string.Format("{0}", (i + 2) / 2));
+					_columnValues[2][i].SetText(string.Format("{0:0.0}", powerReq * _costPerPower));
+					_columnValues[3][i].SetText(string.Format("{0:0.0}", powerReq));
+					_columnValues[4][i].SetText(string.Format("{0:0.0}", powerReq * _spacePerPower));
+					if (powerReq * _spacePerPower > availableSpace)
+					{
+						_buttons[i].Enabled = false;
+						for (int j = 0; j <= _numOfColumnsVisible; j++)
+						{
+							_columnValues[j][i].SetColor(System.Drawing.Color.Tan, System.Drawing.Color.Empty);
+						}
+					}
+					else
+					{
+						_buttons[i].Enabled = true;
+						for (int j = 0; j <= _numOfColumnsVisible; j++)
+						{
+							_columnValues[j][i].SetColor(System.Drawing.Color.White, System.Drawing.Color.Empty);
+						}
+					}
+				}
+				return;
+			}
 			for (int i = 0; i < _maxVisible; i++)
 			{
 				SetText(i);
@@ -368,7 +452,40 @@ namespace Beyond_Beyaan.Screens
 							_columnValues[4][whichRow].SetText(string.Format("{0:0.0}", equipment.GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower)));
 						}
 					} break;
+				case EquipmentType.ENGINE:
+					{
+						float amountReq = _shipDesign.PowerUsed / (equipment.Technology.Speed * 10);
+						float size = equipment.GetSize(_techLevels, _shipDesign.Size);
+						_columnValues[1][whichRow].SetText(string.Format("{0:0.0}", equipment.GetCost(_techLevels, _shipDesign.Size)));
+						_columnValues[2][whichRow].SetText(string.Format("{0:0.0}", size));
+						_columnValues[3][whichRow].SetText(string.Format("{0:0.0}", amountReq));
+						_columnValues[4][whichRow].SetText(string.Format("{0:0.0}", amountReq * size));
+					} break;
 			}
+		}
+
+		private int PowerRequiredForManeuver(int maneuverAmount)
+		{
+			switch (_shipDesign.Size)
+			{
+				case Ship.SMALL:
+				{
+					return maneuverAmount * 2;
+				}
+				case Ship.MEDIUM:
+				{
+					return maneuverAmount * 15;
+				}
+				case Ship.LARGE:
+				{
+					return maneuverAmount * 100;
+				}
+				case Ship.HUGE:
+				{
+					return maneuverAmount * 700;
+				}
+			}
+			return -1;
 		}
 
 		public override void Draw()
@@ -414,6 +531,13 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (_buttons[i].MouseUp(x, y))
 				{
+					if (_equipmentType == EquipmentType.MANEUVER)
+					{
+						if (OnSelectManeuver != null)
+						{
+							OnSelectManeuver(i + 1);
+						}
+					}
 					if (OnSelectEquipment != null)
 					{
 						OnSelectEquipment(_availableEquipments[i + _scrollBar.TopIndex], _currentEquipment);
