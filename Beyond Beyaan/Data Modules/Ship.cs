@@ -284,6 +284,12 @@ namespace Beyond_Beyaan
 			return new Equipment(gameMain.MasterTechnologyManager.GetTechnologyWithName(actualTechName), useSecondary);
 		}
 		#endregion
+
+		public void UpdateEngineNumber()
+		{
+			float amountRequired = PowerUsed / (Engine.Key.Technology.Speed * 10);
+			Engine = new KeyValuePair<Equipment, float>(Engine.Key, amountRequired);
+		}
 	}
 
 	public class TransportShip

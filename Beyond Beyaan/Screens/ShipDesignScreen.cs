@@ -318,6 +318,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			_equipmentSelection.OnSelectManeuver = OnSelectManeuver;
 			_selectionShowing = false;
 
 			return true;
@@ -403,6 +404,7 @@ namespace Beyond_Beyaan.Screens
 			result = _armorButton.MouseHover(x, y, frameDeltaTime) || result;
 			result = _shieldButton.MouseHover(x, y, frameDeltaTime) || result;
 			result = _ECMButton.MouseHover(x, y, frameDeltaTime) || result;
+			result = _engineButton.MouseHover(x, y, frameDeltaTime) || result;
 			result = _computerButton.MouseHover(x, y, frameDeltaTime) || result;
 			result = _confirmButton.MouseHover(x, y, frameDeltaTime) || result;
 			result = _clearButton.MouseHover(x, y, frameDeltaTime) || result;
@@ -435,6 +437,8 @@ namespace Beyond_Beyaan.Screens
 			result = _computerButton.MouseDown(x, y) || result;
 			result = _shieldButton.MouseDown(x, y) || result;
 			result = _ECMButton.MouseDown(x, y) || result;
+			result = _engineButton.MouseDown(x, y) || result;
+			result = _maneuverButton.MouseDown(x, y) || result;
 			result = _prevShipStyleButton.MouseDown(x, y) || result;
 			result = _nextShipStyleButton.MouseDown(x, y) || result;
 			return base.MouseDown(x, y) || result;
@@ -499,6 +503,17 @@ namespace Beyond_Beyaan.Screens
 				_selectionShowing = true;
 				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.COMPUTER, _shipDesign.ECM, _availableECMTechs, _techLevels, _spacePerPower, _costPerPower);
 				_equipmentSelection.OnSelectEquipment = OnSelectECM;
+			}
+			if (_engineButton.MouseUp(x, y))
+			{
+				_selectionShowing = true;
+				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.ENGINE, _shipDesign.Engine.Key, _availableEngineTechs, _techLevels, _spacePerPower, _costPerPower);
+				_equipmentSelection.OnSelectEquipment = OnSelectEngine;
+			}
+			if (_maneuverButton.MouseUp(x, y))
+			{
+				_selectionShowing = true;
+				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.MANEUVER, _shipDesign.ManeuverSpeed, _techLevels, _spacePerPower, _costPerPower);
 			}
 			if (!base.MouseUp(x, y))
 			{
@@ -971,6 +986,7 @@ namespace Beyond_Beyaan.Screens
 		private void OnSelectArmor(Equipment equipment, Equipment previousEquipment)
 		{
 			_shipDesign.Armor = equipment;
+			_shipDesign.UpdateEngineNumber();
 			RefreshHP();
 			RefreshStats();
 			RefreshValidButtons();
@@ -980,6 +996,7 @@ namespace Beyond_Beyaan.Screens
 		private void OnSelectComputer(Equipment equipment, Equipment previousEquipment)
 		{
 			_shipDesign.Computer = equipment.Technology == null ? null : equipment;
+			_shipDesign.UpdateEngineNumber();
 			RefreshComputer();
 			RefreshStats();
 			RefreshValidButtons();
@@ -989,6 +1006,7 @@ namespace Beyond_Beyaan.Screens
 		private void OnSelectShield(Equipment equipment, Equipment previousEquipment)
 		{
 			_shipDesign.Shield = equipment.Technology == null ? null : equipment;
+			_shipDesign.UpdateEngineNumber();
 			RefreshShield();
 			RefreshStats();
 			RefreshValidButtons();
@@ -998,7 +1016,25 @@ namespace Beyond_Beyaan.Screens
 		private void OnSelectECM(Equipment equipment, Equipment previousEquipment)
 		{
 			_shipDesign.ECM = equipment.Technology == null ? null : equipment;
+			_shipDesign.UpdateEngineNumber();
 			RefreshECM();
+			RefreshStats();
+			RefreshValidButtons();
+			_selectionShowing = false;
+			_equipmentSelection.OnSelectEquipment = null;
+		}
+		private void OnSelectEngine(Equipment equipment, Equipment previousEquipment)
+		{
+			_shipDesign.Engine = new KeyValuePair<Equipment, float>(equipment, _shipDesign.PowerUsed / (equipment.Technology.Speed * 10));
+			RefreshAll(); //Engine impacts basically everything that uses power, so just refresh everything
+			_selectionShowing = false;
+			_equipmentSelection.OnSelectEquipment = null;
+		}
+		private void OnSelectManeuver(int maneuverLevel)
+		{
+			_shipDesign.ManeuverSpeed = maneuverLevel;
+			_shipDesign.UpdateEngineNumber();
+			RefreshEngineLabels();
 			RefreshStats();
 			RefreshValidButtons();
 			_selectionShowing = false;
