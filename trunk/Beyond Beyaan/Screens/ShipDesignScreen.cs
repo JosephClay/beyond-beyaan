@@ -432,6 +432,9 @@ namespace Beyond_Beyaan.Screens
 				result = button.MouseDown(x, y) || result;
 			}
 			result = _armorButton.MouseDown(x, y) || result;
+			result = _computerButton.MouseDown(x, y) || result;
+			result = _shieldButton.MouseDown(x, y) || result;
+			result = _ECMButton.MouseDown(x, y) || result;
 			result = _prevShipStyleButton.MouseDown(x, y) || result;
 			result = _nextShipStyleButton.MouseDown(x, y) || result;
 			return base.MouseDown(x, y) || result;
@@ -476,7 +479,26 @@ namespace Beyond_Beyaan.Screens
 			if (_armorButton.MouseUp(x, y))
 			{
 				_selectionShowing = true;
-				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.ARMOR, _availableArmorTechs, _techLevels);
+				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.ARMOR, _shipDesign.Armor, _availableArmorTechs, _techLevels, _spacePerPower, _costPerPower);
+				_equipmentSelection.OnSelectEquipment = OnSelectArmor;
+			}
+			if (_computerButton.MouseUp(x, y))
+			{
+				_selectionShowing = true;
+				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.COMPUTER, _shipDesign.Computer, _availableComputerTechs, _techLevels, _spacePerPower, _costPerPower);
+				_equipmentSelection.OnSelectEquipment = OnSelectComputer;
+			}
+			if (_shieldButton.MouseUp(x, y))
+			{
+				_selectionShowing = true;
+				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.SHIELD, _shipDesign.Shield, _availableShieldTechs, _techLevels, _spacePerPower, _costPerPower);
+				_equipmentSelection.OnSelectEquipment = OnSelectShield;
+			}
+			if (_ECMButton.MouseUp(x, y))
+			{
+				_selectionShowing = true;
+				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.COMPUTER, _shipDesign.ECM, _availableECMTechs, _techLevels, _spacePerPower, _costPerPower);
+				_equipmentSelection.OnSelectEquipment = OnSelectECM;
 			}
 			if (!base.MouseUp(x, y))
 			{
@@ -944,5 +966,44 @@ namespace Beyond_Beyaan.Screens
 			Equipment equipment = new Equipment(whichTech, useSecondary);
 			return equipment.GetCost(_techLevels, _shipDesign.Size) + equipment.GetPower(_shipDesign.Size) * _costPerPower;
 		}
+
+		#region Equipment-Specific Event Handlers
+		private void OnSelectArmor(Equipment equipment, Equipment previousEquipment)
+		{
+			_shipDesign.Armor = equipment;
+			RefreshHP();
+			RefreshStats();
+			RefreshValidButtons();
+			_selectionShowing = false;
+			_equipmentSelection.OnSelectEquipment = null;
+		}
+		private void OnSelectComputer(Equipment equipment, Equipment previousEquipment)
+		{
+			_shipDesign.Computer = equipment.Technology == null ? null : equipment;
+			RefreshComputer();
+			RefreshStats();
+			RefreshValidButtons();
+			_selectionShowing = false;
+			_equipmentSelection.OnSelectEquipment = null;
+		}
+		private void OnSelectShield(Equipment equipment, Equipment previousEquipment)
+		{
+			_shipDesign.Shield = equipment.Technology == null ? null : equipment;
+			RefreshShield();
+			RefreshStats();
+			RefreshValidButtons();
+			_selectionShowing = false;
+			_equipmentSelection.OnSelectEquipment = null;
+		}
+		private void OnSelectECM(Equipment equipment, Equipment previousEquipment)
+		{
+			_shipDesign.ECM = equipment.Technology == null ? null : equipment;
+			RefreshECM();
+			RefreshStats();
+			RefreshValidButtons();
+			_selectionShowing = false;
+			_equipmentSelection.OnSelectEquipment = null;
+		}
+		#endregion
 	}
 }

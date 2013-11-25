@@ -21,7 +21,6 @@ namespace Beyond_Beyaan
 		private GalaxyScreen _galaxyScreen;
 		private DiplomacyScreen _diplomacyScreen;
 		private FleetListScreen _fleetListScreen;
-		private DesignScreen _designScreen;
 		private PlanetsScreen _planetsScreen;
 		private ProcessingTurnScreen _processingTurnScreen;
 		//private SpaceCombat _spaceCombat;
@@ -304,20 +303,6 @@ namespace Beyond_Beyaan
 					}
 					_fleetListScreen.LoadScreen();
 					_screenInterface = _fleetListScreen;
-					break;
-				case Screen.Design:
-					if (_designScreen == null)
-					{
-						_designScreen = new DesignScreen();
-						string reason;
-						if (!_designScreen.Initialize(this, out reason))
-						{
-							MessageBox.Show("Exception in loading Design Screen. Reason: " + reason);
-							_parentForm.Close();
-						}
-					}
-					_screenInterface = _designScreen;
-					_designScreen.LoadScreen();
 					break;
 				case Screen.Planets:
 					if (_planetsScreen == null)

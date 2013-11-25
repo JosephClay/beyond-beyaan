@@ -108,7 +108,6 @@
     <Compile Include="Utility\NameGenerator.cs" />
     <Compile Include="Data Modules\Planet.cs" />
     <Compile Include="Data Managers\PlanetManager.cs" />
-    <Compile Include="Screens\DesignScreen.cs" />
     <Compile Include="Screens\DiplomacyScreen.cs" />
     <Compile Include="Screens\FleetListScreen.cs" />
     <Compile Include="Screens\GalaxyScreen.cs" />

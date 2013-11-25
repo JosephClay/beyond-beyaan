@@ -453,6 +453,12 @@ namespace Beyond_Beyaan
 			return (float)(initialCost * (Math.Pow(0.5, (levelDifference / 10.0))));
 		}
 
+		public float GetActualCost(Dictionary<TechField, int> techLevels, int shipSize, float costPerPower)
+		{
+			float cost = GetCost(techLevels, shipSize);
+			return (cost + GetPower(shipSize) * costPerPower);
+		}
+
 		public float GetSize(Dictionary<TechField, int> techLevels, int shipSize)
 		{
 			float initialSize = 0;
@@ -492,6 +498,12 @@ namespace Beyond_Beyaan
 				return (float)(initialSize * (Math.Pow(0.5, (levelDifference / 10.0))));
 			}
 			return (float)(initialSize * (Math.Pow(0.75, (levelDifference / 10.0))));
+		}
+
+		public float GetActualSize(Dictionary<TechField, int> techLevels, int shipSize, float spacePerPower)
+		{
+			float size = GetSize(techLevels, shipSize);
+			return (size + GetPower(shipSize) * spacePerPower);
 		}
 
 		public float GetPower(int shipSize)
