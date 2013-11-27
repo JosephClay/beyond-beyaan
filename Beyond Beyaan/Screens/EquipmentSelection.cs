@@ -27,10 +27,9 @@ namespace Beyond_Beyaan.Screens
 		private Dictionary<TechField, int> _techLevels;
 		private float _spacePerPower;
 		private float _costPerPower;
-		private Equipment _currentEquipment; //Used for specifying which weapon or special to replace, otherwise unused
-		private int _maneuverLevel;
+		private int _slotNum; //Used for specifying which weapon or special to replace, otherwise unused
 
-		public Action<Equipment, Equipment> OnSelectEquipment;
+		public Action<Equipment, int> OnSelectEquipment;
 		public Action<int> OnSelectManeuver;
 
 		public bool Initialize(GameMain gameMain, out string reason)
@@ -54,6 +53,10 @@ namespace Beyond_Beyaan.Screens
 				{
 					return false;
 				}
+				if (!_buttons[i].SetToolTip("EquipmentSelection" + i, string.Empty, gameMain.ScreenWidth, gameMain.ScreenHeight, gameMain.Random, out reason))
+				{
+					return false;
+				}
 			}
 			_scrollBar = new BBScrollBar();
 			if (!_scrollBar.Initialize(_xPos + 390, _yPos + 50, 400, 10, 10, false, false, gameMain.Random, out reason))
@@ -66,9 +69,9 @@ namespace Beyond_Beyaan.Screens
 			return true;
 		}
 
-		public void LoadEquipments(Ship shipDesign, EquipmentType equipmentType, Equipment currentEquipment, List<Technology> technologies, Dictionary<TechField, int> techLevels, float spacePerPower, float costPerPower)
+		public void LoadEquipments(Ship shipDesign, EquipmentType equipmentType, int slotNum, List<Technology> technologies, Dictionary<TechField, int> techLevels, float spacePerPower, float costPerPower)
 		{
-			_currentEquipment = currentEquipment;
+			_slotNum = slotNum;
 			_shipDesign = shipDesign;
 			_techLevels = techLevels;
 			_equipmentType = equipmentType;
@@ -95,8 +98,10 @@ namespace Beyond_Beyaan.Screens
 					LoadShields(technologies);
 					break;
 				case EquipmentType.SPECIAL:
+					LoadSpecials(technologies);
 					break;
 				case EquipmentType.WEAPON:
+					LoadWeapons(technologies);
 					break;
 			}
 			if (_availableEquipments.Count > 10)
@@ -116,7 +121,6 @@ namespace Beyond_Beyaan.Screens
 		}
 		public void LoadEquipments(Ship shipDesign, EquipmentType equipmentType, int currentManeuver, Dictionary<TechField, int> techLevels, float spacePerPower, float costPerPower)
 		{
-			_maneuverLevel = currentManeuver;
 			_shipDesign = shipDesign;
 			_techLevels = techLevels;
 			_equipmentType = equipmentType;
@@ -188,6 +192,32 @@ namespace Beyond_Beyaan.Screens
 			{
 				var engine = new Equipment(tech, false);
 				_availableEquipments.Add(engine);
+			}
+			_numOfColumnsVisible = 4;
+		}
+
+		private void LoadWeapons(List<Technology> _technologies)
+		{
+			_availableEquipments.Add(GetEmptyEquipment());
+			foreach (var tech in _technologies)
+			{
+				var weapon = new Equipment(tech, false);
+				_availableEquipments.Add(weapon);
+				if (!string.IsNullOrEmpty(tech.TechSecondaryName))
+				{
+					weapon = new Equipment(tech, true);
+					_availableEquipments.Add(weapon);
+				}
+			}
+			_numOfColumnsVisible = 6;
+		}
+		private void LoadSpecials(List<Technology> _technologies)
+		{
+			_availableEquipments.Add(GetEmptyEquipment());
+			foreach (var tech in _technologies)
+			{
+				var special = new Equipment(tech, false);
+				_availableEquipments.Add(special);
 			}
 			_numOfColumnsVisible = 4;
 		}
@@ -278,6 +308,15 @@ namespace Beyond_Beyaan.Screens
 						_columnNames[3].SetText("Power");
 						_columnNames[4].SetText("Space");
 					} break;
+				case EquipmentType.WEAPON:
+					{
+						_columnNames[1].SetText("Damage");
+						_columnNames[2].SetText("Cost");
+						_columnNames[3].SetText("Size");
+						_columnNames[4].SetText("Power");
+						_columnNames[5].SetText("Space");
+						_columnNames[6].SetText("Max Mounts");
+					} break;
 			}
 		}
 
@@ -320,6 +359,20 @@ namespace Beyond_Beyaan.Screens
 					{
 						availableSpace += PowerRequiredForManeuver(_shipDesign.ManeuverSpeed) * _spacePerPower;
 					} break;
+				case EquipmentType.SPECIAL:
+					{
+						if (_shipDesign.Specials[_slotNum] != null)
+						{
+							availableSpace += _shipDesign.Specials[_slotNum].GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower);
+						}
+					} break;
+				case EquipmentType.WEAPON:
+					{
+						if (_shipDesign.Weapons[_slotNum].Key != null)
+						{
+							availableSpace += _shipDesign.Weapons[_slotNum].Key.GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower) * _shipDesign.Weapons[_slotNum].Value;
+						}
+					} break;
 			}
 
 			if (_equipmentType == EquipmentType.MANEUVER)
@@ -333,6 +386,7 @@ namespace Beyond_Beyaan.Screens
 					_columnValues[2][i].SetText(string.Format("{0:0.0}", powerReq * _costPerPower));
 					_columnValues[3][i].SetText(string.Format("{0:0.0}", powerReq));
 					_columnValues[4][i].SetText(string.Format("{0:0.0}", powerReq * _spacePerPower));
+					_buttons[i].SetToolTipText("Maneuver Rating of " + (i + 1));
 					if (powerReq * _spacePerPower > availableSpace)
 					{
 						_buttons[i].Enabled = false;
@@ -389,10 +443,12 @@ namespace Beyond_Beyaan.Screens
 			if (equipment.Technology == null)
 			{
 				_columnValues[0][whichRow].SetText("None");
+				_buttons[whichRow].SetToolTipText("None");
 			}
 			else
 			{
 				_columnValues[0][whichRow].SetText(equipment.DisplayName);
+				_buttons[whichRow].SetToolTipText(equipment.Technology.TechDescription);
 			}
 			switch (_equipmentType)
 			{
@@ -461,6 +517,61 @@ namespace Beyond_Beyaan.Screens
 						_columnValues[3][whichRow].SetText(string.Format("{0:0.0}", amountReq));
 						_columnValues[4][whichRow].SetText(string.Format("{0:0.0}", amountReq * size));
 					} break;
+				case EquipmentType.SPECIAL:
+					{
+						if (equipment.Technology == null)
+						{
+							_columnValues[1][whichRow].SetText("0");
+							_columnValues[2][whichRow].SetText("0");
+							_columnValues[3][whichRow].SetText("0");
+							_columnValues[4][whichRow].SetText("0");
+						}
+						else
+						{
+							_columnValues[1][whichRow].SetText(string.Format("{0:0.0}", equipment.GetActualCost(_techLevels, _shipDesign.Size, _costPerPower)));
+							_columnValues[2][whichRow].SetText(string.Format("{0:0.0}", equipment.GetSize(_techLevels, _shipDesign.Size)));
+							_columnValues[3][whichRow].SetText(string.Format("{0:0.0}", equipment.GetPower(_shipDesign.Size)));
+							_columnValues[4][whichRow].SetText(string.Format("{0:0.0}", equipment.GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower)));
+						}
+					} break;
+				case EquipmentType.WEAPON:
+				{
+					if (equipment.Technology == null)
+					{
+						_columnValues[1][whichRow].SetText("0");
+						_columnValues[2][whichRow].SetText("0");
+						_columnValues[3][whichRow].SetText("0");
+						_columnValues[4][whichRow].SetText("0");
+						_columnValues[5][whichRow].SetText("0");
+						_columnValues[6][whichRow].SetText("0");
+					}
+					else
+					{
+						float availableSpace = _shipDesign.TotalSpace - _shipDesign.SpaceUsed;
+						if (_shipDesign.Weapons[_slotNum].Key != null)
+						{
+							availableSpace += _shipDesign.Weapons[_slotNum].Key.GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower) * _shipDesign.Weapons[_slotNum].Value;
+						}
+						float actualSize = equipment.GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower);
+						if (equipment.Technology.WeaponType == Technology.BEAM_WEAPON || equipment.Technology.WeaponType == Technology.BOMB_WEAPON)
+						{
+							_columnValues[1][whichRow].SetText(string.Format("{0}-{1}", equipment.GetMinDamage(), equipment.GetMaxDamage()));
+						}
+						else if (equipment.Technology.WeaponType != Technology.BIOLOGICAL_WEAPON)
+						{
+							_columnValues[1][whichRow].SetText(string.Format("{0}", equipment.GetMaxDamage()));
+						}
+						else
+						{
+							_columnValues[1][whichRow].SetText(string.Format("{0} POP", equipment.Technology.BioWeapon));
+						}
+						_columnValues[2][whichRow].SetText(string.Format("{0:0.0}", equipment.GetActualCost(_techLevels, _shipDesign.Size, _costPerPower)));
+						_columnValues[3][whichRow].SetText(string.Format("{0:0.0}", equipment.GetSize(_techLevels, _shipDesign.Size)));
+						_columnValues[4][whichRow].SetText(string.Format("{0:0.0}", equipment.GetPower(_shipDesign.Size)));
+						_columnValues[5][whichRow].SetText(string.Format("{0:0.0}", actualSize));
+						_columnValues[6][whichRow].SetText(string.Format("{0}", (int)(availableSpace / actualSize)));
+					}
+				} break;
 			}
 		}
 
@@ -503,6 +614,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				_columnNames[i].Draw();
 			}
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				_buttons[i].DrawToolTip();
+			}
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -540,7 +655,7 @@ namespace Beyond_Beyaan.Screens
 					}
 					if (OnSelectEquipment != null)
 					{
-						OnSelectEquipment(_availableEquipments[i + _scrollBar.TopIndex], _currentEquipment);
+						OnSelectEquipment(_availableEquipments[i + _scrollBar.TopIndex], _slotNum);
 					}
 					return true;
 				}
