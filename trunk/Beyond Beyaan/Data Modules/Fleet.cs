@@ -121,7 +121,7 @@ namespace Beyond_Beyaan
 					bool hasReserve = false;
 					foreach (var special in ship.Key.Specials)
 					{
-						if (special.Technology.ReserveFuelTanks)
+						if (special != null && special.Technology.ReserveFuelTanks)
 						{
 							hasReserve = true;
 							break;

@@ -63,7 +63,7 @@ namespace Beyond_Beyaan
 			{
 				if (tech.ReserveFuelTanks)
 				{
-					scout.Specials.Add(new Equipment(tech, false));
+					scout.Specials[0] = new Equipment(tech, false);
 					break;
 				}
 			}
@@ -82,7 +82,7 @@ namespace Beyond_Beyaan
 			{
 				if (tech.Colony == Technology.STANDARD_COLONY)
 				{
-					colonyShip.Specials.Add(new Equipment(tech, false));
+					colonyShip.Specials[0] = new Equipment(tech, false);
 					break;
 				}
 			}

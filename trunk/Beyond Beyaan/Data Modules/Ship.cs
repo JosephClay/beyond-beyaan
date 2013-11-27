@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using Beyond_Beyaan.Data_Modules;
@@ -24,8 +25,8 @@ namespace Beyond_Beyaan
 		public Equipment Armor;
 		public Equipment Computer;
 		public Equipment ECM;
-		public List<KeyValuePair<Equipment, int>> Weapons;
-		public List<Equipment> Specials;
+		public KeyValuePair<Equipment, int>[] Weapons = new KeyValuePair<Equipment, int>[4];
+		public Equipment[] Specials = new Equipment[3];
 		public float Maintenance { get { return Cost * 0.02f; } }
 		public int TotalSpace 
 		{ 
@@ -82,12 +83,18 @@ namespace Beyond_Beyaan
 				}
 				foreach (var weapon in Weapons)
 				{
-					//Weapon times amount of mounts
-					cost += weapon.Key.GetCost(fieldLevels, Size) * weapon.Value;
+					if (weapon.Key != null)
+					{
+						//Weapon times amount of mounts
+						cost += weapon.Key.GetCost(fieldLevels, Size) * weapon.Value;
+					}
 				}
 				foreach (var special in Specials)
 				{
-					cost += special.GetCost(fieldLevels, Size);
+					if (special != null)
+					{
+						cost += special.GetCost(fieldLevels, Size);
+					}
 				}
 				return cost;
 			}
@@ -114,12 +121,18 @@ namespace Beyond_Beyaan
 				}
 				foreach (var weapon in Weapons)
 				{
-					//Weapon times amount of mounts
-					sizeUsed += weapon.Key.GetSize(fieldLevels, Size) * weapon.Value;
+					if (weapon.Key != null)
+					{
+						//Weapon times amount of mounts
+						sizeUsed += weapon.Key.GetSize(fieldLevels, Size) * weapon.Value;
+					}
 				}
 				foreach (var special in Specials)
 				{
-					sizeUsed += special.GetSize(fieldLevels, Size);
+					if (special != null)
+					{
+						sizeUsed += special.GetSize(fieldLevels, Size);
+					}
 				}
 				return sizeUsed;
 			}
@@ -161,11 +174,17 @@ namespace Beyond_Beyaan
 				}
 				foreach (var weapon in Weapons)
 				{
-					powerUsed += weapon.Key.GetPower(Size) * weapon.Value;
+					if (weapon.Key != null)
+					{
+						powerUsed += weapon.Key.GetPower(Size) * weapon.Value;
+					}
 				}
 				foreach (var special in Specials)
 				{
-					powerUsed += special.GetPower(Size);
+					if (special != null)
+					{
+						powerUsed += special.GetPower(Size);
+					}
 				}
 				return powerUsed;
 			}
@@ -201,8 +220,6 @@ namespace Beyond_Beyaan
 		#region Constructors
 		public Ship()
 		{
-			Weapons = new List<KeyValuePair<Equipment, int>>();
-			Specials = new List<Equipment>();
 		}
 		public Ship(Ship shipToCopy)
 		{
@@ -216,8 +233,8 @@ namespace Beyond_Beyaan
 			Armor = shipToCopy.Armor;
 			Computer = shipToCopy.Computer;
 			ECM = shipToCopy.ECM;
-			Weapons = new List<KeyValuePair<Equipment, int>>(shipToCopy.Weapons);
-			Specials = new List<Equipment>(shipToCopy.Specials);
+			Array.Copy(shipToCopy.Weapons, Weapons, Weapons.Length);
+			Array.Copy(shipToCopy.Specials, Specials, Specials.Length);
 		}
 		#endregion
 
