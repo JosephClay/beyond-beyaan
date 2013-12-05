@@ -402,7 +402,14 @@ namespace Beyond_Beyaan
 		public bool UseSecondary { get; private set; }
 		public string DisplayName
 		{
-			get { return UseSecondary ? Technology.TechSecondaryName : Technology.TechName; }
+			get
+			{
+				if (Technology.WeaponType == Technology.MISSILE_WEAPON)
+				{
+					return UseSecondary ? Technology.TechName + " x 5" : Technology.TechName + " x 2";
+				}
+				return UseSecondary ? Technology.TechSecondaryName : Technology.TechName;
+			}
 		}
 		public string EquipmentName
 		{
@@ -439,7 +446,14 @@ namespace Beyond_Beyaan
 			}
 			else
 			{
-				initialCost = UseSecondary ? Technology.GenericSecondaryCost : Technology.GenericCost;
+				if (Technology.WeaponType == Technology.MISSILE_WEAPON)
+				{
+					initialCost = UseSecondary ? Technology.GenericCost * 1.5f : Technology.GenericCost;
+				}
+				else
+				{
+					initialCost = UseSecondary ? Technology.GenericSecondaryCost : Technology.GenericCost;
+				}
 			}
 			int levelDifference = techLevels[Technology.TechField] - Technology.TechLevel;
 			if (levelDifference < 0)
@@ -482,7 +496,14 @@ namespace Beyond_Beyaan
 			}
 			else
 			{
-				initialSize = UseSecondary ? Technology.GenericSecondarySize : Technology.GenericSize;
+				if (Technology.WeaponType == Technology.MISSILE_WEAPON)
+				{
+					initialSize = UseSecondary ? Technology.GenericSize * 1.5f : Technology.GenericSize;
+				}
+				else
+				{
+					initialSize = UseSecondary ? Technology.GenericSecondarySize : Technology.GenericSize;
+				}
 			}
 			int levelDifference = techLevels[Technology.TechField] - Technology.TechLevel;
 			if (levelDifference < 0)
@@ -522,26 +543,37 @@ namespace Beyond_Beyaan
 						return UseSecondary ? Technology.HugeSecondaryPower : Technology.HugePower;
 				}
 			}
+			if (Technology.WeaponType == Technology.MISSILE_WEAPON)
+			{
+				return UseSecondary ? Technology.GenericPower * 1.5f : Technology.GenericPower;
+			}
 			return UseSecondary ? Technology.GenericSecondaryPower : Technology.GenericPower;
-		}
-
-		public string GetName()
-		{
-			return UseSecondary ? Technology.TechSecondaryName : Technology.TechName;
 		}
 
 		public int GetMinDamage()
 		{
+			if (Technology.WeaponType == Technology.MISSILE_WEAPON)
+			{
+				return Technology.MinimumWeaponDamage;
+			}
 			return UseSecondary ? Technology.MinimumSecondaryWeaponDamage : Technology.MinimumWeaponDamage;
 		}
 
 		public int GetMaxDamage()
 		{
+			if (Technology.WeaponType == Technology.MISSILE_WEAPON)
+			{
+				return Technology.MaximumWeaponDamage;
+			}
 			return UseSecondary ? Technology.MaximumSecondaryWeaponDamage : Technology.MaximumWeaponDamage;
 		}
 
 		public int GetRange()
 		{
+			if (Technology.WeaponType == Technology.MISSILE_WEAPON)
+			{
+				return Technology.WeaponRange;
+			}
 			return UseSecondary ? Technology.SecondaryWeaponRange : Technology.WeaponRange;
 		}
 	}

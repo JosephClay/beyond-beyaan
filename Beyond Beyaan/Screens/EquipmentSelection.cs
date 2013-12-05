@@ -203,7 +203,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				var weapon = new Equipment(tech, false);
 				_availableEquipments.Add(weapon);
-				if (!string.IsNullOrEmpty(tech.TechSecondaryName))
+				if (!string.IsNullOrEmpty(tech.TechSecondaryName) || tech.WeaponType == Technology.MISSILE_WEAPON)
 				{
 					weapon = new Equipment(tech, true);
 					_availableEquipments.Add(weapon);
