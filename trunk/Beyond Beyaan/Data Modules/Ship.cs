@@ -307,6 +307,26 @@ namespace Beyond_Beyaan
 			float amountRequired = PowerUsed / (Engine.Key.Technology.Speed * 10);
 			Engine = new KeyValuePair<Equipment, float>(Engine.Key, amountRequired);
 		}
+
+		public void Clear(List<Technology> availableArmorTechs, List<Technology> availableEngineTechs)
+		{
+			//Used by ship design screen to clear out everything
+			for (int i = 0; i < Weapons.Length; i++)
+			{
+				Weapons[i] = new KeyValuePair<Equipment, int>();
+			}
+			for (int i = 0; i < Specials.Length; i++)
+			{
+				Specials[i] = null;
+			}
+			ECM = null;
+			Computer = null;
+			Shield = null;
+			ManeuverSpeed = 1;
+			Armor = new Equipment(availableArmorTechs[0], false);
+			Engine = new KeyValuePair<Equipment, float>(new Equipment(availableEngineTechs[0], false), 0);
+			UpdateEngineNumber();
+		}
 	}
 
 	public class TransportShip
