@@ -389,6 +389,8 @@ namespace Beyond_Beyaan.Screens
 					_buttons[i].SetToolTipText("Maneuver Rating of " + (i + 1));
 					if (powerReq * _spacePerPower > availableSpace)
 					{
+						// TODO: Add restrictions for specials, i.e. having an colony special disables all other colony options.  Having an special restricts that from being available for other slots.  Etc.
+
 						_buttons[i].Enabled = false;
 						for (int j = 0; j <= _numOfColumnsVisible; j++)
 						{

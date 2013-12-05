@@ -242,7 +242,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					return false;
 				}
-				if (!_weaponDescriptions[i].Initialize(x + 325, y + 112, string.Empty, System.Drawing.Color.White, out reason))
+				if (!_weaponDescriptions[i].Initialize(x + 325, y + 112 + (i * 50), string.Empty, System.Drawing.Color.White, out reason))
 				{
 					return false;
 				}
@@ -441,9 +441,11 @@ namespace Beyond_Beyaan.Screens
 			result = _maneuverButton.MouseDown(x, y) || result;
 			result = _prevShipStyleButton.MouseDown(x, y) || result;
 			result = _nextShipStyleButton.MouseDown(x, y) || result;
+			result = _clearButton.MouseDown(x, y) || result;
 			for (int i = 0; i < _weaponButtons.Length; i++)
 			{
 				result = _weaponButtons[i].MouseDown(x, y) || result;
+				result = _weaponCounts[i].MouseDown(x, y) || result;
 			}
 			for (int i = 0; i < _specialButtons.Length; i++)
 			{
@@ -493,35 +495,41 @@ namespace Beyond_Beyaan.Screens
 				_selectionShowing = true;
 				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.ARMOR, 0, _availableArmorTechs, _techLevels, _spacePerPower, _costPerPower);
 				_equipmentSelection.OnSelectEquipment = OnSelectArmor;
+				return true;
 			}
 			if (_computerButton.MouseUp(x, y))
 			{
 				_selectionShowing = true;
 				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.COMPUTER, 0, _availableComputerTechs, _techLevels, _spacePerPower, _costPerPower);
 				_equipmentSelection.OnSelectEquipment = OnSelectComputer;
+				return true;
 			}
 			if (_shieldButton.MouseUp(x, y))
 			{
 				_selectionShowing = true;
 				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.SHIELD, 0, _availableShieldTechs, _techLevels, _spacePerPower, _costPerPower);
 				_equipmentSelection.OnSelectEquipment = OnSelectShield;
+				return true;
 			}
 			if (_ECMButton.MouseUp(x, y))
 			{
 				_selectionShowing = true;
 				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.COMPUTER, 0, _availableECMTechs, _techLevels, _spacePerPower, _costPerPower);
 				_equipmentSelection.OnSelectEquipment = OnSelectECM;
+				return true;
 			}
 			if (_engineButton.MouseUp(x, y))
 			{
 				_selectionShowing = true;
 				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.ENGINE, 0, _availableEngineTechs, _techLevels, _spacePerPower, _costPerPower);
 				_equipmentSelection.OnSelectEquipment = OnSelectEngine;
+				return true;
 			}
 			if (_maneuverButton.MouseUp(x, y))
 			{
 				_selectionShowing = true;
 				_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.MANEUVER, _shipDesign.ManeuverSpeed, _techLevels, _spacePerPower, _costPerPower);
+				return true;
 			}
 			for (int i = 0; i < _weaponButtons.Length; i++)
 			{
@@ -529,6 +537,15 @@ namespace Beyond_Beyaan.Screens
 				{
 					_selectionShowing = true;
 					_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.WEAPON, i, _availableWeaponTechs, _techLevels, _spacePerPower, _costPerPower);
+					_equipmentSelection.OnSelectEquipment = OnSelectWeapon;
+					return true;
+				}
+				if (_weaponCounts[i].MouseUp(x, y))
+				{
+					_shipDesign.Weapons[i] = new KeyValuePair<Equipment, int>(_shipDesign.Weapons[i].Key, _weaponCounts[i].Value);
+					RefreshWeapons();
+					RefreshStats();
+					RefreshValidButtons();
 				}
 			}
 			for (int i = 0; i < _specialButtons.Length; i++)
@@ -537,7 +554,15 @@ namespace Beyond_Beyaan.Screens
 				{
 					_selectionShowing = true;
 					_equipmentSelection.LoadEquipments(_shipDesign, EquipmentType.SPECIAL, i, _availableSpecialTechs, _techLevels, _spacePerPower, _costPerPower);
+					_equipmentSelection.OnSelectEquipment = OnSelectSpecial;
+					return true;
 				}
+			}
+			if (_clearButton.MouseUp(x, y))
+			{
+				_shipDesign.Clear(_availableArmorTechs, _availableEngineTechs);
+				RefreshAll();
+				return true;
 			}
 			if (!base.MouseUp(x, y))
 			{
@@ -916,7 +941,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					_availableArmorTechs.Add(construction);
 				}
-				if (construction.Repair > 0)
+				if (construction.Repair > 0 || construction.ReserveFuelTanks)
 				{
 					_availableSpecialTechs.Add(construction);
 				}
@@ -1051,6 +1076,40 @@ namespace Beyond_Beyaan.Screens
 		{
 			_shipDesign.Engine = new KeyValuePair<Equipment, float>(equipment, _shipDesign.PowerUsed / (equipment.Technology.Speed * 10));
 			RefreshAll(); //Engine impacts basically everything that uses power, so just refresh everything
+			_selectionShowing = false;
+			_equipmentSelection.OnSelectEquipment = null;
+		}
+		private void OnSelectWeapon(Equipment equipment, int slotNum)
+		{
+			if (equipment.Technology == null)
+			{
+				_shipDesign.Weapons[slotNum] = new KeyValuePair<Equipment, int>();
+			}
+			else
+			{
+				//Since weapons can stack, we need to take the available space, including the space used by previous weapon selection, then replace old weapon with new weapon, and reduce the number of mounts if necessary
+				float availableSpace = _shipDesign.TotalSpace - _shipDesign.SpaceUsed;
+				if (_shipDesign.Weapons[slotNum].Key != null)
+				{
+					availableSpace += _shipDesign.Weapons[slotNum].Key.GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower) * _shipDesign.Weapons[slotNum].Value;
+				}
+				int numOfMounts = (int)(availableSpace / equipment.GetActualSize(_techLevels, _shipDesign.Size, _spacePerPower));
+				_shipDesign.Weapons[slotNum] = new KeyValuePair<Equipment, int>(equipment, Math.Max(Math.Min(numOfMounts, _shipDesign.Weapons[slotNum].Value), 1));
+			}
+			_shipDesign.UpdateEngineNumber();
+			RefreshWeapons();
+			RefreshStats();
+			RefreshValidButtons();
+			_selectionShowing = false;
+			_equipmentSelection.OnSelectEquipment = null;
+		}
+		private void OnSelectSpecial(Equipment equipment, int slotNum)
+		{
+			_shipDesign.Specials[slotNum] = equipment.Technology == null ? null : equipment;
+			_shipDesign.UpdateEngineNumber();
+			RefreshSpecials();
+			RefreshStats();
+			RefreshValidButtons();
 			_selectionShowing = false;
 			_equipmentSelection.OnSelectEquipment = null;
 		}
