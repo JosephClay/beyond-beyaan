@@ -19,7 +19,7 @@ namespace Beyond_Beyaan
 
 		public List<Ship> CurrentDesigns { get; private set; }
 
-		public List<Ship> ObsoleteDesigns { get; private set; }
+		//public List<Ship> ObsoleteDesigns { get; private set; }
 
 		#endregion
 
@@ -29,13 +29,17 @@ namespace Beyond_Beyaan
 			_currentShipDesignID = 0;
 			_fleets = new List<Fleet>();
 			CurrentDesigns = new List<Ship>();
-			ObsoleteDesigns = new List<Ship>();
+			//ObsoleteDesigns = new List<Ship>();
 		}
 
 		public void SetupStarterFleet(StarSystem homeSystem)
 		{
 			Technology retroEngine = null;
 			Technology titaniumArmor = null;
+			Technology laser = null;
+			Technology nuclearMissile = null;
+			Technology nuclearBomb = null;
+
 			foreach (var tech in _empire.TechnologyManager.ResearchedPropulsionTechs)
 			{
 				if (tech.Speed == 1)
@@ -52,7 +56,21 @@ namespace Beyond_Beyaan
 					break;
 				}
 			}
-
+			foreach (var tech in _empire.TechnologyManager.ResearchedWeaponTechs)
+			{
+				if (tech.TechName == "Laser")
+				{
+					laser = tech;
+				}
+				else if (tech.TechName == "Nuclear Missile")
+				{
+					nuclearMissile = tech;
+				}
+				else if (tech.TechName == "Nuclear Bomb")
+				{
+					nuclearBomb = tech;
+				}
+			}
 			Ship scout = new Ship();
 			scout.Name = "Scout";
 			scout.Owner = _empire;
@@ -70,6 +88,41 @@ namespace Beyond_Beyaan
 			scout.Engine = new KeyValuePair<Equipment, float>(new Equipment(retroEngine, false), scout.PowerUsed / (retroEngine.Speed * 10));
 			scout.DesignID = _currentShipDesignID;
 			CurrentDesigns.Add(scout);
+			_currentShipDesignID++;
+
+			Ship fighter = new Ship();
+			fighter.Name = "Fighter";
+			fighter.Owner = _empire;
+			fighter.Size = Ship.SMALL;
+			fighter.WhichStyle = 1;
+			fighter.Weapons[0] = new KeyValuePair<Equipment, int>(new Equipment(laser, false), 1);
+			fighter.Armor = new Equipment(titaniumArmor, false);
+			fighter.Engine = new KeyValuePair<Equipment, float>(new Equipment(retroEngine, false), fighter.PowerUsed / (retroEngine.Speed * 10));
+			CurrentDesigns.Add(fighter);
+			_currentShipDesignID++;
+
+			Ship destroyer = new Ship();
+			destroyer.Name = "Destroyer";
+			destroyer.Owner = _empire;
+			destroyer.Size = Ship.MEDIUM;
+			destroyer.WhichStyle = 0;
+			destroyer.Weapons[0] = new KeyValuePair<Equipment, int>(new Equipment(nuclearMissile, false), 1);
+			destroyer.Weapons[1] = new KeyValuePair<Equipment, int>(new Equipment(laser, false), 3);
+			destroyer.Armor = new Equipment(titaniumArmor, false);
+			destroyer.Engine = new KeyValuePair<Equipment, float>(new Equipment(retroEngine, false), destroyer.PowerUsed / (retroEngine.Speed * 10));
+			CurrentDesigns.Add(destroyer);
+			_currentShipDesignID++;
+
+			Ship bomber = new Ship();
+			bomber.Name = "Bomber";
+			bomber.Owner = _empire;
+			bomber.Size = Ship.MEDIUM;
+			bomber.WhichStyle = 1;
+			bomber.Weapons[0] = new KeyValuePair<Equipment, int>(new Equipment(nuclearBomb, false), 2);
+			bomber.Weapons[1] = new KeyValuePair<Equipment, int>(new Equipment(laser, false), 2);
+			bomber.Armor = new Equipment(titaniumArmor, false);
+			bomber.Engine = new KeyValuePair<Equipment, float>(new Equipment(retroEngine, false), bomber.PowerUsed / (retroEngine.Speed * 10));
+			CurrentDesigns.Add(bomber);
 			_currentShipDesignID++;
 
 			Ship colonyShip = new Ship();
@@ -159,10 +212,21 @@ namespace Beyond_Beyaan
 			CurrentDesigns.Add(ship);
 		}
 
-		public void ObsoleteShipDesign(Ship shipToObsolete)
+		public float ObsoleteShipDesign(Ship shipToObsolete)
 		{
+			float totalScrappedValue = 0;
+			foreach (var fleet in _fleets)
+			{
+				if (fleet.Ships.ContainsKey(shipToObsolete))
+				{
+					totalScrappedValue += fleet.Ships[shipToObsolete] * shipToObsolete.Cost * 0.25f;
+					fleet.SubtractShips(shipToObsolete, -1);
+				}
+			}
+			ClearEmptyFleets();
 			CurrentDesigns.Remove(shipToObsolete);
-			ObsoleteDesigns.Add(shipToObsolete);
+			//ObsoleteDesigns.Add(shipToObsolete);
+			return totalScrappedValue;
 		}
 
 		public Ship GetShipWithDesignID(int designID)
@@ -175,13 +239,13 @@ namespace Beyond_Beyaan
 					return ship;
 				}
 			}
-			foreach (var ship in ObsoleteDesigns)
+			/*foreach (var ship in ObsoleteDesigns)
 			{
 				if (ship.DesignID == designID)
 				{
 					return ship;
 				}
-			}
+			}*/
 			throw new Exception("Ship Design not found: " + designID);
 		}
 
@@ -193,6 +257,20 @@ namespace Beyond_Beyaan
 				iter = 0; //Start over from beginning
 			}
 			return CurrentDesigns[iter];
+		}
+
+		public int GetShipCount(Ship design)
+		{
+			int amount = 0;
+			//Gets the count of ships with this design in the empire
+			foreach (var fleet in _fleets)
+			{
+				if (fleet.Ships.ContainsKey(design))
+				{
+					amount += fleet.Ships[design];
+				}
+			}
+			return amount;
 		}
 
 		public bool MoveFleets(float frameDeltaTime)
@@ -289,12 +367,12 @@ namespace Beyond_Beyaan
 				ship.Save(writer);
 			}
 			writer.WriteEndElement();
-			writer.WriteStartElement("ObsoleteShipDesigns");
+			/*writer.WriteStartElement("ObsoleteShipDesigns");
 			foreach (var ship in ObsoleteDesigns)
 			{
 				ship.Save(writer);
 			}
-			writer.WriteEndElement();
+			writer.WriteEndElement();*/
 			writer.WriteStartElement("Fleets");
 			foreach (var fleet in _fleets)
 			{
@@ -313,14 +391,14 @@ namespace Beyond_Beyaan
 				currentShip.Owner = empire;
 				CurrentDesigns.Add(currentShip);
 			}
-			var obsoleteDesigns = empireDoc.Element("ObsoleteShipDesigns");
+			/*var obsoleteDesigns = empireDoc.Element("ObsoleteShipDesigns");
 			foreach (var obsoleteDesign in obsoleteDesigns.Elements())
 			{
 				var obsoleteShip = new Ship();
 				obsoleteShip.Load(obsoleteDesign, gameMain);
 				obsoleteShip.Owner = empire;
 				ObsoleteDesigns.Add(obsoleteShip);
-			}
+			}*/
 			var fleets = empireDoc.Element("Fleets");
 			foreach (var fleet in fleets.Elements())
 			{

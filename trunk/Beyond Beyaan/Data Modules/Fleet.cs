@@ -309,7 +309,17 @@ namespace Beyond_Beyaan
 		{
 			if (ships.ContainsKey(ship))
 			{
-				ships[ship] -= amount;
+				if (amount == -1)
+				{
+					//Remove this ship totally
+					ships.Remove(ship);
+					orderedShips.Remove(ship);
+					UpdateSpeed();
+				}
+				else
+				{
+					ships[ship] -= amount;
+				}
 			}
 		}
 
