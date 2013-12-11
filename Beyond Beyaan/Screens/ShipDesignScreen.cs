@@ -69,6 +69,9 @@ namespace Beyond_Beyaan.Screens
 		private EquipmentSelection _equipmentSelection;
 		private bool _selectionShowing;
 
+		private FleetSpecsWindow _fleetSpecsWindow;
+		private bool _fleetSpecsShowing;
+
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			int x = (gameMain.ScreenWidth / 2) - 400;
@@ -321,6 +324,13 @@ namespace Beyond_Beyaan.Screens
 			_equipmentSelection.OnSelectManeuver = OnSelectManeuver;
 			_selectionShowing = false;
 
+			_fleetSpecsWindow = new FleetSpecsWindow();
+			if (!_fleetSpecsWindow.Initialize(gameMain, out reason))
+			{
+				return false;
+			}
+			_fleetSpecsShowing = false;
+
 			return true;
 		}
 
@@ -383,6 +393,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				_equipmentSelection.Draw();
 			}
+			else if (_fleetSpecsShowing)
+			{
+				_fleetSpecsWindow.Draw();
+			}
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -390,6 +404,10 @@ namespace Beyond_Beyaan.Screens
 			if (_selectionShowing)
 			{
 				return _equipmentSelection.MouseHover(x, y, frameDeltaTime);
+			}
+			if (_fleetSpecsShowing)
+			{
+				return _fleetSpecsWindow.MouseHover(x, y, frameDeltaTime);
 			}
 			bool result = false;
 			foreach (var button in _shipSizeButtons)
@@ -428,6 +446,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				return _equipmentSelection.MouseDown(x, y);
 			}
+			if (_fleetSpecsShowing)
+			{
+				return _fleetSpecsWindow.MouseDown(x, y);
+			}
 			bool result = false;
 			foreach (var button in _shipSizeButtons)
 			{
@@ -442,6 +464,7 @@ namespace Beyond_Beyaan.Screens
 			result = _prevShipStyleButton.MouseDown(x, y) || result;
 			result = _nextShipStyleButton.MouseDown(x, y) || result;
 			result = _clearButton.MouseDown(x, y) || result;
+			result = _confirmButton.MouseDown(x, y) || result;
 			for (int i = 0; i < _weaponButtons.Length; i++)
 			{
 				result = _weaponButtons[i].MouseDown(x, y) || result;
@@ -460,6 +483,22 @@ namespace Beyond_Beyaan.Screens
 			{
 				//Clicked outside the window, close the window
 				_selectionShowing = false;
+				return true;
+			}
+			if (_fleetSpecsShowing && !_fleetSpecsWindow.MouseUp(x, y))
+			{
+				//Clicked outside the window, check and see if at least one ship design has been scrapped
+				_fleetSpecsShowing = false;
+				if (_gameMain.EmpireManager.CurrentEmpire.FleetManager.CurrentDesigns.Count < 6)
+				{
+					_gameMain.EmpireManager.CurrentEmpire.FleetManager.AddShipDesign(_shipDesign);
+				}
+				//In any case, close the window
+				if (CloseWindow != null)
+				{
+					CloseWindow();
+				}
+				return true;
 			}
 			for (int i = 0; i < _shipSizeButtons.Length; i++)
 			{
@@ -562,6 +601,25 @@ namespace Beyond_Beyaan.Screens
 			{
 				_shipDesign.Clear(_availableArmorTechs, _availableEngineTechs);
 				RefreshAll();
+				return true;
+			}
+			if (_confirmButton.MouseUp(x, y))
+			{
+				if (_gameMain.EmpireManager.CurrentEmpire.FleetManager.CurrentDesigns.Count < 6)
+				{
+					//Easy peasy, just add the current ship design
+					_gameMain.EmpireManager.CurrentEmpire.FleetManager.AddShipDesign(_shipDesign);
+					if (CloseWindow != null)
+					{
+						CloseWindow();
+					}
+				}
+				else
+				{
+					//Gotta show the UI for scrapping a ship design
+					_fleetSpecsShowing = true;
+					_fleetSpecsWindow.LoadDesigns();
+				}
 				return true;
 			}
 			if (!base.MouseUp(x, y))

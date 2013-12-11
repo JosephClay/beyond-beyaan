@@ -96,6 +96,7 @@
     <Compile Include="Data Managers\InterfaceManagement.cs" />
     <Compile Include="Screens\ColonizeScreen.cs" />
     <Compile Include="Screens\EquipmentSelection.cs" />
+    <Compile Include="Screens\FleetSpecsWindow.cs" />
     <Compile Include="Screens\ResearchPrompt.cs" />
     <Compile Include="Screens\ShipDesignScreen.cs" />
     <Compile Include="Screens\SystemInfoWindow.cs" />
