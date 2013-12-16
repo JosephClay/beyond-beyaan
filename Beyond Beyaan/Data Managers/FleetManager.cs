@@ -152,7 +152,7 @@ namespace Beyond_Beyaan
 			starterFleet.AdjacentSystem = homeSystem;
 			starterFleet.Empire = _empire;
 			starterFleet.AddShips(CurrentDesigns[0], 2);
-			starterFleet.AddShips(CurrentDesigns[1], 1);
+			starterFleet.AddShips(CurrentDesigns[4], 1);
 			_fleets.Add(starterFleet);
 		}
 

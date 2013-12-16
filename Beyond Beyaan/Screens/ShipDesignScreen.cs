@@ -436,6 +436,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				result = _specialButtons[i].MouseHover(x, y, frameDeltaTime) || result;
 			}
+			_nameField.Update(frameDeltaTime);
 
 			return result;
 		}
@@ -474,6 +475,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				result = _specialButtons[i].MouseDown(x, y) || result;
 			}
+			result = _nameField.MouseDown(x, y) || result;
 			return base.MouseDown(x, y) || result;
 		}
 
@@ -622,6 +624,10 @@ namespace Beyond_Beyaan.Screens
 				}
 				return true;
 			}
+			if (_nameField.MouseUp(x, y))
+			{
+				return true;
+			}
 			if (!base.MouseUp(x, y))
 			{
 				if (CloseWindow != null)
@@ -629,6 +635,15 @@ namespace Beyond_Beyaan.Screens
 					CloseWindow();
 					return true;
 				}
+			}
+			return false;
+		}
+
+		public override bool KeyDown(GorgonLibrary.InputDevices.KeyboardInputEventArgs e)
+		{
+			if (_nameField.KeyDown(e))
+			{
+				return true;
 			}
 			return false;
 		}

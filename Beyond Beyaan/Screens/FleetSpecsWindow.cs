@@ -19,7 +19,7 @@ namespace Beyond_Beyaan.Screens
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			int x = (gameMain.ScreenWidth / 2) - 350;
-			int y = (gameMain.ScreenHeight / 2) - 320;
+			int y = (gameMain.ScreenHeight / 2) - 300;
 			if (!base.Initialize((gameMain.ScreenWidth / 2) - 370, (gameMain.ScreenHeight / 2) - 320, 740, 640, StretchableImageType.MediumBorder, gameMain, false, gameMain.Random, out reason))
 			{
 				return false;
@@ -208,19 +208,19 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (ship.ECM != null)
 			{
-				_equipmentLabels[2].SetText(ship.ECM.DisplayName);
+				_equipmentLabels[3].SetText(ship.ECM.DisplayName);
 			}
 			else
 			{
-				_equipmentLabels[2].SetText("No ECM");
+				_equipmentLabels[3].SetText("No ECM");
 			}
 			if (ship.Computer != null)
 			{
-				_equipmentLabels[2].SetText(ship.Computer.DisplayName);
+				_equipmentLabels[4].SetText(ship.Computer.DisplayName);
 			}
 			else
 			{
-				_equipmentLabels[2].SetText("No Computer");
+				_equipmentLabels[4].SetText("No Computer");
 			}
 			for (int i = 0; i < 4; i++)
 			{
@@ -270,6 +270,70 @@ namespace Beyond_Beyaan.Screens
 			{
 				_specialLabels[i].Draw();
 			}
+		}
+
+		public override bool MouseHover(int x, int y, float frameDeltaTime)
+		{
+			bool result = false;
+
+			for (int i = 0; i < 6; i ++)
+			{
+				result = _scrapButtons[i].MouseHover(x, y, frameDeltaTime) || result;
+			}
+			if (result)
+			{
+				//So we don't highlight the button behind the scrap button
+				x = int.MinValue;
+				y = int.MinValue;
+			}
+			for (int i = 0; i < 6; i++)
+			{
+				result = _shipButtons[i].MouseHover(x, y, frameDeltaTime) || result;
+			}
+			return result;
+		}
+
+		public override bool MouseDown(int x, int y)
+		{
+			bool result = false;
+
+			for (int i = 0; i < 6; i++)
+			{
+				result = _scrapButtons[i].MouseDown(x, y) || result;
+			}
+			if (result)
+			{
+				//So we don't press the button behind the scrap button
+				x = int.MinValue;
+				y = int.MinValue;
+			}
+			for (int i = 0; i < 6; i++)
+			{
+				result = _shipButtons[i].MouseDown(x, y) || result;
+			}
+			return base.MouseDown(x, y) || result;
+		}
+
+		public override bool MouseUp(int x, int y)
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				if (_scrapButtons[i].MouseUp(x, y))
+				{
+					_gameMain.EmpireManager.CurrentEmpire.FleetManager.ObsoleteShipDesign(_gameMain.EmpireManager.CurrentEmpire.FleetManager.CurrentDesigns[i]);
+					LoadDesigns();
+					return true;
+				}
+			}
+			for (int i = 0; i < 6; i++)
+			{
+				if (_shipButtons[i].MouseUp(x, y))
+				{
+					LoadShipStats(i);
+					return true;
+				}
+			}
+			return base.MouseUp(x, y);
 		}
 	}
 }
