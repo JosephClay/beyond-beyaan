@@ -507,6 +507,7 @@ namespace Beyond_Beyaan.Screens
 				if (_shipSizeButtons[i].MouseUp(x, y))
 				{
 					_shipDesign.Size = i;
+					_shipDesign.UpdateEngineNumber();
 					RefreshAll();
 					return true;
 				}
@@ -863,6 +864,28 @@ namespace Beyond_Beyaan.Screens
 				{
 					_specialButtons[i].SetTextColor(AtLeastOneHigherLevelSpecial(null, remainingSpace) ? System.Drawing.Color.White : System.Drawing.Color.Tan, System.Drawing.Color.Empty);
 				}
+			}
+			for (int i = _shipDesign.Size; i <= Ship.HUGE; i++)
+			{
+				//Any sizes bigger than current one is enabled by default
+				_shipSizeButtons[i].Enabled = true;
+			}
+			for (int i = _shipDesign.Size - 1; i >= Ship.SMALL; i--)
+			{
+				//Check if smaller ship size can contain all current equipments, if not, disable the buttons
+				Ship testShip = new Ship(_shipDesign);
+				testShip.Size = i;
+				testShip.UpdateEngineNumber();
+				if (testShip.SpaceUsed > testShip.TotalSpace)
+				{
+					//invalid design, can't go smaller
+					for (int j = i; j >= Ship.SMALL; j--)
+					{
+						_shipSizeButtons[j].Enabled = false;
+					}
+					break;
+				}
+				_shipSizeButtons[i].Enabled = true;
 			}
 		}
 
