@@ -23,6 +23,7 @@ namespace Beyond_Beyaan.Screens
 		private InGameMenu _inGameMenu;
 		private ResearchScreen _researchScreen;
 		private ShipDesignScreen _shipDesignScreen;
+		private PlanetsView _planetsView;
 
 		private WindowInterface _windowShowing;
 
@@ -72,6 +73,7 @@ namespace Beyond_Beyaan.Screens
 			_inGameMenu = new InGameMenu();
 			_researchScreen = new ResearchScreen();
 			_shipDesignScreen = new ShipDesignScreen();
+			_planetsView = new PlanetsView();
 			if (!_inGameMenu.Initialize(_gameMain, out reason))
 			{
 				return false;
@@ -84,13 +86,19 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
+			if (!_planetsView.Initialize(_gameMain, out reason))
+			{
+				return false;
+			}
 			_inGameMenu.CloseWindow = CloseWindow;
 			_researchScreen.CloseWindow = CloseWindow;
 			_shipDesignScreen.CloseWindow = CloseWindow;
+			_planetsView.CloseWindow = CloseWindow;
 
 			_taskBar.ShowGameMenu = ShowInGameMenu;
 			_taskBar.ShowResearchScreen = ShowResearchScreen;
 			_taskBar.ShowShipDesignScreen = ShowShipDesignScreen;
+			_taskBar.ShowPlanetsScreen = ShowPlanetsView;
 
 			reason = null;
 			return true;
@@ -370,6 +378,10 @@ namespace Beyond_Beyaan.Screens
 			pathSprite.Update(frameDeltaTime, _gameMain.Random);
 			_gameMain.Galaxy.Update(frameDeltaTime, _gameMain.Random);
 
+			if (_taskBar.MouseHover(x, y, frameDeltaTime))
+			{
+				return;
+			}
 			if (_windowShowing != null)
 			{
 				_windowShowing.MouseHover(x, y, frameDeltaTime);
@@ -400,10 +412,6 @@ namespace Beyond_Beyaan.Screens
 					StarSystem selectedSystem = _gameMain.Galaxy.GetStarAtPoint(hoveringPoint);
 					currentEmpire.SelectedFleetGroup.FleetToSplit.SetTentativePath(selectedSystem, currentEmpire.SelectedFleetGroup.FleetToSplit.HasReserveTanks, _gameMain.Galaxy);
 				}
-			}
-			if (_taskBar.MouseHover(x, y, frameDeltaTime))
-			{
-				return;
 			}
 			
 			camera.HandleUpdate(x, y, frameDeltaTime);
@@ -443,13 +451,13 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (whichButton == 1)
 			{
+				if (_taskBar.MouseUp(x, y, whichButton))
+				{
+					return;
+				}
 				if (_windowShowing != null)
 				{
 					_windowShowing.MouseUp(x, y);
-					return;
-				}
-				if (_taskBar.MouseUp(x, y, whichButton))
-				{
 					return;
 				}
 				var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
@@ -663,6 +671,12 @@ namespace Beyond_Beyaan.Screens
 		{
 			_windowShowing = _shipDesignScreen;
 			_shipDesignScreen.Load();
+		}
+
+		private void ShowPlanetsView()
+		{
+			_windowShowing = _planetsView;
+			_planetsView.Load();
 		}
 
 		public void ResetCamera()
