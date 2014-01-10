@@ -47,14 +47,6 @@ namespace Beyond_Beyaan.Screens
 
 			camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
 
-			/*
-			fleetScrollBar = new ScrollBar(_gameMain.ScreenWidth - 24, 30, 16, 48, 4, 6, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
-							SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton,
-							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);
-			shipSelectorScrollBar = new ScrollBar(_gameMain.ScreenWidth - 20, 130, 16, 286, 8, 10, false, false, SpriteName.ScrollUpBackgroundButton, SpriteName.ScrollUpForegroundButton,
-							SpriteName.ScrollDownBackgroundButton, SpriteName.ScrollDownForegroundButton, SpriteName.ScrollVerticalBackgroundButton,
-							SpriteName.ScrollVerticalForegroundButton, SpriteName.ScrollVerticalBar, SpriteName.ScrollVerticalBar);*/
-
 			starName = new RenderImage("starNameRendered", 1, 1, ImageBufferFormats.BufferRGB888A8);
 			starName.BlendingMode = BlendingModes.Modulated;
 
@@ -421,6 +413,10 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (whichButton == 1)
 			{
+				if (_taskBar.MouseDown(x, y, whichButton))
+				{
+					return;
+				}
 				if (_windowShowing != null)
 				{
 					_windowShowing.MouseDown(x, y);
@@ -440,10 +436,6 @@ namespace Beyond_Beyaan.Screens
 						return;
 					}
 				}
-				if (_taskBar.MouseDown(x, y, whichButton))
-				{
-					return;
-				}
 			}
 		}
 
@@ -454,6 +446,10 @@ namespace Beyond_Beyaan.Screens
 				if (_windowShowing != null)
 				{
 					_windowShowing.MouseUp(x, y);
+					return;
+				}
+				if (_taskBar.MouseUp(x, y, whichButton))
+				{
 					return;
 				}
 				var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
@@ -555,10 +551,6 @@ namespace Beyond_Beyaan.Screens
 				if (selectedFleetGroup != null)
 				{
 					_fleetView.LoadFleetGroup(selectedFleetGroup);
-					return;
-				}
-				if (_taskBar.MouseUp(x, y, whichButton))
-				{
 					return;
 				}
 				if (!clearingUI)

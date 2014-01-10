@@ -269,7 +269,7 @@ namespace Beyond_Beyaan
 					{
 						foreach (var special in ship.Specials)
 						{
-							if (special.Technology.Colony >= colonyReq)
+							if (special != null && special.Technology.Colony >= colonyReq)
 							{
 								colonizingFleets.Add(fleet);
 								break;
