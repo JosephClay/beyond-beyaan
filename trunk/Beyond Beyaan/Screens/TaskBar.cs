@@ -10,6 +10,7 @@ namespace Beyond_Beyaan
 		public Action ShowGameMenu;
 		public Action ShowResearchScreen;
 		public Action ShowShipDesignScreen;
+		public Action ShowPlanetsScreen;
 
 		private int left;
 		private int top;
@@ -202,8 +203,13 @@ namespace Beyond_Beyaan
 							}
 							break;
 						}
-						/*case 5: _gameMain.ChangeToScreen(Screen.Planets);
-							break;*/
+						case 5: 
+							if (ShowPlanetsScreen != null)
+							{
+								ShowPlanetsScreen();
+								SetToScreen(Screen.Planets);
+							}
+							break;
 						case 6:
 						{
 							if (ShowResearchScreen != null)
@@ -247,13 +253,13 @@ namespace Beyond_Beyaan
 					_taskButtons[4].Selected = true;
 					break;
 				case Screen.Planets:
-					_taskButtons[6].Selected = true;
+					_taskButtons[5].Selected = true;
 					break;
 				case Screen.Research:
-					_taskButtons[7].Selected = true;
+					_taskButtons[6].Selected = true;
 					break;
 				case Screen.ProcessTurn:
-					_taskButtons[8].Selected = true;
+					_taskButtons[7].Selected = true;
 					break;
 			}
 		}

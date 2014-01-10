@@ -97,6 +97,7 @@
     <Compile Include="Screens\ColonizeScreen.cs" />
     <Compile Include="Screens\EquipmentSelection.cs" />
     <Compile Include="Screens\FleetSpecsWindow.cs" />
+    <Compile Include="Screens\PlanetsView.cs" />
     <Compile Include="Screens\ResearchPrompt.cs" />
     <Compile Include="Screens\ShipDesignScreen.cs" />
     <Compile Include="Screens\SystemInfoWindow.cs" />
@@ -116,7 +117,6 @@
     <Compile Include="Screens\MainGameMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Screens\PlanetsScreen.cs" />
     <Compile Include="Screens\ProcessingTurnScreen.cs" />
     <Compile Include="Screens\ResearchScreen.cs" />
     <Compile Include="Screens\ScreenInterface.cs" />
