@@ -44,6 +44,10 @@ namespace Beyond_Beyaan
 			set
 			{
 				name = value;
+				foreach (var planet in planets)
+				{
+					planet.Name = value;
+				}
 				StarName.SetText(name);
 			}
 		}
@@ -121,11 +125,12 @@ namespace Beyond_Beyaan
 			int amountOfPlanets = r.Next(maxPlanets - minPlanets) + minPlanets;
 			for (int i = 0; i < amountOfPlanets; i++)
 			{
-				StringBuilder sb = new StringBuilder();
+				/*StringBuilder sb = new StringBuilder();
 				sb.Append(this.name);
 				sb.Append(" ");
 				sb.Append(Utility.ConvertNumberToRomanNumberical(i + 1));
-				planets.Add(new Planet(sb.ToString(), r, this));
+				planets.Add(new Planet(sb.ToString(), r, this));*/
+				planets.Add(new Planet(this.name, r, this));
 			}
 		}
 		#endregion
@@ -135,7 +140,7 @@ namespace Beyond_Beyaan
 		{
 			if (planets.Count == 0)
 			{
-				planets.Add(new Planet(name + " I", r, this));
+				planets.Add(new Planet(name, r, this)); //planets.Add(new Planet(name + " I", r, this));
 				planets[0].SetHomeworld(empire, r);
 				homePlanet = planets[0];
 			}

@@ -13,6 +13,8 @@ namespace Beyond_Beyaan.Screens
 		//private StarSystem _selectedSystem;
 		//private Empire _currentEmpire;
 
+		private int _maxVisible;
+
 		#region Constructor
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
@@ -107,7 +109,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			x += 80;
-			if (!_columnHeaders[5].Initialize("Prod", ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonBG, x, y, 80, 30, _gameMain.Random, out reason))
+			if (!_columnHeaders[5].Initialize("Industry", ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonBG, x, y, 80, 30, _gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -157,7 +159,40 @@ namespace Beyond_Beyaan.Screens
 
 		public void Load()
 		{
-			
+			var planets = _gameMain.EmpireManager.CurrentEmpire.PlanetManager.Planets;
+			if (planets.Count > 13)
+			{
+				_maxVisible = 13;
+				_scrollBar.SetEnabledState(true);
+				_scrollBar.SetAmountOfItems(planets.Count);
+			}
+			else
+			{
+				_maxVisible = planets.Count;
+				_scrollBar.SetEnabledState(false);
+				_scrollBar.SetAmountOfItems(13);
+			}
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				_columnCells[0][i].SetText(planets[i].Name);
+				_columnCells[1][i].SetText(planets[i].TotalPopulation.ToString());
+				_columnCells[2][i].SetText(planets[i].InfrastructureTotal.ToString());
+				_columnCells[3][i].SetText(string.Empty); //TODO: Add missile bases
+				_columnCells[4][i].SetText(string.Empty); //TODO: Add waste
+				_columnCells[5][i].SetText(((int)planets[i].ActualProduction).ToString());
+				_columnCells[6][i].SetText(planets[i].ConstructionAmount > 0 ? planets[i].ShipBeingBuilt.Name : string.Empty);
+				for (int j = 0; j < 8; j++)
+				{
+					_columnCells[j][i].Enabled = true;
+				}
+			}
+			for (int i = _maxVisible; i < 13; i++)
+			{
+				for (int j = 0; j < 8; j++)
+				{
+					_columnCells[j][i].Enabled = false;
+				}
+			}
 		}
 
 		public override void Draw()
