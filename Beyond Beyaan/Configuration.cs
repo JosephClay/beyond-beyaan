@@ -19,7 +19,7 @@ namespace Beyond_Beyaan
 			videoModes = new List<VideoMode>();
 			foreach (var videoMode in Gorgon.CurrentDriver.VideoModes)
 			{
-				if (videoMode.Format == BackBufferFormats.BufferRGB888 && videoMode.Width >= 800 && videoMode.Height > 600)
+				if (videoMode.Format == BackBufferFormats.BufferRGB888 && videoMode.Width >= 1066 && videoMode.Height > 600)
 				{
 					bool skip = false;
 					foreach (var videoModeAlreadyAdded in videoModes)
