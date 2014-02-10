@@ -267,11 +267,11 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 			_incomes[1].SetTextColor(Color.Orange, Color.Empty);
-			if (!_incomeLabels[0].Initialize(x + 230, y + 105, string.Empty, Color.White, out reason))
+			if (!_incomeLabels[1].Initialize(x + 230, y + 105, string.Empty, Color.White, out reason))
 			{
 				return false;
 			}
-			_incomeLabels[0].SetAlignment(true);
+			_incomeLabels[1].SetAlignment(true);
 			_incomeTitle.MoveTo((int)(x + 125 - _incomeTitle.GetWidth() / 2), y + 5);
 			x += 250;
 			if (!_reserves.Initialize(x, y, 300, 140, StretchableImageType.ThinBorderBG, _gameMain.Random, out reason))
