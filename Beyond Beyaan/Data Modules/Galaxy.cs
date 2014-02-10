@@ -18,6 +18,7 @@ namespace Beyond_Beyaan
 		private List<StarSystem> starSystems = new List<StarSystem>();
 		private Dictionary<int, StarSystem> _quickLookupSystem = new Dictionary<int, StarSystem>();
 		private BackgroundWorker _bw = new BackgroundWorker();
+		private object _lockGalaxy = new object();
 
 		public Action OnGenerateComplete;
 
@@ -77,25 +78,27 @@ namespace Beyond_Beyaan
 
 		private void GenerateGalaxyThread(object sender, DoWorkEventArgs e)
 		{
-			GALAXYTYPE galaxyType;
-			int minPlanets;
-			int maxPlanets;
-			Random r;
-			try
+			lock (_lockGalaxy)
 			{
-				GalaxyArgs args = (GalaxyArgs)e.Argument;
-				galaxyType = args.GalaxyType;
-				minPlanets = args.MinPlanets;
-				maxPlanets = args.MaxPlanets;
-				r = args.Random;
-			}
-			catch (Exception)
-			{
-				return;
-			}
+				GALAXYTYPE galaxyType;
+				int minPlanets;
+				int maxPlanets;
+				Random r;
+				try
+				{
+					GalaxyArgs args = (GalaxyArgs) e.Argument;
+					galaxyType = args.GalaxyType;
+					minPlanets = args.MinPlanets;
+					maxPlanets = args.MaxPlanets;
+					r = args.Random;
+				}
+				catch (Exception)
+				{
+					return;
+				}
 
-			bool[][] grid = GenerateRandom(galaxyType);
-			/*switch (galaxyType)
+				bool[][] grid = GenerateRandom(galaxyType);
+				/*switch (galaxyType)
 			{
 				case GALAXYTYPE.RANDOM:
 					{
@@ -119,25 +122,26 @@ namespace Beyond_Beyaan
 					} break;
 			}*/
 
-			GalaxySize = grid.Length;
-			int numberOfStars = 0;
-			switch (galaxyType)
-			{
-				case GALAXYTYPE.SMALL:
-					numberOfStars = 24;
-					break;
-				case GALAXYTYPE.MEDIUM:
-					numberOfStars = 48;
-					break;
-				case GALAXYTYPE.LARGE:
-					numberOfStars = 70;
-					break;
-				case GALAXYTYPE.HUGE:
-					numberOfStars = 108;
-					break;
-			}
+				GalaxySize = grid.Length;
+				int numberOfStars = 0;
+				switch (galaxyType)
+				{
+					case GALAXYTYPE.SMALL:
+						numberOfStars = 24;
+						break;
+					case GALAXYTYPE.MEDIUM:
+						numberOfStars = 48;
+						break;
+					case GALAXYTYPE.LARGE:
+						numberOfStars = 70;
+						break;
+					case GALAXYTYPE.HUGE:
+						numberOfStars = 108;
+						break;
+				}
 
-			FillGalaxyWithStars(numberOfStars, minPlanets, maxPlanets, grid, r);
+				FillGalaxyWithStars(numberOfStars, minPlanets, maxPlanets, grid, r);
+			}
 		}
 
 		/*public void ConstructQuadTree()
@@ -434,66 +438,69 @@ namespace Beyond_Beyaan
 		#region Galaxy Setup
 		public StarSystem SetHomeworld(Empire empire, out Planet homePlanet)
 		{
-			Random r = new Random();
-			List<StarSystem> potentialSystems = new List<StarSystem>(starSystems);
-			while (true)
+			lock (_lockGalaxy) //Won't modify anything, but ensures that galaxy is created and won't throw exceptions due to contents being modified
 			{
-				if (potentialSystems.Count == 0)
+				Random r = new Random();
+				List<StarSystem> potentialSystems = new List<StarSystem>(starSystems);
+				while (true)
 				{
-					homePlanet = null;
-					return null;
-				}
-				var potentialSystem = potentialSystems[r.Next(potentialSystems.Count)];
-				if (potentialSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
-				{
-					potentialSystems.Remove(potentialSystem);
-					continue;
-				}
-				//Validation checks
-				bool FourParsecsSystem = false;
-				bool SixParsecsSystem = false;
-				bool AtLeastSixParsecsAwayFromOthers = true;
-				foreach (StarSystem starSystem in starSystems)
-				{
-					if (potentialSystem != starSystem)
+					if (potentialSystems.Count == 0)
 					{
-						int x = potentialSystem.X - starSystem.X;
-						int y = potentialSystem.Y - starSystem.Y;
-						double distance = Math.Sqrt((x * x) + (y * y));
-						if (distance <= PARSEC_SIZE_IN_PIXELS * 4)
+						homePlanet = null;
+						return null;
+					}
+					var potentialSystem = potentialSystems[r.Next(potentialSystems.Count)];
+					if (potentialSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
+					{
+						potentialSystems.Remove(potentialSystem);
+						continue;
+					}
+					//Validation checks
+					bool FourParsecsSystem = false;
+					bool SixParsecsSystem = false;
+					bool AtLeastSixParsecsAwayFromOthers = true;
+					foreach (StarSystem starSystem in starSystems)
+					{
+						if (potentialSystem != starSystem)
 						{
-							if (!FourParsecsSystem)
+							int x = potentialSystem.X - starSystem.X;
+							int y = potentialSystem.Y - starSystem.Y;
+							double distance = Math.Sqrt((x * x) + (y * y));
+							if (distance <= PARSEC_SIZE_IN_PIXELS * 4)
 							{
-								FourParsecsSystem = true;
+								if (!FourParsecsSystem)
+								{
+									FourParsecsSystem = true;
+								}
+								else
+								{
+									//Already have another star system that's within 4 parsecs
+									SixParsecsSystem = true;
+								}
+								if (starSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
+								{
+									AtLeastSixParsecsAwayFromOthers = false;
+									break;
+								}
 							}
-							else
+							else if (distance <= PARSEC_SIZE_IN_PIXELS * 6)
 							{
-								//Already have another star system that's within 4 parsecs
 								SixParsecsSystem = true;
-							}
-							if (starSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
-							{
-								AtLeastSixParsecsAwayFromOthers = false;
-								break;
-							}
-						}
-						else if (distance <= PARSEC_SIZE_IN_PIXELS * 6)
-						{
-							SixParsecsSystem = true;
-							if (starSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
-							{
-								AtLeastSixParsecsAwayFromOthers = false;
-								break;
+								if (starSystem.EmpiresWithPlanetsInThisSystem.Count > 0)
+								{
+									AtLeastSixParsecsAwayFromOthers = false;
+									break;
+								}
 							}
 						}
 					}
+					if (FourParsecsSystem && SixParsecsSystem && AtLeastSixParsecsAwayFromOthers)
+					{
+						potentialSystem.SetHomeworld(empire, out homePlanet, r);
+						return potentialSystem;
+					}
+					potentialSystems.Remove(potentialSystem);
 				}
-				if (FourParsecsSystem && SixParsecsSystem && AtLeastSixParsecsAwayFromOthers)
-				{
-					potentialSystem.SetHomeworld(empire, out homePlanet, r);
-					return potentialSystem;
-				}
-				potentialSystems.Remove(potentialSystem);
 			}
 		}
 		#endregion
