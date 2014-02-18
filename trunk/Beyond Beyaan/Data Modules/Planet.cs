@@ -97,14 +97,21 @@ namespace Beyond_Beyaan
 
 		public float InfrastructureTotal { get; set; }
 
+		#region Production
 		public float TotalProduction
 		{
-			get { return (TotalPopulation * 0.5f) + (InfrastructureTotal); }
+			get { return (TotalPopulation * 0.5f) + (InfrastructureTotal) + ProductionFromTrade; }
 		}
+		
+		public float ProductionFromTrade { get; set; } //This is set externally from EmpireManager class
+		public float ProductionLostFromExpenses { get; set; } //This is set externally from EmpireManager class
+
 		public float ActualProduction
 		{
-			get { return TotalProduction * (1.0f - owner.ExpensesPercentage); }
+			get { return (TotalProduction + ProductionFromTrade) - ProductionLostFromExpenses; }
 		}
+		#endregion
+
 		public List<Race> Races
 		{
 			get	{ return races;	}
@@ -148,6 +155,8 @@ namespace Beyond_Beyaan
 		}
 
 		public float ShipConstructionAmount { get; set; }
+		public float AmountOfBuildingsThisTurn { get; set; }
+		public float AmountOfBCGeneratedThisTurn { get; set; }
 
 		public PLANET_CONSTRUCTION_BONUS ConstructionBonus
 		{
@@ -845,6 +854,34 @@ namespace Beyond_Beyaan
 			}
 			amount = 0;
 			return null;
+		}
+
+		public void UpdateOutputs() //After the Empire class updates the planet's production, this is called to update values
+		{
+			if (InfrastructureAmount > 0)
+			{
+				if (InfrastructureTotal >= populationMax * 2)
+				{
+					AmountOfBuildingsThisTurn = 0; //Already reached the max
+					AmountOfBCGeneratedThisTurn = InfrastructureAmount * 0.01f * 0.5f * ActualProduction;
+				}
+				else
+				{
+					float amountRemaining = (populationMax * 2) - InfrastructureTotal;
+					AmountOfBuildingsThisTurn = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
+					if (AmountOfBuildingsThisTurn > amountRemaining) //Will put some into reserve
+					{
+						AmountOfBCGeneratedThisTurn = (AmountOfBuildingsThisTurn - amountRemaining) * 5;
+						AmountOfBuildingsThisTurn = amountRemaining;
+					}
+				}
+			}
+			else
+			{
+				//No output at all in this field
+				AmountOfBuildingsThisTurn = 0;
+				AmountOfBCGeneratedThisTurn = 0;
+			}
 		}
 
 		private float CalculateTotalPopGrowth()

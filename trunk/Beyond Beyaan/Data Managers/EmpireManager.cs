@@ -202,8 +202,24 @@ namespace Beyond_Beyaan
 			foreach (Empire empire in _empires)
 			{
 				empire.SitRepManager.ClearItems();
-				empire.CheckForBuiltShips();
 				empire.ContactManager.UpdateContacts(empire.SitRepManager);
+			}
+		}
+
+		public void UpdateMilitary()
+		{
+			foreach (Empire empire in _empires)
+			{
+				empire.CheckForBuiltShips();
+			}
+		}
+
+		public void AccureIncome()
+		{
+			foreach (Empire empire in _empires)
+			{
+				empire.UpdateProduction(); //Factor in trade income, expenses, etc
+				empire.AccureIncome(); //If any income (tax, industry points, etc), collect them
 			}
 		}
 

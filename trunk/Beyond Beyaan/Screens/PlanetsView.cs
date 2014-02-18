@@ -14,11 +14,18 @@ namespace Beyond_Beyaan.Screens
 
 		private BBStretchableImage _expensesBackground;
 		private BBStretchableImage _incomeBackground;
+		private BBStretchableImage _tax;
 		private BBStretchableImage _reserves;
 
 		private BBLabel _expenseTitle;
 		private BBLabel _incomeTitle;
-		private BBLabel _reservesTitle;
+
+		private BBLabel _taxLabel;
+		private BBLabel _taxIncome;
+		private BBScrollBar _taxSlider;
+
+		private BBLabel _reservesLabel;
+		private BBLabel _reservesAmount;
 
 		private BBStretchButton[] _expenses;
 		private BBStretchButton[] _incomes;
@@ -171,10 +178,10 @@ namespace Beyond_Beyaan.Screens
 			_expensesBackground = new BBStretchableImage();
 			_incomeBackground = new BBStretchableImage();
 			_reserves = new BBStretchableImage();
+			_tax = new BBStretchableImage();
 
 			_expenseTitle = new BBLabel();
 			_incomeTitle = new BBLabel();
-			_reservesTitle = new BBLabel();
 
 			_expenses = new BBStretchButton[4];
 			_expenseLabels = new BBLabel[4];
@@ -244,6 +251,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			_expenseLabels[3].SetAlignment(true);
 			x += 476;
+
 			if (!_incomeBackground.Initialize(x, y, 250, 140, StretchableImageType.ThinBorderBG, _gameMain.Random, out reason))
 			{
 				return false;
@@ -274,10 +282,43 @@ namespace Beyond_Beyaan.Screens
 			_incomeLabels[1].SetAlignment(true);
 			_incomeTitle.MoveTo((int)(x + 125 - _incomeTitle.GetWidth() / 2), y + 5);
 			x += 250;
-			if (!_reserves.Initialize(x, y, 300, 140, StretchableImageType.ThinBorderBG, _gameMain.Random, out reason))
+
+			if (!_tax.Initialize(x, y, 300, 70, StretchableImageType.ThinBorderBG, _gameMain.Random, out reason))
 			{
 				return false;
 			}
+			if (!_reserves.Initialize(x, y + 70, 300, 70, StretchableImageType.ThinBorderBG, _gameMain.Random, out reason))
+			{
+				return false;
+			}
+			_taxLabel = new BBLabel();
+			_taxIncome = new BBLabel();
+			_taxSlider = new BBScrollBar();
+			_reservesLabel = new BBLabel();
+			_reservesAmount = new BBLabel();
+			
+			if (!_taxLabel.Initialize(x + 10, y + 10, "Tax:", Color.Orange, out reason))
+			{
+				return false;
+			}
+			if (!_taxIncome.Initialize(x + 280, y + 10, string.Empty, Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_taxSlider.Initialize(x + 10, y + 40, 280, 1, 20, true, true, _gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_reservesLabel.Initialize(x + 10, y + 80, "Funds:", Color.Orange, out reason))
+			{
+				return false;
+			}
+			if (!_reservesAmount.Initialize(x + 280, y + 80, string.Empty, Color.White, out reason))
+			{
+				return false;
+			}
+			_taxIncome.SetAlignment(true);
+			_reservesAmount.SetAlignment(true);
 
 			return true;
 		}
@@ -327,6 +368,7 @@ namespace Beyond_Beyaan.Screens
 			_expensesBackground.Draw();
 			_incomeBackground.Draw();
 			_reserves.Draw();
+			_tax.Draw();
 			_expenseTitle.Draw();
 			_incomeTitle.Draw();
 			_scrollBar.Draw();
@@ -340,6 +382,11 @@ namespace Beyond_Beyaan.Screens
 				_incomes[i].Draw();
 				_incomeLabels[i].Draw();
 			}
+			_taxLabel.Draw();
+			_taxIncome.Draw();
+			_taxSlider.Draw();
+			_reservesLabel.Draw();
+			_reservesAmount.Draw();
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
