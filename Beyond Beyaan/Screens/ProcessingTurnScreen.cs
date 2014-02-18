@@ -178,6 +178,7 @@ namespace Beyond_Beyaan.Screens
 					_gameMain.EmpireManager.LaunchTransports();
 					//  TODO: Deduct cost for transports
 					//  TODO: Production is executed
+					_gameMain.EmpireManager.AccureIncome();
 					_gameMain.EmpireManager.UpdatePopulationGrowth();
 					_gameMain.EmpireManager.AccureResearch();
 					//  TODO: Trade growth occurs
@@ -194,9 +195,8 @@ namespace Beyond_Beyaan.Screens
 					_updateStep++;
 					break;
 				case 3:
-					//  TODO: New ships and bases
 					//  TODO: New missile bases/shields added here
-					//  TODO: New ships added
+					_gameMain.EmpireManager.UpdateMilitary();
 					_updateStep++;
 					break;
 				case 4:

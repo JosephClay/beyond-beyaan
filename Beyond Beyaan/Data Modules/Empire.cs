@@ -118,7 +118,7 @@ namespace Beyond_Beyaan
 				float planetIncome = 0;
 				foreach (Planet planet in PlanetManager.Planets)
 				{
-					planetIncome += planet.TotalPopulation * 0.5f;
+					planetIncome += planet.TotalPopulation * (0.5f + (1.5f * (TechnologyManager.PlanetologyLevel / 99.0f)));
 					planetIncome += planet.InfrastructureTotal;
 				}
 				return planetIncome;
@@ -177,6 +177,18 @@ namespace Beyond_Beyaan
 				return SecurityExpense / NetIncome;
 			}
 		}
+		public float NetProduction
+		{
+			get
+			{
+				float production = 0;
+				foreach (var planet in PlanetManager.Planets)
+				{
+					production += planet.TotalProduction;
+				}
+				return production;
+			}
+		}
 		public float NetIncome
 		{
 			get
@@ -200,15 +212,18 @@ namespace Beyond_Beyaan
 		}
 
 		public float ResearchPoints { get; private set; }
+		public float Reserves { get; private set; }
+		public int TaxRate { get; set; }
 
 		public Race EmpireRace { get; private set; }
 
-		public bool Refresh { get; set; }
 		#endregion
 
 		#region Constructors
 		public Empire(string emperorName, int empireID, Race race, PlayerType type, int difficultyModifier, Color color, GameMain gameMain) : this()
 		{
+			Reserves = 0;
+			TaxRate = 0;
 			this.empireName = emperorName;
 			this.empireID = empireID;
 			this.type = type;
@@ -380,6 +395,41 @@ namespace Beyond_Beyaan
 		public void SetVisibleFleets(List<Fleet> fleets)
 		{
 			visibleOtherFleets = fleets;
+		}
+
+		public void UpdateProduction()
+		{
+			//Take the total trade income, and add them to the planets, proportionally to their percentage of the total production across empire
+			float totalProduction = 0;
+			foreach (var planet in PlanetManager.Planets)
+			{
+				planet.ProductionFromTrade = 0; //Don't add extra production from last turn, set it to 0 here
+				totalProduction += planet.TotalProduction;
+			}
+			float netExpenses = NetExpenses; //NetExpenses property dynamically calculates the value, so cache it here
+			//Now that we've added up the total production, distribute the trade so we'd have accurate TotalProduction
+			foreach (var planet in PlanetManager.Planets)
+			{
+				float scale = planet.TotalProduction / totalProduction;
+				planet.ProductionFromTrade = scale * TradeIncome;
+				planet.ProductionLostFromExpenses = scale * netExpenses;
+			}
+		}
+
+		public void AccureIncome()
+		{
+			if (TaxRate > 0)
+			{
+				float tax = TaxRate * 0.01f;
+				foreach (var planet in PlanetManager.Planets)
+				{
+					Reserves += ((planet.TotalProduction * tax) / 2);
+				}
+			}
+			foreach (var planet in PlanetManager.Planets)
+			{
+				Reserves += planet.AmountOfBCGeneratedThisTurn;
+			}
 		}
 
 		public void UpdateResearchPoints()
