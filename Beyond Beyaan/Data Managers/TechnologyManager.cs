@@ -177,6 +177,7 @@ namespace Beyond_Beyaan
 			}
 		}
 		public int FuelRange { get; private set; }
+		public int RoboticControls { get; private set; }
 
 		public bool ComputerLocked { get; set; }
 		public bool ConstructionLocked { get; set; }
@@ -1059,11 +1060,19 @@ namespace Beyond_Beyaan
 		{
 			//After researching or obtaining a technology, update all values
 			FuelRange = 3;
+			RoboticControls = 2;
 			foreach (var tech in ResearchedPropulsionTechs)
 			{
 				if (tech.FuelRange > FuelRange)
 				{
 					FuelRange = tech.FuelRange;
+				}
+			}
+			foreach (var tech in ResearchedComputerTechs)
+			{
+				if (tech.RoboticControl > RoboticControls)
+				{
+					RoboticControls = tech.RoboticControl;
 				}
 			}
 		}

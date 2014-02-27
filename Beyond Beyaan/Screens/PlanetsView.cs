@@ -346,7 +346,7 @@ namespace Beyond_Beyaan.Screens
 			_expenseLabels[2].SetText(string.Format("{0:0.0}% ({1:0.0} BC)", currentEmpire.EspionageExpensePercentage * 100, currentEmpire.EspionageExpense));
 			_expenseLabels[3].SetText(string.Format("{0:0.0}% ({1:0.0} BC)", currentEmpire.SecurityExpensePercentage * 100, currentEmpire.SecurityExpense));
 
-			_incomeLabels[0].SetText(string.Format("{0:0.0} BC", currentEmpire.PlanetIncome));
+			_incomeLabels[0].SetText(string.Format("{0:0.0} BC", currentEmpire.PlanetTotalProduction));
 			_incomeLabels[1].SetText(string.Format("{0:0.0} BC", currentEmpire.TradeIncome));
 		}
 

@@ -111,15 +111,14 @@ namespace Beyond_Beyaan
 			get { return visibleOtherFleets; }
 		}
 
-		public float PlanetIncome
+		public float PlanetTotalProduction
 		{
 			get
 			{
 				float planetIncome = 0;
 				foreach (Planet planet in PlanetManager.Planets)
 				{
-					planetIncome += planet.TotalPopulation * (0.5f + (1.5f * (TechnologyManager.PlanetologyLevel / 99.0f)));
-					planetIncome += planet.InfrastructureTotal;
+					planetIncome += planet.TotalProduction;
 				}
 				return planetIncome;
 			}
@@ -193,7 +192,7 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				return PlanetIncome + TradeIncome;
+				return PlanetTotalProduction + TradeIncome;
 			}
 		}
 		public float NetExpenses

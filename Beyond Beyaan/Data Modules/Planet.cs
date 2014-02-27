@@ -100,7 +100,27 @@ namespace Beyond_Beyaan
 		#region Production
 		public float TotalProduction
 		{
-			get { return (TotalPopulation * 0.5f) + (InfrastructureTotal) + ProductionFromTrade; }
+			get 
+			{
+				float planetProduction = 0;
+				planetProduction += TotalPopulation * (((Owner.TechnologyManager.PlanetologyLevel * 3) + 50) / 100.0f);
+				if (TotalPopulation >= InfrastructureTotal / Owner.TechnologyManager.RoboticControls)
+				{
+					planetProduction += InfrastructureTotal;
+				}
+				else
+				{
+					planetProduction += TotalPopulation * Owner.TechnologyManager.RoboticControls;
+				}
+				return planetProduction;
+			}
+		}
+		public float TotalProductionWithTrade
+		{
+			get
+			{
+				return TotalProduction + ProductionFromTrade;
+			}
 		}
 		
 		public float ProductionFromTrade { get; set; } //This is set externally from EmpireManager class
@@ -108,7 +128,10 @@ namespace Beyond_Beyaan
 
 		public float ActualProduction
 		{
-			get { return (TotalProduction + ProductionFromTrade) - ProductionLostFromExpenses; }
+			get
+			{
+				return TotalProductionWithTrade - ProductionLostFromExpenses;
+			}
 		}
 		#endregion
 
@@ -157,6 +180,7 @@ namespace Beyond_Beyaan
 		public float ShipConstructionAmount { get; set; }
 		public float AmountOfBuildingsThisTurn { get; set; }
 		public float AmountOfBCGeneratedThisTurn { get; set; }
+		public float AmountOfRPGeneratedThisTurn { get; set; }
 
 		public PLANET_CONSTRUCTION_BONUS ConstructionBonus
 		{
@@ -179,18 +203,21 @@ namespace Beyond_Beyaan
 			{
 				if (InfrastructureAmount > 0)
 				{
-					if (InfrastructureTotal >= populationMax * 2)
+					if (AmountOfBuildingsThisTurn > 0)
 					{
-						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)InfrastructureTotal, InfrastructureAmount * 0.01 * 0.5 * ActualProduction);
+						if (AmountOfBCGeneratedThisTurn == 0)
+						{
+							return string.Format("{0} (+{1:0.0}) Buildings", (int)InfrastructureTotal, AmountOfBuildingsThisTurn);	
+						}
+						else
+						{
+							return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)InfrastructureTotal, AmountOfBuildingsThisTurn, AmountOfBCGeneratedThisTurn);
+						}
 					}
-					float amountRemaining = (populationMax * 2) - InfrastructureTotal;
-					float amountBuildThisTurn = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
-					if (amountBuildThisTurn > amountRemaining) //Will put some into reserve
+					else
 					{
-						float difference = (amountBuildThisTurn - amountRemaining) * 5; //This is now BC for excess
-						return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)InfrastructureTotal, amountRemaining, difference);
-					}
-					return string.Format("{0} (+{1:0.0}) Buildings", (int)InfrastructureTotal, amountBuildThisTurn);
+						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)InfrastructureTotal, AmountOfBCGeneratedThisTurn);
+					}					
 				}
 				return string.Format("{0} Buildings", (int)InfrastructureTotal);
 			}
@@ -201,7 +228,7 @@ namespace Beyond_Beyaan
 			{
 				if (ResearchAmount > 0)
 				{
-					return string.Format("{0:0.0} Research Points", (ResearchAmount * 0.01 * ActualProduction));
+					return string.Format("{0:0.0} Research Points", AmountOfRPGeneratedThisTurn);
 				}
 				return "Not Researching";
 			}
@@ -758,6 +785,8 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+
+			UpdateOutputs();
 		}
 
 		private int GetPointsExcludingSelectedTypeAndLockedTypes(OUTPUT_TYPE type)
@@ -881,6 +910,11 @@ namespace Beyond_Beyaan
 				//No output at all in this field
 				AmountOfBuildingsThisTurn = 0;
 				AmountOfBCGeneratedThisTurn = 0;
+			}
+
+			if (ResearchAmount > 0)
+			{
+				AmountOfRPGeneratedThisTurn = ResearchAmount * 0.01f * ActualProduction;
 			}
 		}
 
