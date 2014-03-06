@@ -390,26 +390,32 @@ namespace Beyond_Beyaan
 				Color starColor = Color.White;
 				string description = string.Empty;
 
-				switch (r.Next(6)) //type of star
+				int randNum = r.Next(100);
+
+
+				if (randNum < 30)
 				{
-					case 0: starColor = Color.Red;
-						description = "Red stars are old, dull stars that commonly have poor planets";
-						break;
-					case 1: starColor = Color.Green;
-						description = "Green stars are moderately bright and have a wide range of planetary types";
-						break;
-					case 2: starColor = Color.Purple;
-						description = "Neutron stars are rare and offer the greatest chance of finding rich planets";
-						break;
-					case 3: starColor = Color.Blue;
-						description = "Blue stars are relatively young stars with mineral rich lifeless planets";
-						break;
-					case 4: starColor = Color.White;
-						description = "White stars burn incredibly hot and generally have hostile planets";
-						break;
-					case 5: starColor = Color.Yellow;
-						description = "Yellow stars offer the best chance of discovering planets with friendly environment";
-						break;
+					starColor = Color.Red;
+				}
+				else if (randNum < 55)
+				{
+					starColor = Color.Green;
+				}
+				else if (randNum < 70)
+				{
+					starColor = Color.Yellow;
+				}
+				else if (randNum < 85)
+				{
+					starColor = Color.Blue;
+				}
+				else if (randNum < 95)
+				{
+					starColor = Color.White;
+				}
+				else
+				{
+					starColor = Color.Purple;
 				}
 
 				var newStarsystem = new StarSystem(NameGenerator.GetStarName(r), starId, x * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), y * PARSEC_SIZE_IN_PIXELS + (r.Next(PARSEC_SIZE_IN_PIXELS)), starColor, description, minPlanets, maxPlanets, r);

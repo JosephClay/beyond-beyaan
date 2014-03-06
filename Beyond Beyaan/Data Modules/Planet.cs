@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using Beyond_Beyaan.Data_Managers;
 using Beyond_Beyaan.Data_Modules;
 
@@ -12,6 +13,23 @@ namespace Beyond_Beyaan
 	public enum PLANET_RESEARCH_BONUS { AVERAGE, SENSATIONAL, EXCITING }
 	public class Planet
 	{
+		#region Constants
+
+		private const string NONE = "None";
+		private const string RADIATED = "Radiated";
+		private const string TOXIC = "Toxic";
+		private const string VOLCANIC = "Volcanic";
+		private const string DEAD = "Dead";
+		private const string TUNDRA = "Tundra";
+		private const string BARREN = "Barren";
+		private const string ARCTIC = "Arctic";
+		private const string DESERT = "Desert";
+		private const string STEPPE = "Steppe";
+		private const string BADLANDS = "Badlands";
+		private const string OCEANIC = "Oceanic";
+		private const string JUNGLE = "Jungle";
+		private const string TERRAN = "Terran";
+		#endregion
 		#region Member Variables
 		private StarSystem whichSystem;
 		private PLANET_TYPE planetType;
@@ -22,7 +40,6 @@ namespace Beyond_Beyaan
 		private Dictionary<Race, float> racePopulations;
 		private List<Race> races;
 		private Ship shipBeingBuilt;
-		private bool isWetClimate;
 		#endregion
 
 		#region Properties
@@ -303,112 +320,376 @@ namespace Beyond_Beyaan
 		}
 		public Planet(string name, Random r, StarSystem system)
 		{
-			isWetClimate = r.Next(2) == 0;
 			populationMax = r.Next(0, 150) - 25;
 
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
 			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
 			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 
-			int industryBonusAdjustment = 0;
-			int fertilityBonusAdjustment = 0;
-			string type;
-			if (populationMax < 5)
+			int randomNum = r.Next(100);
+			var color = system.Color;
+
+			string type = string.Empty;
+			if (color == Color.Red)
 			{
-				type = "None";
-				populationMax = 0;
+				//TODO: Handle nebula generation
+				if (randomNum < 5)
+				{
+					type = NONE;
+				}
+				else if (randomNum < 10)
+				{
+					type = RADIATED;
+				}
+				else if (randomNum < 15)
+				{
+					type = TOXIC;
+				}
+				else if (randomNum < 20)
+				{
+					type = VOLCANIC;
+				}
+				else if (randomNum < 25)
+				{
+					type = DEAD;
+				}
+				else if (randomNum < 30)
+				{
+					type = TUNDRA;
+				}
+				else if (randomNum < 35)
+				{
+					type = BARREN;
+				}
+				else if (randomNum < 40)
+				{
+					type = ARCTIC;
+				}
+				else if (randomNum < 50)
+				{
+					type = DESERT;
+				}
+				else if (randomNum < 60)
+				{
+					type = STEPPE;
+				}
+				else if (randomNum < 75)
+				{
+					type = BADLANDS;
+				}
+				else if (randomNum < 85)
+				{
+					type = OCEANIC;
+				}
+				else if (randomNum < 95)
+				{
+					type = JUNGLE;
+				}
+				else
+				{
+					type = TERRAN;
+				}
 			}
-			else if (populationMax <= 10)
+			else if (color == Color.Green)
 			{
-				type = "Radiated";
-				industryBonusAdjustment = 500;
+				//TODO: Handle nebula generation
+				if (randomNum < 5)
+				{
+					type = NONE;
+				}
+				else if (randomNum < 10)
+				{
+					type = RADIATED;
+				}
+				else if (randomNum < 15)
+				{
+					type = TOXIC;
+				}
+				else if (randomNum < 20)
+				{
+					type = VOLCANIC;
+				}
+				else if (randomNum < 25)
+				{
+					type = DEAD;
+				}
+				else if (randomNum < 30)
+				{
+					type = TUNDRA;
+				}
+				else if (randomNum < 35)
+				{
+					type = BARREN;
+				}
+				else if (randomNum < 40)
+				{
+					type = ARCTIC;
+				}
+				else if (randomNum < 45)
+				{
+					type = DESERT;
+				}
+				else if (randomNum < 55)
+				{
+					type = STEPPE;
+				}
+				else if (randomNum < 65)
+				{
+					type = BADLANDS;
+				}
+				else if (randomNum < 75)
+				{
+					type = OCEANIC;
+				}
+				else if (randomNum < 85)
+				{
+					type = JUNGLE;
+				}
+				else
+				{
+					type = TERRAN;
+				}
 			}
-			else if (populationMax <= 15)
+			else if (color == Color.Yellow)
 			{
-				type = "Toxic";
-				industryBonusAdjustment = 300;
+				//TODO: Handle nebula generation
+				if (randomNum < 5)
+				{
+					type = VOLCANIC;
+				}
+				else if (randomNum < 10)
+				{
+					type = TUNDRA;
+				}
+				else if (randomNum < 15)
+				{
+					type = BARREN;
+				}
+				else if (randomNum < 20)
+				{
+					type = ARCTIC;
+				}
+				else if (randomNum < 25)
+				{
+					type = DESERT;
+				}
+				else if (randomNum < 30)
+				{
+					type = STEPPE;
+				}
+				else if (randomNum < 40)
+				{
+					type = BADLANDS;
+				}
+				else if (randomNum < 50)
+				{
+					type = OCEANIC;
+				}
+				else if (randomNum < 60)
+				{
+					type = JUNGLE;
+				}
+				else
+				{
+					type = TERRAN;
+				}
 			}
-			else if (populationMax <= 20)
+			else if (color == Color.Blue)
 			{
-				type = isWetClimate ? "Arctic" : "Volcanic";
-				industryBonusAdjustment = 200;
+				//TODO: Handle nebula generation
+				if (randomNum < 15)
+				{
+					type = NONE;
+				}
+				else if (randomNum < 25)
+				{
+					type = RADIATED;
+				}
+				else if (randomNum < 35)
+				{
+					type = TOXIC;
+				}
+				else if (randomNum < 45)
+				{
+					type = VOLCANIC;
+				}
+				else if (randomNum < 55)
+				{
+					type = DEAD;
+				}
+				else if (randomNum < 65)
+				{
+					type = TUNDRA;
+				}
+				else if (randomNum < 75)
+				{
+					type = BARREN;
+				}
+				else if (randomNum < 85)
+				{
+					type = ARCTIC;
+				}
+				else if (randomNum < 90)
+				{
+					type = DESERT;
+				}
+				else if (randomNum < 95)
+				{
+					type = STEPPE;
+				}
+				else
+				{
+					type = BADLANDS;
+				}
 			}
-			else if (populationMax <= 30)
+			else if (color == Color.White)
 			{
-				type = isWetClimate ? "Dead" : "Barren";
-				industryBonusAdjustment = 100;
-			}
-			else if (populationMax <= 40)
-			{
-				type = isWetClimate ? "Tundra" : "Badlands";
-			}
-			else if (populationMax <= 70)
-			{
-				type = isWetClimate ? "Oceanic" : "Desert";
-				fertilityBonusAdjustment = 200;
-			}
-			else if (populationMax <= 90)
-			{
-				type = isWetClimate ? "Jungle" : "Steppe";
-				fertilityBonusAdjustment = 300;
+				//TODO: Handle nebula generation
+				if (randomNum < 10)
+				{
+					type = NONE;
+				}
+				else if (randomNum < 20)
+				{
+					type = RADIATED;
+				}
+				else if (randomNum < 30)
+				{
+					type = TOXIC;
+				}
+				else if (randomNum < 40)
+				{
+					type = VOLCANIC;
+				}
+				else if (randomNum < 50)
+				{
+					type = DEAD;
+				}
+				else if (randomNum < 60)
+				{
+					type = TUNDRA;
+				}
+				else if (randomNum < 70)
+				{
+					type = BARREN;
+				}
+				else if (randomNum < 80)
+				{
+					type = ARCTIC;
+				}
+				else if (randomNum < 85)
+				{
+					type = DESERT;
+				}
+				else if (randomNum < 90)
+				{
+					type = STEPPE;
+				}
+				else if (randomNum < 95)
+				{
+					type = BADLANDS;
+				}
+				else
+				{
+					type = OCEANIC;
+				}
 			}
 			else
 			{
-				type = "Terran";
-				fertilityBonusAdjustment = 500;
+				//TODO: Handle nebula generation
+				if (randomNum < 20)
+				{
+					type = NONE;
+				}
+				else if (randomNum < 45)
+				{
+					type = RADIATED;
+				}
+				else if (randomNum < 60)
+				{
+					type = TOXIC;
+				}
+				else if (randomNum < 75)
+				{
+					type = VOLCANIC;
+				}
+				else if (randomNum < 85)
+				{
+					type = DEAD;
+				}
+				else if (randomNum < 90)
+				{
+					type = TUNDRA;
+				}
+				else if (randomNum < 95)
+				{
+					type = BARREN;
+				}
+				else
+				{
+					type = ARCTIC;
+				}
 			}
 
-			//Get the construction bonus
-			int number = r.Next(1000) + industryBonusAdjustment;
-			if (!isWetClimate)
+			switch (type)
 			{
-				number += 25;
-			}
-			if (number < 50)
-			{
-				ConstructionBonus = PLANET_CONSTRUCTION_BONUS.DEARTH;
-			}
-			else if (number < 200)
-			{
-				ConstructionBonus = PLANET_CONSTRUCTION_BONUS.POOR;
-			}
-			else if (number >= 950)
-			{
-				ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
-			}
-			else if (number >= 800)
-			{
-				ConstructionBonus = PLANET_CONSTRUCTION_BONUS.COPIOUS;
-			}
-
-			//Get the environment bonus
-			number = r.Next(1000) + fertilityBonusAdjustment;
-			if (isWetClimate)
-			{
-				number += 25;
-			}
-			if (number < 200)
-			{
-				EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.INFERTILE;
-			}
-			else if (number >= 950)
-			{
-				EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.LUSH;
-			}
-			else if (number >= 800)
-			{
-				EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
+				case NONE:
+					populationMax = 0;
+					break;
+				case RADIATED:
+				case TOXIC:
+				case VOLCANIC:
+					populationMax = r.Next(2, 9) * 5;
+					break;
+				case DEAD:
+				case TUNDRA:
+					populationMax = r.Next(4, 11) * 5;
+					break;
+				case BARREN:
+				case ARCTIC:
+					populationMax = r.Next(6, 11) * 5;
+					break;
+				case DESERT:
+					populationMax = r.Next(7, 11) * 5;
+					break;
+				case STEPPE:
+					populationMax = r.Next(9, 13) * 5;
+					break;
+				case BADLANDS:
+					populationMax = r.Next(11, 15) * 5;
+					break;
+				case OCEANIC:
+					populationMax = r.Next(13, 17) * 5;
+					break;
+				case JUNGLE:
+					populationMax = r.Next(15, 19) * 5;
+					break;
+				case TERRAN:
+					populationMax = r.Next(17, 21) * 5;
+					break;
 			}
 
-			//Get the research bonus
-			number = r.Next(1000);
-			if (number >= 950)
+			//Add some variety to the population size
+			while (r.Next(100) < 20)
 			{
-				ResearchBonus = PLANET_RESEARCH_BONUS.EXCITING;
-			}
-			else if (number >= 800)
-			{
-				ResearchBonus = PLANET_RESEARCH_BONUS.SENSATIONAL;
+				if (r.Next(100) < 50)
+				{
+					//decrease the population by 20
+					populationMax -= 20;
+					if (populationMax < 10)
+					{
+						populationMax = 10;
+					}
+				}
+				else
+				{
+					//increase the population by 20
+					populationMax += 20;
+					if (populationMax > 140)
+					{
+						populationMax = 140;
+					}
+				}
 			}
 
 			SetValues(name, type, populationMax, system, null, r);
@@ -427,84 +708,84 @@ namespace Beyond_Beyaan
 
 			switch (type)
 			{
-				case "Arctic":
+				case ARCTIC:
 					{
 						planetType = PLANET_TYPE.ARCTIC;
 						SmallSprite = SpriteManager.GetSprite("ArcticPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("ArcticGround", r);
 					} break;
-				case "Badlands":
+				case BADLANDS:
 					{
 						planetType = PLANET_TYPE.BADLAND;
 						SmallSprite = SpriteManager.GetSprite("BadlandsPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("BadlandsGround", r);
 					} break;
-				case "Barren":
+				case BARREN:
 					{
 						planetType = PLANET_TYPE.BARREN;
 						SmallSprite = SpriteManager.GetSprite("BarrenPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("BarrenGround", r);
 					} break;
-				case "Dead":
+				case DEAD:
 					{
 						planetType = PLANET_TYPE.DEAD;
 						SmallSprite = SpriteManager.GetSprite("DeadPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("DeadGround", r);
 					} break;
-				case "Desert":
+				case DESERT:
 					{
 						planetType = PLANET_TYPE.DESERT;
 						SmallSprite = SpriteManager.GetSprite("DesertPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("DesertGround", r);
 					} break;
-				case "Jungle":
+				case JUNGLE:
 					{
 						planetType = PLANET_TYPE.JUNGLE;
 						SmallSprite = SpriteManager.GetSprite("JunglePlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("JungleGround", r);
 					} break;
-				case "None":
+				case NONE:
 					{
 						planetType = PLANET_TYPE.NONE;
 						SmallSprite = SpriteManager.GetSprite("AsteroidsPlanetSmall", r);
 					} break;
-				case "Oceanic":
+				case OCEANIC:
 					{
 						planetType = PLANET_TYPE.OCEAN;
 						SmallSprite = SpriteManager.GetSprite("OceanicPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("OceanicGround", r);
 					} break;
-				case "Radiated":
+				case RADIATED:
 					{
 						planetType = PLANET_TYPE.RADIATED;
 						SmallSprite = SpriteManager.GetSprite("RadiatedPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("RadiatedGround", r);
 					} break;
-				case "Steppe":
+				case STEPPE:
 					{
 						planetType = PLANET_TYPE.STEPPE;
 						SmallSprite = SpriteManager.GetSprite("SteppePlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("SteppeGround", r);
 					} break;
-				case "Terran":
+				case TERRAN:
 					{
 						planetType = PLANET_TYPE.TERRAN;
 						SmallSprite = SpriteManager.GetSprite("TerranPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("TerranGround", r);
 					} break;
-				case "Toxic":
+				case TOXIC:
 					{
 						planetType = PLANET_TYPE.TOXIC;
 						SmallSprite = SpriteManager.GetSprite("ToxicPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("ToxicGround", r);
 					} break;
-				case "Tundra":
+				case TUNDRA:
 					{
 						planetType = PLANET_TYPE.TUNDRA;
 						SmallSprite = SpriteManager.GetSprite("TundraPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("TundraGround", r);
 					} break;
-				case "Volcanic":
+				case VOLCANIC:
 					{
 						planetType = PLANET_TYPE.VOLCANIC;
 						SmallSprite = SpriteManager.GetSprite("VolcanicPlanetSmall", r);
