@@ -277,9 +277,9 @@ namespace Beyond_Beyaan
 		{
 			switch (bonus)
 			{
-				case PLANET_CONSTRUCTION_BONUS.DEARTH: return SpriteName.PlanetConstructionBonus1;
+				case PLANET_CONSTRUCTION_BONUS.ULTRAPOOR: return SpriteName.PlanetConstructionBonus1;
 				case PLANET_CONSTRUCTION_BONUS.POOR: return SpriteName.PlanetConstructionBonus2;
-				case PLANET_CONSTRUCTION_BONUS.COPIOUS: return SpriteName.PlanetConstructionBonus3;
+				case PLANET_CONSTRUCTION_BONUS.ULTRARICH: return SpriteName.PlanetConstructionBonus3;
 				case PLANET_CONSTRUCTION_BONUS.RICH: return SpriteName.PlanetConstructionBonus4;
 			}
 			//If it reaches here, something went wrong
@@ -289,9 +289,9 @@ namespace Beyond_Beyaan
 		{
 			switch (bonus)
 			{
-				case PLANET_ENVIRONMENT_BONUS.INFERTILE: return SpriteName.PlanetEnvironmentBonus2;
+				case PLANET_ENVIRONMENT_BONUS.HOSTILE: return SpriteName.PlanetEnvironmentBonus2;
 				case PLANET_ENVIRONMENT_BONUS.FERTILE: return SpriteName.PlanetEnvironmentBonus3;
-				case PLANET_ENVIRONMENT_BONUS.LUSH: return SpriteName.PlanetEnvironmentBonus4;
+				case PLANET_ENVIRONMENT_BONUS.GAIA: return SpriteName.PlanetEnvironmentBonus4;
 			}
 			//If it reaches here, something went wrong
 			return SpriteName.CancelBackground;
@@ -300,8 +300,8 @@ namespace Beyond_Beyaan
 		{
 			switch (bonus)
 			{
-				case PLANET_RESEARCH_BONUS.SENSATIONAL: return SpriteName.PlanetEntertainmentBonus3;
-				case PLANET_RESEARCH_BONUS.EXCITING: return SpriteName.PlanetEntertainmentBonus4;
+				case PLANET_RESEARCH_BONUS.ARTIFACTS: return SpriteName.PlanetEntertainmentBonus3;
+				case PLANET_RESEARCH_BONUS.BEYAAN: return SpriteName.PlanetEntertainmentBonus4;
 			}
 			//If it reaches here, something went wrong
 			return SpriteName.CancelBackground;

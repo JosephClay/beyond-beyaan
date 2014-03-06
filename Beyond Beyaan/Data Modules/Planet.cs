@@ -8,9 +8,10 @@ namespace Beyond_Beyaan
 {
 	public enum PLANET_TYPE { TERRAN = 0, JUNGLE, OCEAN, BADLAND, STEPPE, DESERT, ARCTIC, BARREN, TUNDRA, DEAD, VOLCANIC, TOXIC, RADIATED, NONE }
 	public enum OUTPUT_TYPE { RESEARCH, DEFENSE, INFRASTRUCTURE, ENVIRONMENT, CONSTRUCTION }
-	public enum PLANET_CONSTRUCTION_BONUS { DEARTH, POOR, AVERAGE, COPIOUS, RICH }
-	public enum PLANET_ENVIRONMENT_BONUS { INFERTILE, AVERAGE, FERTILE, LUSH }
-	public enum PLANET_RESEARCH_BONUS { AVERAGE, SENSATIONAL, EXCITING }
+	public enum PLANET_CONSTRUCTION_BONUS { ULTRAPOOR, POOR, AVERAGE, RICH, ULTRARICH }
+	public enum PLANET_ENVIRONMENT_BONUS { HOSTILE, AVERAGE, FERTILE, GAIA }
+	public enum PLANET_RESEARCH_BONUS { AVERAGE, ARTIFACTS, BEYAAN }
+	public enum PLANET_ASTEROID_DENSITY { NONE, LOW, HIGH }
 	public class Planet
 	{
 		#region Constants
@@ -199,21 +200,11 @@ namespace Beyond_Beyaan
 		public float AmountOfBCGeneratedThisTurn { get; set; }
 		public float AmountOfRPGeneratedThisTurn { get; set; }
 
-		public PLANET_CONSTRUCTION_BONUS ConstructionBonus
-		{
-			get;
-			private set;
-		}
-		public PLANET_ENVIRONMENT_BONUS EnvironmentBonus
-		{
-			get;
-			private set;
-		}
-		public PLANET_RESEARCH_BONUS ResearchBonus
-		{
-			get;
-			private set;
-		}
+		public PLANET_CONSTRUCTION_BONUS ConstructionBonus { get; private set; }
+		public PLANET_ENVIRONMENT_BONUS EnvironmentBonus { get; private set; }
+		public PLANET_RESEARCH_BONUS ResearchBonus { get; private set; }
+		public PLANET_ASTEROID_DENSITY AsteroidDensity { get; private set; }
+
 		public string InfrastructureStringOutput
 		{
 			get
@@ -689,6 +680,436 @@ namespace Beyond_Beyaan
 					{
 						populationMax = 140;
 					}
+				}
+			}
+
+			//Now roll for poor/ultra poor if the planet is steppe, badlands, oceanic, jungle, or terran
+			if (type == STEPPE || type == BADLANDS || type == OCEANIC || type == JUNGLE || type == TERRAN)
+			{
+				randomNum = r.Next(1000);
+				if (system.Color == Color.Blue || system.Color == Color.White || system.Color == Color.Yellow)
+				{
+					if (randomNum < 25) //2.5% chance of ultrapoor
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRAPOOR;
+					}
+					else if (randomNum < 100) //7.5% chance of poor
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.POOR;
+					}
+				}
+				else if (system.Color == Color.Red)
+				{
+					if (randomNum < 60) //6% chance of ultrapoor
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRAPOOR;
+					}
+					else if (randomNum < 200) //14% chance of poor
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.POOR;
+					}
+				}
+				else if (system.Color == Color.Green)
+				{
+					if (randomNum < 135) //13.5% chance of ultrapoor
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRAPOOR;
+					}
+					else if (randomNum < 300) //16.5% chance of poor
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.POOR;
+					}
+				}
+			}
+
+			//roll for rich/ultrarich only if the planet is not poor already
+			if (ConstructionBonus == PLANET_CONSTRUCTION_BONUS.AVERAGE)
+			{
+				//todo: handle nebula generation
+				randomNum = r.Next(10000);
+				if (type == RADIATED)
+				{
+					if (system.Color == Color.Red || system.Color == Color.Yellow || system.Color == Color.Green || system.Color == Color.White)
+					{
+						if (randomNum < 875)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 3500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else if (system.Color == Color.Blue)
+					{
+						if (randomNum < 1575)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 4500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else //neutron star
+					{
+						if (randomNum < 3000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 6000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+				}
+				else if (type == TOXIC)
+				{
+					if (system.Color == Color.Red || system.Color == Color.Yellow || system.Color == Color.Green || system.Color == Color.White)
+					{
+						if (randomNum < 750)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 3000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else if (system.Color == Color.Blue)
+					{
+						if (randomNum < 1400)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 4000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else //neutron star
+					{
+						if (randomNum < 2750)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 5500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+				}
+				else if (type == VOLCANIC)
+				{
+					if (system.Color == Color.Red || system.Color == Color.Yellow || system.Color == Color.Green || system.Color == Color.White)
+					{
+						if (randomNum < 625)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 2500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else if (system.Color == Color.Blue)
+					{
+						if (randomNum < 1225)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 3500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else //neutron star
+					{
+						if (randomNum < 2500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 5000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+				}
+				else if (type == DEAD)
+				{
+					if (system.Color == Color.Red || system.Color == Color.Yellow || system.Color == Color.Green || system.Color == Color.White)
+					{
+						if (randomNum < 500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 2000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else if (system.Color == Color.Blue)
+					{
+						if (randomNum < 1050)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 3000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else //neutron star
+					{
+						if (randomNum < 2250)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 4500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+				}
+				else if (type == TUNDRA)
+				{
+					if (system.Color == Color.Red || system.Color == Color.Yellow || system.Color == Color.Green || system.Color == Color.White)
+					{
+						if (randomNum < 375)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 1500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else if (system.Color == Color.Blue)
+					{
+						if (randomNum < 875)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 2500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else //neutron star
+					{
+						if (randomNum < 2000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 4000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+				}
+				else if (type == BARREN)
+				{
+					if (system.Color == Color.Red || system.Color == Color.Yellow || system.Color == Color.Green || system.Color == Color.White)
+					{
+						if (randomNum < 250)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 1000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else if (system.Color == Color.Blue)
+					{
+						if (randomNum < 700)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 2000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else //neutron star
+					{
+						if (randomNum < 1750)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 3500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+				}
+				else if (type == ARCTIC)
+				{
+					if (system.Color == Color.Red || system.Color == Color.Yellow || system.Color == Color.Green || system.Color == Color.White)
+					{
+						if (randomNum < 125)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else if (system.Color == Color.Blue)
+					{
+						if (randomNum < 525)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 1500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+					else //neutron star
+					{
+						if (randomNum < 1500)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+						}
+						else if (randomNum < 3000)
+						{
+							ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+						}
+					}
+				}
+				else if (type == DESERT && system.Color == Color.Blue)
+				{
+					if (randomNum < 350)
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+					}
+					else if (randomNum < 1000)
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+					}
+				}
+				else if (type == STEPPE && system.Color == Color.Blue)
+				{
+					if (randomNum < 175)
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.ULTRARICH;
+					}
+					else if (randomNum < 500)
+					{
+						ConstructionBonus = PLANET_CONSTRUCTION_BONUS.RICH;
+					}
+				}
+			}
+
+			//Now determine asteroid density
+			randomNum = r.Next(100);
+			if (randomNum < 25) //Always 25% chance of low density, no matter what type/bonus the planet has
+			{
+				AsteroidDensity = PLANET_ASTEROID_DENSITY.LOW;
+			}
+			else
+			{
+				int extraValue = 0;
+				switch (type)
+				{
+					case RADIATED:
+						extraValue = 12;
+						break;
+					case TOXIC:
+						extraValue = 11;
+						break;
+					case VOLCANIC:
+						extraValue = 10;
+						break;
+					case DEAD:
+						extraValue = 9;
+						break;
+					case TUNDRA:
+						extraValue = 8;
+						break;
+					case BARREN:
+						extraValue = 7;
+						break;
+					case ARCTIC:
+						extraValue = 6;
+						break;
+					case DESERT:
+						extraValue = 5;
+						break;
+					case STEPPE:
+						extraValue = 4;
+						break;
+					case BADLANDS:
+						extraValue = 3;
+						break;
+					case OCEANIC:
+						extraValue = 2;
+						break;
+					case JUNGLE:
+						extraValue = 1;
+						break;
+				}
+				if (ConstructionBonus == PLANET_CONSTRUCTION_BONUS.ULTRARICH)
+				{
+					if (randomNum < 62 + extraValue)
+					{
+						AsteroidDensity = PLANET_ASTEROID_DENSITY.HIGH;
+					}
+					else
+					{
+						AsteroidDensity = PLANET_ASTEROID_DENSITY.NONE;
+					}
+				}
+				else if (ConstructionBonus == PLANET_CONSTRUCTION_BONUS.RICH)
+				{
+					if (randomNum < 52 + extraValue)
+					{
+						AsteroidDensity = PLANET_ASTEROID_DENSITY.HIGH;
+					}
+					else
+					{
+						AsteroidDensity = PLANET_ASTEROID_DENSITY.NONE;
+					}
+				}
+				else
+				{
+					if (randomNum < 42 + extraValue)
+					{
+						AsteroidDensity = PLANET_ASTEROID_DENSITY.HIGH;
+					}
+					else
+					{
+						AsteroidDensity = PLANET_ASTEROID_DENSITY.NONE;
+					}
+				}
+			}
+			
+			//Now roll for fertility
+			if (type == DESERT || type == STEPPE || type == BADLANDS || type == OCEANIC || type == JUNGLE || type == TERRAN)
+			{
+				randomNum = r.Next(100);
+				if (randomNum < 9) //original is 1 / 12th, so this is close enough
+				{
+					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
+					float value = populationMax / 5;
+					value *= 1.25f;
+					populationMax = ((int) value) * 5;
+					if (populationMax > 140)
+					{
+						populationMax = 140;
+					}
+				}
+			}
+
+			//Finally, roll for artifacts
+			if (ConstructionBonus == PLANET_CONSTRUCTION_BONUS.AVERAGE)
+			{
+				randomNum = r.Next(100);
+				if (randomNum < 10) //10% chance of having artifacts
+				{
+					ResearchBonus = PLANET_RESEARCH_BONUS.ARTIFACTS;
 				}
 			}
 
