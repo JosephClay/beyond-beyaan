@@ -20,7 +20,8 @@ namespace Beyond_Beyaan
 		private int size;
 		private string name;
 
-		private float[] color;
+		private float[] _starColor;
+		private Color _color;
 		private List<Empire> exploredBy;
 		public string ExploredByIDs { get; set; } //Used for saving/loading, otherwise not used.
 
@@ -58,7 +59,49 @@ namespace Beyond_Beyaan
 		}
 		public float[] StarColor
 		{
-			get { return color; }
+			get { return _starColor; }
+		}
+		public Color Color
+		{
+			get
+			{
+				return _color;
+			}
+			set
+			{
+				_color = value;
+				_starColor = new[]
+				{
+					_color.R / 255.0f,
+					_color.G / 255.0f,
+					_color.B / 255.0f,
+					_color.A / 255.0f
+				};
+				if (value == Color.Yellow)
+				{
+					Description = "Yellow stars offer the best chance of discovering planets with friendly environment";
+				}
+				else if (value == Color.Red)
+				{
+					Description = "Red stars are old, dull stars that commonly have poor planets";
+				}
+				else if (value == Color.Green)
+				{
+					Description = "Green stars are moderately bright and have a wide range of planetary types";
+				}
+				else if (value == Color.Blue)
+				{
+					Description = "Blue stars are relatively young stars with mineral rich lifeless planets";
+				}
+				else if (value == Color.White)
+				{
+					Description = "White stars burn incredibly hot and generally have hostile planets";
+				}
+				else
+				{
+					Description = "Neutron stars are rare and offer the greatest chance of finding rich planets";
+				}
+			}
 		}
 		public int Size
 		{
@@ -98,13 +141,7 @@ namespace Beyond_Beyaan
 			this.size = 1;
 			ID = id;
 
-			this.color = new float[]
-				{
-					color.R / 255.0f,
-					color.G / 255.0f,
-					color.B / 255.0f,
-					color.A / 255.0f
-				};
+			Color = color;
 
 			exploredBy = new List<Empire>();
 			planets = new List<Planet>();
@@ -150,6 +187,7 @@ namespace Beyond_Beyaan
 				planets[whichPlanet].SetHomeworld(empire, r);
 				homePlanet = planets[whichPlanet];
 			}
+			Color = Color.Yellow; //Homeworlds always have yellow stars
 			exploredBy.Add(empire);
 			UpdateOwners();
 		}
