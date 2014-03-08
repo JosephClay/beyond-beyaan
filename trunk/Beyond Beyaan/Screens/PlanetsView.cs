@@ -418,7 +418,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				_columnCells[0][i].SetText(planets[i].Name);
 				_columnCells[1][i].SetText(planets[i].TotalPopulation.ToString());
-				_columnCells[2][i].SetText(planets[i].InfrastructureTotal.ToString());
+				_columnCells[2][i].SetText(planets[i].Factories.ToString());
 				_columnCells[3][i].SetText(string.Empty); //TODO: Add missile bases
 				_columnCells[4][i].SetText(string.Empty); //TODO: Add waste
 				_columnCells[5][i].SetText(((int)planets[i].ActualProduction).ToString());

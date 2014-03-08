@@ -37,7 +37,10 @@ namespace Beyond_Beyaan
 		private string planetTypeString;
 		private Empire owner;
 		string name;
+		private float _terraformProjectRevenues;
+		private float _terraformPop;
 		private float populationMax;
+		private float _waste;
 		private Dictionary<Race, float> racePopulations;
 		private List<Race> races;
 		private Ship shipBeingBuilt;
@@ -112,8 +115,22 @@ namespace Beyond_Beyaan
 				return totalPopulation;
 			}
 		}
+		public float TotalMaxPopulation
+		{
+			get
+			{
+				return populationMax + _terraformPop;
+			}
+		}
+		public float Waste
+		{
+			get
+			{
+				return _waste;
+			}
+		}
 
-		public float InfrastructureTotal { get; set; }
+		public float Factories { get; set; }
 
 		#region Production
 		public float TotalProduction
@@ -122,9 +139,9 @@ namespace Beyond_Beyaan
 			{
 				float planetProduction = 0;
 				planetProduction += TotalPopulation * (((Owner.TechnologyManager.PlanetologyLevel * 3) + 50) / 100.0f);
-				if (TotalPopulation >= InfrastructureTotal / Owner.TechnologyManager.RoboticControls)
+				if (TotalPopulation >= Factories / Owner.TechnologyManager.RoboticControls)
 				{
-					planetProduction += InfrastructureTotal;
+					planetProduction += Factories;
 				}
 				else
 				{
@@ -199,6 +216,7 @@ namespace Beyond_Beyaan
 		public float AmountOfBuildingsThisTurn { get; set; }
 		public float AmountOfBCGeneratedThisTurn { get; set; }
 		public float AmountOfRPGeneratedThisTurn { get; set; }
+		public float AmountOfWasteCleanupNeeded { get; set; }
 
 		public PLANET_CONSTRUCTION_BONUS ConstructionBonus { get; private set; }
 		public PLANET_ENVIRONMENT_BONUS EnvironmentBonus { get; private set; }
@@ -215,19 +233,19 @@ namespace Beyond_Beyaan
 					{
 						if (AmountOfBCGeneratedThisTurn == 0)
 						{
-							return string.Format("{0} (+{1:0.0}) Buildings", (int)InfrastructureTotal, AmountOfBuildingsThisTurn);	
+							return string.Format("{0} (+{1:0.0}) Buildings", (int)Factories, AmountOfBuildingsThisTurn);	
 						}
 						else
 						{
-							return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)InfrastructureTotal, AmountOfBuildingsThisTurn, AmountOfBCGeneratedThisTurn);
+							return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)Factories, AmountOfBuildingsThisTurn, AmountOfBCGeneratedThisTurn);
 						}
 					}
 					else
 					{
-						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)InfrastructureTotal, AmountOfBCGeneratedThisTurn);
+						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)Factories, AmountOfBCGeneratedThisTurn);
 					}					
 				}
-				return string.Format("{0} Buildings", (int)InfrastructureTotal);
+				return string.Format("{0} Buildings", (int)Factories);
 			}
 		}
 		public string ResearchStringOutput
@@ -1102,6 +1120,10 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+			else if (type == RADIATED || type == TOXIC || type == VOLCANIC || type == DEAD || type == TUNDRA || type == BARREN)
+			{
+				EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.HOSTILE;
+			}
 
 			//Finally, roll for artifacts
 			if (ConstructionBonus == PLANET_CONSTRUCTION_BONUS.AVERAGE)
@@ -1227,7 +1249,7 @@ namespace Beyond_Beyaan
 			populationMax = 100;
 			races.Add(owner.EmpireRace);
 			racePopulations.Add(owner.EmpireRace, 50.0f);
-			InfrastructureTotal = 30;
+			Factories = 30;
 			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
 			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
@@ -1520,7 +1542,7 @@ namespace Beyond_Beyaan
 		public void SetCleanup()
 		{
 			//Waste Processing uses the formula: (Number of buildings * 0.5 * lowest pollution tech percentage) / production * 100
-			float wasteAmount = (InfrastructureTotal * 0.5f); //add tech improvements and racial bonuses/negatives inside (3.0f)
+			float wasteAmount = (Factories * 0.5f); //add tech improvements and racial bonuses/negatives inside (3.0f)
 			float amountOfProductionUsed = (wasteAmount / ActualProduction) * 100;
 			int percentage = (int)amountOfProductionUsed + ((amountOfProductionUsed - (int)amountOfProductionUsed) > 0 ? 1 : 0);
 			
@@ -1541,19 +1563,19 @@ namespace Beyond_Beyaan
 			}
 			if (InfrastructureAmount > 0)
 			{
-				if (InfrastructureTotal < populationMax * 2)
+				if (Factories < TotalMaxPopulation * 2)
 				{
-					float remaining = (populationMax * 2) - InfrastructureTotal;
+					float remaining = (TotalMaxPopulation * 2) - Factories;
 					float amountToBuild = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
 					if (amountToBuild > remaining)
 					{
-						InfrastructureTotal += remaining;
+						Factories += remaining;
 						amountToBuild -= remaining;
 						//TODO: add BC
 					}
 					else
 					{
-						InfrastructureTotal += amountToBuild;
+						Factories += amountToBuild;
 					}
 				}
 				else
@@ -1562,10 +1584,46 @@ namespace Beyond_Beyaan
 				}
 			}
 
+			float totalWasteThisTurn = _waste; //Start with any leftover waste from last turn
+			float factoriesOperated = TotalPopulation > (Factories / Owner.TechnologyManager.RoboticControls)
+										? Factories
+										: (TotalPopulation * Owner.TechnologyManager.RoboticControls);
+			totalWasteThisTurn += factoriesOperated * owner.TechnologyManager.IndustryWasteRate;
+			if (EnvironmentAmount > 0)
+			{
+				float amountOfBC = EnvironmentAmount * 0.01f * ActualProduction;
+				float wasteBCCleanup = totalWasteThisTurn / Owner.TechnologyManager.IndustryCleanupPerBC;
+
+				if (amountOfBC < wasteBCCleanup) //Polluting a bit
+				{
+					totalWasteThisTurn -= amountOfBC * Owner.TechnologyManager.IndustryCleanupPerBC;
+					_waste = totalWasteThisTurn;
+				}
+				else
+				{
+					amountOfBC -= wasteBCCleanup; //Use remaining funds for terraforming/pop growth
+					if (amountOfBC > 0)
+					{
+						//TODO: Add terraforming/pop growth
+						//if ()
+					}
+				}
+			}
+			else
+			{
+				//No cleanup at all, accumulate waste
+				_waste = totalWasteThisTurn;
+			}
+			if (_waste > populationMax - 10)
+			{
+				_waste = populationMax - 10;
+			}
+
+
 			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
 			foreach (Race race in races)
 			{
-				racePopulations[race] += (racePopulations[race] * (0.05f)) * (1 - (TotalPopulation / PopulationMax));
+				racePopulations[race] += CalculateRaceGrowth(race);
 			}
 
 			races.Sort((Race a, Race b) => { return (racePopulations[a].CompareTo(racePopulations[b])); });
@@ -1591,14 +1649,14 @@ namespace Beyond_Beyaan
 		{
 			if (InfrastructureAmount > 0)
 			{
-				if (InfrastructureTotal >= populationMax * 2)
+				if (Factories >= populationMax * 2)
 				{
 					AmountOfBuildingsThisTurn = 0; //Already reached the max
 					AmountOfBCGeneratedThisTurn = InfrastructureAmount * 0.01f * 0.5f * ActualProduction;
 				}
 				else
 				{
-					float amountRemaining = (populationMax * 2) - InfrastructureTotal;
+					float amountRemaining = (populationMax * 2) - Factories;
 					AmountOfBuildingsThisTurn = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
 					if (AmountOfBuildingsThisTurn > amountRemaining) //Will put some into reserve
 					{
@@ -1622,19 +1680,22 @@ namespace Beyond_Beyaan
 
 		private float CalculateTotalPopGrowth()
 		{
-			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
+			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity))
 			float popGrowth = 0;
 			foreach (Race race in races)
 			{
-				popGrowth += (racePopulations[race] * (0.05f)) * (1 - (TotalPopulation / PopulationMax));
+				popGrowth += CalculateRaceGrowth(race);
 			}
 
 			return popGrowth;
 		}
 
-		private float CalculateOptimalCleanEffort()
+		private float CalculateRaceGrowth(Race race)
 		{
-			return TotalPopulation / 2;
+			float pop = racePopulations[race];
+			pop = pop - (pop * ((_waste / populationMax) * 0.1f));
+			pop = pop + (racePopulations[race] * ((1 - (pop / TotalMaxPopulation)) * 0.1f));
+			return (pop - racePopulations[race]);
 		}
 
 		public float GetRacePopulation(Race whichRace)

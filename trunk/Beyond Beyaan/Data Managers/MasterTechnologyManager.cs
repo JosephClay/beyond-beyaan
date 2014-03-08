@@ -201,7 +201,7 @@ namespace Beyond_Beyaan.Data_Managers
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Controlled Radiated Environment", "Permits the colonization of radiated planets.", 18, colony: Technology.RADIATED_COLONY, genericCost: 500, genericSize: 700));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +40", "Increases the population capacity of planets by 40M for a cost of 4 BC per million.", 20, terraforming: 40));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Cloning", "Allows bio engineered colonists to be grown at a rate of 1M per 10 BC.", 21, cloning: 10));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Atmospheric Terraforming", "Converts hostile planets to standard minimal environments, normalizing population growth for a one time cost of 200 BC.", 22));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Atmospheric Terraforming", "Converts hostile planets to standard minimal environments, normalizing population growth for a one time cost of 200 BC.", 22, enrichment: Technology.ATMOSPHERIC_TERRAFORMING));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Advanced Ecological Restoration", "Eliminates 10 units of industrial waste for a cost of 1 BC.", 24, ecoCleanup: 10));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +50", "Increases the population capacity of planets by 50M for a cost of 3 BC per million.", 26, terraforming: 50));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Doom Virus", "Dreadful biological weapons capable of reducing planetary populations by 2 million per attack.", 27, bioWeapon: Technology.DOOM_VIRUS));

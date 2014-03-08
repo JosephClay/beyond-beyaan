@@ -630,7 +630,7 @@ namespace Beyond_Beyaan
 					writer.WriteAttributeString("Type", planet.PlanetTypeString);
 					writer.WriteAttributeString("Owner", planet.Owner == null ? "-1" : planet.Owner.EmpireID.ToString());
 					writer.WriteAttributeString("MaxPopulation", planet.PopulationMax.ToString());
-					writer.WriteAttributeString("Buildings", planet.InfrastructureTotal.ToString());
+					writer.WriteAttributeString("Buildings", planet.Factories.ToString());
 					writer.WriteAttributeString("EnvironmentPercentage", planet.EnvironmentAmount.ToString());
 					writer.WriteAttributeString("InfrastructurePercentage", planet.InfrastructureAmount.ToString());
 					writer.WriteAttributeString("DefensePercentage", planet.DefenseAmount.ToString());
@@ -707,7 +707,7 @@ namespace Beyond_Beyaan
 					float populationMax = float.Parse(planetElement.Attribute("MaxPopulation").Value);
 					var newPlanet = new Planet(planetName, type, populationMax, null, newStar, gameMain.Random);
 					newPlanet.OwnerID = owner;
-					newPlanet.InfrastructureTotal = float.Parse(planetElement.Attribute("Buildings").Value);
+					newPlanet.Factories = float.Parse(planetElement.Attribute("Buildings").Value);
 					newPlanet.EnvironmentAmount = int.Parse(planetElement.Attribute("EnvironmentPercentage").Value);
 					newPlanet.InfrastructureAmount = int.Parse(planetElement.Attribute("InfrastructurePercentage").Value);
 					newPlanet.DefenseAmount = int.Parse(planetElement.Attribute("DefensePercentage").Value);

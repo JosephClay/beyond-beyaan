@@ -54,6 +54,7 @@ namespace Beyond_Beyaan
 
 		public const int SOIL_ENRICHMENT = 1;
 		public const int ADV_SOIL_ENRICHMENT = 2;
+		public const int ATMOSPHERIC_TERRAFORMING = 3;
 
 		public const int BEAM_WEAPON = 1;
 		public const int BOMB_WEAPON = 2;
