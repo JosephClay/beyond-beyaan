@@ -176,8 +176,6 @@ namespace Beyond_Beyaan
 				return Math.Min(level, 99);
 			}
 		}
-		public int FuelRange { get; private set; }
-		public int RoboticControls { get; private set; }
 
 		public bool ComputerLocked { get; set; }
 		public bool ConstructionLocked { get; set; }
@@ -1056,11 +1054,21 @@ namespace Beyond_Beyaan
 			return total;
 		}
 
+		public int FuelRange { get; private set; }
+		public int RoboticControls { get; private set; }
+		public float IndustryWasteRate { get; private set; }
+		public int IndustryCleanupPerBC { get; private set; }
+		public bool HasAtmosphericTerraform { get; private set; }
+		public bool HasSoilEnrichment { get; private set; }
+		public bool HasAdvancedSoilEnrichment { get; private set; }
+
 		private void UpdateValues()
 		{
 			//After researching or obtaining a technology, update all values
 			FuelRange = 3;
 			RoboticControls = 2;
+			IndustryWasteRate = 1.0f;
+			IndustryCleanupPerBC = 2;
 			foreach (var tech in ResearchedPropulsionTechs)
 			{
 				if (tech.FuelRange > FuelRange)
@@ -1073,6 +1081,32 @@ namespace Beyond_Beyaan
 				if (tech.RoboticControl > RoboticControls)
 				{
 					RoboticControls = tech.RoboticControl;
+				}
+			}
+			foreach (var tech in ResearchedConstructionTechs)
+			{
+				if (tech.IndustrialWaste / 100.0f < IndustryWasteRate)
+				{
+					IndustryWasteRate = tech.IndustrialWaste / 100.0f;
+				}
+			}
+			foreach (var tech in ResearchedPlanetologyTechs)
+			{
+				if (tech.EcoCleanup > IndustryCleanupPerBC)
+				{
+					IndustryCleanupPerBC = tech.EcoCleanup;
+				}
+				if (tech.Enrichment == Technology.SOIL_ENRICHMENT)
+				{
+					HasSoilEnrichment = true;
+				}
+				if (tech.Enrichment == Technology.ADV_SOIL_ENRICHMENT)
+				{
+					HasAdvancedSoilEnrichment = true;
+				}
+				if (tech.Enrichment == Technology.ATMOSPHERIC_TERRAFORMING)
+				{
+					HasAtmosphericTerraform = true;
 				}
 			}
 		}
