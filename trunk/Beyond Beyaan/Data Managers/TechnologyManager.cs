@@ -1061,6 +1061,9 @@ namespace Beyond_Beyaan
 		public bool HasAtmosphericTerraform { get; private set; }
 		public bool HasSoilEnrichment { get; private set; }
 		public bool HasAdvancedSoilEnrichment { get; private set; }
+		public int MaxTerraformPop { get; private set; }
+		public int TerraformCost { get; private set; }
+		public int CloningCost { get; private set; }
 
 		private void UpdateValues()
 		{
@@ -1069,6 +1072,9 @@ namespace Beyond_Beyaan
 			RoboticControls = 2;
 			IndustryWasteRate = 1.0f;
 			IndustryCleanupPerBC = 2;
+			MaxTerraformPop = 0;
+			TerraformCost = 6;
+			CloningCost = 20;
 			foreach (var tech in ResearchedPropulsionTechs)
 			{
 				if (tech.FuelRange > FuelRange)
@@ -1107,6 +1113,18 @@ namespace Beyond_Beyaan
 				if (tech.Enrichment == Technology.ATMOSPHERIC_TERRAFORMING)
 				{
 					HasAtmosphericTerraform = true;
+				}
+				if (tech.Terraforming > MaxTerraformPop)
+				{
+					MaxTerraformPop = tech.Terraforming;
+				}
+				if (tech.TerraformCost < TerraformCost)
+				{
+					TerraformCost = tech.TerraformCost;
+				}
+				if (tech.Cloning < CloningCost)
+				{
+					CloningCost = tech.Cloning;
 				}
 			}
 		}
