@@ -31,12 +31,14 @@ namespace Beyond_Beyaan
 		private const string JUNGLE = "Jungle";
 		private const string TERRAN = "Terran";
 		#endregion
+
 		#region Member Variables
 		private StarSystem whichSystem;
 		private PLANET_TYPE planetType;
 		private string planetTypeString;
 		private Empire owner;
 		string name;
+		private float _factoryInvestments; //Amount of BCs spent to determine if we need to refit or not
 		private float _terraformProjectRevenues;
 		private float _terraformPop;
 		private float populationMax;
@@ -213,6 +215,7 @@ namespace Beyond_Beyaan
 		}
 
 		public float ShipConstructionAmount { get; set; }
+		public float AmountLostToRefitThisTurn { get; set; }
 		public float AmountOfBuildingsThisTurn { get; set; }
 		public float AmountOfBCGeneratedThisTurn { get; set; }
 		public float AmountOfRPGeneratedThisTurn { get; set; }
@@ -229,21 +232,19 @@ namespace Beyond_Beyaan
 			{
 				if (InfrastructureAmount > 0)
 				{
+					if (AmountLostToRefitThisTurn > 0)
+					{
+						return "Refitting Buildings";
+					}
 					if (AmountOfBuildingsThisTurn > 0)
 					{
 						if (AmountOfBCGeneratedThisTurn == 0)
 						{
-							return string.Format("{0} (+{1:0.0}) Buildings", (int)Factories, AmountOfBuildingsThisTurn);	
+							return string.Format("{0} (+{1:0.0}) Buildings", (int)Factories, AmountOfBuildingsThisTurn);
 						}
-						else
-						{
-							return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)Factories, AmountOfBuildingsThisTurn, AmountOfBCGeneratedThisTurn);
-						}
+						return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)Factories, AmountOfBuildingsThisTurn, AmountOfBCGeneratedThisTurn);
 					}
-					else
-					{
-						return string.Format("{0} Buildings (+{1:0.0} BC)", (int)Factories, AmountOfBCGeneratedThisTurn);
-					}					
+					return string.Format("{0} Buildings (+{1:0.0} BC)", (int)Factories, AmountOfBCGeneratedThisTurn);
 				}
 				return string.Format("{0} Buildings", (int)Factories);
 			}
@@ -1561,28 +1562,10 @@ namespace Beyond_Beyaan
 			{
 				ShipConstructionAmount += ConstructionAmount * 0.01f * ActualProduction;
 			}
-			if (InfrastructureAmount > 0)
-			{
-				if (Factories < TotalMaxPopulation * 2)
-				{
-					float remaining = (TotalMaxPopulation * 2) - Factories;
-					float amountToBuild = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
-					if (amountToBuild > remaining)
-					{
-						Factories += remaining;
-						amountToBuild -= remaining;
-						owner.Reserves += amountToBuild * 5; //Lose half to corruption
-					}
-					else
-					{
-						Factories += amountToBuild;
-					}
-				}
-				else
-				{
-					owner.Reserves += (InfrastructureAmount * 0.01f * ActualProduction) / 2; //Lose half to corruption
-				}
-			}
+
+			Factories += AmountOfBuildingsThisTurn;
+			_factoryInvestments += AmountLostToRefitThisTurn;
+			_factoryInvestments += AmountOfBuildingsThisTurn * owner.TechnologyManager.FactoryCost;
 
 			float totalWasteThisTurn = _waste; //Start with any leftover waste from last turn
 			float factoriesOperated = TotalPopulation > (Factories / Owner.TechnologyManager.RoboticControls)
@@ -1713,14 +1696,12 @@ namespace Beyond_Beyaan
 				_waste = populationMax - 10;
 			}
 
-
-			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity)) with foodModifier in place of 1
 			foreach (Race race in races)
 			{
 				racePopulations[race] += CalculateRaceGrowth(race);
 			}
 
-			races.Sort((Race a, Race b) => { return (racePopulations[a].CompareTo(racePopulations[b])); });
+			races.Sort((a, b) => { return (racePopulations[a].CompareTo(racePopulations[b])); });
 		}
 
 		public Ship CheckIfShipBuilt(out int amount)
@@ -1743,19 +1724,34 @@ namespace Beyond_Beyaan
 		{
 			if (InfrastructureAmount > 0)
 			{
-				if (Factories >= populationMax * 2)
+				float amountOfBC = (InfrastructureAmount * 0.01f * ActualProduction);
+				if (Factories * owner.TechnologyManager.FactoryCost < _factoryInvestments)
 				{
-					AmountOfBuildingsThisTurn = 0; //Already reached the max
-					AmountOfBCGeneratedThisTurn = InfrastructureAmount * 0.01f * 0.5f * ActualProduction;
-				}
-				else
-				{
-					float amountRemaining = (populationMax * 2) - Factories;
-					AmountOfBuildingsThisTurn = (InfrastructureAmount * 0.01f * ActualProduction) / 10;
-					if (AmountOfBuildingsThisTurn > amountRemaining) //Will put some into reserve
+					//We need to refit
+					AmountLostToRefitThisTurn = amountOfBC / owner.TechnologyManager.FactoryDiscount; //adjust the BC spending to match factory cost, i.e. if 5 bc per factory, it is now 10 bc with 5 actual bcs
+					if (_factoryInvestments + AmountLostToRefitThisTurn >= Factories * owner.TechnologyManager.FactoryCost)
 					{
-						AmountOfBCGeneratedThisTurn = (AmountOfBuildingsThisTurn - amountRemaining) * 5;
-						AmountOfBuildingsThisTurn = amountRemaining;
+						AmountLostToRefitThisTurn = (_factoryInvestments + AmountLostToRefitThisTurn) - (Factories * owner.TechnologyManager.FactoryCost);
+					}
+					amountOfBC -= (AmountLostToRefitThisTurn * owner.TechnologyManager.FactoryDiscount);
+				}
+				if (amountOfBC  > 0)
+				{
+					if (Factories >= populationMax * owner.TechnologyManager.RoboticControls)
+					{
+						AmountOfBuildingsThisTurn = 0; //Already reached the max
+						AmountOfBCGeneratedThisTurn = amountOfBC * 0.5f; //Lose half to corruption
+					}
+					else
+					{
+						float amountRemaining = (TotalMaxPopulation * owner.TechnologyManager.RoboticControls) - Factories;
+						float adjustedBC = amountOfBC / owner.TechnologyManager.FactoryDiscount;
+						AmountOfBuildingsThisTurn = adjustedBC / owner.TechnologyManager.FactoryCost;
+						if (AmountOfBuildingsThisTurn > amountRemaining) //Will put some into reserve
+						{
+							AmountOfBCGeneratedThisTurn = (AmountOfBuildingsThisTurn - amountRemaining) * 5;
+							AmountOfBuildingsThisTurn = amountRemaining;
+						}
 					}
 				}
 			}

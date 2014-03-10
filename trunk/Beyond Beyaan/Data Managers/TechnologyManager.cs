@@ -1056,6 +1056,8 @@ namespace Beyond_Beyaan
 
 		public int FuelRange { get; private set; }
 		public int RoboticControls { get; private set; }
+		public int FactoryCost { get; private set; }
+		public float FactoryDiscount { get; private set; }
 		public float IndustryWasteRate { get; private set; }
 		public int IndustryCleanupPerBC { get; private set; }
 		public bool HasAtmosphericTerraform { get; private set; }
@@ -1075,6 +1077,8 @@ namespace Beyond_Beyaan
 			MaxTerraformPop = 0;
 			TerraformCost = 6;
 			CloningCost = 20;
+			FactoryCost = 10;
+			FactoryDiscount = 10;
 			foreach (var tech in ResearchedPropulsionTechs)
 			{
 				if (tech.FuelRange > FuelRange)
@@ -1087,6 +1091,7 @@ namespace Beyond_Beyaan
 				if (tech.RoboticControl > RoboticControls)
 				{
 					RoboticControls = tech.RoboticControl;
+					FactoryCost = RoboticControls * 5;
 				}
 			}
 			foreach (var tech in ResearchedConstructionTechs)
@@ -1095,7 +1100,13 @@ namespace Beyond_Beyaan
 				{
 					IndustryWasteRate = tech.IndustrialWaste / 100.0f;
 				}
+				if (tech.IndustrialTech < FactoryDiscount)
+				{
+					FactoryDiscount = tech.IndustrialTech;
+				}
 			}
+			//Convert FactoryDiscount to a decimal for less math later on
+			FactoryDiscount *= 0.1f;
 			foreach (var tech in ResearchedPlanetologyTechs)
 			{
 				if (tech.EcoCleanup > IndustryCleanupPerBC)
