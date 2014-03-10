@@ -185,35 +185,35 @@ namespace Beyond_Beyaan.Data_Managers
 		{
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Standard Colony Base", "Permits the colonization of standard planets.", 1, colony: Technology.STANDARD_COLONY, genericCost: 350, genericSize: 700));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Ecological Restoration", "Eliminates 2 units of industrial waste for a cost of 1 BC.", 1, ecoCleanup: 2));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +10", "Increases the population capacity of planets by 10M for a cost of 5 BC per million.", 2, terraforming: 10));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +10", "Increases the population capacity of planets by 10M for a cost of 5 BC per million.", 2, terraforming: 10, terraformCost: 5));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Controlled Barren Environment", "Permits the colonization of barren planets.", 3, colony: Technology.BARREN_COLONY, genericCost: 375, genericSize: 700));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Improved Ecological Restoration", "Eliminates 3 units of industrial waste for a cost of 1 BC.", 5, ecoCleanup: 3));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Controlled Tundra Environment", "Permits the colonization of tundra planets.", 6, colony: Technology.TUNDRA_COLONY, genericCost: 400, genericSize: 700));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +20", "Increases the population capacity of planets by 20M for a cost of 5 BC per million.", 8, terraforming: 20));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +20", "Increases the population capacity of planets by 20M for a cost of 5 BC per million.", 8, terraforming: 20, terraformCost: 5));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Controlled Dead Environment", "Permits the colonization of dead planets.", 9, colony: Technology.DEAD_COLONY, genericCost: 425, genericSize: 700));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Death Spores", "Horrible biological weapons capable of reducing the maximum planetary populations by 1 million per attack.", 10, bioWeapon: Technology.DEATH_SPORES));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Controlled Inferno Environment", "Permits the colonization of inferno planets.", 12, colony: Technology.VOLCANIC_COLONY, genericCost: 450, genericSize: 700));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Enhanced Ecological Restoration", "Eliminates 5 units of industrial waste for a cost of 1 BC.", 13, ecoCleanup: 5));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +30", "Increases the population capacity of planets by 30M for a cost of 4 BC per million.", 14, terraforming: 30));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +30", "Increases the population capacity of planets by 30M for a cost of 4 BC per million.", 14, terraforming: 30, terraformCost: 4));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Controlled Toxic Environment", "Permits the colonization of toxic planets.", 15, colony: Technology.TOXIC_COLONY, genericCost: 475, genericSize: 700));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Soil Enrichment", "Converts standard planets to fertile enviroments, increasing population growth by 50% and raising the base planetary size by 25% for a one time cost of 150 BC.", 16, enrichment: Technology.SOIL_ENRICHMENT));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Bio Toxin Antidote", "Reduces casualties taken from biological weapons by 1 million per attack.", 17, bioAntidote: Technology.BIO_TOXIN_ANTIDOTE));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Controlled Radiated Environment", "Permits the colonization of radiated planets.", 18, colony: Technology.RADIATED_COLONY, genericCost: 500, genericSize: 700));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +40", "Increases the population capacity of planets by 40M for a cost of 4 BC per million.", 20, terraforming: 40));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +40", "Increases the population capacity of planets by 40M for a cost of 4 BC per million.", 20, terraforming: 40, terraformCost: 4));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Cloning", "Allows bio engineered colonists to be grown at a rate of 1M per 10 BC.", 21, cloning: 10));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Atmospheric Terraforming", "Converts hostile planets to standard minimal environments, normalizing population growth for a one time cost of 200 BC.", 22, enrichment: Technology.ATMOSPHERIC_TERRAFORMING));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Advanced Ecological Restoration", "Eliminates 10 units of industrial waste for a cost of 1 BC.", 24, ecoCleanup: 10));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +50", "Increases the population capacity of planets by 50M for a cost of 3 BC per million.", 26, terraforming: 50));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +50", "Increases the population capacity of planets by 50M for a cost of 3 BC per million.", 26, terraforming: 50, terraformCost: 3));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Doom Virus", "Dreadful biological weapons capable of reducing planetary populations by 2 million per attack.", 27, bioWeapon: Technology.DOOM_VIRUS));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Advanced Soil Enrichment", "Converts standard and fertile planets to gaias, doubling the population growth and increasing the planet's base size by 50% for the one time cost of 300 BC.", 30, enrichment: Technology.ADV_SOIL_ENRICHMENT));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +60", "Increases the population capacity of planets by 60M for a cost of 3 BC per million.", 32, terraforming: 60));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +60", "Increases the population capacity of planets by 60M for a cost of 3 BC per million.", 32, terraforming: 60, terraformCost: 3));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Complete Ecological Restoration", "Eliminates 20 units of industrial waste for a cost of 1 BC.", 34, ecoCleanup: 20));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Universal Antidote", "Reduces casualties taken from biological weapons by 2 million per attack.", 36, bioAntidote: Technology.UNIVERSAL_ANTIDOTE));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +80", "Increases the population capacity of planets by 80M for a cost of 2 BC per million.", 38, terraforming: 80));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +80", "Increases the population capacity of planets by 80M for a cost of 2 BC per million.", 38, terraforming: 80, terraformCost: 2));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Bio Terminator", "Abominable biological weapons capable of reducing planetary populations by 3 million per attack.", 40, bioWeapon: Technology.BIO_TERMINATOR));
 			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Advanced Cloning", "Allows bio engineered colonists to be grown at a rate of 1M per 5 BC.", 42, cloning: 5));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +100", "Increases the population capacity of planets by 100M for a cost of 2 BC per million.", 44, terraforming: 100));
-			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Complete Terraforming", "Increases the population capacity of planets by 120M for a cost of 2 BC per million.", 50, terraforming: 120));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Terraforming +100", "Increases the population capacity of planets by 100M for a cost of 2 BC per million.", 44, terraforming: 100, terraformCost: 2));
+			PlanetologyTechs.Add(new Technology(TechField.PLANETOLOGY, "Complete Terraforming", "Increases the population capacity of planets by 120M for a cost of 2 BC per million.", 50, terraforming: 120, terraformCost: 2));
 		}
 
 		private void LoadPropulsionTechs()

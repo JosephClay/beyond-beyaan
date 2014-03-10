@@ -88,6 +88,7 @@ namespace Beyond_Beyaan
 		public int MissileShield { get; private set; }
 		public int EcoCleanup { get; private set; }
 		public int Terraforming { get; private set; }
+		public int TerraformCost { get; private set; }
 		public int Colony { get; private set; }
 		public int Cloning { get; private set; }
 		public int BioWeapon { get; private set; }
@@ -212,6 +213,7 @@ namespace Beyond_Beyaan
 						bool blackHoleGenerator = false,
 						int ecoCleanup = 0,
 						int terraforming = 0,
+						int terraformCost = 6,
 						int colony = 0,
 						int cloning = 20,
 						int bioWeapon = 0,
@@ -317,6 +319,7 @@ namespace Beyond_Beyaan
 			BlackHoleGenerator = blackHoleGenerator;
 			EcoCleanup = ecoCleanup;
 			Terraforming = terraforming;
+			TerraformCost = terraformCost;
 			Colony = colony;
 			Cloning = cloning;
 			BioWeapon = bioWeapon;
