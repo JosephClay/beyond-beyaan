@@ -220,6 +220,8 @@ namespace Beyond_Beyaan
 		public float AmountOfBCGeneratedThisTurn { get; set; }
 		public float AmountOfRPGeneratedThisTurn { get; set; }
 		public float AmountOfWasteCleanupNeeded { get; set; }
+		public float TerraformProjectInvestment { get; set; }
+		public float ExtraPopulationCloned { get; set; }
 
 		public PLANET_CONSTRUCTION_BONUS ConstructionBonus { get; private set; }
 		public PLANET_ENVIRONMENT_BONUS EnvironmentBonus { get; private set; }
@@ -271,15 +273,30 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				/*float increaseAmount = CalculateMaxPopGrowth();
-				if (increaseAmount < 0)
+				if (AmountOfWasteCleanupNeeded > 0)
 				{
-					return String.Format("Polluting ({0:0.00} Max Pop)", increaseAmount);
+					return "Polluting";
 				}
-				if (increaseAmount > 0.05f)
+				if (TerraformProjectInvestment > 0)
 				{
-					return String.Format("Terraforming ({0:0.00} Max Pop)", increaseAmount);
-				}*/
+					if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.HOSTILE)
+					{
+						return "Atmospheric Terraforming";
+					}
+					if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE && owner.TechnologyManager.HasSoilEnrichment)
+					{
+						return "Soil Enriching";
+					}
+					if (EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.GAIA && owner.TechnologyManager.HasAdvancedSoilEnrichment)
+					{
+						return "Gaia Terraforming";
+					}
+					return "Terraforming";
+				}
+				if (ExtraPopulationCloned > 0)
+				{
+					return string.Format("+{0:0.0} Population", ExtraPopulationCloned);
+				}
 				return "Clean";
 			}
 		}
@@ -1567,133 +1584,118 @@ namespace Beyond_Beyaan
 			_factoryInvestments += AmountLostToRefitThisTurn;
 			_factoryInvestments += AmountOfBuildingsThisTurn * owner.TechnologyManager.FactoryCost;
 
-			float totalWasteThisTurn = _waste; //Start with any leftover waste from last turn
-			float factoriesOperated = TotalPopulation > (Factories / Owner.TechnologyManager.RoboticControls)
-										? Factories
-										: (TotalPopulation * Owner.TechnologyManager.RoboticControls);
-			totalWasteThisTurn += factoriesOperated * owner.TechnologyManager.IndustryWasteRate;
-			if (EnvironmentAmount > 0)
+			_waste = AmountOfWasteCleanupNeeded;
+			if (_waste > PopulationMax - 10)
 			{
-				float amountOfBC = EnvironmentAmount * 0.01f * ActualProduction;
-				float wasteBCCleanup = totalWasteThisTurn / Owner.TechnologyManager.IndustryCleanupPerBC;
-
-				if (amountOfBC < wasteBCCleanup) //Polluting a bit
+				_waste = PopulationMax - 10;
+			}
+			
+			if (TerraformProjectInvestment > 0)
+			{
+				if (owner.TechnologyManager.HasAtmosphericTerraform && (planetType == PLANET_TYPE.RADIATED ||
+					planetType == PLANET_TYPE.TOXIC || planetType == PLANET_TYPE.VOLCANIC || planetType == PLANET_TYPE.DEAD ||
+					planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.BARREN))
 				{
-					totalWasteThisTurn -= amountOfBC * Owner.TechnologyManager.IndustryCleanupPerBC;
-					_waste = totalWasteThisTurn;
-				}
-				else
-				{
-					amountOfBC -= wasteBCCleanup; //Use remaining funds for terraforming/pop growth
-					if (amountOfBC > 0)
+					//Invest into changing this to Arctic planet
+					_terraformProjectRevenues += TerraformProjectInvestment;
+					TerraformProjectInvestment = 0;
+					if (_terraformProjectRevenues >= 200) //Converted to Arctic
 					{
-						if (owner.TechnologyManager.HasAtmosphericTerraform && (planetType == PLANET_TYPE.RADIATED ||
-							planetType == PLANET_TYPE.TOXIC || planetType == PLANET_TYPE.VOLCANIC || planetType == PLANET_TYPE.DEAD ||
-							planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.BARREN))
+						_terraformProjectRevenues -= 200;
+						if (planetType == PLANET_TYPE.BARREN || planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.DEAD)
 						{
-							//Invest into changing this to Arctic planet
-							_terraformProjectRevenues += amountOfBC;
-							amountOfBC = 0;
-							if (_terraformProjectRevenues >= 200) //Converted to Arctic
-							{
-								_terraformProjectRevenues -= 200;
-								if (planetType == PLANET_TYPE.BARREN || planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.DEAD)
-								{
-									populationMax += 10;
-								}
-								else
-								{
-									populationMax += 20;
-								}
-								planetType = PLANET_TYPE.ARCTIC;
-								EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
-								amountOfBC = _terraformProjectRevenues; //Roll over into next terraforming project
-								_terraformProjectRevenues = 0;
-							}
+							populationMax += 10;
 						}
-					}
-					if (amountOfBC > 0)
-					{
-						//Handle soil/advanced soil enrichment here
-						if ((owner.TechnologyManager.HasSoilEnrichment || owner.TechnologyManager.HasAdvancedSoilEnrichment) && !(planetType == PLANET_TYPE.RADIATED ||
-							planetType == PLANET_TYPE.TOXIC || planetType == PLANET_TYPE.VOLCANIC || planetType == PLANET_TYPE.DEAD ||
-							planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.BARREN))
+						else
 						{
-							if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE)
+							populationMax += 20;
+						}
+						planetType = PLANET_TYPE.ARCTIC;
+						EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
+						TerraformProjectInvestment = _terraformProjectRevenues; //Roll over into next terraforming project
+						_terraformProjectRevenues = 0;
+					}
+				}
+				if (TerraformProjectInvestment > 0)
+				{
+					//Handle soil/advanced soil enrichment here
+					if ((owner.TechnologyManager.HasSoilEnrichment || owner.TechnologyManager.HasAdvancedSoilEnrichment) && !(planetType == PLANET_TYPE.RADIATED ||
+						planetType == PLANET_TYPE.TOXIC || planetType == PLANET_TYPE.VOLCANIC || planetType == PLANET_TYPE.DEAD ||
+						planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.BARREN))
+					{
+						if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE)
+						{
+							_terraformProjectRevenues += TerraformProjectInvestment;
+							TerraformProjectInvestment = 0;
+							if (_terraformProjectRevenues >= 150)
 							{
-								_terraformProjectRevenues += amountOfBC;
-								amountOfBC = 0;
-								if (_terraformProjectRevenues >= 150)
+								//it is now fertile
+								EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
+								_terraformProjectRevenues -= 150;
+								//TODO: Max Pop increase here
+								if (!owner.TechnologyManager.HasAdvancedSoilEnrichment)
 								{
-									//it is now fertile
-									EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
-									_terraformProjectRevenues -= 150;
-									//TODO: Max Pop increase here
-									if (!owner.TechnologyManager.HasAdvancedSoilEnrichment)
-									{
-										amountOfBC = _terraformProjectRevenues; //Stop at fertile, not gaia, and roll over BCs into terraforming
-										_terraformProjectRevenues = 0;
-										//Event notification here
-									}
-								}
-							}
-							if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.FERTILE && owner.TechnologyManager.HasAdvancedSoilEnrichment)
-							{
-								//Gaia development here
-								_terraformProjectRevenues += amountOfBC;
-								amountOfBC = 0;
-								if (_terraformProjectRevenues >= 150) //Already deducted 150 for Fertile process
-								{
-									EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.GAIA;
-									_terraformProjectRevenues -= 150;
-									//TODO: Max Pop increase here
-									amountOfBC = _terraformProjectRevenues;
-									_terraformProjectRevenues = 0; //No more projects at this point, only terraforming
+									TerraformProjectInvestment = _terraformProjectRevenues; //Stop at fertile, not gaia, and roll over BCs into terraforming
+									_terraformProjectRevenues = 0;
 									//Event notification here
 								}
 							}
 						}
-					}
-					if (amountOfBC > 0)
-					{
-						//Handle terraforming and pop growth here
-						if (_terraformPop < owner.TechnologyManager.MaxTerraformPop)
+						if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.FERTILE && owner.TechnologyManager.HasAdvancedSoilEnrichment)
 						{
-							_terraformPop += amountOfBC / owner.TechnologyManager.TerraformCost;
-							if (_terraformPop >= owner.TechnologyManager.MaxTerraformPop)
+							//Gaia development here
+							_terraformProjectRevenues += TerraformProjectInvestment;
+							TerraformProjectInvestment = 0;
+							if (_terraformProjectRevenues >= 150) //Already deducted 150 for Fertile process
 							{
-								float excess = _terraformPop - owner.TechnologyManager.MaxTerraformPop;
-								_terraformPop = owner.TechnologyManager.MaxTerraformPop;
-								amountOfBC = excess * owner.TechnologyManager.TerraformCost;
+								EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.GAIA;
+								_terraformProjectRevenues -= 150;
+								//TODO: Max Pop increase here
+								TerraformProjectInvestment = _terraformProjectRevenues;
+								_terraformProjectRevenues = 0; //No more projects at this point, only terraforming
 								//Event notification here
-							}
-						}
-						if (amountOfBC > 0)
-						{
-							//Finally add population
-							float amountOfIncrease = amountOfBC / owner.TechnologyManager.CloningCost;
-							float totalPop = TotalPopulation;
-							if (totalPop + amountOfIncrease > TotalMaxPopulation)
-							{
-								amountOfIncrease = TotalMaxPopulation - totalPop;
-								//Excess BC are wasted, matching MoO 1's handling
-							}
-							foreach (var race in racePopulations)
-							{
-								racePopulations[race.Key] += amountOfIncrease * (race.Value / totalPop);
 							}
 						}
 					}
 				}
+				if (TerraformProjectInvestment > 0)
+				{
+					//Handle terraforming and pop growth here
+					if (_terraformPop < owner.TechnologyManager.MaxTerraformPop)
+					{
+						_terraformPop += TerraformProjectInvestment / owner.TechnologyManager.TerraformCost;
+						if (_terraformPop >= owner.TechnologyManager.MaxTerraformPop)
+						{
+							float excess = _terraformPop - owner.TechnologyManager.MaxTerraformPop;
+							_terraformPop = owner.TechnologyManager.MaxTerraformPop;
+							TerraformProjectInvestment = excess * owner.TechnologyManager.TerraformCost;
+							//Event notification here
+						}
+					}
+					if (TerraformProjectInvestment > 0)
+					{
+						//Finally add population
+						float amountOfIncrease = TerraformProjectInvestment / owner.TechnologyManager.CloningCost;
+						float totalPop = TotalPopulation;
+						if (totalPop + amountOfIncrease > TotalMaxPopulation)
+						{
+							amountOfIncrease = TotalMaxPopulation - totalPop;
+							//Excess BC are wasted, matching MoO 1's handling
+						}
+						foreach (var race in racePopulations)
+						{
+							racePopulations[race.Key] += amountOfIncrease * (race.Value / totalPop);
+						}
+					}
+				}
 			}
-			else
+			if (ExtraPopulationCloned > 0)
 			{
-				//No cleanup at all, accumulate waste
-				_waste = totalWasteThisTurn;
-			}
-			if (_waste > populationMax - 10)
-			{
-				_waste = populationMax - 10;
+				float totalPop = TotalPopulation;
+				foreach (var race in racePopulations)
+				{
+					racePopulations[race.Key] += ExtraPopulationCloned * (race.Value / totalPop);
+				}
 			}
 
 			foreach (Race race in races)
@@ -1722,6 +1724,7 @@ namespace Beyond_Beyaan
 
 		public void UpdateOutputs() //After the Empire class updates the planet's production, this is called to update values
 		{
+			#region Infrastructure Output
 			if (InfrastructureAmount > 0)
 			{
 				float amountOfBC = (InfrastructureAmount * 0.01f * ActualProduction);
@@ -1760,6 +1763,50 @@ namespace Beyond_Beyaan
 				//No output at all in this field
 				AmountOfBuildingsThisTurn = 0;
 				AmountOfBCGeneratedThisTurn = 0;
+			}
+			#endregion
+
+			AmountOfWasteCleanupNeeded = _waste; //Start with any leftover waste from last turn
+			float factoriesOperated = TotalPopulation > (Factories / Owner.TechnologyManager.RoboticControls)
+										? Factories
+										: (TotalPopulation * Owner.TechnologyManager.RoboticControls);
+			AmountOfWasteCleanupNeeded += factoriesOperated * owner.TechnologyManager.IndustryWasteRate;
+			TerraformProjectInvestment = 0;
+			ExtraPopulationCloned = 0;
+			if (EnvironmentAmount > 0)
+			{
+				float amountOfBC = EnvironmentAmount * 0.01f * ActualProduction;
+				float wasteBCCleanup = AmountOfWasteCleanupNeeded / Owner.TechnologyManager.IndustryCleanupPerBC;
+
+				if (amountOfBC < wasteBCCleanup) //Polluting a bit
+				{
+					AmountOfWasteCleanupNeeded -= amountOfBC * Owner.TechnologyManager.IndustryCleanupPerBC;
+				}
+				else
+				{
+					AmountOfWasteCleanupNeeded = 0;
+					amountOfBC -= wasteBCCleanup; //Use remaining funds for terraforming/pop growth
+					if (amountOfBC > 0)
+					{
+						if (owner.TechnologyManager.HasAtmosphericTerraform && EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.HOSTILE ||
+							owner.TechnologyManager.HasSoilEnrichment && EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE ||
+							owner.TechnologyManager.HasAdvancedSoilEnrichment && EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.GAIA ||
+							_terraformPop < owner.TechnologyManager.MaxTerraformPop)
+						{
+							//Invest into improving the planet
+							TerraformProjectInvestment += amountOfBC;
+						}
+						else
+						{
+							//Grow some more people
+							ExtraPopulationCloned = amountOfBC / owner.TechnologyManager.CloningCost;
+							if (TotalMaxPopulation < ExtraPopulationCloned + TotalPopulation)
+							{
+								ExtraPopulationCloned = TotalMaxPopulation - (ExtraPopulationCloned + TotalMaxPopulation);
+							}
+						}
+					}
+				}
 			}
 
 			if (ResearchAmount > 0)
