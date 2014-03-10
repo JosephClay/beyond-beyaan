@@ -1066,6 +1066,8 @@ namespace Beyond_Beyaan
 		public int MaxTerraformPop { get; private set; }
 		public int TerraformCost { get; private set; }
 		public int CloningCost { get; private set; }
+		public float MissileBaseCost { get; private set; }
+		public float MissileBaseCostInNebula { get; private set; } //No shields in Nebula, so factor in that (unlike MoO 1)
 
 		private void UpdateValues()
 		{
