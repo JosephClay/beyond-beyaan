@@ -1604,8 +1604,32 @@ namespace Beyond_Beyaan
 					amountOfBC -= wasteBCCleanup; //Use remaining funds for terraforming/pop growth
 					if (amountOfBC > 0)
 					{
-						//TODO: Add terraforming/pop growth
-						//if ()
+						if (owner.TechnologyManager.HasAtmosphericTerraform && (planetType == PLANET_TYPE.RADIATED ||
+							planetType == PLANET_TYPE.TOXIC || planetType == PLANET_TYPE.VOLCANIC || planetType == PLANET_TYPE.DEAD ||
+							planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.BARREN))
+						{
+							//Invest into changing this to Arctic planet
+							_terraformProjectRevenues += amountOfBC;
+							if (_terraformProjectRevenues >= 200) //Converted to Arctic
+							{
+								_terraformProjectRevenues -= 200;
+								if (planetType == PLANET_TYPE.BARREN || planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.DEAD)
+								{
+									populationMax += 10;
+								}
+								else
+								{
+									populationMax += 20;
+								}
+								planetType = PLANET_TYPE.ARCTIC;
+								EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
+							}
+							amountOfBC = _terraformProjectRevenues; //Roll over into next terraforming project
+						}
+					}
+					if (amountOfBC > 0)
+					{
+						
 					}
 				}
 			}
