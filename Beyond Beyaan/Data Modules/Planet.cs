@@ -1571,7 +1571,7 @@ namespace Beyond_Beyaan
 					{
 						Factories += remaining;
 						amountToBuild -= remaining;
-						//TODO: add BC
+						owner.Reserves += amountToBuild * 5; //Lose half to corruption
 					}
 					else
 					{
@@ -1580,7 +1580,7 @@ namespace Beyond_Beyaan
 				}
 				else
 				{
-					//TODO: add BC
+					owner.Reserves += (InfrastructureAmount * 0.01f * ActualProduction) / 2; //Lose half to corruption
 				}
 			}
 
@@ -1610,6 +1610,7 @@ namespace Beyond_Beyaan
 						{
 							//Invest into changing this to Arctic planet
 							_terraformProjectRevenues += amountOfBC;
+							amountOfBC = 0;
 							if (_terraformProjectRevenues >= 200) //Converted to Arctic
 							{
 								_terraformProjectRevenues -= 200;
@@ -1623,13 +1624,82 @@ namespace Beyond_Beyaan
 								}
 								planetType = PLANET_TYPE.ARCTIC;
 								EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
+								amountOfBC = _terraformProjectRevenues; //Roll over into next terraforming project
+								_terraformProjectRevenues = 0;
 							}
-							amountOfBC = _terraformProjectRevenues; //Roll over into next terraforming project
 						}
 					}
 					if (amountOfBC > 0)
 					{
-						
+						//Handle soil/advanced soil enrichment here
+						if ((owner.TechnologyManager.HasSoilEnrichment || owner.TechnologyManager.HasAdvancedSoilEnrichment) && !(planetType == PLANET_TYPE.RADIATED ||
+							planetType == PLANET_TYPE.TOXIC || planetType == PLANET_TYPE.VOLCANIC || planetType == PLANET_TYPE.DEAD ||
+							planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.BARREN))
+						{
+							if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE)
+							{
+								_terraformProjectRevenues += amountOfBC;
+								amountOfBC = 0;
+								if (_terraformProjectRevenues >= 150)
+								{
+									//it is now fertile
+									EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
+									_terraformProjectRevenues -= 150;
+									//TODO: Max Pop increase here
+									if (!owner.TechnologyManager.HasAdvancedSoilEnrichment)
+									{
+										amountOfBC = _terraformProjectRevenues; //Stop at fertile, not gaia, and roll over BCs into terraforming
+										_terraformProjectRevenues = 0;
+										//Event notification here
+									}
+								}
+							}
+							if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.FERTILE && owner.TechnologyManager.HasAdvancedSoilEnrichment)
+							{
+								//Gaia development here
+								_terraformProjectRevenues += amountOfBC;
+								amountOfBC = 0;
+								if (_terraformProjectRevenues >= 150) //Already deducted 150 for Fertile process
+								{
+									EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.GAIA;
+									_terraformProjectRevenues -= 150;
+									//TODO: Max Pop increase here
+									amountOfBC = _terraformProjectRevenues;
+									_terraformProjectRevenues = 0; //No more projects at this point, only terraforming
+									//Event notification here
+								}
+							}
+						}
+					}
+					if (amountOfBC > 0)
+					{
+						//Handle terraforming and pop growth here
+						if (_terraformPop < owner.TechnologyManager.MaxTerraformPop)
+						{
+							_terraformPop += amountOfBC / owner.TechnologyManager.TerraformCost;
+							if (_terraformPop >= owner.TechnologyManager.MaxTerraformPop)
+							{
+								float excess = _terraformPop - owner.TechnologyManager.MaxTerraformPop;
+								_terraformPop = owner.TechnologyManager.MaxTerraformPop;
+								amountOfBC = excess * owner.TechnologyManager.TerraformCost;
+								//Event notification here
+							}
+						}
+						if (amountOfBC > 0)
+						{
+							//Finally add population
+							float amountOfIncrease = amountOfBC / owner.TechnologyManager.CloningCost;
+							float totalPop = TotalPopulation;
+							if (totalPop + amountOfIncrease > TotalMaxPopulation)
+							{
+								amountOfIncrease = TotalMaxPopulation - totalPop;
+								//Excess BC are wasted, matching MoO 1's handling
+							}
+							foreach (var race in racePopulations)
+							{
+								racePopulations[race.Key] += amountOfIncrease * (race.Value / totalPop);
+							}
+						}
 					}
 				}
 			}

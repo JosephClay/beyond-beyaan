@@ -211,7 +211,7 @@ namespace Beyond_Beyaan
 		}
 
 		public float ResearchPoints { get; private set; }
-		public float Reserves { get; private set; }
+		public float Reserves { get; set; }
 		public int TaxRate { get; set; }
 
 		public Race EmpireRace { get; private set; }
