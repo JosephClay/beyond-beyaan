@@ -704,7 +704,7 @@ namespace Beyond_Beyaan
 					{
 						owner = int.Parse(planetElement.Attribute("Owner").Value);
 					}
-					float populationMax = float.Parse(planetElement.Attribute("MaxPopulation").Value);
+					int populationMax = int.Parse(planetElement.Attribute("MaxPopulation").Value);
 					var newPlanet = new Planet(planetName, type, populationMax, null, newStar, gameMain.Random);
 					newPlanet.OwnerID = owner;
 					newPlanet.Factories = float.Parse(planetElement.Attribute("Buildings").Value);

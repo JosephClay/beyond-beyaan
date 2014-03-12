@@ -33,35 +33,36 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Member Variables
-		private StarSystem whichSystem;
-		private PLANET_TYPE planetType;
-		private string planetTypeString;
-		private Empire owner;
-		string name;
+		private StarSystem _whichSystem;
+		private PLANET_TYPE _planetType;
+		private string _planetTypeString;
+		private Empire _owner;
+		string _name;
 		private float _factoryInvestments; //Amount of BCs spent to determine if we need to refit or not
+		private float _baseInvestments; //Amount of BCs spent to determine if we need to upgrade or not
+		private float _shieldProjectRevenues;
 		private float _terraformProjectRevenues;
 		private float _terraformPop;
-		private float populationMax;
-		private float _waste;
-		private Dictionary<Race, float> racePopulations;
-		private List<Race> races;
-		private Ship shipBeingBuilt;
+		private int _populationMax;
+		private Dictionary<Race, float> _racePopulations;
+		private List<Race> _races;
+		private Ship _shipBeingBuilt;
 		#endregion
 
 		#region Properties
 		public StarSystem System
 		{
-			get { return whichSystem; }
+			get { return _whichSystem; }
 		}
 		public PLANET_TYPE PlanetType
 		{
-			get { return planetType; }
+			get { return _planetType; }
 		}
 		public int ColonyRequirement
 		{
 			get
 			{
-				switch (planetType)
+				switch (_planetType)
 				{
 					case PLANET_TYPE.TERRAN:
 					case PLANET_TYPE.OCEAN:
@@ -90,19 +91,19 @@ namespace Beyond_Beyaan
 		}
 		public string PlanetTypeString
 		{
-			get { return planetTypeString; }
+			get { return _planetTypeString; }
 		}
 		public BBSprite SmallSprite { get; private set; }
 		public BBSprite GroundSprite { get; private set; }
 		public string Name
 		{
-			get { return name; }
-			set { name = value; }
+			get { return _name; }
+			set { _name = value; }
 		}
 		public Empire Owner
 		{
-			get { return owner; }
-			set { owner = value; }
+			get { return _owner; }
+			set { _owner = value; }
 		}
 		public int OwnerID { get; set; } //Useful for saving/loading purposes, otherwise unused
 		public float TotalPopulation
@@ -110,9 +111,9 @@ namespace Beyond_Beyaan
 			get 
 			{
 				float totalPopulation = 0.0f;
-				foreach (Race race in races)
+				foreach (Race race in _races)
 				{
-					totalPopulation += racePopulations[race];
+					totalPopulation += _racePopulations[race];
 				}
 				return totalPopulation;
 			}
@@ -121,18 +122,16 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				return populationMax + _terraformPop;
-			}
-		}
-		public float Waste
-		{
-			get
-			{
-				return _waste;
+				return _populationMax + _terraformPop;
 			}
 		}
 
+		public float Waste { get; private set; }
+
 		public float Factories { get; set; }
+		public int Bases { get; set; }
+		public float NextBaseInvestment { get; private set; }
+		public int ShieldLevel { get; set; }
 
 		#region Production
 		public float TotalProduction
@@ -174,16 +173,16 @@ namespace Beyond_Beyaan
 
 		public List<Race> Races
 		{
-			get	{ return races;	}
+			get	{ return _races;	}
 		}
 		public float PopulationMax
 		{
-			get { return populationMax; }
+			get { return _populationMax; }
 		}
 		public Ship ShipBeingBuilt
 		{
-			get { return shipBeingBuilt; }
-			set { shipBeingBuilt = value; }
+			get { return _shipBeingBuilt; }
+			set { _shipBeingBuilt = value; }
 		}
 		public int ShipBeingBuiltID { get; set; } //Useful for saving/loading purposes, otherwise unused
 		public TravelNode RelocateToSystem { get; set; }
@@ -198,7 +197,7 @@ namespace Beyond_Beyaan
 				{
 					return -1;
 				}
-				float remaining = (shipBeingBuilt.Cost - ShipConstructionAmount);
+				float remaining = (_shipBeingBuilt.Cost - ShipConstructionAmount);
 				float totalConstruction = ConstructionAmount * 0.01f * ActualProduction;
 				if (remaining > totalConstruction)
 				{
@@ -208,7 +207,7 @@ namespace Beyond_Beyaan
 				totalConstruction -= remaining;
 				if (totalConstruction > 0)
 				{
-					amount += (int)(totalConstruction / shipBeingBuilt.Cost);
+					amount += (int)(totalConstruction / _shipBeingBuilt.Cost);
 				}
 				return 1.0f / amount;
 			}
@@ -222,6 +221,9 @@ namespace Beyond_Beyaan
 		public float AmountOfWasteCleanupNeeded { get; set; }
 		public float TerraformProjectInvestment { get; set; }
 		public float ExtraPopulationCloned { get; set; }
+		public float AmountLostToUpgradeThisTurn { get; set; }
+		public float AmountOfBaseInvestmentThisTurn { get; set; }
+		public float AmountToInvestInShield { get; set; }
 
 		public PLANET_CONSTRUCTION_BONUS ConstructionBonus { get; private set; }
 		public PLANET_ENVIRONMENT_BONUS EnvironmentBonus { get; private set; }
@@ -266,7 +268,53 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				return "0 Bases";
+				if (AmountToInvestInShield > 0)
+				{
+					return "Building Shield";
+				}
+				if (AmountLostToUpgradeThisTurn > 0 && AmountOfBaseInvestmentThisTurn == 0)
+				{
+					return "Upgrading Bases";
+				}
+				string baseString;
+				if (AmountOfBaseInvestmentThisTurn > 0)
+				{
+					float amountInvested = NextBaseInvestment + AmountOfBaseInvestmentThisTurn;
+					//TODO: Factor in Nebula
+					if (amountInvested > _owner.TechnologyManager.MissileBaseCost)
+					{
+						baseString = string.Format("{0} (+{1}) Bases", Bases, (int) (amountInvested / _owner.TechnologyManager.MissileBaseCost));
+					}
+					else
+					{
+						float turns = (_owner.TechnologyManager.MissileBaseCost - NextBaseInvestment) / AmountOfBaseInvestmentThisTurn;
+						if (turns - (int)turns > 0)
+						{
+							turns += 1;
+						}
+						baseString = string.Format("{0} (+1 in {1} years) Bases", Bases, (int)turns);
+					}
+				}
+				else
+				{
+					baseString = string.Format("{0} Bases", Bases);
+				}
+				switch (ShieldLevel)
+				{
+					case 5:
+						baseString += " (V)";
+						break;
+					case 10:
+						baseString += " (X)";
+						break;
+					case 15:
+						baseString += " (XV)";
+						break;
+					case 20:
+						baseString += " (XX)";
+						break;
+				}
+				return baseString;
 			}
 		}
 		public string EnvironmentStringOutput
@@ -283,11 +331,11 @@ namespace Beyond_Beyaan
 					{
 						return "Atmospheric Terraforming";
 					}
-					if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE && owner.TechnologyManager.HasSoilEnrichment)
+					if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE && _owner.TechnologyManager.HasSoilEnrichment)
 					{
 						return "Soil Enriching";
 					}
-					if (EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.GAIA && owner.TechnologyManager.HasAdvancedSoilEnrichment)
+					if (EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.GAIA && _owner.TechnologyManager.HasAdvancedSoilEnrichment)
 					{
 						return "Gaia Terraforming";
 					}
@@ -341,13 +389,13 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructor
-		public Planet(string name, string type, float maxPop, Empire owner, StarSystem system, Random r)
+		public Planet(string name, string type, int maxPop, Empire owner, StarSystem system, Random r)
 		{
 			SetValues(name, type, maxPop, system, owner, r);
 		}
 		public Planet(string name, Random r, StarSystem system)
 		{
-			populationMax = r.Next(0, 150) - 25;
+			_populationMax = r.Next(0, 150) - 25;
 
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
 			EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
@@ -661,38 +709,38 @@ namespace Beyond_Beyaan
 			switch (type)
 			{
 				case NONE:
-					populationMax = 0;
+					_populationMax = 0;
 					break;
 				case RADIATED:
 				case TOXIC:
 				case VOLCANIC:
-					populationMax = r.Next(2, 9) * 5;
+					_populationMax = r.Next(2, 9) * 5;
 					break;
 				case DEAD:
 				case TUNDRA:
-					populationMax = r.Next(4, 11) * 5;
+					_populationMax = r.Next(4, 11) * 5;
 					break;
 				case BARREN:
 				case ARCTIC:
-					populationMax = r.Next(6, 11) * 5;
+					_populationMax = r.Next(6, 11) * 5;
 					break;
 				case DESERT:
-					populationMax = r.Next(7, 11) * 5;
+					_populationMax = r.Next(7, 11) * 5;
 					break;
 				case STEPPE:
-					populationMax = r.Next(9, 13) * 5;
+					_populationMax = r.Next(9, 13) * 5;
 					break;
 				case BADLANDS:
-					populationMax = r.Next(11, 15) * 5;
+					_populationMax = r.Next(11, 15) * 5;
 					break;
 				case OCEANIC:
-					populationMax = r.Next(13, 17) * 5;
+					_populationMax = r.Next(13, 17) * 5;
 					break;
 				case JUNGLE:
-					populationMax = r.Next(15, 19) * 5;
+					_populationMax = r.Next(15, 19) * 5;
 					break;
 				case TERRAN:
-					populationMax = r.Next(17, 21) * 5;
+					_populationMax = r.Next(17, 21) * 5;
 					break;
 			}
 
@@ -702,19 +750,19 @@ namespace Beyond_Beyaan
 				if (r.Next(100) < 50)
 				{
 					//decrease the population by 20
-					populationMax -= 20;
-					if (populationMax < 10)
+					_populationMax -= 20;
+					if (_populationMax < 10)
 					{
-						populationMax = 10;
+						_populationMax = 10;
 					}
 				}
 				else
 				{
 					//increase the population by 20
-					populationMax += 20;
-					if (populationMax > 140)
+					_populationMax += 20;
+					if (_populationMax > 140)
 					{
-						populationMax = 140;
+						_populationMax = 140;
 					}
 				}
 			}
@@ -1129,12 +1177,12 @@ namespace Beyond_Beyaan
 				if (randomNum < 9) //original is 1 / 12th, so this is close enough
 				{
 					EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
-					float value = populationMax / 5;
+					float value = _populationMax / 5;
 					value *= 1.25f;
-					populationMax = ((int) value) * 5;
-					if (populationMax > 140)
+					_populationMax = ((int) value) * 5;
+					if (_populationMax > 140)
 					{
-						populationMax = 140;
+						_populationMax = 140;
 					}
 				}
 			}
@@ -1153,120 +1201,120 @@ namespace Beyond_Beyaan
 				}
 			}
 
-			SetValues(name, type, populationMax, system, null, r);
+			SetValues(name, type, _populationMax, system, null, r);
 		}
-		private void SetValues(string name, string type, float maxPop, StarSystem system, Empire empire, Random r)
+		private void SetValues(string name, string type, int maxPop, StarSystem system, Empire empire, Random r)
 		{
-			whichSystem = system;
-			this.name = name;
-			races = new List<Race>();
-			racePopulations = new Dictionary<Race, float>();
+			_whichSystem = system;
+			this._name = name;
+			_races = new List<Race>();
+			_racePopulations = new Dictionary<Race, float>();
 			TransferSystem = new KeyValuePair<TravelNode, int>(new TravelNode(), 0);
 			TransferSystemID = new KeyValuePair<int, int>();
 			RelocateToSystem = null;
 			Owner = empire;
-			populationMax = maxPop;
+			_populationMax = maxPop;
 
 			switch (type)
 			{
 				case ARCTIC:
 					{
-						planetType = PLANET_TYPE.ARCTIC;
+						_planetType = PLANET_TYPE.ARCTIC;
 						SmallSprite = SpriteManager.GetSprite("ArcticPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("ArcticGround", r);
 					} break;
 				case BADLANDS:
 					{
-						planetType = PLANET_TYPE.BADLAND;
+						_planetType = PLANET_TYPE.BADLAND;
 						SmallSprite = SpriteManager.GetSprite("BadlandsPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("BadlandsGround", r);
 					} break;
 				case BARREN:
 					{
-						planetType = PLANET_TYPE.BARREN;
+						_planetType = PLANET_TYPE.BARREN;
 						SmallSprite = SpriteManager.GetSprite("BarrenPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("BarrenGround", r);
 					} break;
 				case DEAD:
 					{
-						planetType = PLANET_TYPE.DEAD;
+						_planetType = PLANET_TYPE.DEAD;
 						SmallSprite = SpriteManager.GetSprite("DeadPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("DeadGround", r);
 					} break;
 				case DESERT:
 					{
-						planetType = PLANET_TYPE.DESERT;
+						_planetType = PLANET_TYPE.DESERT;
 						SmallSprite = SpriteManager.GetSprite("DesertPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("DesertGround", r);
 					} break;
 				case JUNGLE:
 					{
-						planetType = PLANET_TYPE.JUNGLE;
+						_planetType = PLANET_TYPE.JUNGLE;
 						SmallSprite = SpriteManager.GetSprite("JunglePlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("JungleGround", r);
 					} break;
 				case NONE:
 					{
-						planetType = PLANET_TYPE.NONE;
+						_planetType = PLANET_TYPE.NONE;
 						SmallSprite = SpriteManager.GetSprite("AsteroidsPlanetSmall", r);
 					} break;
 				case OCEANIC:
 					{
-						planetType = PLANET_TYPE.OCEAN;
+						_planetType = PLANET_TYPE.OCEAN;
 						SmallSprite = SpriteManager.GetSprite("OceanicPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("OceanicGround", r);
 					} break;
 				case RADIATED:
 					{
-						planetType = PLANET_TYPE.RADIATED;
+						_planetType = PLANET_TYPE.RADIATED;
 						SmallSprite = SpriteManager.GetSprite("RadiatedPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("RadiatedGround", r);
 					} break;
 				case STEPPE:
 					{
-						planetType = PLANET_TYPE.STEPPE;
+						_planetType = PLANET_TYPE.STEPPE;
 						SmallSprite = SpriteManager.GetSprite("SteppePlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("SteppeGround", r);
 					} break;
 				case TERRAN:
 					{
-						planetType = PLANET_TYPE.TERRAN;
+						_planetType = PLANET_TYPE.TERRAN;
 						SmallSprite = SpriteManager.GetSprite("TerranPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("TerranGround", r);
 					} break;
 				case TOXIC:
 					{
-						planetType = PLANET_TYPE.TOXIC;
+						_planetType = PLANET_TYPE.TOXIC;
 						SmallSprite = SpriteManager.GetSprite("ToxicPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("ToxicGround", r);
 					} break;
 				case TUNDRA:
 					{
-						planetType = PLANET_TYPE.TUNDRA;
+						_planetType = PLANET_TYPE.TUNDRA;
 						SmallSprite = SpriteManager.GetSprite("TundraPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("TundraGround", r);
 					} break;
 				case VOLCANIC:
 					{
-						planetType = PLANET_TYPE.VOLCANIC;
+						_planetType = PLANET_TYPE.VOLCANIC;
 						SmallSprite = SpriteManager.GetSprite("VolcanicPlanetSmall", r);
 						GroundSprite = SpriteManager.GetSprite("VolcanicGround", r);
 					} break;
 			}
 
-			planetTypeString = Utility.PlanetTypeToString(planetType);
+			_planetTypeString = Utility.PlanetTypeToString(_planetType);
 		}
 		#endregion
 
 		public void SetHomeworld(Empire owner, Random r) //Set this planet as homeworld
 		{
-			this.owner = owner;
-			planetType = PLANET_TYPE.TERRAN;
-			planetTypeString = Utility.PlanetTypeToString(planetType);
+			this._owner = owner;
+			_planetType = PLANET_TYPE.TERRAN;
+			_planetTypeString = Utility.PlanetTypeToString(_planetType);
 			SmallSprite = SpriteManager.GetSprite("TerranPlanetSmall", r);
-			populationMax = 100;
-			races.Add(owner.EmpireRace);
-			racePopulations.Add(owner.EmpireRace, 50.0f);
+			_populationMax = 100;
+			_races.Add(owner.EmpireRace);
+			_racePopulations.Add(owner.EmpireRace, 50.0f);
 			Factories = 30;
 			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
 			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
@@ -1559,9 +1607,8 @@ namespace Beyond_Beyaan
 
 		public void SetCleanup()
 		{
-			//Waste Processing uses the formula: (Number of buildings * 0.5 * lowest pollution tech percentage) / production * 100
-			float wasteAmount = (Factories * 0.5f); //add tech improvements and racial bonuses/negatives inside (3.0f)
-			float amountOfProductionUsed = (wasteAmount / ActualProduction) * 100;
+			UpdateOutputs();
+			float amountOfProductionUsed = (AmountOfWasteCleanupNeeded / ActualProduction) * 100;
 			int percentage = (int)amountOfProductionUsed + ((amountOfProductionUsed - (int)amountOfProductionUsed) > 0 ? 1 : 0);
 			
 			if (EnvironmentAmount < percentage)
@@ -1574,6 +1621,10 @@ namespace Beyond_Beyaan
 		//Used for end of turn processing
 		public void UpdatePlanet()
 		{
+			bool setInfrastructureToZero = false;
+			bool setDefenseToZero = false;
+			bool setEnvironmentToZero = false;
+			bool setConstructionToZero = false; //Only used when Stargates are built
 			//Update ship construction
 			if (ConstructionAmount > 0)
 			{
@@ -1582,19 +1633,76 @@ namespace Beyond_Beyaan
 
 			Factories += AmountOfBuildingsThisTurn;
 			_factoryInvestments += AmountLostToRefitThisTurn;
-			_factoryInvestments += AmountOfBuildingsThisTurn * owner.TechnologyManager.FactoryCost;
+			_factoryInvestments += AmountOfBuildingsThisTurn * _owner.TechnologyManager.FactoryCost;
 
-			_waste = AmountOfWasteCleanupNeeded;
-			if (_waste > PopulationMax - 10)
+			if (Factories >= TotalMaxPopulation * _owner.TechnologyManager.RoboticControls)
 			{
-				_waste = PopulationMax - 10;
+				setInfrastructureToZero = true;
+				//TODO: Notify player
+			}
+
+			Waste = AmountOfWasteCleanupNeeded;
+			if (Waste > PopulationMax - 10)
+			{
+				Waste = PopulationMax - 10;
+			}
+
+			if (AmountLostToUpgradeThisTurn > 0)
+			{
+				_baseInvestments += AmountLostToUpgradeThisTurn;
+				AmountLostToUpgradeThisTurn = 0;
+			}
+			if (AmountToInvestInShield > 0)
+			{
+				_shieldProjectRevenues += AmountToInvestInShield;
+				if (_shieldProjectRevenues >= 500)
+				{
+					//Upgrade the shield to next level
+					ShieldLevel += 5;
+					_shieldProjectRevenues -= 500;
+					if (ShieldLevel == _owner.TechnologyManager.HighestPlanetaryShield)
+					{
+						//TODO: Notify player that shield has been built, and invest the remaining BCs into bases, then set military spending to 0
+						float amountOfBCs = _shieldProjectRevenues;
+						setDefenseToZero = true;
+						if (Bases * _owner.TechnologyManager.MissileBaseCost < _baseInvestments)
+						{
+							float amountNeeded = (Bases * _owner.TechnologyManager.MissileBaseCost) - _baseInvestments;
+							if (amountOfBCs < amountNeeded)
+							{
+								_baseInvestments += amountOfBCs;
+							}
+							else
+							{
+								_baseInvestments += amountNeeded;
+								AmountOfBaseInvestmentThisTurn += amountOfBCs - amountNeeded;
+							}
+						}
+						else
+						{
+							//Free to build new bases
+							AmountOfBaseInvestmentThisTurn += amountOfBCs;
+						}
+					}
+				}
+			}
+			if (AmountOfBaseInvestmentThisTurn > 0)
+			{
+				//Add to investment, and see if we built some bases
+				NextBaseInvestment += AmountOfBaseInvestmentThisTurn;
+				//TODO: Factor in Nebula
+				while (NextBaseInvestment >= _owner.TechnologyManager.MissileBaseCost)
+				{
+					Bases++;
+					NextBaseInvestment -= _owner.TechnologyManager.MissileBaseCost;
+				}
 			}
 			
 			if (TerraformProjectInvestment > 0)
 			{
-				if (owner.TechnologyManager.HasAtmosphericTerraform && (planetType == PLANET_TYPE.RADIATED ||
-					planetType == PLANET_TYPE.TOXIC || planetType == PLANET_TYPE.VOLCANIC || planetType == PLANET_TYPE.DEAD ||
-					planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.BARREN))
+				if (_owner.TechnologyManager.HasAtmosphericTerraform && (_planetType == PLANET_TYPE.RADIATED ||
+					_planetType == PLANET_TYPE.TOXIC || _planetType == PLANET_TYPE.VOLCANIC || _planetType == PLANET_TYPE.DEAD ||
+					_planetType == PLANET_TYPE.TUNDRA || _planetType == PLANET_TYPE.BARREN))
 				{
 					//Invest into changing this to Arctic planet
 					_terraformProjectRevenues += TerraformProjectInvestment;
@@ -1602,26 +1710,27 @@ namespace Beyond_Beyaan
 					if (_terraformProjectRevenues >= 200) //Converted to Arctic
 					{
 						_terraformProjectRevenues -= 200;
-						if (planetType == PLANET_TYPE.BARREN || planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.DEAD)
+						if (_planetType == PLANET_TYPE.BARREN || _planetType == PLANET_TYPE.TUNDRA || _planetType == PLANET_TYPE.DEAD)
 						{
-							populationMax += 10;
+							_populationMax += 10;
 						}
 						else
 						{
-							populationMax += 20;
+							_populationMax += 20;
 						}
-						planetType = PLANET_TYPE.ARCTIC;
+						_planetType = PLANET_TYPE.ARCTIC;
 						EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.AVERAGE;
 						TerraformProjectInvestment = _terraformProjectRevenues; //Roll over into next terraforming project
 						_terraformProjectRevenues = 0;
+						//TODO: Notify player
 					}
 				}
 				if (TerraformProjectInvestment > 0)
 				{
 					//Handle soil/advanced soil enrichment here
-					if ((owner.TechnologyManager.HasSoilEnrichment || owner.TechnologyManager.HasAdvancedSoilEnrichment) && !(planetType == PLANET_TYPE.RADIATED ||
-						planetType == PLANET_TYPE.TOXIC || planetType == PLANET_TYPE.VOLCANIC || planetType == PLANET_TYPE.DEAD ||
-						planetType == PLANET_TYPE.TUNDRA || planetType == PLANET_TYPE.BARREN))
+					if ((_owner.TechnologyManager.HasSoilEnrichment || _owner.TechnologyManager.HasAdvancedSoilEnrichment) && !(_planetType == PLANET_TYPE.RADIATED ||
+						_planetType == PLANET_TYPE.TOXIC || _planetType == PLANET_TYPE.VOLCANIC || _planetType == PLANET_TYPE.DEAD ||
+						_planetType == PLANET_TYPE.TUNDRA || _planetType == PLANET_TYPE.BARREN))
 					{
 						if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE)
 						{
@@ -1632,28 +1741,28 @@ namespace Beyond_Beyaan
 								//it is now fertile
 								EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.FERTILE;
 								_terraformProjectRevenues -= 150;
-								//TODO: Max Pop increase here
-								if (!owner.TechnologyManager.HasAdvancedSoilEnrichment)
+								_populationMax += (((_populationMax - 5) / 20) + 1) * 5;
+								if (!_owner.TechnologyManager.HasAdvancedSoilEnrichment)
 								{
 									TerraformProjectInvestment = _terraformProjectRevenues; //Stop at fertile, not gaia, and roll over BCs into terraforming
 									_terraformProjectRevenues = 0;
-									//Event notification here
+									//TODO: Notify player
 								}
 							}
 						}
-						if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.FERTILE && owner.TechnologyManager.HasAdvancedSoilEnrichment)
+						if (EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.FERTILE && _owner.TechnologyManager.HasAdvancedSoilEnrichment)
 						{
 							//Gaia development here
 							_terraformProjectRevenues += TerraformProjectInvestment;
 							TerraformProjectInvestment = 0;
-							if (_terraformProjectRevenues >= 150) //Already deducted 150 for Fertile process
+							if (_terraformProjectRevenues >= 150) //Already deducted 150 for Fertile process from Gaia's 300 cost
 							{
 								EnvironmentBonus = PLANET_ENVIRONMENT_BONUS.GAIA;
 								_terraformProjectRevenues -= 150;
-								//TODO: Max Pop increase here
+								_populationMax += (((_populationMax - 20) / 25) + 1) * 5;
 								TerraformProjectInvestment = _terraformProjectRevenues;
 								_terraformProjectRevenues = 0; //No more projects at this point, only terraforming
-								//Event notification here
+								//TODO: Notify player
 							}
 						}
 					}
@@ -1661,30 +1770,25 @@ namespace Beyond_Beyaan
 				if (TerraformProjectInvestment > 0)
 				{
 					//Handle terraforming and pop growth here
-					if (_terraformPop < owner.TechnologyManager.MaxTerraformPop)
+					if (_terraformPop < _owner.TechnologyManager.MaxTerraformPop)
 					{
-						_terraformPop += TerraformProjectInvestment / owner.TechnologyManager.TerraformCost;
-						if (_terraformPop >= owner.TechnologyManager.MaxTerraformPop)
+						_terraformPop += TerraformProjectInvestment / _owner.TechnologyManager.TerraformCost;
+						if (_terraformPop >= _owner.TechnologyManager.MaxTerraformPop)
 						{
-							float excess = _terraformPop - owner.TechnologyManager.MaxTerraformPop;
-							_terraformPop = owner.TechnologyManager.MaxTerraformPop;
-							TerraformProjectInvestment = excess * owner.TechnologyManager.TerraformCost;
-							//Event notification here
+							float excess = _terraformPop - _owner.TechnologyManager.MaxTerraformPop;
+							_terraformPop = _owner.TechnologyManager.MaxTerraformPop;
+							TerraformProjectInvestment = excess * _owner.TechnologyManager.TerraformCost;
+							//TODO: Notify player
 						}
 					}
 					if (TerraformProjectInvestment > 0)
 					{
 						//Finally add population
-						float amountOfIncrease = TerraformProjectInvestment / owner.TechnologyManager.CloningCost;
-						float totalPop = TotalPopulation;
-						if (totalPop + amountOfIncrease > TotalMaxPopulation)
+						ExtraPopulationCloned += TerraformProjectInvestment / _owner.TechnologyManager.CloningCost;
+						if (TotalPopulation + ExtraPopulationCloned > TotalMaxPopulation)
 						{
-							amountOfIncrease = TotalMaxPopulation - totalPop;
+							ExtraPopulationCloned = TotalMaxPopulation - TotalPopulation;
 							//Excess BC are wasted, matching MoO 1's handling
-						}
-						foreach (var race in racePopulations)
-						{
-							racePopulations[race.Key] += amountOfIncrease * (race.Value / totalPop);
 						}
 					}
 				}
@@ -1692,31 +1796,61 @@ namespace Beyond_Beyaan
 			if (ExtraPopulationCloned > 0)
 			{
 				float totalPop = TotalPopulation;
-				foreach (var race in racePopulations)
+				//Sanity check
+				if (TotalPopulation + ExtraPopulationCloned > TotalMaxPopulation)
 				{
-					racePopulations[race.Key] += ExtraPopulationCloned * (race.Value / totalPop);
+					ExtraPopulationCloned = TotalMaxPopulation - TotalPopulation;
+				}
+				foreach (var race in _racePopulations)
+				{
+					_racePopulations[race.Key] += ExtraPopulationCloned * (race.Value / totalPop);
+				}
+				if (TotalPopulation >= TotalMaxPopulation)
+				{
+					setEnvironmentToZero = true;
+					//Extra population will die off due to growth formula, this is very minor, in decimal place.
+					//TODO: Notify player
 				}
 			}
 
-			foreach (Race race in races)
+			foreach (Race race in _races)
 			{
-				racePopulations[race] += CalculateRaceGrowth(race);
+				_racePopulations[race] += CalculateRaceGrowth(race);
 			}
 
-			races.Sort((a, b) => { return (racePopulations[a].CompareTo(racePopulations[b])); });
+			_races.Sort((a, b) => { return (_racePopulations[a].CompareTo(_racePopulations[b])); });
+
+			if (setConstructionToZero)
+			{
+				SetOutputAmount(OUTPUT_TYPE.CONSTRUCTION, 0, true);
+			}
+			if (setEnvironmentToZero)
+			{
+				SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, 0, true);
+			}
+			if (setInfrastructureToZero)
+			{
+				SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 0, true);
+			}
+			if (setDefenseToZero)
+			{
+				SetOutputAmount(OUTPUT_TYPE.DEFENSE, 0, true);
+			}
+			//Update the enviroment to at least sufficient to clean up waste
+			SetCleanup();
 		}
 
 		public Ship CheckIfShipBuilt(out int amount)
 		{
-			if (ShipConstructionAmount >= shipBeingBuilt.Cost)
+			if (ShipConstructionAmount >= _shipBeingBuilt.Cost)
 			{
 				amount = 0;
-				while (ShipConstructionAmount >= shipBeingBuilt.Cost)
+				while (ShipConstructionAmount >= _shipBeingBuilt.Cost)
 				{
 					amount++;
-					ShipConstructionAmount -= shipBeingBuilt.Cost;
+					ShipConstructionAmount -= _shipBeingBuilt.Cost;
 				}
-				return shipBeingBuilt;
+				return _shipBeingBuilt;
 			}
 			amount = 0;
 			return null;
@@ -1725,31 +1859,35 @@ namespace Beyond_Beyaan
 		public void UpdateOutputs() //After the Empire class updates the planet's production, this is called to update values
 		{
 			#region Infrastructure Output
+
+			AmountLostToRefitThisTurn = 0;
+			AmountOfBuildingsThisTurn = 0;
+			AmountOfBCGeneratedThisTurn = 0;
 			if (InfrastructureAmount > 0)
 			{
 				float amountOfBC = (InfrastructureAmount * 0.01f * ActualProduction);
-				if (Factories * owner.TechnologyManager.FactoryCost < _factoryInvestments)
+				if (Factories * _owner.TechnologyManager.FactoryCost < _factoryInvestments)
 				{
 					//We need to refit
-					AmountLostToRefitThisTurn = amountOfBC / owner.TechnologyManager.FactoryDiscount; //adjust the BC spending to match factory cost, i.e. if 5 bc per factory, it is now 10 bc with 5 actual bcs
-					if (_factoryInvestments + AmountLostToRefitThisTurn >= Factories * owner.TechnologyManager.FactoryCost)
+					AmountLostToRefitThisTurn = amountOfBC / _owner.TechnologyManager.FactoryDiscount; //adjust the BC spending to match factory cost, i.e. if 5 bc per factory, it is now 10 bc with 5 actual bcs
+					if (_factoryInvestments + AmountLostToRefitThisTurn >= Factories * _owner.TechnologyManager.FactoryCost)
 					{
-						AmountLostToRefitThisTurn = (_factoryInvestments + AmountLostToRefitThisTurn) - (Factories * owner.TechnologyManager.FactoryCost);
+						AmountLostToRefitThisTurn = (_factoryInvestments + AmountLostToRefitThisTurn) - (Factories * _owner.TechnologyManager.FactoryCost);
 					}
-					amountOfBC -= (AmountLostToRefitThisTurn * owner.TechnologyManager.FactoryDiscount);
+					amountOfBC -= (AmountLostToRefitThisTurn * _owner.TechnologyManager.FactoryDiscount);
 				}
 				if (amountOfBC  > 0)
 				{
-					if (Factories >= populationMax * owner.TechnologyManager.RoboticControls)
+					if (Factories >= _populationMax * _owner.TechnologyManager.RoboticControls)
 					{
 						AmountOfBuildingsThisTurn = 0; //Already reached the max
 						AmountOfBCGeneratedThisTurn = amountOfBC * 0.5f; //Lose half to corruption
 					}
 					else
 					{
-						float amountRemaining = (TotalMaxPopulation * owner.TechnologyManager.RoboticControls) - Factories;
-						float adjustedBC = amountOfBC / owner.TechnologyManager.FactoryDiscount;
-						AmountOfBuildingsThisTurn = adjustedBC / owner.TechnologyManager.FactoryCost;
+						float amountRemaining = (TotalMaxPopulation * _owner.TechnologyManager.RoboticControls) - Factories;
+						float adjustedBC = amountOfBC / _owner.TechnologyManager.FactoryDiscount;
+						AmountOfBuildingsThisTurn = adjustedBC / _owner.TechnologyManager.FactoryCost;
 						if (AmountOfBuildingsThisTurn > amountRemaining) //Will put some into reserve
 						{
 							AmountOfBCGeneratedThisTurn = (AmountOfBuildingsThisTurn - amountRemaining) * 5;
@@ -1766,11 +1904,52 @@ namespace Beyond_Beyaan
 			}
 			#endregion
 
-			AmountOfWasteCleanupNeeded = _waste; //Start with any leftover waste from last turn
+			#region Defense Output
+
+			AmountToInvestInShield = 0;
+			AmountOfBaseInvestmentThisTurn = 0;
+			AmountLostToUpgradeThisTurn = 0;
+			if (DefenseAmount > 0)
+			{
+				//First check to see if there's available shield projects to invest in first
+				if (ShieldLevel < _owner.TechnologyManager.HighestPlanetaryShield)
+				{
+					AmountToInvestInShield = DefenseAmount * 0.01f * ActualProduction;
+				}
+				else
+				{
+					//Building bases, but first, do we need to upgrade?
+					//TODO: Factor in nebula
+					float amountOfBCs = DefenseAmount * 0.01f * ActualProduction;
+					if (Bases * _owner.TechnologyManager.MissileBaseCost < _baseInvestments)
+					{
+						float amountNeeded = (Bases * _owner.TechnologyManager.MissileBaseCost) - _baseInvestments;
+						if (amountOfBCs < amountNeeded)
+						{
+							AmountLostToUpgradeThisTurn = amountOfBCs;
+						}
+						else
+						{
+							AmountLostToUpgradeThisTurn = amountNeeded;
+							AmountOfBaseInvestmentThisTurn = amountOfBCs - amountNeeded;
+						}
+					}
+					else
+					{
+						//Free to build new bases
+						AmountOfBaseInvestmentThisTurn = amountOfBCs;
+					}
+				}
+			}
+			#endregion
+
+			#region Environment Output
+
+			AmountOfWasteCleanupNeeded = Waste; //Start with any leftover waste from last turn
 			float factoriesOperated = TotalPopulation > (Factories / Owner.TechnologyManager.RoboticControls)
 										? Factories
 										: (TotalPopulation * Owner.TechnologyManager.RoboticControls);
-			AmountOfWasteCleanupNeeded += factoriesOperated * owner.TechnologyManager.IndustryWasteRate;
+			AmountOfWasteCleanupNeeded += factoriesOperated * _owner.TechnologyManager.IndustryWasteRate;
 			TerraformProjectInvestment = 0;
 			ExtraPopulationCloned = 0;
 			if (EnvironmentAmount > 0)
@@ -1788,10 +1967,10 @@ namespace Beyond_Beyaan
 					amountOfBC -= wasteBCCleanup; //Use remaining funds for terraforming/pop growth
 					if (amountOfBC > 0)
 					{
-						if (owner.TechnologyManager.HasAtmosphericTerraform && EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.HOSTILE ||
-							owner.TechnologyManager.HasSoilEnrichment && EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE ||
-							owner.TechnologyManager.HasAdvancedSoilEnrichment && EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.GAIA ||
-							_terraformPop < owner.TechnologyManager.MaxTerraformPop)
+						if (_owner.TechnologyManager.HasAtmosphericTerraform && EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.HOSTILE ||
+							_owner.TechnologyManager.HasSoilEnrichment && EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE ||
+							_owner.TechnologyManager.HasAdvancedSoilEnrichment && EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.GAIA ||
+							_terraformPop < _owner.TechnologyManager.MaxTerraformPop)
 						{
 							//Invest into improving the planet
 							TerraformProjectInvestment += amountOfBC;
@@ -1799,7 +1978,7 @@ namespace Beyond_Beyaan
 						else
 						{
 							//Grow some more people
-							ExtraPopulationCloned = amountOfBC / owner.TechnologyManager.CloningCost;
+							ExtraPopulationCloned = amountOfBC / _owner.TechnologyManager.CloningCost;
 							if (TotalMaxPopulation < ExtraPopulationCloned + TotalPopulation)
 							{
 								ExtraPopulationCloned = TotalMaxPopulation - (ExtraPopulationCloned + TotalMaxPopulation);
@@ -1808,6 +1987,7 @@ namespace Beyond_Beyaan
 					}
 				}
 			}
+			#endregion
 
 			if (ResearchAmount > 0)
 			{
@@ -1819,7 +1999,7 @@ namespace Beyond_Beyaan
 		{
 			//Calculate normal population growth using formula (rate of growth * population) * (1 - (population / planet's capacity))
 			float popGrowth = 0;
-			foreach (Race race in races)
+			foreach (Race race in _races)
 			{
 				popGrowth += CalculateRaceGrowth(race);
 			}
@@ -1829,38 +2009,38 @@ namespace Beyond_Beyaan
 
 		private float CalculateRaceGrowth(Race race)
 		{
-			float pop = racePopulations[race];
-			pop = pop - (pop * ((_waste / populationMax) * 0.1f));
-			pop = pop + (racePopulations[race] * ((1 - (pop / TotalMaxPopulation)) * 0.1f));
-			return (pop - racePopulations[race]);
+			float pop = _racePopulations[race];
+			pop = pop - (pop * ((Waste / _populationMax) * 0.1f));
+			pop = pop + (_racePopulations[race] * ((1 - (pop / TotalMaxPopulation)) * 0.1f));
+			return (pop - _racePopulations[race]);
 		}
 
 		public float GetRacePopulation(Race whichRace)
 		{
-			return racePopulations[whichRace];
+			return _racePopulations[whichRace];
 		}
 
 		public void AddRacePopulation(Race whichRace, float amount)
 		{
-			if (racePopulations.ContainsKey(whichRace))
+			if (_racePopulations.ContainsKey(whichRace))
 			{
-				racePopulations[whichRace] += amount;
+				_racePopulations[whichRace] += amount;
 			}
 			else
 			{
 				//Add it
-				if (!races.Contains(whichRace))
+				if (!_races.Contains(whichRace))
 				{
-					races.Add(whichRace);
+					_races.Add(whichRace);
 				}
-				racePopulations[whichRace] = amount;
+				_racePopulations[whichRace] = amount;
 			}
 		}
 
 		public void RemoveRacePopulation(Race whichRace, float amount)
 		{
-			racePopulations[whichRace] -= amount;
-			if (racePopulations[whichRace] <= 0)
+			_racePopulations[whichRace] -= amount;
+			if (_racePopulations[whichRace] <= 0)
 			{
 				//They died out on this planet
 				RemoveRace(whichRace);
@@ -1869,19 +2049,19 @@ namespace Beyond_Beyaan
 
 		public void RemoveRace(Race whichRace)
 		{
-			racePopulations.Remove(whichRace);
-			races.Remove(whichRace);
+			_racePopulations.Remove(whichRace);
+			_races.Remove(whichRace);
 		}
 
 		public void Colonize(Empire whichEmpire)
 		{
-			owner = whichEmpire;
+			_owner = whichEmpire;
 			whichEmpire.PlanetManager.AddOwnedPlanet(this);
-			racePopulations = new Dictionary<Race, float>();
-			racePopulations.Add(whichEmpire.EmpireRace, 2);
-			races.Add(whichEmpire.EmpireRace);
+			_racePopulations = new Dictionary<Race, float>();
+			_racePopulations.Add(whichEmpire.EmpireRace, 2);
+			_races.Add(whichEmpire.EmpireRace);
 			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
-			shipBeingBuilt = whichEmpire.FleetManager.CurrentDesigns[0];
+			_shipBeingBuilt = whichEmpire.FleetManager.CurrentDesigns[0];
 			System.UpdateOwners();
 		}
 	}
