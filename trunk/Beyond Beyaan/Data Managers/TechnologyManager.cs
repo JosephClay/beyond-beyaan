@@ -1068,6 +1068,7 @@ namespace Beyond_Beyaan
 		public int CloningCost { get; private set; }
 		public float MissileBaseCost { get; private set; }
 		public float MissileBaseCostInNebula { get; private set; } //No shields in Nebula, so factor in that (unlike MoO 1)
+		public int HighestPlanetaryShield { get; private set; }
 
 		private void UpdateValues()
 		{
@@ -1081,6 +1082,12 @@ namespace Beyond_Beyaan
 			CloningCost = 20;
 			FactoryCost = 10;
 			FactoryDiscount = 10;
+			HighestPlanetaryShield = 0;
+			Technology bestArmor = null;
+			Technology bestBattleComputer = null;
+			Technology bestMissile = null;
+			Technology bestShield = null;
+			Technology bestECM = null;
 			foreach (var tech in ResearchedPropulsionTechs)
 			{
 				if (tech.FuelRange > FuelRange)
@@ -1095,6 +1102,14 @@ namespace Beyond_Beyaan
 					RoboticControls = tech.RoboticControl;
 					FactoryCost = RoboticControls * 5;
 				}
+				if (tech.BattleComputer > 0 && (bestBattleComputer == null || bestBattleComputer.BattleComputer < tech.BattleComputer))
+				{
+					bestBattleComputer = tech;
+				}
+				if (tech.ECM > 0 && (bestECM == null || bestECM.ECM < tech.ECM))
+				{
+					bestECM = tech;
+				}
 			}
 			foreach (var tech in ResearchedConstructionTechs)
 			{
@@ -1105,6 +1120,21 @@ namespace Beyond_Beyaan
 				if (tech.IndustrialTech < FactoryDiscount)
 				{
 					FactoryDiscount = tech.IndustrialTech;
+				}
+				if (tech.Armor > 0 && (bestArmor == null || bestArmor.Armor < tech.Armor))
+				{
+					bestArmor = tech;
+				}
+			}
+			foreach (var tech in ResearchedForceFieldTechs)
+			{
+				if (tech.PlanetaryShield > HighestPlanetaryShield)
+				{
+					HighestPlanetaryShield = tech.PlanetaryShield;
+				}
+				if (tech.Shield > 0 && (bestShield == null || bestShield.Shield < tech.Shield))
+				{
+					bestShield = tech;
 				}
 			}
 			//Convert FactoryDiscount to a decimal for less math later on
@@ -1139,6 +1169,67 @@ namespace Beyond_Beyaan
 				{
 					CloningCost = tech.Cloning;
 				}
+			}
+
+			foreach (var tech in ResearchedWeaponTechs)
+			{
+				if (tech.WeaponType == Technology.MISSILE_WEAPON && (bestMissile == null || bestMissile.MaximumWeaponDamage < tech.MaximumWeaponDamage))
+				{
+					bestMissile = tech;
+				}
+			}
+
+			//Now add up the cost for missile base this turn
+			/* Missile base cost is broken down as following:
+			 * Battle Scanner and Subspace Interdictor are free
+			 * Armor = 60% of Large Ship Cost, 1/2 HP of Large Ship HP
+			 * Missiles = 540% of base cost, 3 missiles fired per base, +1 speed and double range
+			 * Shields = 61% of Large Ship Cost
+			 * Battle Computers = 61% of Large Ship Cost
+			 * ECM = 62% of Large Ship Cost
+			 * Base Slab (Construction Tech Level 1) = 120 BC
+			 * */
+
+			Dictionary<TechField, int> techLevels = new Dictionary<TechField, int>();
+			techLevels.Add(TechField.FORCE_FIELD, ForceFieldLevel);
+			techLevels.Add(TechField.WEAPON, WeaponLevel);
+			techLevels.Add(TechField.PROPULSION, PropulsionLevel);
+			techLevels.Add(TechField.COMPUTER, ComputerLevel);
+			techLevels.Add(TechField.CONSTRUCTION, ConstructionLevel);
+			techLevels.Add(TechField.PLANETOLOGY, PlanetologyLevel);
+
+			//Factor in Slab's base price of 120, minus minizaturation
+			int levelDifference = ConstructionLevel;
+			if (levelDifference > 50)
+			{
+				levelDifference = 50; //Cap the miniaturization at 50 levels
+			}
+			MissileBaseCost = (float)(120 * (Math.Pow(0.5, (levelDifference / 10.0))));
+			if (bestArmor != null)
+			{
+				var armor = new Equipment(bestArmor, false);
+				MissileBaseCost += armor.GetCost(techLevels, 2) * 0.6f;
+			}
+			if (bestMissile != null)
+			{
+				var missile = new Equipment(bestMissile, false);
+				MissileBaseCost += missile.GetCost(techLevels, 2) * 5.4f;
+			}
+			if (bestBattleComputer != null)
+			{
+				var battleComputer = new Equipment(bestBattleComputer, false);
+				MissileBaseCost += battleComputer.GetCost(techLevels, 2) * 0.61f;
+			}
+			if (bestECM != null)
+			{
+				var ecm = new Equipment(bestECM, false);
+				MissileBaseCost += ecm.GetCost(techLevels, 2) * 0.62f;
+			}
+			MissileBaseCostInNebula = MissileBaseCost; //Since shields don't work in nebulaes, doesn't make sense to build shields
+			if (bestShield != null)
+			{
+				var shield = new Equipment(bestShield, false);
+				MissileBaseCost += shield.GetCost(techLevels, 2) * 0.61f;
 			}
 		}
 

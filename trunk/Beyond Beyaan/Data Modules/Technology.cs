@@ -29,10 +29,10 @@ namespace Beyond_Beyaan
 		public const int AUTOMATED_REPAIR = 1;
 		public const int ADVANCED_REPAIR = 2;
 
-		public const int PLANETARY_V_SHIELD = 1;
-		public const int PLANETARY_X_SHIELD = 2;
-		public const int PLANETARY_XV_SHIELD = 3;
-		public const int PLANETARY_XX_SHIELD = 4;
+		public const int PLANETARY_V_SHIELD = 5;
+		public const int PLANETARY_X_SHIELD = 10;
+		public const int PLANETARY_XV_SHIELD = 15;
+		public const int PLANETARY_XX_SHIELD = 20;
 
 		public const int ZYRO_SHIELD = 1;
 		public const int LIGHTNING_SHIELD = 2;
