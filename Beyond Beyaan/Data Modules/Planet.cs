@@ -1619,7 +1619,12 @@ namespace Beyond_Beyaan
 			float amountOfProductionUsed = (cleanupNeeded / (ActualProduction * _owner.TechnologyManager.IndustryCleanupPerBC)) * 100;
 			int percentage = (int)amountOfProductionUsed + ((amountOfProductionUsed - (int)amountOfProductionUsed) > 0 ? 1 : 0);
 			
-			if (EnvironmentAmount < percentage)
+			//Check if we need to set the minimum environment cleanup
+			if (EnvironmentAmount < percentage || 
+				(TotalPopulation >= TotalMaxPopulation && 
+				((EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.HOSTILE && !_owner.TechnologyManager.HasAtmosphericTerraform) ||
+				(EnvironmentBonus == PLANET_ENVIRONMENT_BONUS.AVERAGE && !_owner.TechnologyManager.HasSoilEnrichment) ||
+				(EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.GAIA && EnvironmentBonus != PLANET_ENVIRONMENT_BONUS.HOSTILE && !_owner.TechnologyManager.HasAdvancedSoilEnrichment))))
 			{
 				//Only set it if it's below the desired amount
 				SetOutputAmount(OUTPUT_TYPE.ENVIRONMENT, percentage, true);
