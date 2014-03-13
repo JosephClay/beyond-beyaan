@@ -1607,8 +1607,16 @@ namespace Beyond_Beyaan
 
 		public void SetCleanup()
 		{
-			UpdateOutputs();
-			float amountOfProductionUsed = (AmountOfWasteCleanupNeeded / ActualProduction) * 100;
+			float cleanupNeeded = Waste; //Start with any leftover waste from last turn
+			float factoriesOperated = TotalPopulation > (Factories / Owner.TechnologyManager.RoboticControls)
+										? Factories
+										: (TotalPopulation * Owner.TechnologyManager.RoboticControls);
+			cleanupNeeded += factoriesOperated * _owner.TechnologyManager.IndustryWasteRate;
+			if (cleanupNeeded > _populationMax - 10)
+			{
+				cleanupNeeded = _populationMax - 10;
+			}
+			float amountOfProductionUsed = (cleanupNeeded / (ActualProduction * _owner.TechnologyManager.IndustryCleanupPerBC)) * 100;
 			int percentage = (int)amountOfProductionUsed + ((amountOfProductionUsed - (int)amountOfProductionUsed) > 0 ? 1 : 0);
 			
 			if (EnvironmentAmount < percentage)
@@ -1690,6 +1698,7 @@ namespace Beyond_Beyaan
 			{
 				//Add to investment, and see if we built some bases
 				NextBaseInvestment += AmountOfBaseInvestmentThisTurn;
+				_baseInvestments += AmountOfBaseInvestmentThisTurn;
 				//TODO: Factor in Nebula
 				while (NextBaseInvestment >= _owner.TechnologyManager.MissileBaseCost)
 				{
@@ -1801,9 +1810,9 @@ namespace Beyond_Beyaan
 				{
 					ExtraPopulationCloned = TotalMaxPopulation - TotalPopulation;
 				}
-				foreach (var race in _racePopulations)
+				foreach (var race in _races)
 				{
-					_racePopulations[race.Key] += ExtraPopulationCloned * (race.Value / totalPop);
+					_racePopulations[race] += ExtraPopulationCloned * (_racePopulations[race] / totalPop);
 				}
 				if (TotalPopulation >= TotalMaxPopulation)
 				{
@@ -1921,7 +1930,7 @@ namespace Beyond_Beyaan
 					//Building bases, but first, do we need to upgrade?
 					//TODO: Factor in nebula
 					float amountOfBCs = DefenseAmount * 0.01f * ActualProduction;
-					if (Bases * _owner.TechnologyManager.MissileBaseCost < _baseInvestments)
+					if (Bases * _owner.TechnologyManager.MissileBaseCost > _baseInvestments)
 					{
 						float amountNeeded = (Bases * _owner.TechnologyManager.MissileBaseCost) - _baseInvestments;
 						if (amountOfBCs < amountNeeded)
@@ -1950,6 +1959,10 @@ namespace Beyond_Beyaan
 										? Factories
 										: (TotalPopulation * Owner.TechnologyManager.RoboticControls);
 			AmountOfWasteCleanupNeeded += factoriesOperated * _owner.TechnologyManager.IndustryWasteRate;
+			if (AmountOfWasteCleanupNeeded > _populationMax - 10)
+			{
+				AmountOfWasteCleanupNeeded = _populationMax - 10; //cap at base pop - 10
+			}
 			TerraformProjectInvestment = 0;
 			ExtraPopulationCloned = 0;
 			if (EnvironmentAmount > 0)
