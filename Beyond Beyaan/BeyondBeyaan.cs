@@ -124,8 +124,7 @@ namespace Beyond_Beyaan
 			}
 			catch (Exception exception)
 			{
-				MessageBox.Show(exception.Message);
-				Close();
+				HandleException(exception);
 			}
 		}
 
@@ -167,31 +166,59 @@ namespace Beyond_Beyaan
 
 		void keyboard_KeyDown(object sender, KeyboardInputEventArgs e)
 		{
-			if (e.Alt && e.Key == KeyboardKeys.Enter)
+			try
 			{
-				Gorgon.Screen.Windowed = !Gorgon.Screen.Windowed;
+				if (e.Alt && e.Key == KeyboardKeys.Enter)
+				{
+					Gorgon.Screen.Windowed = !Gorgon.Screen.Windowed;
+				}
+				gameMain.KeyDown(e);
 			}
-			gameMain.KeyDown(e);
+			catch (Exception exception)
+			{
+				HandleException(exception);
+			}
 		}
 
 		void Gorgon_Idle(object sender, FrameEventArgs e)
 		{
-			Gorgon.Screen.Clear(Drawing.Color.Black);
-			Gorgon.Screen.BeginDrawing();
+			try
+			{
+				Gorgon.Screen.Clear(Drawing.Color.Black);
+				Gorgon.Screen.BeginDrawing();
 
-			gameMain.ProcessGame(e.FrameDeltaTime);
+				gameMain.ProcessGame(e.FrameDeltaTime);
 
-			Gorgon.Screen.EndDrawing();
+				Gorgon.Screen.EndDrawing();
+			}
+			catch(Exception exception)
+			{
+				HandleException(exception);
+			}
 		}
 
 		private void BeyondBeyaan_MouseDown(object sender, MouseEventArgs e)
-		{	
-			gameMain.MouseDown(e);
+		{
+			try
+			{
+				gameMain.MouseDown(e);
+			}
+			catch (Exception exception)
+			{
+				HandleException(exception);
+			}
 		}
 
 		private void BeyondBeyaan_MouseUp(object sender, MouseEventArgs e)
 		{
-			gameMain.MouseUp(e);
+			try
+			{
+				gameMain.MouseUp(e);
+			}
+			catch (Exception exception)
+			{
+				HandleException(exception);
+			}
 		}
 
 		private void BeyondBeyaan_MouseMove(object sender, MouseEventArgs e)
@@ -202,7 +229,14 @@ namespace Beyond_Beyaan
 
 		void BeyondBeyaan_MouseWheel(object sender, MouseEventArgs e)
 		{
-			gameMain.MouseScroll(e.Delta);
+			try
+			{
+				gameMain.MouseScroll(e.Delta);
+			}
+			catch (Exception exception)
+			{
+				HandleException(exception);
+			}
 		}
 
 		private void BeyondBeyaan_MouseLeave(object sender, EventArgs e)
@@ -213,6 +247,29 @@ namespace Beyond_Beyaan
 		private void BeyondBeyaan_MouseEnter(object sender, EventArgs e)
 		{
 			Cursor.Hide();
+		}
+
+		private void HandleException(Exception e)
+		{
+			var path = Path.Combine(Environment.CurrentDirectory, "Error.log");
+			try
+			{
+				using (StreamWriter writer = new StreamWriter(path))
+				{
+					writer.WriteLine("Exception: " + e.Message);
+					writer.WriteLine();
+					writer.WriteLine("Callstack: " + e.StackTrace);
+				}
+				MessageBox.Show("The game has crashed.  Please post the text in " + path +
+							" to https://code.google.com/p/beyond-beyaan/issues/list.  I apologize for the inconvenience.");
+			}
+			catch
+			{
+				MessageBox.Show(
+					"The game has crashed, and Error.log failed to be created.  Here's the exception and callstack, please post it at https://code.google.com/p/beyond-beyaan/issues/list.  Press Ctrl-C to copy the text of this dialog.\n\r\n\rException: " +
+					e.Message + "\n\r\n\rCallstack: " + e.StackTrace);
+			}
+			Close();
 		}
 	}
 }
