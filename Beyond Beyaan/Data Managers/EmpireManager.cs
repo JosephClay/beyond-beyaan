@@ -137,6 +137,10 @@ namespace Beyond_Beyaan
 			{
 				foreach (Fleet fleet in empire.FleetManager.GetFleets())
 				{
+					if (empire != _empires[0] && !fleet.VisibleToWhichEmpires.Contains(_empires[0]))
+					{
+						continue;
+					}
 					if (fleet.GalaxyX + 16 < left || fleet.GalaxyY + 16 < top || fleet.GalaxyX - 16 > left + width || fleet.GalaxyY - 16 > top + height)
 					{
 						continue;
@@ -154,7 +158,11 @@ namespace Beyond_Beyaan
 			{
 				foreach (Fleet fleet in empire.FleetManager.ReturnFleetAtPoint(x, y))
 				{
-					fleets.Add(fleet);
+					//Don't include fleets the human player can't see.
+					if (empire == _empires[0] || fleet.VisibleToWhichEmpires.Contains(_empires[0]))
+					{
+						fleets.Add(fleet);
+					}
 				}
 			}
 			return (fleets.Count > 0 ? new FleetGroup(fleets) : null);
@@ -176,6 +184,42 @@ namespace Beyond_Beyaan
 				if (empire.FleetManager.MoveFleets(frameDeltaTime))
 				{
 					stillHaveMovement = true;
+				}
+				foreach (var fleet in empire.FleetManager.GetFleets())
+				{
+					fleet.VisibleToWhichEmpires.Clear();
+					//Update whether or not it's visible to other empires
+					foreach (Empire otherEmpire in _empires)
+					{
+						if (otherEmpire == empire)
+						{
+							continue; //no need to check owner
+						}
+						foreach (var planet in otherEmpire.PlanetManager.Planets)
+						{
+							float xDis = fleet.GalaxyX - planet.System.X;
+							float yDis = fleet.GalaxyY - planet.System.Y;
+							if ((xDis * xDis) + (yDis * yDis) < otherEmpire.TechnologyManager.PlanetRadarRange)
+							{
+								fleet.VisibleToWhichEmpires.Add(otherEmpire);
+								break;
+							}
+						}
+						if (otherEmpire.TechnologyManager.FleetRadarRange > 0 && !fleet.VisibleToWhichEmpires.Contains(otherEmpire))
+						{
+							//It first checks if other empire even have fleet radar, and if it's not already detected by planets, to improve performance
+							foreach (var otherFleet in otherEmpire.FleetManager.GetFleets())
+							{
+								float xDis = fleet.GalaxyX - otherFleet.GalaxyX;
+								float yDis = fleet.GalaxyY - otherFleet.GalaxyY;
+								if ((xDis * xDis) + (yDis * yDis) < otherEmpire.TechnologyManager.FleetRadarRange)
+								{
+									fleet.VisibleToWhichEmpires.Add(otherEmpire);
+									break;
+								}
+							}
+						}
+					}
 				}
 			}
 			return stillHaveMovement;
