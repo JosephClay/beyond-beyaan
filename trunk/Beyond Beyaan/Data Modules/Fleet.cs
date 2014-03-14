@@ -170,6 +170,8 @@ namespace Beyond_Beyaan
 		{
 			get { return transportShips.Count > 0; }
 		}
+
+		public List<Empire> VisibleToWhichEmpires { get; private set; }
 		#endregion
 
 		#region Constructors
@@ -179,6 +181,7 @@ namespace Beyond_Beyaan
 			orderedShips = new List<Ship>();
 			transportShips = new List<TransportShip>();
 			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
+			VisibleToWhichEmpires = new List<Empire>();
 		}
 		#endregion
 

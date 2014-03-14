@@ -1055,6 +1055,10 @@ namespace Beyond_Beyaan
 		}
 
 		public int FuelRange { get; private set; }
+		public int PlanetRadarRange { get; private set; }
+		public int FleetRadarRange { get; private set; }
+		public bool ShowEnemyETA { get; private set; }
+		public bool RadarExplorePlanets { get; private set; }
 		public int RoboticControls { get; private set; }
 		public int FactoryCost { get; private set; }
 		public float FactoryDiscount { get; private set; }
@@ -1088,6 +1092,7 @@ namespace Beyond_Beyaan
 			Technology bestMissile = null;
 			Technology bestShield = null;
 			Technology bestECM = null;
+			int bestScanner = 0;
 			foreach (var tech in ResearchedPropulsionTechs)
 			{
 				if (tech.FuelRange > FuelRange)
@@ -1110,6 +1115,37 @@ namespace Beyond_Beyaan
 				{
 					bestECM = tech;
 				}
+				if (tech.SpaceScanner > bestScanner)
+				{
+					bestScanner = tech.SpaceScanner;
+				}
+			}
+			switch (bestScanner)
+			{
+				case 0:
+					FleetRadarRange = 0;
+					PlanetRadarRange = 3;
+					ShowEnemyETA = false;
+					RadarExplorePlanets = false;
+					break;
+				case Technology.DEEP_SPACE_SCANNER:
+					FleetRadarRange = 1;
+					PlanetRadarRange = 5;
+					ShowEnemyETA = false;
+					RadarExplorePlanets = false;
+					break;
+				case Technology.IMPROVED_SPACE_SCANNER:
+					FleetRadarRange = 2;
+					PlanetRadarRange = 7;
+					ShowEnemyETA = true;
+					RadarExplorePlanets = false;
+					break;
+				case Technology.ADVANCED_SPACE_SCANNER:
+					FleetRadarRange = 3;
+					PlanetRadarRange = 9;
+					ShowEnemyETA = true;
+					RadarExplorePlanets = true;
+					break;
 			}
 			foreach (var tech in ResearchedConstructionTechs)
 			{
