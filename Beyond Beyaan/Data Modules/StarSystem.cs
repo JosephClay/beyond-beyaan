@@ -155,7 +155,6 @@ namespace Beyond_Beyaan
 			EmpiresWithFleetAdjacentThisTurn = new List<Empire>();
 			EmpiresWithPlanetsInThisSystem = new List<Empire>();
 			OwnerPercentage = new Dictionary<Empire, float>();
-			Description = description;
 		}
 		public StarSystem(string name, int id, int x, int y, Color color, string description, int minPlanets, int maxPlanets, Random r) : this (name, id, x, y, color, description, r)
 		{

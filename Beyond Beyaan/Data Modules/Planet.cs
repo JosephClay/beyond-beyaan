@@ -341,7 +341,7 @@ namespace Beyond_Beyaan
 					}
 					return "Terraforming";
 				}
-				if (ExtraPopulationCloned > 0)
+				if (ExtraPopulationCloned >= 0.1)
 				{
 					return string.Format("+{0:0.0} Population", ExtraPopulationCloned);
 				}
