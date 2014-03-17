@@ -1776,6 +1776,9 @@ namespace Beyond_Beyaan
 		#region Constructors
 		public bool Initialize(int xPos, int yPos, int width, int min, int max, int initialAmount, Random r, out string reason)
 		{
+			_enabled = true;
+			_upButtonEnabled = true;
+
 			_width = width;
 
 			_upButton = new BBButton();
@@ -1909,8 +1912,8 @@ namespace Beyond_Beyaan
 
 		private void RefreshButtons()
 		{
-			_downButton.Active = Value != _minimum && _enabled;
-			_upButton.Active = Value != _maximum && _enabled && _upButtonEnabled;
+			_downButton.Active = Value > _minimum && _enabled;
+			_upButton.Active = Value < _maximum && _enabled && _upButtonEnabled;
 		}
 
 		#endregion

@@ -671,7 +671,8 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (e.Key == KeyboardKeys.Escape)
 			{
-				_gameMain.ChangeToScreen(Screen.InGameMenu);
+				_taskBar.SetToScreen(Screen.InGameMenu);
+				ShowInGameMenu();
 			}
 			if (e.Key == KeyboardKeys.Space)
 			{
