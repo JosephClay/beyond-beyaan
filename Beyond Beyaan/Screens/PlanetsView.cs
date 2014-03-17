@@ -297,7 +297,7 @@ namespace Beyond_Beyaan.Screens
 			_reservesLabel = new BBLabel();
 			_reservesAmount = new BBLabel();
 			
-			if (!_taxLabel.Initialize(x + 10, y + 10, "Tax:", Color.Orange, out reason))
+			if (!_taxLabel.Initialize(x + 10, y + 10, "Reserve:", Color.Orange, out reason))
 			{
 				return false;
 			}
