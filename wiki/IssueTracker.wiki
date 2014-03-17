@@ -1,1 +1,5 @@
 Go back to [Main] page.
+
+Issues:
+
+issue 28 - ESC does not bring up menu while in galaxy screen.
