@@ -1316,6 +1316,7 @@ namespace Beyond_Beyaan
 			_races.Add(owner.EmpireRace);
 			_racePopulations.Add(owner.EmpireRace, 50.0f);
 			Factories = 30;
+			_factoryInvestments = 300; //Start with 300 BCs invested in factories
 			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);
 			ResearchBonus = PLANET_RESEARCH_BONUS.AVERAGE;
 			ConstructionBonus = PLANET_CONSTRUCTION_BONUS.AVERAGE;
@@ -1880,7 +1881,7 @@ namespace Beyond_Beyaan
 			if (InfrastructureAmount > 0)
 			{
 				float amountOfBC = (InfrastructureAmount * 0.01f * ActualProduction);
-				if (Factories * _owner.TechnologyManager.FactoryCost < _factoryInvestments)
+				if (Factories * _owner.TechnologyManager.FactoryCost > _factoryInvestments)
 				{
 					//We need to refit
 					AmountLostToRefitThisTurn = amountOfBC / _owner.TechnologyManager.FactoryDiscount; //adjust the BC spending to match factory cost, i.e. if 5 bc per factory, it is now 10 bc with 5 actual bcs
@@ -1892,7 +1893,7 @@ namespace Beyond_Beyaan
 				}
 				if (amountOfBC  > 0)
 				{
-					if (Factories >= _populationMax * _owner.TechnologyManager.RoboticControls)
+					if (Factories >= TotalMaxPopulation * _owner.TechnologyManager.RoboticControls)
 					{
 						AmountOfBuildingsThisTurn = 0; //Already reached the max
 						AmountOfBCGeneratedThisTurn = amountOfBC * 0.5f; //Lose half to corruption
