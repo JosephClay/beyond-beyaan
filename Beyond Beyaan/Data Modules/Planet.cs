@@ -236,10 +236,6 @@ namespace Beyond_Beyaan
 			{
 				if (InfrastructureAmount > 0)
 				{
-					if (AmountLostToRefitThisTurn > 0)
-					{
-						return "Refitting Buildings";
-					}
 					if (AmountOfBuildingsThisTurn > 0)
 					{
 						if (AmountOfBCGeneratedThisTurn == 0)
@@ -247,6 +243,10 @@ namespace Beyond_Beyaan
 							return string.Format("{0} (+{1:0.0}) Buildings", (int)Factories, AmountOfBuildingsThisTurn);
 						}
 						return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)Factories, AmountOfBuildingsThisTurn, AmountOfBCGeneratedThisTurn);
+					}
+					if (AmountLostToRefitThisTurn > 0)
+					{
+						return "Refitting Buildings";
 					}
 					return string.Format("{0} Buildings (+{1:0.0} BC)", (int)Factories, AmountOfBCGeneratedThisTurn);
 				}
@@ -1853,6 +1853,7 @@ namespace Beyond_Beyaan
 			}
 			//Update the enviroment to at least sufficient to clean up waste
 			SetCleanup();
+			UpdateOutputs();
 		}
 
 		public Ship CheckIfShipBuilt(out int amount)
@@ -1887,11 +1888,12 @@ namespace Beyond_Beyaan
 					AmountLostToRefitThisTurn = amountOfBC / _owner.TechnologyManager.FactoryDiscount; //adjust the BC spending to match factory cost, i.e. if 5 bc per factory, it is now 10 bc with 5 actual bcs
 					if (_factoryInvestments + AmountLostToRefitThisTurn >= Factories * _owner.TechnologyManager.FactoryCost)
 					{
-						AmountLostToRefitThisTurn = (_factoryInvestments + AmountLostToRefitThisTurn) - (Factories * _owner.TechnologyManager.FactoryCost);
+						//More BC than needed to refit
+						AmountLostToRefitThisTurn -= (_factoryInvestments + AmountLostToRefitThisTurn) - (Factories * _owner.TechnologyManager.FactoryCost);
 					}
 					amountOfBC -= (AmountLostToRefitThisTurn * _owner.TechnologyManager.FactoryDiscount);
 				}
-				if (amountOfBC  > 0)
+				if (amountOfBC > 0)
 				{
 					if (Factories >= TotalMaxPopulation * _owner.TechnologyManager.RoboticControls)
 					{

@@ -266,6 +266,7 @@ namespace Beyond_Beyaan
 			FleetManager.SetupStarterFleet(homeSystem);
 			homePlanet.ShipBeingBuilt = FleetManager.CurrentDesigns[0];
 			homePlanet.SetCleanup();
+			homePlanet.UpdateOutputs();
 		}
 
 		public void SetUpContacts(List<Empire> allEmpires)
