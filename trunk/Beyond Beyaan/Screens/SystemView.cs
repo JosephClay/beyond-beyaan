@@ -215,7 +215,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_infrastructureSlider.Initialize(_xPos + 65, _yPos + 160, 200, 1, 101, true, true, gameMain.Random, out reason))
+			if (!_infrastructureSlider.Initialize(_xPos + 65, _yPos + 160, 200, 0, 100, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -227,7 +227,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_researchSlider.Initialize(_xPos + 65, _yPos + 220, 200, 1, 101, true, true, gameMain.Random, out reason))
+			if (!_researchSlider.Initialize(_xPos + 65, _yPos + 220, 200, 0, 100, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -239,7 +239,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_environmentSlider.Initialize(_xPos + 65, _yPos + 280, 200, 1, 101, true, true, gameMain.Random, out reason))
+			if (!_environmentSlider.Initialize(_xPos + 65, _yPos + 280, 200, 0, 100, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -251,7 +251,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_defenseSlider.Initialize(_xPos + 65, _yPos + 340, 200, 1, 101, true, true, gameMain.Random, out reason))
+			if (!_defenseSlider.Initialize(_xPos + 65, _yPos + 340, 200, 0, 100, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -263,7 +263,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_constructionSlider.Initialize(_xPos + 65, _yPos + 400, 200, 1, 101, true, true, gameMain.Random, out reason))
+			if (!_constructionSlider.Initialize(_xPos + 65, _yPos + 400, 200, 0, 100, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -276,7 +276,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_popTransferSlider.Initialize(_xPos + 20, _yPos + 400, 260, 1, 1, true, true, gameMain.Random, out reason))
+			if (!_popTransferSlider.Initialize(_xPos + 20, _yPos + 400, 260, 0, 1, true, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
