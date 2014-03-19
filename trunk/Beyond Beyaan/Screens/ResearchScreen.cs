@@ -95,7 +95,7 @@ namespace Beyond_Beyaan.Screens
 					return false;
 				}
 				_techProgressLabels[i].SetAlignment(true);
-				if (!_techSliders[i].Initialize(x + 550, y + 35 + (i * 30), 200, 1, 100, true, true, gameMain.Random, out reason))
+				if (!_techSliders[i].Initialize(x + 550, y + 35 + (i * 30), 200, 0, 100, true, true, gameMain.Random, out reason))
 				{
 					return false;
 				}
