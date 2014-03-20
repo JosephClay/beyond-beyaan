@@ -403,7 +403,7 @@ namespace Beyond_Beyaan
 	public class Equipment
 	{
 		public Technology Technology { get; private set; }
-		public bool UseSecondary { get; private set; }
+		public bool UseSecondary { get; set; }
 		public string DisplayName
 		{
 			get

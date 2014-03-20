@@ -255,14 +255,29 @@ namespace Beyond_Beyaan
 			foreach (var weapon in Weapons)
 			{
 				writer.WriteStartElement("Weapon");
-				writer.WriteAttributeString("Name", weapon.Key.EquipmentName);
-				writer.WriteAttributeString("NumOfMounts", weapon.Value.ToString());
+				if (weapon.Key == null)
+				{
+					writer.WriteAttributeString("Name", "null");
+				}
+				else
+				{
+					writer.WriteAttributeString("Name", weapon.Key.EquipmentName);
+					writer.WriteAttributeString("NumOfMounts", weapon.Value.ToString());
+					writer.WriteAttributeString("IsSecondary", weapon.Key.UseSecondary.ToString());
+				}
 				writer.WriteEndElement();
 			}
 			foreach (var special in Specials)
 			{
 				writer.WriteStartElement("Special");
-				writer.WriteAttributeString("Name", special.EquipmentName);
+				if (special == null)
+				{
+					writer.WriteAttributeString("Name", "null");
+				}
+				else
+				{
+					writer.WriteAttributeString("Name", special.EquipmentName);
+				}
 				writer.WriteEndElement();
 			}
 			writer.WriteEndElement();
@@ -282,15 +297,31 @@ namespace Beyond_Beyaan
 			int iter = 0;
 			foreach (var weapon in shipDesign.Elements("Weapon"))
 			{
-				var weaponTech = LoadEquipment(weapon.Attribute("Name").Value, gameMain);
-				Weapons[iter] = new KeyValuePair<Equipment, int>(weaponTech, int.Parse(weapon.Attribute("NumOfMounts").Value));
+				if (weapon.Attribute("Name").Value == "null")
+				{
+					Weapons[iter] = new KeyValuePair<Equipment, int>();
+				}
+				else
+				{
+					var weaponTech = LoadEquipment(weapon.Attribute("Name").Value, gameMain);
+					weaponTech.UseSecondary = bool.Parse(weapon.Attribute("IsSecondary").Value);
+					Weapons[iter] = new KeyValuePair<Equipment, int>(weaponTech, int.Parse(weapon.Attribute("NumOfMounts").Value));
+
+				}
 				iter++;
 			}
 			iter = 0;
 			foreach (var special in shipDesign.Elements("Special"))
 			{
-				var specialTech = LoadEquipment(special.Attribute("Name").Value, gameMain);
-				Specials[iter] = specialTech;
+				if (special.Attribute("Name").Value == "null")
+				{
+					Specials[iter] = null;
+				}
+				else
+				{
+					var specialTech = LoadEquipment(special.Attribute("Name").Value, gameMain);
+					Specials[iter] = specialTech;
+				}
 				iter++;
 			}
 		}
