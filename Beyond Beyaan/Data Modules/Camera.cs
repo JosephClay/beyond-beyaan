@@ -160,21 +160,21 @@ namespace Beyond_Beyaan
 
 		private void CheckPosition()
 		{
-			if (cameraX > (width - (windowWidth / zoomDistance) / 2))
+			if (cameraX > (width - ((windowWidth / zoomDistance) * 0.8f)))
 			{
-				cameraX = (width - (windowWidth / zoomDistance) / 2);
+				cameraX = (width - ((windowWidth / zoomDistance) * 0.8f));
 			}
-			if (cameraX < ((windowWidth / zoomDistance) / -2))
+			if (cameraX < ((windowWidth / zoomDistance) / -5))
 			{
-				cameraX = ((windowWidth / zoomDistance) / -2);
+				cameraX = ((windowWidth / zoomDistance) / -5);
 			}
-			if (cameraY > (height - (windowHeight / zoomDistance) / 2))
+			if (cameraY > (height - ((windowHeight / zoomDistance) * 0.8f)))
 			{
-				cameraY = (height - (windowHeight / zoomDistance) / 2);
+				cameraY = (height - ((windowHeight / zoomDistance) * 0.8f));
 			}
-			if (cameraY < ((windowHeight / zoomDistance) / -2))
+			if (cameraY < ((windowHeight / zoomDistance) / -5))
 			{
-				cameraY = ((windowHeight / zoomDistance) / -2);
+				cameraY = ((windowHeight / zoomDistance) / -5);
 			}
 		}
 		#endregion
