@@ -602,6 +602,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			_gameMain.EmpireManager.SetupContacts();
 			_gameMain.EmpireManager.SetInitialEmpireTurn();
+			_generatingGalaxy = false;
 			_gameMain.ChangeToScreen(Screen.Galaxy);
 		}
 

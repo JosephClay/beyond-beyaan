@@ -126,8 +126,6 @@ namespace Beyond_Beyaan
 		{
 			//Used when exiting out of current game (new game for example)
 			EmpireManager = new EmpireManager(this);
-			AIManager = new AIManager();
-			RaceManager = new RaceManager();
 			_situationReport.Clear();
 			_newGame.Clear();
 		}

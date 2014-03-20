@@ -160,7 +160,7 @@ namespace Beyond_Beyaan
 		public List<StarSystem> GetStarsInArea(float left, float top, float width, float height)
 		{
 			List<StarSystem> starsInArea = new List<StarSystem>();
-			//ParentNode.GetStarsInArea(left, top, width + 4, height + 4, starsInArea);
+			
 			foreach (StarSystem star in starSystems)
 			{
 				if (star.X + (star.Size * 16) < left || star.Y + (star.Size * 16) < top || star.X - (star.Size * 16) > left + width || star.Y - (star.Size * 16) > top + height)
