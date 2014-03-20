@@ -644,6 +644,8 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (_nameField.KeyDown(e))
 			{
+				//Update the ship design with the text from name field
+				_shipDesign.Name = _nameField.Text;
 				return true;
 			}
 			return false;
