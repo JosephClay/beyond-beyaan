@@ -283,6 +283,11 @@ namespace Beyond_Beyaan
 				{
 					stillHaveMovement = true;
 				}
+				else
+				{
+					//This refreshes the ETA text
+					fleet.TravelNodes = fleet.TravelNodes;
+				}
 			}
 			return stillHaveMovement;
 		}

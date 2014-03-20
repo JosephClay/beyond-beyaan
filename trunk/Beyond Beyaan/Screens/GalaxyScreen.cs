@@ -11,11 +11,11 @@ namespace Beyond_Beyaan.Screens
 	public class GalaxyScreen : ScreenInterface
 	{
 		private GameMain _gameMain;
-		private Camera camera;
+		private Camera _camera;
 
-		private RenderTarget oldTarget;
-		private RenderImage starName;
-		private RenderImage backBuffer;
+		private RenderTarget _oldTarget;
+		private RenderImage _starName;
+		private RenderImage _backBuffer;
 		private SystemView _systemView;
 		private FleetView _fleetView;
 
@@ -28,9 +28,11 @@ namespace Beyond_Beyaan.Screens
 		private WindowInterface _windowShowing;
 
 		//private int maxVisible;
-		private BBSprite pathSprite;
-		private BBSprite fuelCircle;
-		private BBSprite[] selectionSprites;
+		private BBSprite _pathSprite;
+		private BBSprite _fuelCircle;
+		private BBSprite[] _selectionSprites;
+		private BBLabel _travelETA;
+		private BBLabel _tentativeETA;
 
 		private bool _showingFuelRange;
 		private bool _showingRadarRange;
@@ -38,23 +40,23 @@ namespace Beyond_Beyaan.Screens
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
 			_gameMain = gameMain;
-			pathSprite = SpriteManager.GetSprite("Path", _gameMain.Random);
-			fuelCircle = SpriteManager.GetSprite("FuelCircle", _gameMain.Random);
-			selectionSprites = new BBSprite[4];
-			selectionSprites[0] = SpriteManager.GetSprite("SelectionTL", _gameMain.Random);
-			selectionSprites[1] = SpriteManager.GetSprite("SelectionTR", _gameMain.Random);
-			selectionSprites[2] = SpriteManager.GetSprite("SelectionBL", _gameMain.Random);
-			selectionSprites[3] = SpriteManager.GetSprite("SelectionBR", _gameMain.Random);
+			_pathSprite = SpriteManager.GetSprite("Path", _gameMain.Random);
+			_fuelCircle = SpriteManager.GetSprite("FuelCircle", _gameMain.Random);
+			_selectionSprites = new BBSprite[4];
+			_selectionSprites[0] = SpriteManager.GetSprite("SelectionTL", _gameMain.Random);
+			_selectionSprites[1] = SpriteManager.GetSprite("SelectionTR", _gameMain.Random);
+			_selectionSprites[2] = SpriteManager.GetSprite("SelectionBL", _gameMain.Random);
+			_selectionSprites[3] = SpriteManager.GetSprite("SelectionBR", _gameMain.Random);
 			_showingFuelRange = false;
 			_showingRadarRange = false;
 
-			camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
+			_camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
 
-			starName = new RenderImage("starNameRendered", 1, 1, ImageBufferFormats.BufferRGB888A8);
-			starName.BlendingMode = BlendingModes.Modulated;
+			_starName = new RenderImage("starNameRendered", 1, 1, ImageBufferFormats.BufferRGB888A8);
+			_starName.BlendingMode = BlendingModes.Modulated;
 
-			backBuffer = new RenderImage("galaxyBackBuffer", _gameMain.ScreenWidth, _gameMain.ScreenHeight, ImageBufferFormats.BufferRGB888A8);
-			backBuffer.BlendingMode = BlendingModes.Modulated;
+			_backBuffer = new RenderImage("galaxyBackBuffer", _gameMain.ScreenWidth, _gameMain.ScreenHeight, ImageBufferFormats.BufferRGB888A8);
+			_backBuffer.BlendingMode = BlendingModes.Modulated;
 
 			_systemView = new SystemView();
 			if (!_systemView.Initialize(_gameMain, "GalaxyScreen", out reason))
@@ -102,6 +104,18 @@ namespace Beyond_Beyaan.Screens
 			_taskBar.ShowShipDesignScreen = ShowShipDesignScreen;
 			_taskBar.ShowPlanetsScreen = ShowPlanetsView;
 
+			_travelETA = new BBLabel();
+			_tentativeETA = new BBLabel();
+
+			if (!_travelETA.Initialize(0, 0, "ETA", Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_tentativeETA.Initialize(0, 0, "ETA", Color.White, out reason))
+			{
+				return false;
+			}
+
 			reason = null;
 			return true;
 		}
@@ -111,14 +125,44 @@ namespace Beyond_Beyaan.Screens
 			if (_gameMain.EmpireManager.CurrentEmpire != null && _gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem != null)
 			{
 				_gameMain.EmpireManager.CurrentEmpire.SelectedSystem = _gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem;
-				camera.CenterCamera(_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.X, _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Y, camera.ZoomDistance);
+				_camera.CenterCamera(_gameMain.EmpireManager.CurrentEmpire.SelectedSystem.X, _gameMain.EmpireManager.CurrentEmpire.SelectedSystem.Y, _camera.ZoomDistance);
 				_systemView.LoadSystem();
 			}
 		}
 
 		public void CenterScreenToPoint(Point point)
 		{
-			camera.CenterCamera(point.X * 60, point.Y * 60, camera.ZoomDistance);
+			_camera.CenterCamera(point.X * 60, point.Y * 60, _camera.ZoomDistance);
+		}
+
+		private void DrawETA(TravelNode node, bool isTentative)
+		{
+			if (isTentative)
+			{
+				_tentativeETA.MoveTo((int)((node.StarSystem.X - _camera.CameraX) * _camera.ZoomDistance), (int)((node.StarSystem.Y - _camera.CameraY - 32) * _camera.ZoomDistance));
+				if (node.Angle > 180)
+				{
+					_tentativeETA.SetAlignment(true);
+				}
+				else
+				{
+					_tentativeETA.SetAlignment(false);
+				}
+				_tentativeETA.Draw();
+			}
+			else
+			{
+				_travelETA.MoveTo((int)((node.StarSystem.X - _camera.CameraX) * _camera.ZoomDistance), (int)((node.StarSystem.Y - _camera.CameraY - 32) * _camera.ZoomDistance));
+				if (node.Angle > 180)
+				{
+					_travelETA.SetAlignment(true);
+				}
+				else
+				{
+					_travelETA.SetAlignment(false);
+				}
+				_travelETA.Draw();
+			}
 		}
 
 		//Used when other non-combat screens are open, to fill in the blank areas
@@ -128,79 +172,79 @@ namespace Beyond_Beyaan.Screens
 			StarSystem selectedSystem = currentEmpire.SelectedSystem;
 			FleetGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
 			List<StarSystem> systems = _gameMain.Galaxy.GetAllStars();
-			bool displayName = camera.ZoomDistance > 0.8f;
+			bool displayName = _camera.ZoomDistance > 0.8f;
 
 			if (_showingFuelRange)
 			{
 				// TODO: Optimize this by going through an empire's owned systems, instead of all stars
-				float scale = (currentEmpire.TechnologyManager.FuelRange / 3.0f) * camera.ZoomDistance;
-				float extendedScale = ((currentEmpire.TechnologyManager.FuelRange + 3) / 3.0f) * camera.ZoomDistance;
-				backBuffer.Clear(Color.Black);
-				oldTarget = GorgonLibrary.Gorgon.CurrentRenderTarget;
-				GorgonLibrary.Gorgon.CurrentRenderTarget = backBuffer;
+				float scale = (currentEmpire.TechnologyManager.FuelRange / 3.0f) * _camera.ZoomDistance;
+				float extendedScale = ((currentEmpire.TechnologyManager.FuelRange + 3) / 3.0f) * _camera.ZoomDistance;
+				_backBuffer.Clear(Color.Black);
+				_oldTarget = GorgonLibrary.Gorgon.CurrentRenderTarget;
+				GorgonLibrary.Gorgon.CurrentRenderTarget = _backBuffer;
 				List<StarSystem> ownedSystems = new List<StarSystem>();
 				foreach (StarSystem system in systems)
 				{
 					if (system.Planets[0].Owner == currentEmpire)
 					{
-						fuelCircle.Draw((system.X - camera.CameraX) * camera.ZoomDistance, (system.Y - camera.CameraY) * camera.ZoomDistance, extendedScale, extendedScale, Color.LimeGreen);
+						_fuelCircle.Draw((system.X - _camera.CameraX) * _camera.ZoomDistance, (system.Y - _camera.CameraY) * _camera.ZoomDistance, extendedScale, extendedScale, Color.LimeGreen);
 						ownedSystems.Add(system);
 					}
 				}
-				GorgonLibrary.Gorgon.CurrentRenderTarget = oldTarget;
-				backBuffer.Blit(0, 0, _gameMain.ScreenWidth, _gameMain.ScreenHeight, Color.FromArgb(75, Color.White), BlitterSizeMode.Crop);
-				backBuffer.Clear(Color.Black);
-				GorgonLibrary.Gorgon.CurrentRenderTarget = backBuffer;
+				GorgonLibrary.Gorgon.CurrentRenderTarget = _oldTarget;
+				_backBuffer.Blit(0, 0, _gameMain.ScreenWidth, _gameMain.ScreenHeight, Color.FromArgb(75, Color.White), BlitterSizeMode.Crop);
+				_backBuffer.Clear(Color.Black);
+				GorgonLibrary.Gorgon.CurrentRenderTarget = _backBuffer;
 				foreach (StarSystem system in ownedSystems)
 				{
-					fuelCircle.Draw((system.X - camera.CameraX) * camera.ZoomDistance, (system.Y - camera.CameraY) * camera.ZoomDistance, scale, scale, Color.LimeGreen);
+					_fuelCircle.Draw((system.X - _camera.CameraX) * _camera.ZoomDistance, (system.Y - _camera.CameraY) * _camera.ZoomDistance, scale, scale, Color.LimeGreen);
 				}
-				GorgonLibrary.Gorgon.CurrentRenderTarget = oldTarget;
-				backBuffer.Blit(0, 0, _gameMain.ScreenWidth, _gameMain.ScreenHeight, Color.FromArgb(75, Color.White), BlitterSizeMode.Crop);
+				GorgonLibrary.Gorgon.CurrentRenderTarget = _oldTarget;
+				_backBuffer.Blit(0, 0, _gameMain.ScreenWidth, _gameMain.ScreenHeight, Color.FromArgb(75, Color.White), BlitterSizeMode.Crop);
 			}
 			else if (_showingRadarRange)
 			{
 				// TODO: Optimize this by going through an empire's owned systems, instead of all stars
-				float planetScale = (currentEmpire.TechnologyManager.PlanetRadarRange / 3.0f) * camera.ZoomDistance;
-				float fleetScale = (currentEmpire.TechnologyManager.FleetRadarRange / 3.0f) * camera.ZoomDistance;
-				backBuffer.Clear(Color.Black);
-				oldTarget = GorgonLibrary.Gorgon.CurrentRenderTarget;
-				GorgonLibrary.Gorgon.CurrentRenderTarget = backBuffer;
+				float planetScale = (currentEmpire.TechnologyManager.PlanetRadarRange / 3.0f) * _camera.ZoomDistance;
+				float fleetScale = (currentEmpire.TechnologyManager.FleetRadarRange / 3.0f) * _camera.ZoomDistance;
+				_backBuffer.Clear(Color.Black);
+				_oldTarget = GorgonLibrary.Gorgon.CurrentRenderTarget;
+				GorgonLibrary.Gorgon.CurrentRenderTarget = _backBuffer;
 				foreach (StarSystem system in systems)
 				{
 					if (system.Planets[0].Owner == currentEmpire)
 					{
-						fuelCircle.Draw((system.X - camera.CameraX) * camera.ZoomDistance, (system.Y - camera.CameraY) * camera.ZoomDistance, planetScale, planetScale, Color.Tomato);
+						_fuelCircle.Draw((system.X - _camera.CameraX) * _camera.ZoomDistance, (system.Y - _camera.CameraY) * _camera.ZoomDistance, planetScale, planetScale, Color.Tomato);
 					}
 				}
 				if (currentEmpire.TechnologyManager.FleetRadarRange > 0)
 				{
 					foreach (var fleet in currentEmpire.FleetManager.GetFleets())
 					{
-						fuelCircle.Draw((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance, (fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance, fleetScale, fleetScale, Color.Tomato);
+						_fuelCircle.Draw((fleet.GalaxyX - _camera.CameraX) * _camera.ZoomDistance, (fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance, fleetScale, fleetScale, Color.Tomato);
 					}
 				}
-				GorgonLibrary.Gorgon.CurrentRenderTarget = oldTarget;
-				backBuffer.Blit(0, 0, _gameMain.ScreenWidth, _gameMain.ScreenHeight, Color.FromArgb(75, Color.White), BlitterSizeMode.Crop);
+				GorgonLibrary.Gorgon.CurrentRenderTarget = _oldTarget;
+				_backBuffer.Blit(0, 0, _gameMain.ScreenWidth, _gameMain.ScreenHeight, Color.FromArgb(75, Color.White), BlitterSizeMode.Crop);
 			}
 
 			if (selectedSystem != null)
 			{
 				if (selectedSystem.Planets[0].TransferSystem.Key.StarSystem != selectedSystem)
 				{
-					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedSystem.Planets[0].TransferSystem.Key.Length / pathSprite.Width), camera.ZoomDistance, Color.Green, selectedSystem.Planets[0].TransferSystem.Key.Angle);
+					_pathSprite.Draw((selectedSystem.X - _camera.CameraX) * _camera.ZoomDistance, (selectedSystem.Y - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (selectedSystem.Planets[0].TransferSystem.Key.Length / _pathSprite.Width), _camera.ZoomDistance, Color.Green, selectedSystem.Planets[0].TransferSystem.Key.Angle);
 				}
 				if (selectedSystem.Planets[0].RelocateToSystem != null)
 				{
-					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedSystem.Planets[0].RelocateToSystem.Length / pathSprite.Width), camera.ZoomDistance, Color.Blue, selectedSystem.Planets[0].RelocateToSystem.Angle);
+					_pathSprite.Draw((selectedSystem.X - _camera.CameraX) * _camera.ZoomDistance, (selectedSystem.Y - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (selectedSystem.Planets[0].RelocateToSystem.Length / _pathSprite.Width), _camera.ZoomDistance, Color.Blue, selectedSystem.Planets[0].RelocateToSystem.Angle);
 				}
 				if (_systemView.IsTransferring && _systemView.TransferSystem != null)
 				{
-					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (_systemView.TransferSystem.Length / pathSprite.Width), camera.ZoomDistance, _systemView.TransferSystem.IsValid ? Color.LightGreen : Color.Red, _systemView.TransferSystem.Angle);
+					_pathSprite.Draw((selectedSystem.X - _camera.CameraX) * _camera.ZoomDistance, (selectedSystem.Y - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (_systemView.TransferSystem.Length / _pathSprite.Width), _camera.ZoomDistance, _systemView.TransferSystem.IsValid ? Color.LightGreen : Color.Red, _systemView.TransferSystem.Angle);
 				}
 				if (_systemView.IsRelocating && _systemView.RelocateSystem != null)
 				{
-					pathSprite.Draw((selectedSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (_systemView.RelocateSystem.Length / pathSprite.Width), camera.ZoomDistance, _systemView.RelocateSystem.IsValid ? Color.LightSkyBlue : Color.Red, _systemView.RelocateSystem.Angle);
+					_pathSprite.Draw((selectedSystem.X - _camera.CameraX) * _camera.ZoomDistance, (selectedSystem.Y - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (_systemView.RelocateSystem.Length / _pathSprite.Width), _camera.ZoomDistance, _systemView.RelocateSystem.IsValid ? Color.LightSkyBlue : Color.Red, _systemView.RelocateSystem.Angle);
 				}
 			}
 
@@ -208,41 +252,41 @@ namespace Beyond_Beyaan.Screens
 			{
 				GorgonLibrary.Gorgon.CurrentShader = _gameMain.StarShader;
 				_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
-				system.Sprite.Draw((int)((system.X - camera.CameraX) * camera.ZoomDistance), (int)((system.Y - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance);
+				system.Sprite.Draw((int)((system.X - _camera.CameraX) * _camera.ZoomDistance), (int)((system.Y - _camera.CameraY) * _camera.ZoomDistance), _camera.ZoomDistance, _camera.ZoomDistance);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 
 				if (system == currentEmpire.SelectedSystem)
 				{
-					selectionSprites[0].Draw(((system.X - 16) - camera.CameraX) * camera.ZoomDistance, ((system.Y - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-					selectionSprites[1].Draw(((system.X) - camera.CameraX) * camera.ZoomDistance, ((system.Y - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-					selectionSprites[2].Draw(((system.X - 16) - camera.CameraX) * camera.ZoomDistance, ((system.Y) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-					selectionSprites[3].Draw(((system.X) - camera.CameraX) * camera.ZoomDistance, ((system.Y) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+					_selectionSprites[0].Draw(((system.X - 16) - _camera.CameraX) * _camera.ZoomDistance, ((system.Y - 16) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+					_selectionSprites[1].Draw(((system.X) - _camera.CameraX) * _camera.ZoomDistance, ((system.Y - 16) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+					_selectionSprites[2].Draw(((system.X - 16) - _camera.CameraX) * _camera.ZoomDistance, ((system.Y) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+					_selectionSprites[3].Draw(((system.X) - _camera.CameraX) * _camera.ZoomDistance, ((system.Y) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
 				}
 
 				if (displayName && (_gameMain.EmpireManager.CurrentEmpire.ContactManager.IsContacted(system.DominantEmpire) || system.IsThisSystemExploredByEmpire(_gameMain.EmpireManager.CurrentEmpire)))
 				{
-					float x = (system.X - camera.CameraX) * camera.ZoomDistance;
+					float x = (system.X - _camera.CameraX) * _camera.ZoomDistance;
 					x -= (system.StarName.GetWidth() / 2);
-					float y = ((system.Y + (system.Size * 16)) - camera.CameraY) * camera.ZoomDistance;
+					float y = ((system.Y + (system.Size * 16)) - _camera.CameraY) * _camera.ZoomDistance;
 					system.StarName.MoveTo((int)x, (int)y);
 					if (system.DominantEmpire != null)
 					{
 						// TODO: Optimize this by moving the text sprite and color shader to StarSystem, where it's updated when ownership changes
 						float percentage = 1.0f;
-						oldTarget = GorgonLibrary.Gorgon.CurrentRenderTarget;
-						starName.Width = (int)system.StarName.GetWidth();
-						starName.Height = (int)system.StarName.GetHeight();
-						GorgonLibrary.Gorgon.CurrentRenderTarget = starName;
+						_oldTarget = GorgonLibrary.Gorgon.CurrentRenderTarget;
+						_starName.Width = (int)system.StarName.GetWidth();
+						_starName.Height = (int)system.StarName.GetHeight();
+						GorgonLibrary.Gorgon.CurrentRenderTarget = _starName;
 						system.StarName.MoveTo(0, 0);
 						system.StarName.Draw();
-						GorgonLibrary.Gorgon.CurrentRenderTarget = oldTarget;
+						GorgonLibrary.Gorgon.CurrentRenderTarget = _oldTarget;
 						//GorgonLibrary.Gorgon.CurrentShader = _gameMain.NameShader;
 						foreach (Empire empire in system.EmpiresWithPlanetsInThisSystem)
 						{
 							/*_gameMain.NameShader.Parameters["EmpireColor"].SetValue(empire.ConvertedColor);
 							_gameMain.NameShader.Parameters["startPos"].SetValue(percentage);
 							_gameMain.NameShader.Parameters["endPos"].SetValue(percentage + system.OwnerPercentage[empire]);*/
-							starName.Blit(x, y, starName.Width * percentage, starName.Height, empire.EmpireColor, GorgonLibrary.Graphics.BlitterSizeMode.Crop);
+							_starName.Blit(x, y, _starName.Width * percentage, _starName.Height, empire.EmpireColor, GorgonLibrary.Graphics.BlitterSizeMode.Crop);
 							percentage -= system.OwnerPercentage[empire];
 						}
 						//GorgonLibrary.Gorgon.CurrentShader = null;
@@ -270,22 +314,34 @@ namespace Beyond_Beyaan.Screens
 								float y = travelNode.StarSystem.Y - selectedFleetGroup.FleetToSplit.GalaxyY;
 								float length = (float)Math.Sqrt((x * x) + (y * y));
 								float angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
-								pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - camera.CameraX - 32) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (length / pathSprite.Width), camera.ZoomDistance, Color.Green, angle);
+								_pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - _camera.CameraX - 32) * _camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (length / _pathSprite.Width), _camera.ZoomDistance, Color.Green, angle);
 							}
 							else
 							{
-								pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (travelNode.Length / pathSprite.Width), camera.ZoomDistance, Color.Green, travelNode.Angle);
+								_pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - _camera.CameraX) * _camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (travelNode.Length / _pathSprite.Width), _camera.ZoomDistance, Color.Green, travelNode.Angle);
+							}
+							if (selectedFleetGroup.SelectedFleet.TravelNodes.Count == 1)
+							{
+								//Only one node, so draw ETA at this star
+								DrawETA(travelNode, false);
 							}
 						}
 						else
 						{
-							pathSprite.Draw((selectedFleetGroup.SelectedFleet.TravelNodes[i - 1].StarSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.TravelNodes[i - 1].StarSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[i].Length / pathSprite.Width), camera.ZoomDistance, Color.Green, selectedFleetGroup.SelectedFleet.TravelNodes[i].Angle);
+							_pathSprite.Draw((selectedFleetGroup.SelectedFleet.TravelNodes[i - 1].StarSystem.X - _camera.CameraX) * _camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.TravelNodes[i - 1].StarSystem.Y - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[i].Length / _pathSprite.Width), _camera.ZoomDistance, Color.Green, selectedFleetGroup.SelectedFleet.TravelNodes[i].Angle);
+							if (i == selectedFleetGroup.SelectedFleet.TravelNodes.Count - 1)
+							{
+								//Last node, so draw ETA here
+								DrawETA(selectedFleetGroup.FleetToSplit.TravelNodes[i], false);
+							}
 						}
 					}
 				}
-				else if (currentEmpire.TechnologyManager.ShowEnemyETA)
+				else if (currentEmpire.TechnologyManager.ShowEnemyETA && selectedFleetGroup.SelectedFleet.TravelNodes.Count > 0)
 				{
-					pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[0].Length / pathSprite.Width), camera.ZoomDistance, Color.Red, selectedFleetGroup.SelectedFleet.TravelNodes[0].Angle);
+					_pathSprite.Draw((selectedFleetGroup.SelectedFleet.GalaxyX - _camera.CameraX) * _camera.ZoomDistance, (selectedFleetGroup.SelectedFleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (selectedFleetGroup.SelectedFleet.TravelNodes[0].Length / _pathSprite.Width), _camera.ZoomDistance, Color.Red, selectedFleetGroup.SelectedFleet.TravelNodes[0].Angle);
+					//Player do not know if there's other stops, so draw ETA for first one
+					DrawETA(selectedFleetGroup.FleetToSplit.TravelNodes[0], false);
 				}
 			}
 
@@ -303,7 +359,7 @@ namespace Beyond_Beyaan.Screens
 							float y = travelNode.StarSystem.Y - selectedFleetGroup.FleetToSplit.GalaxyY;
 							float length = (float)Math.Sqrt((x * x) + (y * y));
 							float angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
-							pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX - 32) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (length / pathSprite.Width), camera.ZoomDistance, travelNode.IsValid ? Color.LightGreen : Color.Red, angle);
+							_pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - _camera.CameraX - 32) * _camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (length / _pathSprite.Width), _camera.ZoomDistance, travelNode.IsValid ? Color.LightGreen : Color.Red, angle);
 						}
 						else if (selectedFleetGroup.FleetToSplit.AdjacentSystem != null)
 						{
@@ -312,21 +368,31 @@ namespace Beyond_Beyaan.Screens
 							float y = travelNode.StarSystem.Y - selectedFleetGroup.FleetToSplit.GalaxyY;
 							float length = (float)Math.Sqrt((x * x) + (y * y));
 							float angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
-							pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX + 32) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (length / pathSprite.Width), camera.ZoomDistance, travelNode.IsValid ? Color.LightGreen : Color.Red, angle);
+							_pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - _camera.CameraX + 32) * _camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (length / _pathSprite.Width), _camera.ZoomDistance, travelNode.IsValid ? Color.LightGreen : Color.Red, angle);
 						}
 						else
 						{
-							pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.FleetToSplit.TentativeNodes[0].Length / pathSprite.Width), camera.ZoomDistance, Color.LightGreen, selectedFleetGroup.FleetToSplit.TentativeNodes[0].Angle);
+							_pathSprite.Draw((selectedFleetGroup.FleetToSplit.GalaxyX - _camera.CameraX) * _camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.GalaxyY - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (selectedFleetGroup.FleetToSplit.TentativeNodes[0].Length / _pathSprite.Width), _camera.ZoomDistance, Color.LightGreen, selectedFleetGroup.FleetToSplit.TentativeNodes[0].Angle);
+						}
+						if (selectedFleetGroup.FleetToSplit.TentativeNodes.Count == 1)
+						{
+							//Only one node, so draw ETA at this star
+							DrawETA(travelNode, true);
 						}
 					}
 					else
 					{
-						pathSprite.Draw((selectedFleetGroup.FleetToSplit.TentativeNodes[i - 1].StarSystem.X - camera.CameraX) * camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.TentativeNodes[i - 1].StarSystem.Y - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance * (selectedFleetGroup.FleetToSplit.TentativeNodes[i].Length / pathSprite.Width), camera.ZoomDistance, selectedFleetGroup.FleetToSplit.TentativeNodes[i].IsValid ? Color.LightGreen : Color.Red, selectedFleetGroup.FleetToSplit.TentativeNodes[i].Angle);
+						_pathSprite.Draw((selectedFleetGroup.FleetToSplit.TentativeNodes[i - 1].StarSystem.X - _camera.CameraX) * _camera.ZoomDistance, (selectedFleetGroup.FleetToSplit.TentativeNodes[i - 1].StarSystem.Y - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance * (selectedFleetGroup.FleetToSplit.TentativeNodes[i].Length / _pathSprite.Width), _camera.ZoomDistance, selectedFleetGroup.FleetToSplit.TentativeNodes[i].IsValid ? Color.LightGreen : Color.Red, selectedFleetGroup.FleetToSplit.TentativeNodes[i].Angle);
+						if (i == selectedFleetGroup.FleetToSplit.TentativeNodes.Count - 1)
+						{
+							//Last node, so draw ETA here
+							DrawETA(selectedFleetGroup.FleetToSplit.TentativeNodes[i], true);
+						}
 					}
 				}
 			}
 
-			foreach (Fleet fleet in _gameMain.EmpireManager.GetFleetsWithinArea(camera.CameraX, camera.CameraY, _gameMain.ScreenWidth / camera.ZoomDistance, _gameMain.ScreenHeight / camera.ZoomDistance))
+			foreach (Fleet fleet in _gameMain.EmpireManager.GetFleetsWithinArea(_camera.CameraX, _camera.CameraY, _gameMain.ScreenWidth / _camera.ZoomDistance, _gameMain.ScreenHeight / _camera.ZoomDistance))
 			{
 				BBSprite fleetIcon = fleet.Ships.Count > 0 ? fleet.Empire.EmpireRace.FleetIcon : fleet.Empire.EmpireRace.TransportIcon;
 				if (fleet.AdjacentSystem != null)
@@ -336,24 +402,24 @@ namespace Beyond_Beyaan.Screens
 						//Adjacent to a system, but is heading to another system
 						if (selectedFleetGroup != null && selectedFleetGroup.Fleets.Contains(fleet))
 						{
-							selectionSprites[0].Draw(((fleet.GalaxyX - 48) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-							selectionSprites[1].Draw(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-							selectionSprites[2].Draw(((fleet.GalaxyX - 48) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-							selectionSprites[3].Draw(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+							_selectionSprites[0].Draw(((fleet.GalaxyX - 48) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY - 16) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+							_selectionSprites[1].Draw(((fleet.GalaxyX - 32) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY - 16) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+							_selectionSprites[2].Draw(((fleet.GalaxyX - 48) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+							_selectionSprites[3].Draw(((fleet.GalaxyX - 32) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
 						}
-						fleetIcon.Draw((int)(((fleet.GalaxyX - 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
+						fleetIcon.Draw((int)(((fleet.GalaxyX - 32) - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), _camera.ZoomDistance, _camera.ZoomDistance, fleet.Empire.EmpireColor);
 					}
 					else
 					{
 						//Adjacent to a system, just chilling
 						if (selectedFleetGroup != null && selectedFleetGroup.Fleets.Contains(fleet))
 						{
-							selectionSprites[0].Draw(((fleet.GalaxyX + 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-							selectionSprites[1].Draw(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-							selectionSprites[2].Draw(((fleet.GalaxyX + 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-							selectionSprites[3].Draw(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+							_selectionSprites[0].Draw(((fleet.GalaxyX + 16) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY - 16) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+							_selectionSprites[1].Draw(((fleet.GalaxyX + 32) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY - 16) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+							_selectionSprites[2].Draw(((fleet.GalaxyX + 16) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+							_selectionSprites[3].Draw(((fleet.GalaxyX + 32) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
 						}
-						fleetIcon.Draw((int)(((fleet.GalaxyX + 32) - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
+						fleetIcon.Draw((int)(((fleet.GalaxyX + 32) - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), _camera.ZoomDistance, _camera.ZoomDistance, fleet.Empire.EmpireColor);
 					}
 				}
 				else
@@ -361,12 +427,12 @@ namespace Beyond_Beyaan.Screens
 					//Fleet is enroute, no moving of icon needed
 					if (selectedFleetGroup != null && selectedFleetGroup.Fleets.Contains(fleet))
 					{
-						selectionSprites[0].Draw(((fleet.GalaxyX - 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-						selectionSprites[1].Draw(((fleet.GalaxyX) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY - 16) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-						selectionSprites[2].Draw(((fleet.GalaxyX - 16) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
-						selectionSprites[3].Draw(((fleet.GalaxyX) - camera.CameraX) * camera.ZoomDistance, ((fleet.GalaxyY) - camera.CameraY) * camera.ZoomDistance, camera.ZoomDistance, camera.ZoomDistance, Color.Green);
+						_selectionSprites[0].Draw(((fleet.GalaxyX - 16) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY - 16) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+						_selectionSprites[1].Draw(((fleet.GalaxyX) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY - 16) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+						_selectionSprites[2].Draw(((fleet.GalaxyX - 16) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
+						_selectionSprites[3].Draw(((fleet.GalaxyX) - _camera.CameraX) * _camera.ZoomDistance, ((fleet.GalaxyY) - _camera.CameraY) * _camera.ZoomDistance, _camera.ZoomDistance, _camera.ZoomDistance, Color.Green);
 					}
-					fleetIcon.Draw((int)((fleet.GalaxyX - camera.CameraX) * camera.ZoomDistance), (int)((fleet.GalaxyY - camera.CameraY) * camera.ZoomDistance), camera.ZoomDistance, camera.ZoomDistance, fleet.Empire.EmpireColor);
+					fleetIcon.Draw((int)((fleet.GalaxyX - _camera.CameraX) * _camera.ZoomDistance), (int)((fleet.GalaxyY - _camera.CameraY) * _camera.ZoomDistance), _camera.ZoomDistance, _camera.ZoomDistance, fleet.Empire.EmpireColor);
 				}
 			}
 		}
@@ -399,7 +465,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void Update(int x, int y, float frameDeltaTime)
 		{
-			pathSprite.Update(frameDeltaTime, _gameMain.Random);
+			_pathSprite.Update(frameDeltaTime, _gameMain.Random);
 			_gameMain.Galaxy.Update(frameDeltaTime, _gameMain.Random);
 
 			if (_taskBar.MouseHover(x, y, frameDeltaTime))
@@ -430,15 +496,16 @@ namespace Beyond_Beyaan.Screens
 				{
 					Point hoveringPoint = new Point();
 
-					hoveringPoint.X = (int)((x / camera.ZoomDistance) + camera.CameraX);
-					hoveringPoint.Y = (int)((y / camera.ZoomDistance) + camera.CameraY);
+					hoveringPoint.X = (int)((x / _camera.ZoomDistance) + _camera.CameraX);
+					hoveringPoint.Y = (int)((y / _camera.ZoomDistance) + _camera.CameraY);
 
 					StarSystem selectedSystem = _gameMain.Galaxy.GetStarAtPoint(hoveringPoint);
 					currentEmpire.SelectedFleetGroup.FleetToSplit.SetTentativePath(selectedSystem, currentEmpire.SelectedFleetGroup.FleetToSplit.HasReserveTanks, _gameMain.Galaxy);
+					RefreshETAText();
 				}
 			}
 			
-			camera.HandleUpdate(x, y, frameDeltaTime);
+			_camera.HandleUpdate(x, y, frameDeltaTime);
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
@@ -495,8 +562,8 @@ namespace Beyond_Beyaan.Screens
 					{
 						Point point = new Point();
 
-						point.X = (int)((x / camera.ZoomDistance) + camera.CameraX);
-						point.Y = (int)((y / camera.ZoomDistance) + camera.CameraY);
+						point.X = (int)((x / _camera.ZoomDistance) + _camera.CameraX);
+						point.Y = (int)((y / _camera.ZoomDistance) + _camera.CameraY);
 
 						StarSystem system = _gameMain.Galaxy.GetStarAtPoint(point);
 						if (system != null)
@@ -523,8 +590,8 @@ namespace Beyond_Beyaan.Screens
 					{
 						Point point = new Point();
 
-						point.X = (int)((x / camera.ZoomDistance) + camera.CameraX);
-						point.Y = (int)((y / camera.ZoomDistance) + camera.CameraY);
+						point.X = (int)((x / _camera.ZoomDistance) + _camera.CameraX);
+						point.Y = (int)((y / _camera.ZoomDistance) + _camera.CameraY);
 
 						StarSystem system = _gameMain.Galaxy.GetStarAtPoint(point);
 						if (system != null)
@@ -552,6 +619,7 @@ namespace Beyond_Beyaan.Screens
 				{
 					if (_fleetView.MouseUp(x, y))
 					{
+						RefreshETAText();
 						return;
 					}
 				}
@@ -559,8 +627,8 @@ namespace Beyond_Beyaan.Screens
 				bool clearingUI = _gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null || _gameMain.EmpireManager.CurrentEmpire.SelectedFleetGroup != null;
 				Point pointClicked = new Point();
 
-				pointClicked.X = (int)((x / camera.ZoomDistance) + camera.CameraX);
-				pointClicked.Y = (int)((y / camera.ZoomDistance) + camera.CameraY);
+				pointClicked.X = (int)((x / _camera.ZoomDistance) + _camera.CameraX);
+				pointClicked.Y = (int)((y / _camera.ZoomDistance) + _camera.CameraY);
 
 				StarSystem selectedSystem = _gameMain.Galaxy.GetStarAtPoint(pointClicked);
 				if (selectedSystem != null && selectedSystem == _gameMain.EmpireManager.CurrentEmpire.SelectedSystem)
@@ -583,11 +651,12 @@ namespace Beyond_Beyaan.Screens
 				if (selectedFleetGroup != null)
 				{
 					_fleetView.LoadFleetGroup(selectedFleetGroup);
+					RefreshETAText();
 					return;
 				}
 				if (!clearingUI)
 				{
-					camera.CenterCamera(pointClicked.X, pointClicked.Y, camera.ZoomDistance);
+					_camera.CenterCamera(pointClicked.X, pointClicked.Y, _camera.ZoomDistance);
 				}
 			}
 			else if (whichButton == 2)
@@ -636,13 +705,45 @@ namespace Beyond_Beyaan.Screens
 			}
 		}
 
+		private void RefreshETAText()
+		{
+			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+
+			//Update the ETAs
+			if (currentEmpire.SelectedFleetGroup.SelectedFleet.Empire == currentEmpire)
+			{
+				if (currentEmpire.SelectedFleetGroup.FleetToSplit.TentativeNodes != null)
+				{
+					if (
+						currentEmpire.SelectedFleetGroup.FleetToSplit.TentativeNodes[
+							currentEmpire.SelectedFleetGroup.FleetToSplit.TentativeNodes.Count - 1].IsValid)
+					{
+						_tentativeETA.SetText("ETA: " + currentEmpire.SelectedFleetGroup.FleetToSplit.TentativeETA);
+					}
+					else
+					{
+						_tentativeETA.SetText("Out of range");
+					}
+				}
+
+				if (currentEmpire.SelectedFleetGroup.SelectedFleet.Empire == currentEmpire)
+				{
+					_travelETA.SetText("ETA: " + currentEmpire.SelectedFleetGroup.SelectedFleet.TravelETA);
+				}
+			}
+			else
+			{
+				_travelETA.SetText("ETA: " + currentEmpire.SelectedFleetGroup.SelectedFleet.TravelToFirstNodeETA);
+			}
+		}
+
 		public void MouseScroll(int direction, int x, int y)
 		{
 			if (_windowShowing != null)
 			{
 				return;
 			}
-			camera.MouseWheel(direction, x, y);
+			_camera.MouseWheel(direction, x, y);
 		}
 
 		public void KeyDown(KeyboardInputEventArgs e)
@@ -718,7 +819,7 @@ namespace Beyond_Beyaan.Screens
 
 		public void ResetCamera()
 		{
-			camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
+			_camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
 		}
 	}
 }
