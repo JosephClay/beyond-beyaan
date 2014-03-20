@@ -649,6 +649,12 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (_windowShowing != null)
 			{
+				if (e.Key == KeyboardKeys.Escape)
+				{
+					//Close the current window
+					CloseWindow();
+					return;
+				}
 				_windowShowing.KeyDown(e);
 				return;
 			}
