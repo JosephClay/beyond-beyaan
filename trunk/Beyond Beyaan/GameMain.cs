@@ -14,6 +14,15 @@ namespace Beyond_Beyaan
 
 	public class GameMain
 	{
+		#region Constants
+
+		public const int SIMPLE = 0;
+		public const int EASY = 1;
+		public const int MEDIUM = 2;
+		public const int HARD = 3;
+		public const int IMPOSSIBLE = 4;
+		#endregion
+
 		#region Screens
 		private ScreenInterface _screenInterface;
 		private MainGameMenu _mainGameMenu;
@@ -42,6 +51,7 @@ namespace Beyond_Beyaan
 		internal GorgonLibrary.Graphics.FXShader ShipShader { get; private set; }
 		internal GorgonLibrary.Graphics.FXShader StarShader { get; private set; }
 		internal DirectoryInfo GameDataSet { get; private set; }
+		internal int DifficultyLevel { get; set; }
 		#endregion
 
 		#region Mouse Stuff

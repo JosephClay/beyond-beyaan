@@ -442,7 +442,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Galaxy Setup
-		public StarSystem SetHomeworld(Empire empire, out Planet homePlanet)
+		public StarSystem SetHomeworld(Empire empire, int population, out Planet homePlanet)
 		{
 			lock (_lockGalaxy) //Won't modify anything, but ensures that galaxy is created and won't throw exceptions due to contents being modified
 			{
@@ -502,7 +502,7 @@ namespace Beyond_Beyaan
 					}
 					if (FourParsecsSystem && SixParsecsSystem && AtLeastSixParsecsAwayFromOthers)
 					{
-						potentialSystem.SetHomeworld(empire, out homePlanet, r);
+						potentialSystem.SetHomeworld(empire, population, out homePlanet, r);
 						return potentialSystem;
 					}
 					potentialSystems.Remove(potentialSystem);

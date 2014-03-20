@@ -162,11 +162,11 @@ namespace Beyond_Beyaan.Screens
 			}
 			List<string> difficultyItems = new List<string>
 											{
-												"Extra Mild",
-												"Mild",
+												"Simple",
+												"Easy",
 												"Medium",
-												"Hot",
-												"Extra Hot"
+												"Hard",
+												"Impossible"
 											};
 			if (!_difficultyComboBox.Initialize(difficultyItems, _xPos + 170, _yPos + 215, 200, 35, 5, gameMain.Random, out reason))
 			{
@@ -558,11 +558,12 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 			//Galaxy already generated, move on to player setup
+			_gameMain.DifficultyLevel = _difficultyComboBox.SelectedIndex;
 			string emperorName = string.IsNullOrEmpty(_playerEmperorName.Text) ? _playerRaces[0].GetRandomEmperorName() : _playerEmperorName.Text;
 			string homeworldName = string.IsNullOrEmpty(_playerHomeworldName.Text) ? NameGenerator.GetName() : _playerHomeworldName.Text;
-			Empire empire = new Empire(emperorName, 0, _playerRaces[0], PlayerType.HUMAN, 20, _playerColors[0], _gameMain);
+			Empire empire = new Empire(emperorName, 0, _playerRaces[0], PlayerType.HUMAN, 20 + (_gameMain.DifficultyLevel * 5), _playerColors[0], _gameMain);
 			Planet homePlanet;
-			StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+			StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, _gameMain.DifficultyLevel <= GameMain.MEDIUM ? 50 : 40, out homePlanet);
 			if (homeSystem == null)
 			{
 				_gameMain.EmpireManager.Reset();
@@ -586,7 +587,8 @@ namespace Beyond_Beyaan.Screens
 					}
 				}
 				empire = new Empire(_playerRaces[i + 1].GetRandomEmperorName(), i + 1, _playerRaces[i + 1], PlayerType.CPU, 30, _playerColors[i + 1], _gameMain);
-				homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
+				//AI always have 50 initial population
+				homeSystem = _gameMain.Galaxy.SetHomeworld(empire, 50, out homePlanet);
 				if (homeSystem == null)
 				{
 					_gameMain.EmpireManager.Reset();
