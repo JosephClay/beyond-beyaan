@@ -1725,11 +1725,12 @@ namespace Beyond_Beyaan
 					if (_terraformProjectRevenues >= 200) //Converted to Arctic
 					{
 						_terraformProjectRevenues -= 200;
-						if (_planetType == PLANET_TYPE.BARREN || _planetType == PLANET_TYPE.TUNDRA || _planetType == PLANET_TYPE.DEAD)
+						//Barren planets get no population bonus.
+						if (_planetType == PLANET_TYPE.TUNDRA || _planetType == PLANET_TYPE.DEAD)
 						{
 							_populationMax += 10;
 						}
-						else
+						else if (_planetType != PLANET_TYPE.BARREN)
 						{
 							_populationMax += 20;
 						}
