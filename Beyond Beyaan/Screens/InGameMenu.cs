@@ -191,6 +191,11 @@ namespace Beyond_Beyaan.Screens
 			}
 			if (_buttons[0].MouseUp(x, y))
 			{
+				var func = CloseWindow;
+				if (func != null)
+				{
+					func();
+				}
 				_gameMain.ClearAll();
 				_gameMain.ChangeToScreen(Screen.NewGame);
 				return true;
