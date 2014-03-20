@@ -471,6 +471,12 @@ namespace Beyond_Beyaan.Screens
 			{
 				return;
 			}
+			if (_showingSelection && e.Key == KeyboardKeys.Escape)
+			{
+				//Close the race selection
+				_showingSelection = false;
+				return;
+			}
 			if (_playerEmperorName.KeyDown(e))
 			{
 				return;
