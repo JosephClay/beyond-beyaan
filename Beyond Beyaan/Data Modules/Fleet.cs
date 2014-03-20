@@ -19,32 +19,32 @@ namespace Beyond_Beyaan
 	public class Fleet
 	{
 		#region Member Variables
-		private float galaxyX;
-		private float galaxyY;
+		private float _galaxyX;
+		private float _galaxyY;
 
 		private Empire _empire;
 		private List<TravelNode> _travelNodes;
-		private List<TravelNode> tentativeNodes;
+		private List<TravelNode> _tentativeNodes;
 		private Dictionary<Ship, int> ships;
-		private List<Ship> orderedShips; //For reference uses
-		private List<TransportShip> transportShips;
-		private StarSystem adjacentSystem;
+		private List<Ship> _orderedShips; //For reference uses
+		private List<TransportShip> _transportShips;
+		private StarSystem _adjacentSystem;
 
-		private int maxSpeed;
-		private float remainingMoves;
+		private int _maxSpeed;
+		private float _remainingMoves;
 		#endregion
 
 		#region Properties
 		public float GalaxyX
 		{
-			get { return galaxyX; }
-			set { galaxyX = value; }
+			get { return _galaxyX; }
+			set { _galaxyX = value; }
 		}
 
 		public float GalaxyY
 		{
-			get { return galaxyY; }
-			set { galaxyY = value; }
+			get { return _galaxyY; }
+			set { _galaxyY = value; }
 		}
 
 		public Empire Empire
@@ -56,51 +56,68 @@ namespace Beyond_Beyaan
 		public List<TravelNode> TravelNodes
 		{
 			get { return _travelNodes; }
-			set { _travelNodes = value; }
+			set
+			{
+				_travelNodes = value;
+				if (_travelNodes != null && _travelNodes.Count > 0)
+				{
+					float totalDistance = 0;
+					foreach (var node in _travelNodes)
+					{
+						totalDistance += node.Length;
+					}
+					TravelETA = (int)(totalDistance / (_maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS));
+					if (totalDistance - (TravelETA * Galaxy.PARSEC_SIZE_IN_PIXELS) > 0)
+					{
+						TravelETA++;
+					}
+					TravelToFirstNodeETA = (int)(_travelNodes[0].Length / (_maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS));
+					if (_travelNodes[0].Length - (TravelETA * Galaxy.PARSEC_SIZE_IN_PIXELS) > 0)
+					{
+						TravelToFirstNodeETA++;
+					}
+				}
+				else
+				{
+					TravelETA = 0;
+				}
+			}
 		}
 
 		public List<TravelNode> TentativeNodes
 		{
-			get { return tentativeNodes; }
-			set { tentativeNodes = value; }
+			get { return _tentativeNodes; }
+			set
+			{
+				_tentativeNodes = value;
+				if (_tentativeNodes != null)
+				{
+					float totalDistance = 0;
+					foreach (var node in _tentativeNodes)
+					{
+						totalDistance += node.Length;
+					}
+					TentativeETA = (int)(totalDistance / (_maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS));
+					if (totalDistance - (TentativeETA * Galaxy.PARSEC_SIZE_IN_PIXELS) > 0)
+					{
+						TentativeETA++;
+					}
+				}
+				else
+				{
+					TentativeETA = 0;
+				}
+			}
 		}
+
+		public int TravelETA { get; private set; }
+		public int TravelToFirstNodeETA { get; private set; } //So we don't display the actual ETA of an enemy's fleet
+		public int TentativeETA { get; private set; }
 
 		public StarSystem AdjacentSystem
 		{
-			get { return adjacentSystem; }
-			set { adjacentSystem = value; }
-		}
-
-		public int ETA
-		{
-			get
-			{
-				float amount = 0;
-				if (_travelNodes != null)
-				{
-					for (int i = 0; i < _travelNodes.Count; i++)
-					{
-						amount += _travelNodes[i].Length;
-					}
-				}
-				return (int)((amount / maxSpeed) + ((amount % maxSpeed > 0) ? 1 : 0));
-			}
-		}
-
-		public int TentativeETA
-		{
-			get
-			{
-				float amount = 0;
-				if (tentativeNodes != null)
-				{
-					for (int i = 0; i < tentativeNodes.Count; i++)
-					{
-						amount += tentativeNodes[i].Length;
-					}
-				}
-				return (int)((amount / maxSpeed) + ((amount % maxSpeed > 0) ? 1 : 0));
-			}
+			get { return _adjacentSystem; }
+			set { _adjacentSystem = value; }
 		}
 
 		public bool HasReserveTanks
@@ -147,7 +164,7 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				return orderedShips;
+				return _orderedShips;
 			}
 		}
 		public int ShipCount
@@ -164,11 +181,11 @@ namespace Beyond_Beyaan
 		}
 		public List<TransportShip> TransportShips
 		{
-			get { return transportShips; }
+			get { return _transportShips; }
 		}
 		public bool HasTransports
 		{
-			get { return transportShips.Count > 0; }
+			get { return _transportShips.Count > 0; }
 		}
 
 		public List<Empire> VisibleToWhichEmpires { get; private set; }
@@ -178,9 +195,9 @@ namespace Beyond_Beyaan
 		public Fleet()
 		{
 			ships = new Dictionary<Ship, int>();
-			orderedShips = new List<Ship>();
-			transportShips = new List<TransportShip>();
-			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
+			_orderedShips = new List<Ship>();
+			_transportShips = new List<TransportShip>();
+			_remainingMoves = _maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 			VisibleToWhichEmpires = new List<Empire>();
 		}
 		#endregion
@@ -188,78 +205,78 @@ namespace Beyond_Beyaan
 		#region Functions
 		private void UpdateSpeed()
 		{
-			maxSpeed = int.MaxValue;
-			if (orderedShips.Count > 0)
+			_maxSpeed = int.MaxValue;
+			if (_orderedShips.Count > 0)
 			{
-				foreach (Ship ship in orderedShips)
+				foreach (Ship ship in _orderedShips)
 				{
-					if (ship.GalaxySpeed < maxSpeed)
+					if (ship.GalaxySpeed < _maxSpeed)
 					{
-						maxSpeed = ship.GalaxySpeed;
+						_maxSpeed = ship.GalaxySpeed;
 					}
 				}
 			}
 			else
 			{
 				//Placeholder for now til I add technology check for best engine speed
-				maxSpeed = 1;
+				_maxSpeed = 1;
 			}
-			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
+			_remainingMoves = _maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 		}
 
 		public void SetTentativePath(StarSystem destination, bool hasExtendedFuelTanks, Galaxy galaxy)
 		{
-			if (destination == null || destination == adjacentSystem)
+			if (destination == null || destination == _adjacentSystem)
 			{
 				//if destination is same as origin, or nowhere, clear the tentative path
-				tentativeNodes = null;
+				TentativeNodes = null;
 				return;
 			}
 			if (_travelNodes != null && _travelNodes[_travelNodes.Count - 1].StarSystem == destination)
 			{
 				//Same path as current path
-				tentativeNodes = null;
+				TentativeNodes = null;
 				return;
 			}
-			if (tentativeNodes != null && tentativeNodes[tentativeNodes.Count - 1].StarSystem == destination)
+			if (TentativeNodes != null && TentativeNodes[_tentativeNodes.Count - 1].StarSystem == destination)
 			{
 				// Existing tentative path
 				return;
 			}
 
 			StarSystem currentDestination = null;
-			if (adjacentSystem == null) //Has left a system
+			if (_adjacentSystem == null) //Has left a system
 			{
 				currentDestination = _travelNodes[0].StarSystem;
 			}
-			List<TravelNode> path = galaxy.GetPath(galaxyX, galaxyY, currentDestination, destination, hasExtendedFuelTanks, _empire);
+			List<TravelNode> path = galaxy.GetPath(_galaxyX, _galaxyY, currentDestination, destination, hasExtendedFuelTanks, _empire);
 			if (path == null)
 			{
-				tentativeNodes = null;
+				TentativeNodes = null;
 				return;
 			}
 
-			tentativeNodes = path;
-			if (tentativeNodes.Count == 0)
+			TentativeNodes = path;
+			if (TentativeNodes.Count == 0)
 			{
-				tentativeNodes = null;
+				TentativeNodes = null;
 			}
 		}
 
 		public bool ConfirmPath()
 		{
-			if (tentativeNodes != null)
+			if (_tentativeNodes != null)
 			{
-				foreach (var node in tentativeNodes)
+				foreach (var node in _tentativeNodes)
 				{
 					if (!node.IsValid)
 					{
 						return false;
 					}
 				}
-				TravelNode[] nodes = new TravelNode[tentativeNodes.Count];
-				tentativeNodes.CopyTo(nodes);
-				tentativeNodes = null;
+				TravelNode[] nodes = new TravelNode[_tentativeNodes.Count];
+				_tentativeNodes.CopyTo(nodes);
+				_tentativeNodes = null;
 
 				_travelNodes = new List<TravelNode>(nodes);
 			}
@@ -267,12 +284,12 @@ namespace Beyond_Beyaan
 			{
 				//Null because target is either invalid or the system the fleet is currently adjacent
 				_travelNodes = null;
-				tentativeNodes = null;
+				_tentativeNodes = null;
 			}
 			return true;
 		}
 
-		private float CalculatePathCost(List<TravelNode> nodes)
+		/*private float CalculatePathCost(List<TravelNode> nodes)
 		{
 			float amount = 0;
 			for (int i = 0; i < nodes.Count; i++)
@@ -281,8 +298,8 @@ namespace Beyond_Beyaan
 				float y;
 				if (i == 0)
 				{
-					x = (galaxyX - nodes[i].StarSystem.X);
-					y = (galaxyY - nodes[i].StarSystem.Y);
+					x = (_galaxyX - nodes[i].StarSystem.X);
+					y = (_galaxyY - nodes[i].StarSystem.Y);
 				}
 				else
 				{
@@ -292,7 +309,7 @@ namespace Beyond_Beyaan
 				amount += (float)Math.Sqrt(x * x + y * y);
 			}
 			return amount;
-		}
+		}*/
 
 		public void AddShips(Ship ship, int amount)
 		{
@@ -303,7 +320,7 @@ namespace Beyond_Beyaan
 			else
 			{
 				ships.Add(ship, amount);
-				orderedShips.Add(ship);
+				_orderedShips.Add(ship);
 				UpdateSpeed();
 			}
 		}
@@ -316,7 +333,7 @@ namespace Beyond_Beyaan
 				{
 					//Remove this ship totally
 					ships.Remove(ship);
-					orderedShips.Remove(ship);
+					_orderedShips.Remove(ship);
 					UpdateSpeed();
 				}
 				else
@@ -329,7 +346,7 @@ namespace Beyond_Beyaan
 		public void AddTransport(Race race, int amount)
 		{
 			bool added = false;
-			foreach (TransportShip transport in transportShips)
+			foreach (TransportShip transport in _transportShips)
 			{
 				if (transport.raceOnShip == race)
 				{
@@ -343,15 +360,15 @@ namespace Beyond_Beyaan
 				TransportShip transport = new TransportShip();
 				transport.raceOnShip = race;
 				transport.amount = amount;
-				transportShips.Add(transport);
+				_transportShips.Add(transport);
 			}
-			maxSpeed = 1;
+			_maxSpeed = 1;
 		}
 
 		public void SubtractTransport(Race race, int amount)
 		{
 			TransportShip transportShipToRemove = null;
-			foreach (TransportShip transport in transportShips)
+			foreach (TransportShip transport in _transportShips)
 			{
 				if (transport.raceOnShip == race)
 				{
@@ -381,10 +398,10 @@ namespace Beyond_Beyaan
 			foreach (Ship ship in shipsToRemove)
 			{
 				ships.Remove(ship);
-				orderedShips.Remove(ship);
+				_orderedShips.Remove(ship);
 			}
 			List<TransportShip> transportsToRemove = new List<TransportShip>();
-			foreach (var transport in transportShips)
+			foreach (var transport in _transportShips)
 			{
 				if (transport.amount <= 0)
 				{
@@ -393,7 +410,7 @@ namespace Beyond_Beyaan
 			}
 			foreach (var transport in transportsToRemove)
 			{
-				transportShips.Remove(transport);
+				_transportShips.Remove(transport);
 			}
 			UpdateSpeed();
 		}
@@ -401,7 +418,7 @@ namespace Beyond_Beyaan
 		public void ResetMove()
 		{
 			UpdateSpeed();
-			remainingMoves = maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
+			_remainingMoves = _maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
 		}
 
 		public bool Move(float frameDeltaTime)
@@ -410,52 +427,52 @@ namespace Beyond_Beyaan
 			{
 				return false;
 			}
-			if (remainingMoves > 0)
+			if (_remainingMoves > 0)
 			{
-				adjacentSystem = null; //Left the system
-				float amountToMove = frameDeltaTime * maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
-				if (amountToMove > remainingMoves)
+				_adjacentSystem = null; //Left the system
+				float amountToMove = frameDeltaTime * _maxSpeed * Galaxy.PARSEC_SIZE_IN_PIXELS;
+				if (amountToMove > _remainingMoves)
 				{
-					amountToMove = remainingMoves;
+					amountToMove = _remainingMoves;
 				}
-				remainingMoves -= amountToMove;
+				_remainingMoves -= amountToMove;
 
 				float xMov = (float)(Math.Cos(_travelNodes[0].Angle * (Math.PI / 180)) * amountToMove);
 				float yMov = (float)(Math.Sin(_travelNodes[0].Angle * (Math.PI / 180)) * amountToMove);
 
-				bool isLeftOfNode = galaxyX <= _travelNodes[0].StarSystem.X;
-				bool isTopOfNode = galaxyY <= _travelNodes[0].StarSystem.Y;
+				bool isLeftOfNode = _galaxyX <= _travelNodes[0].StarSystem.X;
+				bool isTopOfNode = _galaxyY <= _travelNodes[0].StarSystem.Y;
 
-				galaxyX += xMov;
-				galaxyY += yMov;
+				_galaxyX += xMov;
+				_galaxyY += yMov;
 
-				if ((galaxyX > _travelNodes[0].StarSystem.X && isLeftOfNode) ||
-					(galaxyX <= _travelNodes[0].StarSystem.X && !isLeftOfNode) ||
-					(galaxyY > _travelNodes[0].StarSystem.Y && isTopOfNode) ||
-					(galaxyY <= _travelNodes[0].StarSystem.Y && !isTopOfNode))
+				if ((_galaxyX > _travelNodes[0].StarSystem.X && isLeftOfNode) ||
+					(_galaxyX <= _travelNodes[0].StarSystem.X && !isLeftOfNode) ||
+					(_galaxyY > _travelNodes[0].StarSystem.Y && isTopOfNode) ||
+					(_galaxyY <= _travelNodes[0].StarSystem.Y && !isTopOfNode))
 				{
 					//TODO: Carry over excess movement to next node
 
 					//It has arrived at destination
-					galaxyX = _travelNodes[0].StarSystem.X;
-					galaxyY = _travelNodes[0].StarSystem.Y;
-					adjacentSystem = _travelNodes[0].StarSystem;
+					_galaxyX = _travelNodes[0].StarSystem.X;
+					_galaxyY = _travelNodes[0].StarSystem.Y;
+					_adjacentSystem = _travelNodes[0].StarSystem;
 					_travelNodes.RemoveAt(0);
 					if (_travelNodes.Count == 0)
 					{
 						_travelNodes = null;
-						remainingMoves = 0;
+						_remainingMoves = 0;
 					}
 				}
 				else
 				{
-					float x = _travelNodes[0].StarSystem.X - galaxyX;
-					float y = _travelNodes[0].StarSystem.Y - galaxyY;
+					float x = _travelNodes[0].StarSystem.X - _galaxyX;
+					float y = _travelNodes[0].StarSystem.Y - _galaxyY;
 					_travelNodes[0].Length = (float)Math.Sqrt((x * x) + (y * y));
 					_travelNodes[0].Angle = (float)(Math.Atan2(y, x) * (180 / Math.PI));
 				}
 			}
-			return remainingMoves > 0;
+			return _remainingMoves > 0;
 		}
 
 		public float GetExpenses()
@@ -476,17 +493,17 @@ namespace Beyond_Beyaan
 			{
 				//only one ship, so remove the entry for it
 				ships.Remove(whichShip);
-				orderedShips.Remove(whichShip);
+				_orderedShips.Remove(whichShip);
 			}
-			adjacentSystem.Planets[0].Colonize(_empire);
+			_adjacentSystem.Planets[0].Colonize(_empire);
 		}
 
 		public void Save(XmlWriter writer)
 		{
 			writer.WriteStartElement("Fleet");
-			writer.WriteAttributeString("X", galaxyX.ToString());
-			writer.WriteAttributeString("Y", galaxyY.ToString());
-			writer.WriteAttributeString("AdjacentSystem", adjacentSystem == null ? "-1" : adjacentSystem.ID.ToString());
+			writer.WriteAttributeString("X", _galaxyX.ToString());
+			writer.WriteAttributeString("Y", _galaxyY.ToString());
+			writer.WriteAttributeString("AdjacentSystem", _adjacentSystem == null ? "-1" : _adjacentSystem.ID.ToString());
 			if (_travelNodes != null)
 			{
 				writer.WriteStartElement("TravelNodes");
@@ -505,7 +522,7 @@ namespace Beyond_Beyaan
 				writer.WriteAttributeString("NumberOfShips", ship.Value.ToString());
 				writer.WriteEndElement();
 			}
-			foreach (var transport in transportShips)
+			foreach (var transport in _transportShips)
 			{
 				writer.WriteStartElement("Transport");
 				writer.WriteAttributeString("Race", transport.raceOnShip.RaceName);
@@ -518,9 +535,9 @@ namespace Beyond_Beyaan
 		public void Load(XElement fleet, FleetManager fleetManager, Empire empire, GameMain gameMain)
 		{
 			_empire = empire;
-			galaxyX = float.Parse(fleet.Attribute("X").Value);
-			galaxyY = float.Parse(fleet.Attribute("Y").Value);
-			adjacentSystem = gameMain.Galaxy.GetStarWithID(int.Parse(fleet.Attribute("AdjacentSystem").Value));
+			_galaxyX = float.Parse(fleet.Attribute("X").Value);
+			_galaxyY = float.Parse(fleet.Attribute("Y").Value);
+			_adjacentSystem = gameMain.Galaxy.GetStarWithID(int.Parse(fleet.Attribute("AdjacentSystem").Value));
 			var travelNodes = fleet.Element("TravelNodes");
 			if (travelNodes != null)
 			{
@@ -531,7 +548,7 @@ namespace Beyond_Beyaan
 					var destination = gameMain.Galaxy.GetStarWithID(int.Parse(travelNode.Attribute("Destination").Value));
 					if (startingPlace == null)
 					{
-						_travelNodes.Add(gameMain.Galaxy.GenerateTravelNode(galaxyX, galaxyY, destination));
+						_travelNodes.Add(gameMain.Galaxy.GenerateTravelNode(_galaxyX, _galaxyY, destination));
 					}
 					else
 					{

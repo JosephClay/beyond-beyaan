@@ -116,7 +116,6 @@ namespace Beyond_Beyaan
 			fleet.Empire = fleetToSplit.Empire;
 			fleet.GalaxyX = fleetToSplit.GalaxyX;
 			fleet.GalaxyY = fleetToSplit.GalaxyY;
-			fleet.TravelNodes = fleetToSplit.TravelNodes;
 			fleet.AdjacentSystem = fleetToSplit.AdjacentSystem;
 
 			foreach (KeyValuePair<Ship, int> ship in fleetToSplit.Ships)
@@ -137,6 +136,7 @@ namespace Beyond_Beyaan
 			}
 			selectedFleet.ClearEmptyShips();
 			fleet.ClearEmptyShips();
+			fleet.TravelNodes = fleetToSplit.TravelNodes;
 			if (selectedFleet.Ships.Count == 0 && selectedFleet.TransportShips.Count == 0)
 			{
 				fleets.Remove(selectedFleet);
