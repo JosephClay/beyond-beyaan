@@ -512,6 +512,7 @@ namespace Beyond_Beyaan
 		#region Properties
 		public bool Enabled { get; set; }
 		public bool Selected { get; set; }
+		public string Text { get; private set; }
 		#endregion
 
 		#region Constructors
@@ -562,6 +563,7 @@ namespace Beyond_Beyaan
 		public void SetText(string text)
 		{
 			_label.SetText(text);
+			Text = text;
 			switch (_alignment)
 			{
 				case ButtonTextAlignment.LEFT:
@@ -988,6 +990,7 @@ namespace Beyond_Beyaan
 							if (i > 0)
 							{
 								_selectedIndex = i + _scrollBar.TopIndex - 1;
+								_buttons[0].SetText(_buttons[i].Text);
 							}
 							Dropped = false;
 							_dropBackground.Resize(_width, _height);
