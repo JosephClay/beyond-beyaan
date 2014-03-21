@@ -62,7 +62,7 @@ namespace Beyond_Beyaan.Screens
 			}
 
 			_versionLabel = new BBLabel();
-			if (!_versionLabel.Initialize(10, _gameMain.ScreenHeight - 30, "Version 0.5", System.Drawing.Color.White, out reason))
+			if (!_versionLabel.Initialize(10, _gameMain.ScreenHeight - 30, "Version 0.59", System.Drawing.Color.White, out reason))
 			{
 				return false;
 			}
