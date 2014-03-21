@@ -192,12 +192,7 @@ namespace Beyond_Beyaan
 		public int WeaponPercentage { get; private set; }
 
 		//1.25 for poor, 1.00 for average, .80 for good, and .60 for excellent
-		public float ComputerRaceModifier { get; set; }
-		public float ConstructionRaceModifier { get; set; }
-		public float ForceFieldRaceModifier { get; set; }
-		public float PlanetologyRaceModifier { get; set; }
-		public float PropulsionRaceModifier { get; set; }
-		public float WeaponRaceModifier { get; set; }
+		public Dictionary<TechField,float> RaceModifiers { get; set; }
 
 		//20 for Simple, 25 for Easy, 30 for Medium, 35 for Hard, 40 for Impossible
 		//Average rating is always used for AI players
@@ -215,12 +210,13 @@ namespace Beyond_Beyaan
 			PropulsionPercentage = 20;
 			WeaponPercentage = 20;
 
-			ComputerRaceModifier = 1;
-			ConstructionRaceModifier = 1;
-			ForceFieldRaceModifier = 1;
-			PlanetologyRaceModifier = 1;
-			PropulsionRaceModifier = 1;
-			WeaponRaceModifier = 1;
+			RaceModifiers = new Dictionary<TechField, float>();
+			RaceModifiers[TechField.COMPUTER] = 1;
+			RaceModifiers[TechField.CONSTRUCTION] = 1;
+			RaceModifiers[TechField.FORCE_FIELD] = 1;
+			RaceModifiers[TechField.PLANETOLOGY] = 1;
+			RaceModifiers[TechField.PROPULSION] = 1;
+			RaceModifiers[TechField.WEAPON] = 1;
 
 			ResearchedComputerTechs = new List<Technology>();
 			ResearchedConstructionTechs = new List<Technology>();
@@ -354,7 +350,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						ComputerResearchAmount = oldAmount;
 						researchedAmount = ComputerResearchAmount;
-						researchCost = (int)(WhichComputerBeingResearched.ResearchPoints * DifficultyModifier * ComputerRaceModifier);
+						researchCost = (int)(WhichComputerBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.COMPUTER]);
 					} break;
 				case TechField.CONSTRUCTION:
 					{
@@ -369,7 +365,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						ConstructionResearchAmount = oldAmount;
 						researchedAmount = ConstructionResearchAmount;
-						researchCost = (int)(WhichConstructionBeingResearched.ResearchPoints * DifficultyModifier * ConstructionRaceModifier);
+						researchCost = (int)(WhichConstructionBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.CONSTRUCTION]);
 					} break;
 				case TechField.FORCE_FIELD:
 					{
@@ -384,7 +380,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						ForceFieldResearchAmount = oldAmount;
 						researchedAmount = ForceFieldResearchAmount;
-						researchCost = (int)(WhichForceFieldBeingResearched.ResearchPoints * DifficultyModifier * ForceFieldRaceModifier);
+						researchCost = (int)(WhichForceFieldBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.FORCE_FIELD]);
 					} break;
 				case TechField.PLANETOLOGY:
 					{
@@ -399,7 +395,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						PlanetologyResearchAmount = oldAmount;
 						researchedAmount = PlanetologyResearchAmount;
-						researchCost = (int)(WhichPlanetologyBeingResearched.ResearchPoints * DifficultyModifier * PlanetologyRaceModifier);
+						researchCost = (int)(WhichPlanetologyBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.PLANETOLOGY]);
 					} break;
 				case TechField.PROPULSION:
 					{
@@ -414,7 +410,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						PropulsionResearchAmount = oldAmount;
 						researchedAmount = PropulsionResearchAmount;
-						researchCost = (int)(WhichPropulsionBeingResearched.ResearchPoints * DifficultyModifier * PropulsionRaceModifier);
+						researchCost = (int)(WhichPropulsionBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.PROPULSION]);
 					} break;
 				case TechField.WEAPON:
 					{
@@ -429,7 +425,7 @@ namespace Beyond_Beyaan
 						chance = GetChanceForDiscovery(whichField);
 						WeaponResearchAmount = oldAmount;
 						researchedAmount = WeaponResearchAmount;
-						researchCost = (int)(WhichWeaponBeingResearched.ResearchPoints * DifficultyModifier * WeaponRaceModifier);
+						researchCost = (int)(WhichWeaponBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.WEAPON]);
 					} break;
 			}
 			progressString = string.Format("{0:0.0} / {1:0.0}", researchedAmount, researchCost);
@@ -724,7 +720,7 @@ namespace Beyond_Beyaan
 				{
 					if (ComputerPercentage > 0 && WhichComputerBeingResearched != null)
 					{
-						int researchPointsRequired = (int)(WhichComputerBeingResearched.ResearchPoints * DifficultyModifier * ComputerRaceModifier);
+						int researchPointsRequired = (int)(WhichComputerBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.COMPUTER]);
 						if (ComputerResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 						{
 							return (int)(((ComputerResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
@@ -735,7 +731,7 @@ namespace Beyond_Beyaan
 					{
 						if (ConstructionPercentage > 0 && WhichConstructionBeingResearched != null)
 						{
-							int researchPointsRequired = (int)(WhichConstructionBeingResearched.ResearchPoints * DifficultyModifier * ConstructionRaceModifier);
+							int researchPointsRequired = (int)(WhichConstructionBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.CONSTRUCTION]);
 							if (ConstructionResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 							{
 								return (int)(((ConstructionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
@@ -746,7 +742,7 @@ namespace Beyond_Beyaan
 					{
 						if (ForceFieldPercentage > 0 && WhichForceFieldBeingResearched != null)
 						{
-							int researchPointsRequired = (int)(WhichForceFieldBeingResearched.ResearchPoints * DifficultyModifier * ForceFieldRaceModifier);
+							int researchPointsRequired = (int)(WhichForceFieldBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.FORCE_FIELD]);
 							if (ForceFieldResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 							{
 								return (int)(((ForceFieldResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
@@ -757,7 +753,7 @@ namespace Beyond_Beyaan
 					{
 						if (PlanetologyPercentage > 0 && WhichPlanetologyBeingResearched != null)
 						{
-							int researchPointsRequired = (int)(WhichPlanetologyBeingResearched.ResearchPoints * DifficultyModifier * PlanetologyRaceModifier);
+							int researchPointsRequired = (int)(WhichPlanetologyBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.PLANETOLOGY]);
 							if (PlanetologyResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 							{
 								return (int)(((PlanetologyResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
@@ -768,7 +764,7 @@ namespace Beyond_Beyaan
 					{
 						if (PropulsionPercentage > 0 && WhichPropulsionBeingResearched != null)
 						{
-							int researchPointsRequired = (int)(WhichPropulsionBeingResearched.ResearchPoints * DifficultyModifier * PropulsionRaceModifier);
+							int researchPointsRequired = (int)(WhichPropulsionBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.PROPULSION]);
 							if (PropulsionResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 							{
 								return (int)(((PropulsionResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
@@ -779,7 +775,7 @@ namespace Beyond_Beyaan
 					{
 						if (WeaponPercentage > 0 && WhichWeaponBeingResearched != null)
 						{
-							int researchPointsRequired = (int)(WhichWeaponBeingResearched.ResearchPoints * DifficultyModifier * WeaponRaceModifier);
+							int researchPointsRequired = (int)(WhichWeaponBeingResearched.ResearchPoints * DifficultyModifier * RaceModifiers[TechField.WEAPON]);
 							if (WeaponResearchAmount > researchPointsRequired) //We now have a chance of discovering it
 							{
 								return (int)(((WeaponResearchAmount - researchPointsRequired) / (researchPointsRequired * 2)) * 100);
