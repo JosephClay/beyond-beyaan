@@ -199,7 +199,7 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				return ShipMaintenance + BaseMaintenance + EspionageExpense + SecurityExpense;
+				return ShipMaintenance + BaseMaintenance + EspionageExpense + SecurityExpense + TaxExpenses;
 			}
 		}
 		public float ExpensesPercentage
@@ -212,7 +212,31 @@ namespace Beyond_Beyaan
 
 		public float ResearchPoints { get; private set; }
 		public float Reserves { get; set; }
-		public int TaxRate { get; set; }
+		private int _taxRate;
+		public int TaxRate
+		{
+			get
+			{
+				return _taxRate;
+			}
+			set
+			{
+				_taxRate = value;
+				UpdateProduction();
+			}
+		}
+		public float TaxExpenses 
+		{ 
+			get
+			{
+				if (TaxRate == 0)
+				{
+					//a bit of optimization here.
+					return 0;
+				}
+				return NetProduction * TaxRate * 0.01f;
+			}
+		}
 
 		public Race EmpireRace { get; private set; }
 
@@ -413,6 +437,7 @@ namespace Beyond_Beyaan
 				float scale = planet.TotalProduction / totalProduction;
 				planet.ProductionFromTrade = scale * TradeIncome;
 				planet.ProductionLostFromExpenses = scale * netExpenses;
+				planet.SetCleanup();
 			}
 		}
 
@@ -420,11 +445,7 @@ namespace Beyond_Beyaan
 		{
 			if (TaxRate > 0)
 			{
-				float tax = TaxRate * 0.01f;
-				foreach (var planet in PlanetManager.Planets)
-				{
-					Reserves += ((planet.TotalProduction * tax) / 2);
-				}
+				Reserves += TaxExpenses / 2;
 			}
 			foreach (var planet in PlanetManager.Planets)
 			{

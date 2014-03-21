@@ -573,6 +573,7 @@ namespace Beyond_Beyaan.Screens
 			}
 			homeSystem.Name = homeworldName;
 			empire.SetHomeSystem(homeSystem, homePlanet);
+			empire.UpdateProduction(); //This sets up expenses and all that
 			_gameMain.EmpireManager.AddEmpire(empire);
 
 			for (int i = 0; i < _numericUpDownAI.Value; i++)
@@ -598,6 +599,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				homeSystem.Name = NameGenerator.GetName();
 				empire.SetHomeSystem(homeSystem, homePlanet);
+				empire.UpdateProduction(); //This sets up expenses and all that
 				_gameMain.EmpireManager.AddEmpire(empire);
 			}
 			_gameMain.EmpireManager.SetupContacts();

@@ -11,6 +11,7 @@ namespace Beyond_Beyaan
 		public Action ShowResearchScreen;
 		public Action ShowShipDesignScreen;
 		public Action ShowPlanetsScreen;
+		public Action EndTurn;
 
 		private int left;
 		private int top;
@@ -221,6 +222,11 @@ namespace Beyond_Beyaan
 						}
 						case 7:
 						{
+							Clear();
+							if (EndTurn != null)
+							{
+								EndTurn();
+							}
 							_gameMain.ChangeToScreen(Screen.ProcessTurn);
 							_gameMain.HideSitRep();
 							break;
