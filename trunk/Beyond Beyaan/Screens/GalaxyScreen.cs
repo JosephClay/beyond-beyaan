@@ -36,6 +36,7 @@ namespace Beyond_Beyaan.Screens
 
 		private bool _showingFuelRange;
 		private bool _showingRadarRange;
+		private bool _showingOwners;
 
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
@@ -49,6 +50,7 @@ namespace Beyond_Beyaan.Screens
 			_selectionSprites[3] = SpriteManager.GetSprite("SelectionBR", _gameMain.Random);
 			_showingFuelRange = false;
 			_showingRadarRange = false;
+			_showingOwners = false;
 
 			_camera = new Camera(_gameMain.Galaxy.GalaxySize * 60, _gameMain.Galaxy.GalaxySize * 60, _gameMain.ScreenWidth, _gameMain.ScreenHeight);
 
@@ -259,7 +261,24 @@ namespace Beyond_Beyaan.Screens
 			foreach (StarSystem system in systems)
 			{
 				GorgonLibrary.Gorgon.CurrentShader = _gameMain.StarShader;
-				_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+				if (_showingOwners)
+				{
+					var darkGray = new [] {0.25f, 0.25f, 0.25f, 1};
+					if (system.IsThisSystemExploredByEmpire(currentEmpire))
+					{
+						_gameMain.StarShader.Parameters["StarColor"].SetValue(system.Planets[0].Owner == null
+							                                                      ? darkGray
+							                                                      : system.Planets[0].Owner.ConvertedColor);
+					}
+					else
+					{
+						_gameMain.StarShader.Parameters["StarColor"].SetValue(darkGray);
+					}
+				}
+				else
+				{
+					_gameMain.StarShader.Parameters["StarColor"].SetValue(system.StarColor);
+				}
 				system.Sprite.Draw((int)((system.X - _camera.CameraX) * _camera.ZoomDistance), (int)((system.Y - _camera.CameraY) * _camera.ZoomDistance), _camera.ZoomDistance, _camera.ZoomDistance);
 				GorgonLibrary.Gorgon.CurrentShader = null;
 
@@ -786,6 +805,10 @@ namespace Beyond_Beyaan.Screens
 			{
 				_showingFuelRange = false;
 				_showingRadarRange = !_showingRadarRange;
+			}
+			if (e.Key == KeyboardKeys.B)
+			{
+				_showingOwners = !_showingOwners; //This does not affect the other two toggable views since it only changes the stars' color
 			}
 			if (e.Key == KeyboardKeys.Escape)
 			{
