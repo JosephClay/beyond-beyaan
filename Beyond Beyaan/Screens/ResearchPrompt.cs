@@ -19,6 +19,7 @@ namespace Beyond_Beyaan.Screens
 		private BBStretchableImage _techDescriptionBackground;
 		private BBStretchableImage _availableTechsToResearchBackground;
 		private BBInvisibleStretchButton[] _availableTechsToResearchButtons;
+		private BBLabel[] _researchCosts;
 		private BBScrollBar _scrollBar;
 		private int _maxVisible;
 
@@ -44,6 +45,7 @@ namespace Beyond_Beyaan.Screens
 			_techDescription = new BBTextBox();
 			_scrollBar = new BBScrollBar();
 			_availableTechsToResearchButtons = new BBInvisibleStretchButton[4];
+			_researchCosts = new BBLabel[4];
 
 			if (!_techDescriptionBackground.Initialize(_xPos + 20, _yPos + 20, 420, 170, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
@@ -68,6 +70,7 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < _availableTechsToResearchButtons.Length; i++)
 			{
 				_availableTechsToResearchButtons[i] = new BBInvisibleStretchButton();
+				_researchCosts[i] = new BBLabel();
 				if (!_availableTechsToResearchButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, _xPos + 30, _yPos + 230 + (i * 25), 385, 25, gameMain.Random, out reason))
 				{
 					return false;
@@ -76,6 +79,11 @@ namespace Beyond_Beyaan.Screens
 				{
 					return false;
 				}
+				if (!_researchCosts[i].Initialize(_xPos + 405, _yPos + 232 + (i * 25), string.Empty, System.Drawing.Color.White, out reason))
+				{
+					return false;
+				}
+				_researchCosts[i].SetAlignment(true);
 			}
 
 			return true;
@@ -92,6 +100,7 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < _maxVisible; i++)
 			{
 				_availableTechsToResearchButtons[i].Draw();
+				_researchCosts[i].Draw();
 			}
 			_scrollBar.Draw();
 
@@ -524,10 +533,12 @@ namespace Beyond_Beyaan.Screens
 
 		private void RefreshTechButtons()
 		{
+			var techManager = _gameMain.EmpireManager.CurrentEmpire.TechnologyManager;
 			for (int i = 0; i < _maxVisible; i++)
 			{
 				_availableTechsToResearchButtons[i].SetText(_availableTopics[_currentTechField][i + _scrollBar.TopIndex].TechName);
 				_availableTechsToResearchButtons[i].SetToolTipText(_availableTopics[_currentTechField][i + _scrollBar.TopIndex].TechDescription);
+				_researchCosts[i].SetText(string.Format("{0:0} RPs", _availableTopics[_currentTechField][i + _scrollBar.TopIndex].ResearchPoints * techManager.DifficultyModifier * techManager.RaceModifiers[_currentTechField]));
 			}
 		}
 	}
