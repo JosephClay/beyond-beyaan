@@ -831,7 +831,11 @@ namespace Beyond_Beyaan
 		public int SelectedIndex
 		{
 			get { return _selectedIndex; }
-			set { _selectedIndex = value; }
+			set 
+			{ 
+				_selectedIndex = value;
+				_buttons[0].SetText(_items[_selectedIndex]);
+			}
 		}
 
 		public bool Dropped { get; private set; }
