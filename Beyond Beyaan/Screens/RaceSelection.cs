@@ -161,6 +161,14 @@ namespace Beyond_Beyaan.Screens
 			{
 				if (_raceButtons[i].MouseUp(x, y))
 				{
+					if (_raceButtons[i].DoubleClicked)
+					{
+						if (OnOkClick != null)
+						{
+							OnOkClick(_whichPlayerSelecting, _whichRaceSelected);
+							return true;
+						}
+					}
 					if (i == 0 && _raceScrollBar.TopIndex == 0)
 					{
 						_whichRaceSelected = null;

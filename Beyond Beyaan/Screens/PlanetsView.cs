@@ -7,6 +7,7 @@ namespace Beyond_Beyaan.Screens
 	public class PlanetsView : WindowInterface
 	{
 		public Action CloseWindow;
+		public Action<StarSystem> CenterToSystem;
 
 		private BBStretchButton[] _columnHeaders;
 		private BBStretchButton[][] _columnCells;
@@ -33,6 +34,7 @@ namespace Beyond_Beyaan.Screens
 		//private Empire _currentEmpire;
 
 		private int _maxVisible;
+		private int _selectedRow;
 
 		#region Constructor
 		public bool Initialize(GameMain gameMain, out string reason)
@@ -336,6 +338,9 @@ namespace Beyond_Beyaan.Screens
 			_incomeLabels[0].SetText(string.Format("{0:0.0} BC", currentEmpire.PlanetTotalProduction));
 			_incomeLabels[1].SetText(string.Format("{0:0.0} BC", currentEmpire.TradeIncome));
 
+			_selectedRow = 0;
+			RefreshSelection();
+
 			RefreshReserves();
 		}
 
@@ -378,6 +383,23 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
+			int left = (_gameMain.ScreenWidth / 2) - 513;
+			int top = (_gameMain.ScreenHeight / 2) - 250;
+			if (x >= left && x < left + 1010 && y >= top && y < top + 390)
+			{
+				//When hovering over a column, that entire row is highlighted
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					_columnCells[0][i].MouseHover(left + 1, y, frameDeltaTime);
+					_columnCells[1][i].MouseHover(left + 281, y, frameDeltaTime);
+					_columnCells[2][i].MouseHover(left + 371, y, frameDeltaTime);
+					_columnCells[3][i].MouseHover(left + 461, y, frameDeltaTime);
+					_columnCells[4][i].MouseHover(left + 541, y, frameDeltaTime);
+					_columnCells[5][i].MouseHover(left + 621, y, frameDeltaTime);
+					_columnCells[6][i].MouseHover(left + 701, y, frameDeltaTime);
+					_columnCells[7][i].MouseHover(left + 951, y, frameDeltaTime);
+				}
+			}
 			if (_reserveSlider.MouseHover(x, y, frameDeltaTime))
 			{
 				_gameMain.EmpireManager.CurrentEmpire.TaxRate = _reserveSlider.TopIndex;
@@ -389,12 +411,61 @@ namespace Beyond_Beyaan.Screens
 
 		public override bool MouseDown(int x, int y)
 		{
+			int left = (_gameMain.ScreenWidth / 2) - 513;
+			int top = (_gameMain.ScreenHeight / 2) - 250;
+			if (x >= left && x < left + 1010 && y >= top && y < top + 390)
+			{
+				//When clicking a column, that entire row is clicked
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					_columnCells[0][i].MouseDown(left + 1, y);
+					_columnCells[1][i].MouseDown(left + 281, y);
+					_columnCells[2][i].MouseDown(left + 371, y);
+					_columnCells[3][i].MouseDown(left + 461, y);
+					_columnCells[4][i].MouseDown(left + 541, y);
+					_columnCells[5][i].MouseDown(left + 621, y);
+					_columnCells[6][i].MouseDown(left + 701, y);
+					_columnCells[7][i].MouseDown(left + 951, y);
+				}
+			}
 			_reserveSlider.MouseDown(x, y);
 			return base.MouseDown(x, y);
 		}
 
 		public override bool MouseUp(int x, int y)
 		{
+			int left = (_gameMain.ScreenWidth / 2) - 513;
+			int top = (_gameMain.ScreenHeight / 2) - 250;
+			if (x >= left && x < left + 1010 && y >= top && y < top + 390)
+			{
+				//When clicking a column, that entire row is clicked
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					_columnCells[0][i].MouseUp(left + 1, y);
+					_columnCells[1][i].MouseUp(left + 281, y);
+					_columnCells[2][i].MouseUp(left + 371, y);
+					_columnCells[3][i].MouseUp(left + 461, y);
+					_columnCells[4][i].MouseUp(left + 541, y);
+					_columnCells[5][i].MouseUp(left + 621, y);
+					_columnCells[6][i].MouseUp(left + 701, y);
+					if (_columnCells[7][i].MouseUp(left + 951, y))
+					{
+						if (_columnCells[7][i].DoubleClicked)
+						{
+							if (CenterToSystem != null)
+							{
+								CenterToSystem(
+									_gameMain.EmpireManager.CurrentEmpire.PlanetManager.Planets[_scrollBar.TopIndex + _selectedRow].System);
+							}
+						}
+						else
+						{
+							_selectedRow = i;
+							RefreshSelection();
+						}
+					}
+				}
+			}
 			if (_reserveSlider.MouseUp(x, y))
 			{
 				_gameMain.EmpireManager.CurrentEmpire.TaxRate = _reserveSlider.TopIndex;
@@ -419,6 +490,27 @@ namespace Beyond_Beyaan.Screens
 										? string.Format("{0:0.0} BC", currentEmpire.Reserves)
 										: string.Format("{0:0.0} (+{1:0.0}) BC", currentEmpire.Reserves,
 														currentEmpire.TaxExpenses / 2));
+		}
+
+		private void RefreshSelection()
+		{
+			for (int i = 0; i < 13; i++)
+			{
+				if (i == _selectedRow)
+				{
+					for (int j = 0; j < 8; j++)
+					{
+						_columnCells[j][i].Selected = true;
+					}
+				}
+				else
+				{
+					for (int j = 0; j < 8; j++)
+					{
+						_columnCells[j][i].Selected = false;
+					}
+				}
+			}
 		}
 
 		public void LoadPlanets(List<Planet> planets)

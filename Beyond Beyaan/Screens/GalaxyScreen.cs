@@ -98,6 +98,7 @@ namespace Beyond_Beyaan.Screens
 			_researchScreen.CloseWindow = CloseWindow;
 			_shipDesignScreen.CloseWindow = CloseWindow;
 			_planetsView.CloseWindow = CloseWindow;
+			_planetsView.CenterToSystem = CenterToSystem;
 
 			_taskBar.ShowGameMenu = ShowInGameMenu;
 			_taskBar.ShowResearchScreen = ShowResearchScreen;
@@ -119,6 +120,12 @@ namespace Beyond_Beyaan.Screens
 
 			reason = null;
 			return true;
+		}
+
+		private void CenterToSystem(StarSystem starSystem)
+		{
+			_gameMain.EmpireManager.CurrentEmpire.LastSelectedSystem = starSystem;
+			CloseWindow();
 		}
 
 		public void CenterScreen()

@@ -507,12 +507,23 @@ namespace Beyond_Beyaan
 		protected int _yPos;
 		protected int _width;
 		protected int _height;
+		protected bool _doubleClicked;
+		protected float _timeSinceClick;
 		#endregion
 
 		#region Properties
 		public bool Enabled { get; set; }
 		public bool Selected { get; set; }
 		public string Text { get; private set; }
+		public bool DoubleClicked
+		{
+			get
+			{
+				var value = _doubleClicked;
+				_doubleClicked = false; //Reset it
+				return value;
+			}
+		}
 		#endregion
 
 		#region Constructors
@@ -544,6 +555,8 @@ namespace Beyond_Beyaan
 			SetText(buttonText);
 
 			Reset();
+			_timeSinceClick = 10; //10 seconds will exceed any double-click max interval
+			_doubleClicked = false;
 
 			reason = null;
 			return true;
@@ -558,6 +571,8 @@ namespace Beyond_Beyaan
 			Enabled = true;
 			_pressed = false;
 			Selected = false;
+			_timeSinceClick = 10;
+			_doubleClicked = false;
 		}
 
 		public void SetText(string text)
@@ -625,6 +640,10 @@ namespace Beyond_Beyaan
 
 		public bool MouseHover(int x, int y, float frameDeltaTime)
 		{
+			if (_timeSinceClick < 10)
+			{
+				_timeSinceClick += frameDeltaTime;
+			}
 			if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 			{
 				if (_pulse < 0.6f)
@@ -702,6 +721,11 @@ namespace Beyond_Beyaan
 				_pressed = false;
 				if (x >= _xPos && x < _xPos + _width && y >= _yPos && y < _yPos + _height)
 				{
+					if (_timeSinceClick < 0.3)
+					{
+						_doubleClicked = true;
+					}
+					_timeSinceClick = 0;
 					return true;
 				}
 			}
