@@ -20,12 +20,9 @@ namespace Beyond_Beyaan.Screens
 		private BBLabel _expenseTitle;
 		private BBLabel _incomeTitle;
 
-		private BBLabel _taxLabel;
-		private BBLabel _taxIncome;
-		private BBScrollBar _taxSlider;
-
 		private BBLabel _reservesLabel;
 		private BBLabel _reservesAmount;
+		private BBScrollBar _reserveSlider;
 
 		private BBStretchButton[] _expenses;
 		private BBStretchButton[] _incomes;
@@ -43,7 +40,7 @@ namespace Beyond_Beyaan.Screens
 			int x = (gameMain.ScreenWidth / 2) - 533;
 			int y = (gameMain.ScreenHeight / 2) - 300;
 
-			if (!base.Initialize(x, y, 1066, 600, StretchableImageType.MediumBorder, gameMain, false, gameMain.Random, out reason))
+			if (!Initialize(x, y, 1066, 600, StretchableImageType.MediumBorder, gameMain, false, gameMain.Random, out reason))
 			{
 				return false;
 			}
@@ -291,33 +288,22 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			_taxLabel = new BBLabel();
-			_taxIncome = new BBLabel();
-			_taxSlider = new BBScrollBar();
+			_reserveSlider = new BBScrollBar();
 			_reservesLabel = new BBLabel();
 			_reservesAmount = new BBLabel();
-			
-			if (!_taxLabel.Initialize(x + 10, y + 10, "Reserve:", Color.Orange, out reason))
+
+			if (!_reservesLabel.Initialize(x + 10, y + 10, "Reserve:", Color.Orange, out reason))
 			{
 				return false;
 			}
-			if (!_taxIncome.Initialize(x + 280, y + 10, string.Empty, Color.White, out reason))
+			if (!_reservesAmount.Initialize(x + 280, y + 10, string.Empty, Color.White, out reason))
 			{
 				return false;
 			}
-			if (!_taxSlider.Initialize(x + 10, y + 40, 280, 1, 20, true, true, _gameMain.Random, out reason))
+			if (!_reserveSlider.Initialize(x + 10, y + 40, 280, 0, 20, true, true, _gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_reservesLabel.Initialize(x + 10, y + 80, "Funds:", Color.Orange, out reason))
-			{
-				return false;
-			}
-			if (!_reservesAmount.Initialize(x + 280, y + 80, string.Empty, Color.White, out reason))
-			{
-				return false;
-			}
-			_taxIncome.SetAlignment(true);
 			_reservesAmount.SetAlignment(true);
 
 			return true;
@@ -326,7 +312,8 @@ namespace Beyond_Beyaan.Screens
 
 		public void Load()
 		{
-			var planets = _gameMain.EmpireManager.CurrentEmpire.PlanetManager.Planets;
+			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+			var planets = currentEmpire.PlanetManager.Planets;
 			if (planets.Count > 13)
 			{
 				_maxVisible = 13;
@@ -340,7 +327,7 @@ namespace Beyond_Beyaan.Screens
 				_scrollBar.SetAmountOfItems(13);
 			}
 			LoadPlanets(planets);
-			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+			
 			_expenseLabels[0].SetText(string.Format("{0:0.0}% ({1:0.0} BC)", currentEmpire.ShipMaintenancePercentage * 100, currentEmpire.ShipMaintenance));
 			_expenseLabels[1].SetText(string.Format("{0:0.0}% ({1:0.0} BC)", currentEmpire.BaseMaintenancePercentage * 100, currentEmpire.BaseMaintenance));
 			_expenseLabels[2].SetText(string.Format("{0:0.0}% ({1:0.0} BC)", currentEmpire.EspionageExpensePercentage * 100, currentEmpire.EspionageExpense));
@@ -348,6 +335,8 @@ namespace Beyond_Beyaan.Screens
 
 			_incomeLabels[0].SetText(string.Format("{0:0.0} BC", currentEmpire.PlanetTotalProduction));
 			_incomeLabels[1].SetText(string.Format("{0:0.0} BC", currentEmpire.TradeIncome));
+
+			RefreshReserves();
 		}
 
 		public override void Draw()
@@ -382,25 +371,36 @@ namespace Beyond_Beyaan.Screens
 				_incomes[i].Draw();
 				_incomeLabels[i].Draw();
 			}
-			_taxLabel.Draw();
-			_taxIncome.Draw();
-			_taxSlider.Draw();
+			_reserveSlider.Draw();
 			_reservesLabel.Draw();
 			_reservesAmount.Draw();
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
+			if (_reserveSlider.MouseHover(x, y, frameDeltaTime))
+			{
+				_gameMain.EmpireManager.CurrentEmpire.TaxRate = _reserveSlider.TopIndex;
+				RefreshReserves();
+				return true;
+			}
 			return base.MouseHover(x, y, frameDeltaTime);
 		}
 
 		public override bool MouseDown(int x, int y)
 		{
+			_reserveSlider.MouseDown(x, y);
 			return base.MouseDown(x, y);
 		}
 
 		public override bool MouseUp(int x, int y)
 		{
+			if (_reserveSlider.MouseUp(x, y))
+			{
+				_gameMain.EmpireManager.CurrentEmpire.TaxRate = _reserveSlider.TopIndex;
+				RefreshReserves();
+				return true;
+			}
 			if (!base.MouseUp(x, y))
 			{
 				if (CloseWindow != null)
@@ -412,15 +412,24 @@ namespace Beyond_Beyaan.Screens
 			return false;
 		}
 
+		private void RefreshReserves()
+		{
+			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+			_reservesAmount.SetText(currentEmpire.TaxRate == 0
+										? string.Format("{0:0.0} BC", currentEmpire.Reserves)
+										: string.Format("{0:0.0} (+{1:0.0}) BC", currentEmpire.Reserves,
+														currentEmpire.TaxExpenses / 2));
+		}
+
 		public void LoadPlanets(List<Planet> planets)
 		{
 			for (int i = 0; i < _maxVisible; i++)
 			{
 				_columnCells[0][i].SetText(planets[i].Name);
-				_columnCells[1][i].SetText(planets[i].TotalPopulation.ToString());
-				_columnCells[2][i].SetText(planets[i].Factories.ToString());
-				_columnCells[3][i].SetText(string.Empty); //TODO: Add missile bases
-				_columnCells[4][i].SetText(string.Empty); //TODO: Add waste
+				_columnCells[1][i].SetText(string.Format("{0:0.0}", planets[i].TotalPopulation));
+				_columnCells[2][i].SetText(string.Format("{0:0.0}", planets[i].Factories));
+				_columnCells[3][i].SetText(planets[i].Bases.ToString());
+				_columnCells[4][i].SetText(string.Format("{0:0.0}", planets[i].Waste));
 				_columnCells[5][i].SetText(((int)planets[i].ActualProduction).ToString());
 				_columnCells[6][i].SetText(planets[i].ConstructionAmount > 0 ? planets[i].ShipBeingBuilt.Name : string.Empty);
 				for (int j = 0; j < 8; j++)

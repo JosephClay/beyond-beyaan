@@ -103,6 +103,7 @@ namespace Beyond_Beyaan.Screens
 			_taskBar.ShowResearchScreen = ShowResearchScreen;
 			_taskBar.ShowShipDesignScreen = ShowShipDesignScreen;
 			_taskBar.ShowPlanetsScreen = ShowPlanetsView;
+			_taskBar.EndTurn = CloseWindow;
 
 			_travelETA = new BBLabel();
 			_tentativeETA = new BBLabel();
@@ -542,8 +543,12 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (whichButton == 1)
 			{
+				var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 				if (_taskBar.MouseUp(x, y, whichButton))
 				{
+					//clear the fleet/planet window
+					currentEmpire.SelectedSystem = null;
+					currentEmpire.SelectedFleetGroup = null;
 					return;
 				}
 				if (_windowShowing != null)
@@ -551,7 +556,6 @@ namespace Beyond_Beyaan.Screens
 					_windowShowing.MouseUp(x, y);
 					return;
 				}
-				var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
 				if (currentEmpire.SelectedSystem != null)
 				{
 					if (_systemView.MouseUp(x, y))
@@ -790,6 +794,7 @@ namespace Beyond_Beyaan.Screens
 		private void CloseWindow()
 		{
 			_windowShowing = null;
+			CenterScreen();
 			_taskBar.Clear();
 		}
 
