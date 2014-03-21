@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using Beyond_Beyaan.Data_Managers;
 using GorgonLibrary.InputDevices;
 using Beyond_Beyaan.Data_Modules;
@@ -233,21 +234,15 @@ namespace Beyond_Beyaan.Screens
 				return false;
 			}
 
+			LoadLastSettings();
+
 			reason = null;
 			return true;
 		}
 
 		public void Clear()
 		{
-			//_playerRace = null;
-			_playerRaces = new Race[6];
-			_numericUpDownAI.SetValue(1);
-			_playerEmperorName.SetText(string.Empty);
-			_playerHomeworldName.SetText(string.Empty);
-			for (int i = 0; i < _raceSprites.Length; i++)
-			{
-				_raceSprites[i] = _randomRaceSprite;
-			}
+			LoadLastSettings();
 		}
 
 		public void DrawScreen()
@@ -540,6 +535,7 @@ namespace Beyond_Beyaan.Screens
 
 		private void SetUpEmpiresAndStart()
 		{
+			SaveSettings();
 			List<Race> selectedRaces = new List<Race>();
 			foreach (Race race in _playerRaces)
 			{
@@ -642,6 +638,104 @@ namespace Beyond_Beyaan.Screens
 				else
 				{
 					_playerRaceDescription.SetText(whichRace.RaceDescription);
+				}
+			}
+		}
+
+		private void LoadLastSettings()
+		{
+			var path = Path.Combine(_gameMain.GameDataSet.FullName, "GameSettings.config");
+			if (File.Exists(path))
+			{
+				using (StreamReader reader = new StreamReader(path))
+				{
+					_playerEmperorName.SetText(reader.ReadLine());
+					_playerHomeworldName.SetText(reader.ReadLine());
+					var raceName = reader.ReadLine();
+					if (raceName == "Random")
+					{
+						_playerRaces[0] = null;
+						_raceSprites[0] = _randomRaceSprite;
+					}
+					else
+					{
+						foreach (var race in _gameMain.RaceManager.Races)
+						{
+							if (race.RaceName == raceName)
+							{
+								_playerRaces[0] = race;
+								_raceSprites[0] = race.MiniAvatar;
+								break;
+							}
+						}
+					}
+					_galaxyComboBox.SelectedIndex = int.Parse(reader.ReadLine());
+					_difficultyComboBox.SelectedIndex = int.Parse(reader.ReadLine());
+					_numericUpDownAI.SetValue(int.Parse(reader.ReadLine()));
+					for (int i = 0; i < _numericUpDownAI.Value; i++)
+					{
+						raceName = reader.ReadLine();
+						if (raceName == "Random")
+						{
+							_playerRaces[i + 1] = null;
+							_raceSprites[i + 1] = _randomRaceSprite;
+						}
+						else
+						{
+							foreach (var race in _gameMain.RaceManager.Races)
+							{
+								if (race.RaceName == raceName)
+								{
+									_playerRaces[i + 1] = race;
+									_raceSprites[i + 1] = race.MiniAvatar;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				_playerRaces = new Race[6];
+				_numericUpDownAI.SetValue(1);
+				_playerEmperorName.SetText(string.Empty);
+				_playerHomeworldName.SetText(string.Empty);
+				for (int i = 0; i < _raceSprites.Length; i++)
+				{
+					_raceSprites[i] = _randomRaceSprite;
+				}
+			}
+		}
+
+		private void SaveSettings()
+		{
+			var path = Path.Combine(_gameMain.GameDataSet.FullName, "GameSettings.config");
+			using (StreamWriter writer = new StreamWriter(path))
+			{
+				writer.WriteLine(_playerEmperorName.Text);
+				writer.WriteLine(_playerHomeworldName.Text);
+				if (_playerRaces[0] != null)
+				{
+					writer.WriteLine(_playerRaces[0].RaceName);
+				}
+				else
+				{
+					writer.WriteLine("Random");
+				}
+				writer.WriteLine(_galaxyComboBox.SelectedIndex);
+				writer.WriteLine(_difficultyComboBox.SelectedIndex);
+				writer.WriteLine(_numericUpDownAI.Value);
+				for (int i = 0; i < _numericUpDownAI.Value; i++)
+				{
+					if (_playerRaces[i + 1] != null)
+					{
+						writer.WriteLine(_playerRaces[i + 1].RaceName);
+					}
+					else
+					{
+						writer.WriteLine("Random");
+					}
 				}
 			}
 		}
