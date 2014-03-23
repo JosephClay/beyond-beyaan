@@ -1,5 +1,3 @@
 This is the main entry point for Beyond Beyaan.
 
 [IssueTracker] - List of issues being tracked.
-
-Test edit by Arpad
