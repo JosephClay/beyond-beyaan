@@ -559,7 +559,7 @@ namespace Beyond_Beyaan.Screens
 			string homeworldName = string.IsNullOrEmpty(_playerHomeworldName.Text) ? NameGenerator.GetName() : _playerHomeworldName.Text;
 			Empire empire = new Empire(emperorName, 0, _playerRaces[0], PlayerType.HUMAN, 20 + (_gameMain.DifficultyLevel * 5), _playerColors[0], _gameMain);
 			Planet homePlanet;
-			StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, _gameMain.DifficultyLevel <= GameMain.MEDIUM ? 50 : 40, out homePlanet);
+			StarSystem homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
 			if (homeSystem == null)
 			{
 				_gameMain.EmpireManager.Reset();
@@ -585,7 +585,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				empire = new Empire(_playerRaces[i + 1].GetRandomEmperorName(), i + 1, _playerRaces[i + 1], PlayerType.CPU, 30, _playerColors[i + 1], _gameMain);
 				//AI always have 50 initial population
-				homeSystem = _gameMain.Galaxy.SetHomeworld(empire, 50, out homePlanet);
+				homeSystem = _gameMain.Galaxy.SetHomeworld(empire, out homePlanet);
 				if (homeSystem == null)
 				{
 					_gameMain.EmpireManager.Reset();

@@ -1,122 +1,140 @@
-﻿using System.Collections.Generic;
-using GorgonLibrary.InputDevices;
+﻿using System;
 
 namespace Beyond_Beyaan
 {
 	class Camera
 	{
 		#region Member Variables
-		private int width;
-		private int height;
 
-		private int windowWidth;
-		private int windowHeight;
+		private int _windowWidth;
+		private int _windowHeight;
 
-		private float xVel; //for camera movement
-		private float yVel; //for camera movement
+		private float _xVel; //for camera movement
+		private float _yVel; //for camera movement
 
-		private float cameraX, cameraY; //The position where the player is looking at
-		private float zoomDistance; //The distance from the galaxy "plane" the player is looking from
+		private float _cameraX, _cameraY; //The position where the player is looking at
+		private int _moveToX, _moveToY; //The position where camera needs to move to
+		private bool _moving;
+		private bool _leftOfX;
+		private bool _aboveOfY;
 
-		private float maxZoom;
 		#endregion
 
 		#region Auto Properties
-		public int Width { get { return width; } }
-		public int Height { get { return height; } }
 
-		public float CameraX { get { return cameraX; } }
-		public float CameraY { get { return cameraY; } }
+		public int Width { get; private set; }
+		public int Height { get; private set; }
 
-		public float ZoomDistance { get { return zoomDistance; } }
-		public float MaxZoom { get { return maxZoom; } }
+		public float CameraX { get { return _cameraX; } }
+		public float CameraY { get { return _cameraY; } }
+
+		public float ZoomDistance { get; private set; }
+		public float MaxZoom { get; private set; }
+
 		#endregion
 
 		#region Constructors
 		public Camera(int width, int height, int windowWidth, int windowHeight)
 		{
-			this.width = width;
-			this.height = height;
+			Width = width;
+			Height = height;
 
-			this.windowWidth = windowWidth;
-			this.windowHeight = windowHeight;
+			_windowWidth = windowWidth;
+			_windowHeight = windowHeight;
 
-			maxZoom = 1.0f;
+			MaxZoom = 1.0f;
 			while (true)
 			{
-				maxZoom -= 0.05f;
-				if (width * maxZoom < windowWidth && height * maxZoom < windowHeight)
+				MaxZoom -= 0.05f;
+				if (width * MaxZoom < windowWidth && height * MaxZoom < windowHeight)
 				{
 					//Get a maxZoom that have the items fill the screen
 					float temp = windowWidth / (float)width;
-					maxZoom = windowHeight / (float)height;
-					if (temp < maxZoom)
+					MaxZoom = windowHeight / (float)height;
+					if (temp < MaxZoom)
 					{
-						maxZoom = temp;
+						MaxZoom = temp;
 					}
 					break;
 				}
-				if (maxZoom <= 0)
+				if (MaxZoom <= 0)
 				{
-					maxZoom = 0.05f;
+					MaxZoom = 0.05f;
 					break;
 				}
 			}
 
-			zoomDistance = 1.0f;
+			ZoomDistance = 1.0f;
 		}
 		#endregion
 
 		#region Functions
-		public void CenterCamera(int x, int y, float zoomDis)
+		public void ScrollToPosition(int x, int y)
 		{
-			zoomDistance = zoomDis;
-			if (zoomDistance < maxZoom)
+			//Smoothly move to the new position
+			_moveToX = (int)(x - (_windowWidth / ZoomDistance) / 2);
+			_moveToY = (int)(y - (_windowHeight / ZoomDistance) / 2);
+
+			if (_moveToX > (Width - ((_windowWidth / ZoomDistance) * 0.9f)))
 			{
-				zoomDistance = maxZoom;
+				_moveToX = (int)(Width - ((_windowWidth / ZoomDistance) * 0.9f));
+			}
+			if (_moveToX < ((_windowWidth / ZoomDistance) / -10))
+			{
+				_moveToX = (int)((_windowWidth / ZoomDistance) / -10);
+			}
+			if (_moveToY > (Height - ((_windowHeight / ZoomDistance) * 0.9f)))
+			{
+				_moveToY = (int)(Height - ((_windowHeight / ZoomDistance) * 0.9f));
+			}
+			if (_moveToY < ((_windowHeight / ZoomDistance) / -10))
+			{
+				_moveToY = (int)((_windowHeight / ZoomDistance) / -10);
 			}
 
-			cameraX = x - (windowWidth / zoomDistance) / 2;
-			cameraY = y - (windowHeight / zoomDistance) / 2;
+			_moving = true;
+			//We want only a second to move to the position
+			float xDis = _moveToX - _cameraX;
+			float yDis = _moveToY - _cameraY;
+			float moveSpeed = (float)Math.Sqrt(xDis * xDis + yDis * yDis) * 2;
+			float angle = (float)(Math.Atan2(yDis, xDis));
+			_xVel = (float)(moveSpeed * Math.Cos(angle));
+			_yVel = (float)(moveSpeed * Math.Sin(angle));
+			_leftOfX = _moveToX < _cameraX;
+			_aboveOfY = _moveToY < _cameraY;
+		}
+		public void CenterCamera(int x, int y, float zoomDis)
+		{
+			//Instantly move to the new position (used in start of turn after processing turn is done)
+			ZoomDistance = zoomDis;
+			if (ZoomDistance < MaxZoom)
+			{
+				ZoomDistance = MaxZoom;
+			}
+
+			_cameraX = x - (_windowWidth / ZoomDistance) / 2;
+			_cameraY = y - (_windowHeight / ZoomDistance) / 2;
 
 			CheckPosition();
 		}
 
-		public void HandleUpdate(int mouseX, int mouseY, float frameDeltaTime)
+		public void HandleUpdate(float frameDeltaTime)
 		{
-			xVel = 0;
-			yVel = 0;
-			if (mouseY < 40 && cameraY > ((windowHeight / zoomDistance) / -2))
+			if (_moving)
 			{
-				int y = mouseY - 40;
-				y = y * (-y);
-				yVel = (y / 10000.0f) * (5000 * frameDeltaTime);
-			}
-			else if (mouseY >= windowHeight - 40 && cameraY < (height - (windowHeight / zoomDistance) / 2))
-			{
-				int y = 40 - (windowHeight - mouseY);
-				y = y * y;
-				yVel = (y / 10000.0f) * (5000 * frameDeltaTime);
-			}
-			if (mouseX < 40 && cameraX > ((windowWidth / zoomDistance) / -2))
-			{
-				int x = mouseX - 40;
-				x = x * (-x);
-				xVel = (x / 10000.0f) * (5000 * frameDeltaTime);
-			}
-			else if (mouseX >= windowWidth - 40 && cameraX < (width - (windowWidth / zoomDistance) / 2))
-			{
-				int x = 40 - (windowWidth - mouseX);
-				x = x * x;
-				xVel = (x / 10000.0f) * (5000 * frameDeltaTime);
-			}
-
-			if (xVel != 0 || yVel != 0)
-			{
-				cameraX += xVel;
-				cameraY += yVel;
-
-				CheckPosition();
+				_cameraX += frameDeltaTime * _xVel;
+				_cameraY += frameDeltaTime * _yVel;
+				if ((_cameraX < _moveToX && _leftOfX) ||
+					(_cameraX > _moveToX && !_leftOfX) ||
+					(_cameraY < _moveToY && _aboveOfY) ||
+					(_cameraY > _moveToY && !_aboveOfY))
+				{
+					//close enough, snap to position
+					_cameraX = _moveToX;
+					_cameraY = _moveToY;
+					_moving = false;
+					CheckPosition();
+				}
 			}
 		}
 
@@ -124,35 +142,35 @@ namespace Beyond_Beyaan
 		{
 			if (direction > 0)
 			{
-				if (zoomDistance < 1)
+				if (ZoomDistance < 1)
 				{
-					float oldScale = zoomDistance;
-					zoomDistance += 0.05f;
-					if (zoomDistance >= 1)
+					float oldScale = ZoomDistance;
+					ZoomDistance += 0.05f;
+					if (ZoomDistance >= 1)
 					{
-						zoomDistance = 1;
+						ZoomDistance = 1;
 					}
 
-					float xScale = mouseX / windowWidth;
-					float yScale = mouseY / windowHeight;
+					float xScale = mouseX / _windowWidth;
+					float yScale = mouseY / _windowHeight;
 
-					cameraX += ((windowWidth / oldScale) - (windowWidth / zoomDistance)) * xScale;
-					cameraY += ((windowHeight / oldScale) - (windowHeight / zoomDistance)) * yScale;
+					_cameraX += ((_windowWidth / oldScale) - (_windowWidth / ZoomDistance)) * xScale;
+					_cameraY += ((_windowHeight / oldScale) - (_windowHeight / ZoomDistance)) * yScale;
 				}
 			}
 			else
 			{
-				if (zoomDistance > maxZoom)
+				if (ZoomDistance > MaxZoom)
 				{
-					float oldScale = zoomDistance;
-					zoomDistance -= 0.05f;
-					if (zoomDistance < maxZoom)
+					float oldScale = ZoomDistance;
+					ZoomDistance -= 0.05f;
+					if (ZoomDistance < MaxZoom)
 					{
-						zoomDistance = maxZoom;
+						ZoomDistance = MaxZoom;
 					}
 
-					cameraX -= ((windowWidth / zoomDistance) - (windowWidth / oldScale)) / 2;
-					cameraY -= ((windowHeight / zoomDistance) - (windowHeight / oldScale)) / 2;
+					_cameraX -= ((_windowWidth / ZoomDistance) - (_windowWidth / oldScale)) / 2;
+					_cameraY -= ((_windowHeight / ZoomDistance) - (_windowHeight / oldScale)) / 2;
 				}
 			}
 			CheckPosition();
@@ -160,21 +178,21 @@ namespace Beyond_Beyaan
 
 		private void CheckPosition()
 		{
-			if (cameraX > (width - ((windowWidth / zoomDistance) * 0.8f)))
+			if (_cameraX > (Width - ((_windowWidth / ZoomDistance) * 0.9f)))
 			{
-				cameraX = (width - ((windowWidth / zoomDistance) * 0.8f));
+				_cameraX = (Width - ((_windowWidth / ZoomDistance) * 0.9f));
 			}
-			if (cameraX < ((windowWidth / zoomDistance) / -5))
+			if (_cameraX < ((_windowWidth / ZoomDistance) / -10))
 			{
-				cameraX = ((windowWidth / zoomDistance) / -5);
+				_cameraX = ((_windowWidth / ZoomDistance) / -10);
 			}
-			if (cameraY > (height - ((windowHeight / zoomDistance) * 0.8f)))
+			if (_cameraY > (Height - ((_windowHeight / ZoomDistance) * 0.9f)))
 			{
-				cameraY = (height - ((windowHeight / zoomDistance) * 0.8f));
+				_cameraY = (Height - ((_windowHeight / ZoomDistance) * 0.9f));
 			}
-			if (cameraY < ((windowHeight / zoomDistance) / -5))
+			if (_cameraY < ((_windowHeight / ZoomDistance) / -10))
 			{
-				cameraY = ((windowHeight / zoomDistance) / -5);
+				_cameraY = ((_windowHeight / ZoomDistance) / -10);
 			}
 		}
 		#endregion

@@ -140,11 +140,6 @@ namespace Beyond_Beyaan.Screens
 			}
 		}
 
-		public void CenterScreenToPoint(Point point)
-		{
-			_camera.CenterCamera(point.X * 60, point.Y * 60, _camera.ZoomDistance);
-		}
-
 		private void DrawETA(TravelNode node, bool isTentative)
 		{
 			if (isTentative)
@@ -532,7 +527,7 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 			
-			_camera.HandleUpdate(x, y, frameDeltaTime);
+			_camera.HandleUpdate(frameDeltaTime);
 		}
 
 		public void MouseDown(int x, int y, int whichButton)
@@ -686,7 +681,7 @@ namespace Beyond_Beyaan.Screens
 				}
 				if (!clearingUI)
 				{
-					_camera.CenterCamera(pointClicked.X, pointClicked.Y, _camera.ZoomDistance);
+					_camera.ScrollToPosition(pointClicked.X, pointClicked.Y);
 				}
 			}
 			else if (whichButton == 2)

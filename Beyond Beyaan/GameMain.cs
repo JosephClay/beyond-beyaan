@@ -344,11 +344,6 @@ namespace Beyond_Beyaan
 			_currentScreen = whichScreen;
 		}
 
-		public void CenterGalaxyScreen(Point point)
-		{
-			_galaxyScreen.CenterScreenToPoint(point);
-		}
-
 		public void DrawGalaxyBackground()
 		{
 			_galaxyScreen.DrawGalaxy();
