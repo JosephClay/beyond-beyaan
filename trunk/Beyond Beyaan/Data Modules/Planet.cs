@@ -1306,7 +1306,7 @@ namespace Beyond_Beyaan
 		}
 		#endregion
 
-		public void SetHomeworld(Empire owner, int population, Random r) //Set this planet as homeworld
+		public void SetHomeworld(Empire owner, Random r) //Set this planet as homeworld
 		{
 			_owner = owner;
 			_planetType = PLANET_TYPE.TERRAN;
@@ -1314,7 +1314,7 @@ namespace Beyond_Beyaan
 			SmallSprite = SpriteManager.GetSprite("TerranPlanetSmall", r);
 			_populationMax = 100;
 			_races.Add(owner.EmpireRace);
-			_racePopulations.Add(owner.EmpireRace, population);
+			_racePopulations.Add(owner.EmpireRace, 40);
 			Factories = 30;
 			_factoryInvestments = 300; //Start with 300 BCs invested in factories
 			SetOutputAmount(OUTPUT_TYPE.INFRASTRUCTURE, 100, true);

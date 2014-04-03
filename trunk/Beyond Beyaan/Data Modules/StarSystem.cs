@@ -172,18 +172,18 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Public Functions
-		public void SetHomeworld(Empire empire, int population, out Planet homePlanet, Random r)
+		public void SetHomeworld(Empire empire, out Planet homePlanet, Random r)
 		{
 			if (planets.Count == 0)
 			{
 				planets.Add(new Planet(name, r, this)); //planets.Add(new Planet(name + " I", r, this));
-				planets[0].SetHomeworld(empire, population, r);
+				planets[0].SetHomeworld(empire, r);
 				homePlanet = planets[0];
 			}
 			else
 			{
 				int whichPlanet = r.Next(planets.Count);
-				planets[whichPlanet].SetHomeworld(empire, population, r);
+				planets[whichPlanet].SetHomeworld(empire, r);
 				homePlanet = planets[whichPlanet];
 			}
 			Color = Color.Yellow; //Homeworlds always have yellow stars
