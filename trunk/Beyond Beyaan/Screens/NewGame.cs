@@ -466,11 +466,15 @@ namespace Beyond_Beyaan.Screens
 			{
 				return;
 			}
-			if (_showingSelection && e.Key == KeyboardKeys.Escape)
+			if (e.Key == KeyboardKeys.Escape)
 			{
-				//Close the race selection
-				_showingSelection = false;
-				return;
+				if (_showingSelection)
+				{
+					//Close the race selection
+					_showingSelection = false;
+					return;
+				}
+				_gameMain.ChangeToScreen(Screen.MainMenu);
 			}
 			if (_playerEmperorName.KeyDown(e))
 			{
@@ -480,6 +484,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				return;
 			}
+			
 		}
 
 		private void DrawGalaxyPreview()

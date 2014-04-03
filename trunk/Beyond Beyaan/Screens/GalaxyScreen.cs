@@ -472,8 +472,6 @@ namespace Beyond_Beyaan.Screens
 			if (selectedFleetGroup != null)
 			{
 				_fleetView.Draw();
-				/* TODO: Add ETA display
-				drawingManagement.DrawText("Arial", "ETA: " + selectedFleetGroup.FleetToSplit.TentativeETA + " Turns", (int)((((lastNode.X - camera.CameraX) * 32) - camera.XOffset) * camera.Scale), (int)(((((lastNode.Y + 1) - camera.CameraY) * 32) - camera.YOffset) * camera.Scale), System.Drawing.Color.White);*/
 			}
 			if (selectedSystem != null)
 			{
@@ -775,13 +773,31 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (_windowShowing != null)
 			{
-				if (e.Key == KeyboardKeys.Escape)
+				if (!_windowShowing.KeyDown(e))
 				{
-					//Close the current window
-					CloseWindow();
-					return;
+					if (e.Key == KeyboardKeys.Escape)
+					{
+						//Parent window didn't handle escape, so close window
+						//Close the current window
+						CloseWindow();
+						return;
+					}
 				}
-				_windowShowing.KeyDown(e);
+				return;
+			}
+			if (e.Key == KeyboardKeys.Escape)
+			{
+				Empire currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+				StarSystem selectedSystem = currentEmpire.SelectedSystem;
+				FleetGroup selectedFleetGroup = currentEmpire.SelectedFleetGroup;
+				if (selectedFleetGroup != null)
+				{
+					currentEmpire.SelectedFleetGroup = null;
+				}
+				if (selectedSystem != null)
+				{
+					currentEmpire.SelectedSystem = null;
+				}
 				return;
 			}
 			if (_gameMain.EmpireManager.CurrentEmpire.SelectedSystem != null)

@@ -234,23 +234,24 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
+				int maxFactories = (int)(TotalMaxPopulation * Owner.TechnologyManager.RoboticControls);
 				if (InfrastructureAmount > 0)
 				{
 					if (AmountOfBuildingsThisTurn > 0)
 					{
 						if (AmountOfBCGeneratedThisTurn == 0)
 						{
-							return string.Format("{0} (+{1:0.0}) Buildings", (int)Factories, AmountOfBuildingsThisTurn);
+							return string.Format("{0}/{1} (+{2:0.0}) Factories", (int)Factories, maxFactories, AmountOfBuildingsThisTurn);
 						}
-						return string.Format("{0} (+{1:0.0}) Buildings (+{2:0.0} BC)", (int)Factories, AmountOfBuildingsThisTurn, AmountOfBCGeneratedThisTurn);
+						return string.Format("{0}/{1} (+{2:0.0}) Factories (+{3:0.0} BC)", (int)Factories, maxFactories, AmountOfBuildingsThisTurn, AmountOfBCGeneratedThisTurn);
 					}
 					if (AmountLostToRefitThisTurn > 0)
 					{
-						return "Refitting Buildings";
+						return "Refitting Factories";
 					}
-					return string.Format("{0} Buildings (+{1:0.0} BC)", (int)Factories, AmountOfBCGeneratedThisTurn);
+					return string.Format("{0}/{1} Factories (+{2:0.0} BC)", (int)Factories, maxFactories, AmountOfBCGeneratedThisTurn);
 				}
-				return string.Format("{0} Buildings", (int)Factories);
+				return string.Format("{0}/{1} Factories", (int)Factories, maxFactories);
 			}
 		}
 		public string ResearchStringOutput
