@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Beyond_Beyaan.Data_Modules;
+using GorgonLibrary.InputDevices;
 
 namespace Beyond_Beyaan.Screens
 {
@@ -640,7 +641,7 @@ namespace Beyond_Beyaan.Screens
 			return false;
 		}
 
-		public override bool KeyDown(GorgonLibrary.InputDevices.KeyboardInputEventArgs e)
+		public override bool KeyDown(KeyboardInputEventArgs e)
 		{
 			if (_nameField.KeyDown(e))
 			{
@@ -648,6 +649,29 @@ namespace Beyond_Beyaan.Screens
 				_shipDesign.Name = _nameField.Text;
 				return true;
 			}
+			if (e.Key == KeyboardKeys.Escape)
+			{
+				if (_selectionShowing)
+				{
+					_selectionShowing = false;
+					return true;
+				}
+				if (_fleetSpecsShowing)
+				{
+					_fleetSpecsShowing = false;
+					if (_gameMain.EmpireManager.CurrentEmpire.FleetManager.CurrentDesigns.Count < 6)
+					{
+						_gameMain.EmpireManager.CurrentEmpire.FleetManager.AddShipDesign(_shipDesign);
+					}
+					//In any case, close the window
+					if (CloseWindow != null)
+					{
+						CloseWindow();
+					}
+					return true;
+				}
+			}
+
 			return false;
 		}
 

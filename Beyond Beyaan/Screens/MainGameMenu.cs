@@ -247,6 +247,10 @@ namespace Beyond_Beyaan.Screens
 
 		public void KeyDown(KeyboardInputEventArgs e)
 		{
+			if (e.Key == KeyboardKeys.Escape)
+			{
+				_gameMain.ExitGame();
+			}
 		}
 
 		private void RefreshSaves()
