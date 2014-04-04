@@ -13,7 +13,6 @@ namespace Beyond_Beyaan
 		public Action ShowPlanetsScreen;
 		public Action EndTurn;
 
-		private int _left;
 		private int _top;
 		private bool _hide;
 
@@ -29,48 +28,48 @@ namespace Beyond_Beyaan
 			_gameMain = gameMain;
 			_taskButtons = new BBStretchButton[7];
 
-			_left = gameMain.ScreenWidth - 1050;
-			_top = gameMain.ScreenHeight - 40;
-
+			int width = gameMain.ScreenWidth / 7;
+			int offset = gameMain.ScreenWidth - (width * 7); //account for integer rounding
+			_top = gameMain.ScreenHeight - 50;
+			int x = 0;
 			for (int i = 0; i < _taskButtons.Length; i++)
 			{
 				_taskButtons[i] = new BBStretchButton();
 			}
-			if (!_taskButtons[0].Initialize("Game Menu", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _left, _top, 150, 40, gameMain.Random, out reason))
+			if (!_taskButtons[0].Initialize("Game Menu", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x, _top, width, 50, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			_left += 150;
-			if (!_taskButtons[1].Initialize("Design Ships", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _left, _top, 150, 40, gameMain.Random, out reason))
+			x += width;
+			if (!_taskButtons[1].Initialize("Design Ships", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x, _top, width, 50, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			_left += 150;
-			if (!_taskButtons[2].Initialize("Fleets Overview", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _left, _top, 150, 40, gameMain.Random, out reason))
+			x += width;
+			if (!_taskButtons[2].Initialize("Fleets Overview", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x, _top, width, 50, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			_left += 150;
-			if (!_taskButtons[3].Initialize("Diplomacy", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _left, _top, 150, 40, gameMain.Random, out reason))
+			x += width;
+			if (!_taskButtons[3].Initialize("Diplomacy", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x, _top, width, 50, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			_left += 150;
-			if (!_taskButtons[4].Initialize("Planets Overview", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _left, _top, 150, 40, gameMain.Random, out reason))
+			x += width;
+			if (!_taskButtons[4].Initialize("Planets Overview", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x, _top, width, 50, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			_left += 150;
-			if (!_taskButtons[5].Initialize("Manage Research", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _left, _top, 150, 40, gameMain.Random, out reason))
+			x += width;
+			if (!_taskButtons[5].Initialize("Manage Research", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x, _top, width, 50, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			_left += 150;
-			if (!_taskButtons[6].Initialize("End Turn", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _left, _top, 150, 40, gameMain.Random, out reason))
+			x += width;
+			if (!_taskButtons[6].Initialize("End Turn", ButtonTextAlignment.CENTER, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, x, _top, width + offset, 50, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			_left = gameMain.ScreenWidth - 1050;
 
 			_hide = false;
 			reason = null;
@@ -100,7 +99,7 @@ namespace Beyond_Beyaan
 			{
 				button.MouseHover(mouseX, mouseY, frameDeltaTime);
 			}
-			if (mouseX >= _left && mouseY > _top && mouseY < _top + 39)
+			if (mouseY > _top)
 			{
 				return true;
 			}
