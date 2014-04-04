@@ -11,90 +11,83 @@ namespace Beyond_Beyaan.Screens
 		private FleetGroup _selectedFleetGroup;
 		private Fleet _selectedFleet;
 
-		private BBStretchableImage _fleetBackground;
+		private BBLabel _empireNameLabel;
+		private BBStretchableImage _empireBackground;
+		private BBButton _nextFleet;
+		private BBButton _previousFleet;
+
 		private BBStretchableImage[] _shipBackground;
 		private BBStretchableImage _shipPreview;
-
-		private BBScrollBar _fleetScrollBar;
-		private BBScrollBar _shipScrollBar;
-
-		private BBInvisibleStretchButton[] _fleetButtons;
 		private BBScrollBar[] _shipSliders;
 		private BBLabel[] _shipLabels;
-
-		private int _maxFleetVisible;
-		private int _maxShipVisible;
-
-		private bool _useFleetScrollBar;
-		private bool _useShipScrollBar;
+		private int _maxVisible;
 
 		private bool _showingPreview;
 		private BBSprite _shipSprite;
 		private Point _shipPoint;
 		private float[] _empireColor;
+		private bool _isTransports;
 		#endregion
 
 		#region Constructor
 		public bool Initialize(GameMain gameMain, out string reason)
 		{
-			if (!base.Initialize(gameMain.ScreenWidth - 300, gameMain.ScreenHeight / 2 - 240, 300, 480, StretchableImageType.ThinBorderBG, gameMain, true, gameMain.Random, out reason))
+			if (!Initialize(gameMain.ScreenWidth - 300, 0, 300, 480, StretchableImageType.ThinBorderBG, gameMain, true, gameMain.Random, out reason))
 			{
 				return false;
 			}
 
-			_fleetBackground = new BBStretchableImage();
+			_empireBackground = new BBStretchableImage();
+			_empireNameLabel = new BBLabel();
+			_nextFleet = new BBButton();
+			_previousFleet = new BBButton();
+
 			_shipBackground = new BBStretchableImage[6];
 			_shipPreview = new BBStretchableImage();
 
-			_fleetScrollBar = new BBScrollBar();
-			_shipScrollBar = new BBScrollBar();
-
-			_fleetButtons = new BBInvisibleStretchButton[3];
 			_shipSliders = new BBScrollBar[6];
 			_shipLabels = new BBLabel[6];
+
+			if (!_empireBackground.Initialize(_xPos + 10, _yPos + 10, 280, 40, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_empireNameLabel.Initialize(_xPos + 10, _yPos + 10, string.Empty, Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_previousFleet.Initialize("ScrollLeftBGButton", "ScrollLeftFGButton", string.Empty, ButtonTextAlignment.LEFT, _xPos + 18, _yPos + 22, 16, 16, gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_nextFleet.Initialize("ScrollRightBGButton", "ScrollRightFGButton", string.Empty, ButtonTextAlignment.LEFT, _xPos + 266, _yPos + 22, 16, 16, gameMain.Random, out reason))
+			{
+				return false;
+			}
 
 			if (!_shipPreview.Initialize(0, 0, 170, 170, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 			{
 				return false;
 			}
-			if (!_fleetBackground.Initialize(_xPos + 10, _yPos + 10, 280, 120, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
-			{
-				return false;
-			}
-			for (int i = 0; i < _fleetButtons.Length; i++)
-			{
-				_fleetButtons[i] = new BBInvisibleStretchButton();
-				if (!_fleetButtons[i].Initialize(string.Empty, ButtonTextAlignment.LEFT, StretchableImageType.ThinBorderBG, StretchableImageType.ThinBorderFG, _xPos + 15, _yPos + 15 + (i * 35), 250, 35, gameMain.Random, out reason))
-				{
-					return false;
-				}
-			}
+			
 			for (int i = 0; i < _shipBackground.Length; i++)
 			{
 				_shipBackground[i] = new BBStretchableImage();
 				_shipLabels[i] = new BBLabel();
 				_shipSliders[i] = new BBScrollBar();
 
-				if (!_shipBackground[i].Initialize(_xPos + 10, _yPos + 135 + (i * 55), 260, 55, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
+				if (!_shipBackground[i].Initialize(_xPos + 10, _yPos + 55 + (i * 55), 280, 55, StretchableImageType.ThinBorderBG, gameMain.Random, out reason))
 				{
 					return false;
 				}
-				if (!_shipLabels[i].Initialize(_xPos + 15, _yPos + 145 + (i * 55), "Test", Color.White, out reason))
+				if (!_shipLabels[i].Initialize(_xPos + 15, _yPos + 65 + (i * 55), "Test", Color.White, out reason))
 				{
 					return false;
 				}
-				if (!_shipSliders[i].Initialize(_xPos + 15, _yPos + 165 + (i * 55), 250, 1, 1, true, true, gameMain.Random, out reason))
+				if (!_shipSliders[i].Initialize(_xPos + 15, _yPos + 85 + (i * 55), 270, 1, 1, true, true, gameMain.Random, out reason))
 				{
 					return false;
 				}
-			}
-			if (!_fleetScrollBar.Initialize(_xPos + 267, _yPos + 20, 100, _fleetButtons.Length, _fleetButtons.Length, false, false, gameMain.Random, out reason))
-			{
-				return false;
-			}
-			if (!_shipScrollBar.Initialize(_xPos + 275, _yPos + 135, 330, _shipBackground.Length, _shipBackground.Length, false, false, gameMain.Random, out reason))
-			{
-				return false;
 			}
 			return true;
 		}
@@ -103,19 +96,19 @@ namespace Beyond_Beyaan.Screens
 		public override void Draw()
 		{
 			base.Draw();
-			_fleetBackground.Draw();
-			for (int i = 0; i < _maxFleetVisible; i++)
-			{
-				_fleetButtons[i].Draw();
-			}
-			for (int i = 0; i < _maxShipVisible; i++)
+			_empireBackground.Draw();
+			_empireNameLabel.Draw();
+			_previousFleet.Draw();
+			_nextFleet.Draw();
+			for (int i = 0; i < _maxVisible; i++)
 			{
 				_shipBackground[i].Draw();
 				_shipLabels[i].Draw();
-				_shipSliders[i].Draw();
+				if (!_isTransports)
+				{
+					_shipSliders[i].Draw();
+				}
 			}
-			_fleetScrollBar.Draw();
-			_shipScrollBar.Draw();
 			if (_showingPreview)
 			{
 				_shipPreview.Draw();
@@ -130,52 +123,42 @@ namespace Beyond_Beyaan.Screens
 		{
 			base.MoveWindow();
 
-			_fleetBackground.MoveTo(_xPos + 10, _yPos + 10);
+			_empireBackground.MoveTo(_xPos + 10, _yPos + 10);
+			_empireNameLabel.MoveTo(_xPos + 150 - (int)(_empireNameLabel.GetWidth() / 2), _yPos + 30 - (int)(_empireNameLabel.GetHeight() / 2));
+			_previousFleet.MoveTo(_xPos + 18, _yPos + 22);
+			_nextFleet.MoveTo(_xPos + 266, _yPos + 22);
 			
-			for (int i = 0; i < _fleetButtons.Length; i++)
-			{
-				_fleetButtons[i].MoveTo(_xPos + 15, _yPos + 15 + (i * 35));
-			}
 			for (int i = 0; i < _shipBackground.Length; i++)
 			{
-				_shipBackground[i].MoveTo(_xPos + 10, _yPos + 135 + (i * 55));
-				_shipLabels[i].MoveTo(_xPos + 15, _yPos + 145 + (i * 55));
-				_shipSliders[i].MoveTo(_xPos + 15, _yPos + 165 + (i * 55));
+				_shipBackground[i].MoveTo(_xPos + 10, _yPos + 55 + (i * 55));
+				_shipLabels[i].MoveTo(_xPos + 15, _yPos + 65 + (i * 55));
+				_shipSliders[i].MoveTo(_xPos + 15, _yPos + 85 + (i * 55));
 			}
-			_fleetScrollBar.MoveTo(_xPos + 267, _yPos + 20);
-			_shipScrollBar.MoveTo(_xPos + 275, _yPos + 135);
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
 		{
 			bool result = false;
-			for (int i = 0; i < _maxFleetVisible; i++)
-			{
-				result = _fleetButtons[i].MouseHover(x, y, frameDeltaTime) || result;
-			}
-			bool withinX = (x >= _xPos + 10 && x < _xPos + 270);
+			_previousFleet.MouseHover(x, y, frameDeltaTime);
+			_nextFleet.MouseHover(x, y, frameDeltaTime);
+			bool withinX = (x >= _xPos + 10 && x < _xPos + 290);
 			bool showingPreview = false;
-			for (int i = 0; i < _maxShipVisible; i++)
+			for (int i = 0; i < _maxVisible; i++)
 			{
 				if (_shipSliders[i].MouseHover(x, y, frameDeltaTime))
 				{
 					result = true;
-					if (_selectedFleet.Ships.Count > 0)
+					if (!_isTransports)
 					{
-						Ship ship = _selectedFleet.OrderedShips[i + _shipScrollBar.TopIndex];
+						Ship ship = _selectedFleet.OrderedShips[i];
 						_selectedFleetGroup.FleetToSplit.Ships[ship] = _shipSliders[i].TopIndex;
 						_shipLabels[i].SetText(_shipSliders[i].TopIndex + " x " + ship.Name);
 					}
-					else //Transports
-					{
-						_selectedFleetGroup.FleetToSplit.TransportShips[i + _shipScrollBar.TopIndex].amount = _shipSliders[i].TopIndex;
-						_shipLabels[i].SetText(_selectedFleetGroup.FleetToSplit.TransportShips[i + _shipScrollBar.TopIndex].amount + " x " + _selectedFleetGroup.FleetToSplit.TransportShips[i + _shipScrollBar.TopIndex].raceOnShip.RaceName);
-					}
 				}
-				int tempY = _yPos + 135 + (i * 55);
-				if (_selectedFleet.Ships.Count > 0 && withinX && y >= tempY && y < tempY + 55)
+				int tempY = _yPos + 55 + (i * 55);
+				if (!_isTransports && withinX && y >= tempY && y < tempY + 55)
 				{
-					var ship = _selectedFleet.OrderedShips[i + _shipScrollBar.TopIndex];
+					var ship = _selectedFleet.OrderedShips[i];
 					_shipSprite = ship.Owner.EmpireRace.GetShip(ship.Size, ship.WhichStyle);
 					_empireColor = ship.Owner.ConvertedColor;
 					//Show ship preview for this ship
@@ -196,41 +179,22 @@ namespace Beyond_Beyaan.Screens
 				}
 			}
 			_showingPreview = showingPreview;
-			if (_fleetScrollBar.MouseHover(x, y, frameDeltaTime))
-			{
-				RefreshFleets();
-				result = true;
-			}
-			if (_shipScrollBar.MouseHover(x, y, frameDeltaTime))
-			{
-				RefreshShips();
-				result = true;
-			}
 			return base.MouseHover(x, y, frameDeltaTime) || result;
 		}
 
 		public override bool MouseDown(int x, int y)
 		{
-			for (int i = 0; i < _maxFleetVisible; i++)
+			_nextFleet.MouseDown(x, y);
+			_previousFleet.MouseDown(x, y);
+
+			if (!_isTransports)
 			{
-				if (_fleetButtons[i].MouseDown(x, y))
+				for (int i = 0; i < _maxVisible; i++)
 				{
-					return true;
-				}
-			}
-			if (_fleetScrollBar.MouseDown(x, y))
-			{
-				return true;
-			}
-			if (_shipScrollBar.MouseDown(x, y))
-			{
-				return true;
-			}
-			for (int i = 0; i < _maxShipVisible; i++)
-			{
-				if (_shipSliders[i].MouseDown(x, y))
-				{
-					return true;
+					if (_shipSliders[i].MouseDown(x, y))
+					{
+						return true;
+					}
 				}
 			}
 			return base.MouseDown(x, y);
@@ -239,47 +203,43 @@ namespace Beyond_Beyaan.Screens
 		public override bool MouseUp(int x, int y)
 		{
 			bool result = false;
-			for (int i = 0; i < _maxFleetVisible; i++)
+			if (_previousFleet.MouseUp(x, y))
 			{
-				if (_fleetButtons[i].MouseUp(x, y))
+				int index = _selectedFleetGroup.Fleets.IndexOf(_selectedFleet);
+				index--;
+				if (index < 0)
 				{
-					_selectedFleetGroup.SelectFleet(i + _fleetScrollBar.TopIndex);
-					for (int j = 0; j < _maxFleetVisible; j++)
-					{
-						_fleetButtons[j].Selected = false;
-					}
-					_fleetButtons[i].Selected = true;
-					_selectedFleet = _selectedFleetGroup.SelectedFleet;
-					LoadShips();
-					result = true;
+					index = _selectedFleetGroup.Fleets.Count - 1;
 				}
-			}
-			if (_fleetScrollBar.MouseUp(x, y))
-			{
-				RefreshFleets();
+				_selectedFleetGroup.SelectFleet(index);
+				_selectedFleet = _selectedFleetGroup.SelectedFleet;
+				LoadShips();
 				result = true;
 			}
-			if (_shipScrollBar.MouseUp(x, y))
+			if (_nextFleet.MouseUp(x, y))
 			{
-				RefreshShips();
-				result = true;
-			}
-			for (int i = 0; i < _maxShipVisible; i++)
-			{
-				if (_shipSliders[i].MouseUp(x, y))
+				int index = _selectedFleetGroup.Fleets.IndexOf(_selectedFleet);
+				index++;
+				if (index >= _selectedFleetGroup.Fleets.Count)
 				{
-					if (_selectedFleet.OrderedShips.Count > 0)
+					index = 0;
+				}
+				_selectedFleetGroup.SelectFleet(index);
+				_selectedFleet = _selectedFleetGroup.SelectedFleet;
+				LoadShips();
+				result = true;
+			}
+			if (!_isTransports)
+			{
+				for (int i = 0; i < _maxVisible; i++)
+				{
+					if (_shipSliders[i].MouseUp(x, y))
 					{
-						Ship ship = _selectedFleet.OrderedShips[i + _shipScrollBar.TopIndex];
+						Ship ship = _selectedFleet.OrderedShips[i];
 						_selectedFleetGroup.FleetToSplit.Ships[ship] = _shipSliders[i].TopIndex;
 						_shipLabels[i].SetText(_shipSliders[i].TopIndex + " x " + ship.Name);
+						result = true;
 					}
-					else //Transports
-					{
-						_selectedFleetGroup.FleetToSplit.TransportShips[i + _shipScrollBar.TopIndex].amount = _shipSliders[i].TopIndex;
-						_shipLabels[i].SetText(_selectedFleetGroup.FleetToSplit.TransportShips[i + _shipScrollBar.TopIndex].amount + " x " + _selectedFleetGroup.FleetToSplit.TransportShips[i + _shipScrollBar.TopIndex].raceOnShip.RaceName);
-					}
-					result = true;
 				}
 			}
 			return base.MouseUp(x, y) || result;
@@ -289,26 +249,20 @@ namespace Beyond_Beyaan.Screens
 		{
 			_selectedFleetGroup = selectedFleetGroup;
 			_selectedFleet = selectedFleetGroup.SelectedFleet;
-			_maxFleetVisible = Math.Min(selectedFleetGroup.Fleets.Count, _fleetButtons.Length);
-			_useFleetScrollBar = selectedFleetGroup.Fleets.Count > _fleetButtons.Length;
 
-			_fleetScrollBar.TopIndex = 0;
-			if (_useFleetScrollBar)
+			if (_selectedFleetGroup.Fleets.Count == 1)
 			{
-				_fleetScrollBar.SetEnabledState(true);
-				_fleetScrollBar.SetAmountOfItems(selectedFleetGroup.Fleets.Count);
+				//Disable the next/prev buttons
+				_nextFleet.Active = false;
+				_previousFleet.Active = false;
 			}
 			else
 			{
-				_fleetScrollBar.SetEnabledState(false);
-				_fleetScrollBar.SetAmountOfItems(_fleetButtons.Length);
-			}
-			if (selectedFleetGroup.FleetIndex < _fleetButtons.Length)
-			{
-				_fleetButtons[selectedFleetGroup.FleetIndex].Selected = true;
+				_nextFleet.Active = true;
+				_previousFleet.Active = true;
 			}
 			
-			RefreshFleets();
+			RefreshFleet();
 			LoadShips();
 		}
 
@@ -316,26 +270,17 @@ namespace Beyond_Beyaan.Screens
 		{
 			if (_selectedFleet.Ships.Count > 0)
 			{
-				_maxShipVisible = Math.Min(_selectedFleet.Ships.Count, _shipBackground.Length);
-				_useShipScrollBar = _selectedFleet.Ships.Count > _shipBackground.Length;
+				_maxVisible = _selectedFleet.Ships.Count;
+				_isTransports = false;
 			}
 			else //Transports
 			{
-				_maxShipVisible = Math.Min(_selectedFleet.TransportShips.Count, _shipBackground.Length);
-				_useShipScrollBar = _selectedFleet.TransportShips.Count > _shipBackground.Length;
+				_maxVisible = _selectedFleet.TransportShips.Count;
+				_isTransports = true;
 			}
-			
-			_shipScrollBar.TopIndex = 0;
-			if (_useShipScrollBar)
-			{
-				_shipScrollBar.SetEnabledState(true);
-				_shipScrollBar.SetAmountOfItems(_selectedFleet.Ships.Count);
-			}
-			else
-			{
-				_shipScrollBar.SetEnabledState(false);
-				_shipScrollBar.SetAmountOfItems(_shipBackground.Length);
-			}
+			_windowHeight = 65 + (_maxVisible * 55);
+			_backGroundImage.Resize(300, _windowHeight);
+
 			bool isOwned = _selectedFleet.Empire == _gameMain.EmpireManager.CurrentEmpire;
 			foreach (var slider in _shipSliders)
 			{
@@ -346,11 +291,11 @@ namespace Beyond_Beyaan.Screens
 
 		private void RefreshShips()
 		{
-			for (int i = 0; i < _maxShipVisible; i++)
+			for (int i = 0; i < _maxVisible; i++)
 			{
 				if (_selectedFleet.OrderedShips.Count > 0)
 				{
-					Ship ship = _selectedFleet.OrderedShips[i + _shipScrollBar.TopIndex];
+					Ship ship = _selectedFleet.OrderedShips[i];
 					_shipSliders[i].SetAmountOfItems(_selectedFleet.Ships[ship] + 1);
 					int amount = _selectedFleetGroup.FleetToSplit.Ships[ship];
 					_shipLabels[i].SetText(amount + " x " + ship.Name);
@@ -358,30 +303,18 @@ namespace Beyond_Beyaan.Screens
 				}
 				else
 				{
-					_shipSliders[i].SetAmountOfItems(_selectedFleet.TransportShips[i + _shipScrollBar.TopIndex].amount);
-					int amount = _selectedFleetGroup.FleetToSplit.TransportShips[i + _shipScrollBar.TopIndex].amount;
-					_shipLabels[i].SetText(amount + " x " + _selectedFleetGroup.FleetToSplit.TransportShips[i + _shipScrollBar.TopIndex].raceOnShip.RaceName);
+					_shipSliders[i].SetAmountOfItems(_selectedFleet.TransportShips[i].amount);
+					int amount = _selectedFleetGroup.FleetToSplit.TransportShips[i].amount;
+					_shipLabels[i].SetText(amount + " x " + _selectedFleetGroup.FleetToSplit.TransportShips[i].raceOnShip.RaceName);
 					_shipSliders[i].TopIndex = amount;
 				}
 			}
 		}
 
-		private void RefreshFleets()
+		private void RefreshFleet()
 		{
-			for (int i = 0; i < _maxFleetVisible; i++)
-			{
-				if (_selectedFleetGroup.Fleets[i + _fleetScrollBar.TopIndex].ShipCount > 0)
-				{
-					_fleetButtons[i].SetText(_selectedFleetGroup.Fleets[i + _fleetScrollBar.TopIndex].ShipCount + " " + _selectedFleetGroup.Fleets[i + _fleetScrollBar.TopIndex].Empire.EmpireRace.SingularRaceName + " Ships");
-				}
-				else
-				{
-					_fleetButtons[i].SetText(_selectedFleetGroup.Fleets[i + _fleetScrollBar.TopIndex].TransportShips[0].amount + " " + _selectedFleetGroup.Fleets[i + _fleetScrollBar.TopIndex].TransportShips[0].raceOnShip.SingularRaceName + " Transports");
-				}
-				_fleetButtons[i].SetTextColor(_selectedFleetGroup.Fleets[i + _fleetScrollBar.TopIndex].Empire.EmpireColor, Color.Empty);
-				_fleetButtons[i].Selected = false;
-			}
-			_fleetButtons[_selectedFleetGroup.FleetIndex - _fleetScrollBar.TopIndex].Selected = true;
+			_empireNameLabel.SetText(string.Format("{0} Fleet", _selectedFleet.Empire.EmpireRace.RaceName));
+			_empireNameLabel.MoveTo(_xPos + 150 - (int)(_empireNameLabel.GetWidth() / 2), _yPos + 30 - (int)(_empireNameLabel.GetHeight() / 2));
 		}
 	}
 }
