@@ -318,12 +318,12 @@ namespace Beyond_Beyaan.Screens
 				_name.SetText(_currentSystem.Name);
 				_isOwnedSystem = _currentSystem.Planets[0].Owner == _currentEmpire;
 				_name.SetTextAttributes(_currentSystem.Planets[0].Owner != null ? _currentSystem.Planets[0].Owner.EmpireColor : System.Drawing.Color.White, System.Drawing.Color.Empty);
-				_popLabel.SetText(planet.Owner != null ? string.Format("{0:0}/{1:0} B", planet.TotalPopulation, planet.TotalMaxPopulation - planet.Waste) : string.Format("{0:0} B", planet.TotalMaxPopulation - planet.Waste));
+				_popLabel.SetText(planet.Owner != null ? string.Format("{0:0.0}/{1:0} B", planet.TotalPopulation, planet.TotalMaxPopulation - planet.Waste) : string.Format("{0:0} B", planet.TotalMaxPopulation - planet.Waste));
 				_terrainLabel.SetText(Utility.PlanetTypeToString(_currentSystem.Planets[0].PlanetType));
 				if (_isOwnedSystem)
 				{
 					_name.SetReadOnly(false);
-					_productionLabel.SetText(string.Format("{0:0.0} ({1:0.0}) Production", _currentSystem.Planets[0].ActualProduction, _currentSystem.Planets[0].TotalProduction));
+					_productionLabel.SetText(string.Format("{0:0.0} ({1:0.0}) Industry", _currentSystem.Planets[0].ActualProduction, _currentSystem.Planets[0].TotalProduction));
 					_infrastructureLabel.SetText(_currentSystem.Planets[0].InfrastructureStringOutput);
 					_researchLabel.SetText(_currentSystem.Planets[0].ResearchStringOutput);
 					_environmentLabel.SetText(_currentSystem.Planets[0].EnvironmentStringOutput);
