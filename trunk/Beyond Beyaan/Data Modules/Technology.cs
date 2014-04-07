@@ -177,7 +177,7 @@ namespace Beyond_Beyaan
 		public int MaximumWeaponDamage { get; private set; }
 		public int MaximumSecondaryWeaponDamage { get; private set; }
 		public bool ShieldPiercing { get; private set; }
-		public int WeaponRange { get; private set; }
+		public float WeaponRange { get; private set; }
 		public int SecondaryWeaponRange { get; private set; }
 		public int NumberOfShots { get; private set; }
 		public bool Streaming { get; private set; }
@@ -280,7 +280,7 @@ namespace Beyond_Beyaan
 						int maximumWeaponDamage = 0,
 						int maximumSecondaryWeaponDamage = 0,
 						bool shieldPiercing = false,
-						int weaponRange = 0,
+						float weaponRange = 0,
 						int secondaryWeaponRange = 0,
 						int numberOfShots = 0,
 						bool streaming = false,
@@ -576,9 +576,9 @@ namespace Beyond_Beyaan
 		{
 			if (Technology.WeaponType == Technology.MISSILE_WEAPON)
 			{
-				return Technology.WeaponRange;
+				return (int)(UseSecondary ? ((Technology.WeaponRange + 0.1f) * 2) : (Technology.WeaponRange + 1.1f) * 2); //.1f is to compenstate for any float rounding error
 			}
-			return UseSecondary ? Technology.SecondaryWeaponRange : Technology.WeaponRange;
+			return (int)(UseSecondary ? Technology.SecondaryWeaponRange : Technology.WeaponRange);
 		}
 	}
 }
