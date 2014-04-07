@@ -789,7 +789,15 @@ namespace Beyond_Beyaan.Screens
 					_weaponButtons[i].SetText(weapon.Key.DisplayName);
 					_weaponCounts[i].SetValue(weapon.Value);
 					_weaponCounts[i].Enabled = true;
-					string description = string.Format("Damage: {0}-{1}		Range: {2}		", weapon.Key.GetMinDamage(), weapon.Key.GetMaxDamage(), weapon.Key.GetRange());
+					string description = string.Empty;
+					if (weapon.Key.Technology.WeaponType == Technology.MISSILE_WEAPON)
+					{
+						description = string.Format("Damage: {0}		Range: {1}		", weapon.Key.GetMaxDamage(), weapon.Key.GetRange());
+					}
+					else
+					{
+						description = string.Format("Damage: {0}-{1}		Range: {2}		", weapon.Key.GetMinDamage(), weapon.Key.GetMaxDamage(), weapon.Key.GetRange());
+					}
 					if (weapon.Key.Technology.WeaponType == Technology.MISSILE_WEAPON)
 					{
 						description += string.Format("{0} Shots		", weapon.Key.UseSecondary ? 5 : 2);
