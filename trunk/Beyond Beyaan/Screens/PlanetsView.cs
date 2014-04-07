@@ -328,7 +328,8 @@ namespace Beyond_Beyaan.Screens
 				_scrollBar.SetEnabledState(false);
 				_scrollBar.SetAmountOfItems(13);
 			}
-			LoadPlanets(planets);
+			_scrollBar.TopIndex = 0;
+			RefreshPlanets(planets);
 			
 			_expenseLabels[0].SetText(string.Format("{0:0.0}% ({1:0.0} BC)", currentEmpire.ShipMaintenancePercentage * 100, currentEmpire.ShipMaintenance));
 			_expenseLabels[1].SetText(string.Format("{0:0.0}% ({1:0.0} BC)", currentEmpire.BaseMaintenancePercentage * 100, currentEmpire.BaseMaintenance));
@@ -490,6 +491,11 @@ namespace Beyond_Beyaan.Screens
 										? string.Format("{0:0.0} BC", currentEmpire.Reserves)
 										: string.Format("{0:0.0} (+{1:0.0}) BC", currentEmpire.Reserves,
 														currentEmpire.TaxExpenses / 2));
+			var planets = currentEmpire.PlanetManager.Planets;
+			for (int i = 0; i < _maxVisible; i++)
+			{
+				_columnCells[5][i + _scrollBar.TopIndex].SetText(((int)planets[i].ActualProduction).ToString());
+			}
 		}
 
 		private void RefreshSelection()
@@ -513,17 +519,17 @@ namespace Beyond_Beyaan.Screens
 			}
 		}
 
-		public void LoadPlanets(List<Planet> planets)
+		public void RefreshPlanets(List<Planet> planets)
 		{
 			for (int i = 0; i < _maxVisible; i++)
 			{
-				_columnCells[0][i].SetText(planets[i].Name);
-				_columnCells[1][i].SetText(string.Format("{0:0.0}", planets[i].TotalPopulation));
-				_columnCells[2][i].SetText(string.Format("{0:0.0}", planets[i].Factories));
-				_columnCells[3][i].SetText(planets[i].Bases.ToString());
-				_columnCells[4][i].SetText(string.Format("{0:0.0}", planets[i].Waste));
-				_columnCells[5][i].SetText(((int)planets[i].ActualProduction).ToString());
-				_columnCells[6][i].SetText(planets[i].ConstructionAmount > 0 ? planets[i].ShipBeingBuilt.Name : string.Empty);
+				_columnCells[0][i + _scrollBar.TopIndex].SetText(planets[i].Name);
+				_columnCells[1][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i].TotalPopulation));
+				_columnCells[2][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i].Factories));
+				_columnCells[3][i + _scrollBar.TopIndex].SetText(planets[i].Bases.ToString());
+				_columnCells[4][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i].Waste));
+				_columnCells[5][i + _scrollBar.TopIndex].SetText(((int)planets[i].ActualProduction).ToString());
+				_columnCells[6][i + _scrollBar.TopIndex].SetText(planets[i].ConstructionAmount > 0 ? planets[i].ShipBeingBuilt.Name : string.Empty);
 				for (int j = 0; j < 8; j++)
 				{
 					_columnCells[j][i].Enabled = true;
