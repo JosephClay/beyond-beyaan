@@ -538,7 +538,7 @@ namespace Beyond_Beyaan.Screens
 			{
 				_availableTechsToResearchButtons[i].SetText(_availableTopics[_currentTechField][i + _scrollBar.TopIndex].TechName);
 				_availableTechsToResearchButtons[i].SetToolTipText(_availableTopics[_currentTechField][i + _scrollBar.TopIndex].TechDescription);
-				_researchCosts[i].SetText(string.Format("{0:0} RPs", _availableTopics[_currentTechField][i + _scrollBar.TopIndex].ResearchPoints * techManager.DifficultyModifier * techManager.RaceModifiers[_currentTechField]));
+				_researchCosts[i].SetText(string.Format("{0:0} RPs", _availableTopics[_currentTechField][i + _scrollBar.TopIndex].ResearchPoints * TechnologyManager.COST_MODIFIER * techManager.RaceModifiers[_currentTechField]));
 			}
 		}
 	}

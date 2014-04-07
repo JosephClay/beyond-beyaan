@@ -243,7 +243,7 @@ namespace Beyond_Beyaan
 		#endregion
 
 		#region Constructors
-		public Empire(string emperorName, int empireID, Race race, PlayerType type, int difficultyModifier, Color color, GameMain gameMain) : this()
+		public Empire(string emperorName, int empireID, Race race, PlayerType type, Color color, GameMain gameMain) : this()
 		{
 			Reserves = 0;
 			TaxRate = 0;
@@ -251,7 +251,6 @@ namespace Beyond_Beyaan
 			this.empireID = empireID;
 			this.type = type;
 			EmpireColor = color;
-			TechnologyManager.DifficultyModifier = difficultyModifier;
 			try
 			{
 				TechnologyManager.SetComputerTechs(gameMain.MasterTechnologyManager.GetRandomizedComputerTechs());
