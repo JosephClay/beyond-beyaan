@@ -15,7 +15,6 @@ namespace Beyond_Beyaan.Screens
 
 		private BBStretchableImage _expensesBackground;
 		private BBStretchableImage _incomeBackground;
-		private BBStretchableImage _tax;
 		private BBStretchableImage _reserves;
 
 		private BBLabel _expenseTitle;
@@ -25,13 +24,15 @@ namespace Beyond_Beyaan.Screens
 		private BBLabel _reservesAmount;
 		private BBScrollBar _reserveSlider;
 
+		private BBLabel _transferLabel;
+		private BBLabel _transferAmount;
+		private BBScrollBar _transferSlider;
+		private BBStretchButton _transferReserves;
+
 		private BBStretchButton[] _expenses;
 		private BBStretchButton[] _incomes;
 		private BBLabel[] _expenseLabels;
 		private BBLabel[] _incomeLabels;
-
-		//private StarSystem _selectedSystem;
-		//private Empire _currentEmpire;
 
 		private int _maxVisible;
 		private int _selectedRow;
@@ -177,7 +178,6 @@ namespace Beyond_Beyaan.Screens
 			_expensesBackground = new BBStretchableImage();
 			_incomeBackground = new BBStretchableImage();
 			_reserves = new BBStretchableImage();
-			_tax = new BBStretchableImage();
 
 			_expenseTitle = new BBLabel();
 			_incomeTitle = new BBLabel();
@@ -282,17 +282,18 @@ namespace Beyond_Beyaan.Screens
 			_incomeTitle.MoveTo((int)(x + 125 - _incomeTitle.GetWidth() / 2), y + 5);
 			x += 250;
 
-			if (!_tax.Initialize(x, y, 300, 70, StretchableImageType.ThinBorderBG, _gameMain.Random, out reason))
-			{
-				return false;
-			}
-			if (!_reserves.Initialize(x, y + 70, 300, 70, StretchableImageType.ThinBorderBG, _gameMain.Random, out reason))
+			if (!_reserves.Initialize(x, y, 300, 140, StretchableImageType.ThinBorderBG, _gameMain.Random, out reason))
 			{
 				return false;
 			}
 			_reserveSlider = new BBScrollBar();
 			_reservesLabel = new BBLabel();
 			_reservesAmount = new BBLabel();
+
+			_transferSlider = new BBScrollBar();
+			_transferLabel = new BBLabel();
+			_transferAmount = new BBLabel();
+			_transferReserves = new BBStretchButton();
 
 			if (!_reservesLabel.Initialize(x + 10, y + 10, "Reserve:", Color.Orange, out reason))
 			{
@@ -302,11 +303,28 @@ namespace Beyond_Beyaan.Screens
 			{
 				return false;
 			}
-			if (!_reserveSlider.Initialize(x + 10, y + 40, 280, 0, 20, true, true, _gameMain.Random, out reason))
+			if (!_reserveSlider.Initialize(x + 10, y + 33, 280, 0, 20, true, true, _gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_transferLabel.Initialize(x + 10, y + 51, "Amount to transfer:", Color.Orange, out reason))
+			{
+				return false;
+			}
+			if (!_transferAmount.Initialize(x + 280, y + 51, string.Empty, Color.White, out reason))
+			{
+				return false;
+			}
+			if (!_transferSlider.Initialize(x + 10, y + 72, 280, 0, 200, true, true, _gameMain.Random, out reason))
+			{
+				return false;
+			}
+			if (!_transferReserves.Initialize("Transfer reserves to selected planet", ButtonTextAlignment.CENTER, StretchableImageType.TinyButtonBG, StretchableImageType.TinyButtonFG, x + 10, y + 95, 280, 35, _gameMain.Random, out reason))
 			{
 				return false;
 			}
 			_reservesAmount.SetAlignment(true);
+			_transferAmount.SetAlignment(true);
 
 			return true;
 		}
@@ -343,6 +361,9 @@ namespace Beyond_Beyaan.Screens
 			RefreshSelection();
 
 			RefreshReserves();
+
+			_transferSlider.TopIndex = 0;
+			RefreshTransfer();
 		}
 
 		public override void Draw()
@@ -363,7 +384,6 @@ namespace Beyond_Beyaan.Screens
 			_expensesBackground.Draw();
 			_incomeBackground.Draw();
 			_reserves.Draw();
-			_tax.Draw();
 			_expenseTitle.Draw();
 			_incomeTitle.Draw();
 			_scrollBar.Draw();
@@ -380,6 +400,10 @@ namespace Beyond_Beyaan.Screens
 			_reserveSlider.Draw();
 			_reservesLabel.Draw();
 			_reservesAmount.Draw();
+			_transferSlider.Draw();
+			_transferLabel.Draw();
+			_transferAmount.Draw();
+			_transferReserves.Draw();
 		}
 
 		public override bool MouseHover(int x, int y, float frameDeltaTime)
@@ -407,6 +431,12 @@ namespace Beyond_Beyaan.Screens
 				RefreshReserves();
 				return true;
 			}
+			if (_transferSlider.MouseHover(x, y, frameDeltaTime))
+			{
+				RefreshTransfer();
+				return true;
+			}
+			_transferReserves.MouseHover(x, y, frameDeltaTime);
 			return base.MouseHover(x, y, frameDeltaTime);
 		}
 
@@ -429,7 +459,9 @@ namespace Beyond_Beyaan.Screens
 					_columnCells[7][i].MouseDown(left + 951, y);
 				}
 			}
+			_transferReserves.MouseDown(x, y);
 			_reserveSlider.MouseDown(x, y);
+			_transferSlider.MouseDown(x, y);
 			return base.MouseDown(x, y);
 		}
 
@@ -456,12 +488,12 @@ namespace Beyond_Beyaan.Screens
 							if (CenterToSystem != null)
 							{
 								CenterToSystem(
-									_gameMain.EmpireManager.CurrentEmpire.PlanetManager.Planets[_scrollBar.TopIndex + _selectedRow].System);
+									_gameMain.EmpireManager.CurrentEmpire.PlanetManager.Planets[_selectedRow].System);
 							}
 						}
 						else
 						{
-							_selectedRow = i;
+							_selectedRow = i + _scrollBar.TopIndex;
 							RefreshSelection();
 						}
 					}
@@ -471,6 +503,23 @@ namespace Beyond_Beyaan.Screens
 			{
 				_gameMain.EmpireManager.CurrentEmpire.TaxRate = _reserveSlider.TopIndex;
 				RefreshReserves();
+				return true;
+			}
+			if (_transferSlider.MouseUp(x, y))
+			{
+				RefreshTransfer();
+				return true;
+			}
+			if (_transferReserves.MouseUp(x, y))
+			{
+				var empire = _gameMain.EmpireManager.CurrentEmpire;
+				var planet = empire.PlanetManager.Planets[_selectedRow];
+				float amount = empire.Reserves * (_transferSlider.TopIndex / 200.0f);
+				planet.Reserves += amount;
+				empire.Reserves -= amount;
+				_transferSlider.TopIndex = 0;
+				RefreshReserves();
+				RefreshTransfer();
 				return true;
 			}
 			if (!base.MouseUp(x, y))
@@ -495,6 +544,26 @@ namespace Beyond_Beyaan.Screens
 			for (int i = 0; i < _maxVisible; i++)
 			{
 				_columnCells[5][i + _scrollBar.TopIndex].SetText(((int)planets[i].ActualProduction).ToString());
+			}
+		}
+
+		private void RefreshTransfer()
+		{
+			var currentEmpire = _gameMain.EmpireManager.CurrentEmpire;
+			float amount = currentEmpire.Reserves;
+			if (amount <= 0.0001)
+			{
+				_transferAmount.SetText("0.0 BC");
+				_transferSlider.SetEnabledState(false);
+				_transferReserves.Enabled = false;
+			}
+			else
+			{
+				float percentage = _transferSlider.TopIndex / 200.0f;
+				amount *= percentage;
+				_transferAmount.SetText(string.Format("{0:0.0} BC", amount));
+				_transferSlider.SetEnabledState(true);
+				_transferReserves.Enabled = true;
 			}
 		}
 
@@ -523,16 +592,30 @@ namespace Beyond_Beyaan.Screens
 		{
 			for (int i = 0; i < _maxVisible; i++)
 			{
-				_columnCells[0][i + _scrollBar.TopIndex].SetText(planets[i].Name);
-				_columnCells[1][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i].TotalPopulation));
-				_columnCells[2][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i].Factories));
-				_columnCells[3][i + _scrollBar.TopIndex].SetText(planets[i].Bases.ToString());
-				_columnCells[4][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i].Waste));
-				_columnCells[5][i + _scrollBar.TopIndex].SetText(((int)planets[i].ActualProduction).ToString());
-				_columnCells[6][i + _scrollBar.TopIndex].SetText(planets[i].ConstructionAmount > 0 ? planets[i].ShipBeingBuilt.Name : string.Empty);
+				_columnCells[0][i + _scrollBar.TopIndex].SetText(planets[i + _scrollBar.TopIndex].Name);
+				_columnCells[1][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i + _scrollBar.TopIndex].TotalPopulation));
+				_columnCells[2][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i + _scrollBar.TopIndex].Factories));
+				_columnCells[3][i + _scrollBar.TopIndex].SetText(planets[i + _scrollBar.TopIndex].Bases.ToString());
+				_columnCells[4][i + _scrollBar.TopIndex].SetText(string.Format("{0:0.0}", planets[i + _scrollBar.TopIndex].Waste));
+				_columnCells[5][i + _scrollBar.TopIndex].SetText(((int)planets[i + _scrollBar.TopIndex].ActualProduction).ToString());
+				_columnCells[6][i + _scrollBar.TopIndex].SetText(planets[i].ConstructionAmount > 0 ? planets[i + _scrollBar.TopIndex].ShipBeingBuilt.Name : string.Empty);
 				for (int j = 0; j < 8; j++)
 				{
 					_columnCells[j][i].Enabled = true;
+				}
+				if (i + _scrollBar.TopIndex == _selectedRow)
+				{
+					for (int j = 0; j < 8; j++)
+					{
+						_columnCells[j][i].Selected = true;
+					}
+				}
+				else
+				{
+					for (int j = 0; j < 8; j++)
+					{
+						_columnCells[j][i].Selected = true;
+					}
 				}
 			}
 			for (int i = _maxVisible; i < 13; i++)
