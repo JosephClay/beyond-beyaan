@@ -132,6 +132,7 @@ namespace Beyond_Beyaan
 		public int Bases { get; set; }
 		public float NextBaseInvestment { get; private set; }
 		public int ShieldLevel { get; set; }
+		public float Reserves { get; set; }
 
 		#region Production
 		public float TotalProduction
@@ -166,7 +167,19 @@ namespace Beyond_Beyaan
 		{
 			get
 			{
-				return TotalProductionWithTrade - ProductionLostFromExpenses;
+				float actualProd = TotalProductionWithTrade - ProductionLostFromExpenses;
+				if (Reserves > 0)
+				{
+					if (Reserves > actualProd) //Cap at double the production
+					{
+						actualProd *= 2;
+					}
+					else
+					{
+						actualProd += Reserves;
+					}
+				}
+				return actualProd;
 			}
 		}
 		#endregion
@@ -1856,6 +1869,16 @@ namespace Beyond_Beyaan
 			//Update the enviroment to at least sufficient to clean up waste
 			SetCleanup();
 			UpdateOutputs();
+
+			//Deduct reserves if any exists
+			if (Reserves > 0)
+			{
+				Reserves -= (TotalProductionWithTrade - ProductionLostFromExpenses);
+				if (Reserves < 0)
+				{
+					Reserves = 0;
+				}
+			}
 		}
 
 		public Ship CheckIfShipBuilt(out int amount)

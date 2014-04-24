@@ -265,8 +265,7 @@ namespace Beyond_Beyaan
 				MessageBox.Show(e.Message);
 			}
 
-			this.EmpireRace = race;
-			//this.handicap = 1.0f;
+			EmpireRace = race;
 		}
 		public Empire()
 		{
@@ -274,8 +273,6 @@ namespace Beyond_Beyaan
 			TechnologyManager = new TechnologyManager();
 			PlanetManager = new PlanetManager();
 			SitRepManager = new SitRepManager();
-			//reserves = 0;
-			//expenses = 0;
 			visibleOtherFleets = new List<Fleet>();
 		}
 		#endregion
