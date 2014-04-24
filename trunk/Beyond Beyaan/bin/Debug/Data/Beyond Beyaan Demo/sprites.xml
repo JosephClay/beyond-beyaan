@@ -1713,4 +1713,252 @@
   <Sprite name="VelociraptorLandingShip" file="Velociraptors.png">
     <Frame x="428" y="781" width="300" height="200" />
   </Sprite>
+  <!--Morions-->
+  <Sprite name="MorionTinyShip1" file="Morions.png">
+    <Frame x="0" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="MorionTinyShip2" file="Morions.png">
+    <Frame x="32" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="MorionTinyShip3" file="Morions.png">
+    <Frame x="64" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="MorionTinyShip4" file="Morions.png">
+    <Frame x="96" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="MorionTinyShip5" file="Morions.png">
+    <Frame x="128" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="MorionTinyShip6" file="Morions.png">
+    <Frame x="160" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="MorionSmallShip1" file="Morions.png">
+    <Frame x="0" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="MorionSmallShip2" file="Morions.png">
+    <Frame x="64" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="MorionSmallShip3" file="Morions.png">
+    <Frame x="128" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="MorionSmallShip4" file="Morions.png">
+    <Frame x="192" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="MorionSmallShip5" file="Morions.png">
+    <Frame x="256" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="MorionSmallShip6" file="Morions.png">
+    <Frame x="320" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="MorionMediumShip1" file="Morions.png">
+    <Frame x="0" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="MorionMediumShip2" file="Morions.png">
+    <Frame x="96" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="MorionMediumShip3" file="Morions.png">
+    <Frame x="192" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="MorionMediumShip4" file="Morions.png">
+    <Frame x="288" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="MorionMediumShip5" file="Morions.png">
+    <Frame x="384" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="MorionMediumShip6" file="Morions.png">
+    <Frame x="480" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="MorionLargeShip1" file="Morions.png">
+    <Frame x="0" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="MorionLargeShip2" file="Morions.png">
+    <Frame x="128" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="MorionLargeShip3" file="Morions.png">
+    <Frame x="256" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="MorionLargeShip4" file="Morions.png">
+    <Frame x="384" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="MorionLargeShip5" file="Morions.png">
+    <Frame x="512" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="MorionLargeShip6" file="Morions.png">
+    <Frame x="640" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="MorionHugeShip1" file="Morions.png">
+    <Frame x="0" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="MorionHugeShip2" file="Morions.png">
+    <Frame x="160" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="MorionHugeShip3" file="Morions.png">
+    <Frame x="320" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="MorionHugeShip4" file="Morions.png">
+    <Frame x="480" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="MorionHugeShip5" file="Morions.png">
+    <Frame x="640" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="MorionHugeShip6" file="Morions.png">
+    <Frame x="800" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="MorionTitanShip" file="Morions.png">
+    <Frame x="768" y="64" width="256" height="256" axisX="128" axisY="128" />
+  </Sprite>
+  <Sprite name="MorionFleetIcon" file="Morions.png">
+    <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="MorionTransportIcon" file="Morions.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="MorionGroundTroop" file="Morions.png">
+    <Frame x="192" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="MorionDyingTroop" file="Morions.png">
+    <Frame x="256" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="MorionNeutralPortrait" file="Morions.png">
+    <Frame x="0" y="481" width="300" height="300" />
+  </Sprite>
+  <Sprite name="MorionHappyPortrait" file="Morions.png">
+    <Frame x="300" y="481" width="300" height="300" />
+  </Sprite>
+  <Sprite name="MorionAngryPortrait" file="Morions.png">
+    <Frame x="600" y="481" width="300" height="300" />
+  </Sprite>
+  <Sprite name="MorionThumbnail" file="Morions.png">
+    <Frame x="0" y="781" width="128" height="128" />
+  </Sprite>
+  <Sprite name="MorionCity" file="Morions.png">
+    <Frame x="128" y="781" width="300" height="200" />
+  </Sprite>
+  <Sprite name="MorionLandingShip" file="Morions.png">
+    <Frame x="428" y="781" width="300" height="200" />
+  </Sprite>
+  <!--Zygobies-->
+  <Sprite name="ZygobieTinyShip1" file="Zygobies.png">
+    <Frame x="0" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZygobieTinyShip2" file="Zygobies.png">
+    <Frame x="32" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZygobieTinyShip3" file="Zygobies.png">
+    <Frame x="64" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZygobieTinyShip4" file="Zygobies.png">
+    <Frame x="96" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZygobieTinyShip5" file="Zygobies.png">
+    <Frame x="128" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZygobieTinyShip6" file="Zygobies.png">
+    <Frame x="160" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZygobieSmallShip1" file="Zygobies.png">
+    <Frame x="0" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="ZygobieSmallShip2" file="Zygobies.png">
+    <Frame x="64" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="ZygobieSmallShip3" file="Zygobies.png">
+    <Frame x="128" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="ZygobieSmallShip4" file="Zygobies.png">
+    <Frame x="192" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="ZygobieSmallShip5" file="Zygobies.png">
+    <Frame x="256" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="ZygobieSmallShip6" file="Zygobies.png">
+    <Frame x="320" y="32" width="64" height="64" axisX="32" axisY="32" />
+  </Sprite>
+  <Sprite name="ZygobieMediumShip1" file="Zygobies.png">
+    <Frame x="0" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="ZygobieMediumShip2" file="Zygobies.png">
+    <Frame x="96" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="ZygobieMediumShip3" file="Zygobies.png">
+    <Frame x="192" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="ZygobieMediumShip4" file="Zygobies.png">
+    <Frame x="288" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="ZygobieMediumShip5" file="Zygobies.png">
+    <Frame x="384" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="ZygobieMediumShip6" file="Zygobies.png">
+    <Frame x="480" y="96" width="96" height="96" axisX="48" axisY="48" />
+  </Sprite>
+  <Sprite name="ZygobieLargeShip1" file="Zygobies.png">
+    <Frame x="0" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="ZygobieLargeShip2" file="Zygobies.png">
+    <Frame x="128" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="ZygobieLargeShip3" file="Zygobies.png">
+    <Frame x="256" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="ZygobieLargeShip4" file="Zygobies.png">
+    <Frame x="384" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="ZygobieLargeShip5" file="Zygobies.png">
+    <Frame x="512" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="ZygobieLargeShip6" file="Zygobies.png">
+    <Frame x="640" y="192" width="128" height="128" axisX="64" axisY="64" />
+  </Sprite>
+  <Sprite name="ZygobieHugeShip1" file="Zygobies.png">
+    <Frame x="0" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="ZygobieHugeShip2" file="Zygobies.png">
+    <Frame x="160" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="ZygobieHugeShip3" file="Zygobies.png">
+    <Frame x="320" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="ZygobieHugeShip4" file="Zygobies.png">
+    <Frame x="480" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="ZygobieHugeShip5" file="Zygobies.png">
+    <Frame x="640" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="ZygobieHugeShip6" file="Zygobies.png">
+    <Frame x="800" y="320" width="160" height="160" axisX="80" axisY="80" />
+  </Sprite>
+  <Sprite name="ZygobieTitanShip" file="Zygobies.png">
+    <Frame x="768" y="64" width="256" height="256" axisX="128" axisY="128" />
+  </Sprite>
+  <Sprite name="ZygobieFleetIcon" file="Zygobies.png">
+    <Frame x="224" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZygobieTransportIcon" file="Zygobies.png">
+    <Frame x="288" y="0" width="32" height="32" axisX="16" axisY="16" />
+  </Sprite>
+  <Sprite name="ZygobieGroundTroop" file="Zygobies.png">
+    <Frame x="192" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZygobieDyingTroop" file="Zygobies.png">
+    <Frame x="256" y="0" width="32" height="32" />
+  </Sprite>
+  <Sprite name="ZygobieNeutralPortrait" file="Zygobies.png">
+    <Frame x="0" y="481" width="300" height="300" />
+  </Sprite>
+  <Sprite name="ZygobieHappyPortrait" file="Zygobies.png">
+    <Frame x="300" y="481" width="300" height="300" />
+  </Sprite>
+  <Sprite name="ZygobieAngryPortrait" file="Zygobies.png">
+    <Frame x="600" y="481" width="300" height="300" />
+  </Sprite>
+  <Sprite name="ZygobieThumbnail" file="Zygobies.png">
+    <Frame x="0" y="781" width="128" height="128" />
+  </Sprite>
+  <Sprite name="ZygobieCity" file="Zygobies.png">
+    <Frame x="128" y="781" width="300" height="200" />
+  </Sprite>
+  <Sprite name="ZygobieLandingShip" file="Zygobies.png">
+    <Frame x="428" y="781" width="300" height="200" />
+  </Sprite>
 </Sprites>
