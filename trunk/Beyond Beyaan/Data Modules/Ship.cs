@@ -193,10 +193,6 @@ namespace Beyond_Beyaan
 		{
 			get { return Engine.Key.Technology.Speed; }
 		}
-		public int DefenseRating
-		{
-			get { return (2 - Size) + (ManeuverSpeed - 1); }
-		}
 		public int MaxHitPoints
 		{
 			get
@@ -213,6 +209,27 @@ namespace Beyond_Beyaan
 						return (int)(Armor.UseSecondary ? Armor.Technology.HugeSecondaryHP : Armor.Technology.HugeHP);
 				}
 				return 0;
+			}
+		}
+		public int BeamDefense
+		{
+			get
+			{
+				return (2 - Size) + ManeuverSpeed; // TODO: Add other equipment that adds to defense, such as cloaking
+			}
+		}
+		public int MissileDefense
+		{
+			get
+			{
+				return  ((2 - Size) + ManeuverSpeed + (ECM == null ? 0 : ECM.Technology.ECM));
+			}
+		}
+		public int AttackLevel
+		{
+			get
+			{
+				return (Computer == null ? 0 : Computer.Technology.BattleComputer); //Todo: add battle scanner's +1 if ship has it
 			}
 		}
 		#endregion
