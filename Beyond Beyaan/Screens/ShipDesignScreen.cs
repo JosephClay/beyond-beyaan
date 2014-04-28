@@ -721,7 +721,7 @@ namespace Beyond_Beyaan.Screens
 			_spacePerPower = _shipDesign.Engine.Key.GetSize(_techLevels, _shipDesign.Size) / (_shipDesign.GalaxySpeed * 10);
 			_costPerPowerLabel.SetText(string.Format("Cost per Power: {0:0.0} BCs", _costPerPower));
 			_spacePerPowerLabel.SetText(string.Format("Space per Power: {0:0.0} DWT", _spacePerPower));
-			_defenseRating.SetText(string.Format("{0} Defense Rating", _shipDesign.DefenseRating));
+			_defenseRating.SetText(string.Format("{0} Defense Rating", _shipDesign.BeamDefense));
 		}
 
 		private void RefreshHP()
@@ -749,13 +749,12 @@ namespace Beyond_Beyaan.Screens
 			if (_shipDesign.ECM != null)
 			{
 				_ECMButton.SetText(_shipDesign.ECM.DisplayName);
-				_missileDefenseLabel.SetText(string.Format("{0} Missile Defense Rating", _shipDesign.ECM.Technology.ECM));
 			}
 			else
 			{
 				_ECMButton.SetText("No ECM");
-				_missileDefenseLabel.SetText("0 Missile Defense Rating");
 			}
+			_missileDefenseLabel.SetText(string.Format("{0} Missile Defense Rating", _shipDesign.MissileDefense));
 		}
 
 		private void RefreshComputer()
